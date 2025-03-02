@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:picto_frontend/page_router.dart';
-import 'package:picto_frontend/test_ground/ksm_test_screen.dart';
+import 'package:picto_frontend/theme.dart';
 
 void main() {
   runApp(const Picto());
@@ -18,12 +18,9 @@ class Picto extends StatelessWidget {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: [SystemUiOverlay.top]);
     return GetMaterialApp(
       title: 'PICTO APP',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
+      theme: PictoThemeData.init(),
       getPages: PageRouter.getPages(),
-      initialRoute: '/test_ground',
+      initialRoute: '/splash',
       debugShowCheckedModeBanner: false,
     );
   }
