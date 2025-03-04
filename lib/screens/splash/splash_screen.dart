@@ -2,6 +2,7 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:picto_frontend/screens/splash/splash_view_model.dart';
+import 'package:picto_frontend/widgets/picto_logo.dart';
 
 class SplashScreen extends StatelessWidget {
   SplashScreen({super.key});
@@ -19,17 +20,7 @@ class SplashScreen extends StatelessWidget {
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset(
-                'assets/images/picto_logo.png',
-                fit: BoxFit.cover,
-              ),
-              SizedBox(
-                height: context.mediaQuery.size.height * 0.05,
-              ),
-              Text(
-                "PICTO",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
-              ),
+              PictoLogo(scale: 1, fontSize: 30,),
               SizedBox(
                 width: context.mediaQuery.size.width,
                 height: context.mediaQuery.size.height * 0.03,

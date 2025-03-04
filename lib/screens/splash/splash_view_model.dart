@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:get/get.dart';
+import 'package:picto_frontend/services/session_scheduler_service/handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../models/user.dart';
 
@@ -11,9 +12,10 @@ import '../../models/user.dart';
 4. 세션 스케줄러와 연결
  */
 
-class SplashViewModel extends GetxController{
+class SplashViewModel extends GetxController {
   late SharedPreferences preferences;
-  var statusMsg = "로딩중...".obs ;
+  var statusMsg = "로딩중...".obs;
+
   String? accessToken;
   String? refreshToken;
   User? owner;
@@ -24,22 +26,22 @@ class SplashViewModel extends GetxController{
     String? accessToken;
     String? refreshToken;
 
-    try{
+    try {
       userId = preferences.getInt("userId");
       accessToken = preferences.getString("accessToken");
       refreshToken = preferences.getString("refreshToken");
 
-      if(userId == null || accessToken == null || refreshToken == null) {
+      if (userId == null || accessToken == null || refreshToken == null) {
         // 로그인 화면으로 이동
         statusMsg.value = "로그인 페이지로 이동 중";
         await Future.delayed(Duration(seconds: 5));
-        Get.toNamed('/login');
+        Get.offNamed('/login');
       }
 
       _loadProfile();
       _loadMapPhotos();
-      _session_connect();
-    } catch(e) {
+      _sessionConnect();
+    } catch (e) {
       print("[ERROR] " + e.toString());
     }
   }
@@ -52,7 +54,7 @@ class SplashViewModel extends GetxController{
 
   }
 
-  void _session_connect() async {
-
+  void _sessionConnect() async {
+    SessionSchedulerHandler().connectWebSocket();
   }
 }

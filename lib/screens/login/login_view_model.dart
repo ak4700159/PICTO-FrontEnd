@@ -3,6 +3,11 @@ import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginViewModel extends GetxController {
+  RxBool isPasswordVisible = false.obs;
+
+  void togglePasswordVisible() {
+    isPasswordVisible.value = !isPasswordVisible.value;
+  }
 /*
   Future<void> _checkLoginStatus() async {
     final prefs = await SharedPreferences.getInstance();
