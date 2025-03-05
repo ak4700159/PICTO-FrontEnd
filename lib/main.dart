@@ -8,8 +8,8 @@ import 'package:picto_frontend/theme.dart';
 void main() {
   SystemChrome.setSystemUIOverlayStyle(
     SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
-      systemNavigationBarColor: Color(0xff7038ff),
+      statusBarColor:  PictoThemeData.mainColor,
+      systemNavigationBarColor: PictoThemeData.mainColor,
     ),
   );
   runApp(const Picto());

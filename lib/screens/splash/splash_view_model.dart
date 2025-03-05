@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:get/get.dart';
 import 'package:picto_frontend/services/session_scheduler_service/handler.dart';
+import 'package:picto_frontend/services/user_manager_service/handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../models/user.dart';
 
@@ -15,31 +16,32 @@ import '../../models/user.dart';
 class SplashViewModel extends GetxController {
   late SharedPreferences preferences;
   var statusMsg = "로딩중...".obs;
-
-  String? accessToken;
-  String? refreshToken;
   User? owner;
 
-  void loadDataFromStorage() async {
+  void initStatus() async {
     preferences = await SharedPreferences.getInstance();
     int? userId;
     String? accessToken;
     String? refreshToken;
 
     try {
+      // 내부 저장된 데이터 로딩
       userId = preferences.getInt("userId");
       accessToken = preferences.getString("accessToken");
       refreshToken = preferences.getString("refreshToken");
+      // 엑세스토큰 리프레쉬토큰 전달
+      UserManagerHandler().initSettings(accessToken, refreshToken, userId);
 
       if (userId == null || accessToken == null || refreshToken == null) {
         // 로그인 화면으로 이동
         statusMsg.value = "로그인 페이지로 이동 중";
+        // 토큰
         await Future.delayed(Duration(seconds: 5));
         Get.offNamed('/login');
       }
 
       _loadProfile();
-      _loadMapPhotos();
+      // _loadMapPhotos();
       _sessionConnect();
     } catch (e) {
       print("[ERROR] " + e.toString());
@@ -51,7 +53,7 @@ class SplashViewModel extends GetxController {
   }
 
   void _loadMapPhotos() async {
-
+    // 지도 안에서 불러 올지는 대기
   }
 
   void _sessionConnect() async {

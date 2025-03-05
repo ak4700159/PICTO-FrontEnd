@@ -4,21 +4,54 @@ import 'dart:js_interop';
 import 'package:dio/dio.dart';
 import 'package:picto_frontend/models/user.dart';
 import 'package:picto_frontend/services/custom_interceptor.dart';
+import 'package:picto_frontend/services/user_manager_service/signin_response.dart';
 
 class UserManagerHandler {
+  // private 생성자 선언 -> 외부에서 해당 클래스의 생성자 생성을 막는다.
+  UserManagerHandler._();
+  static final UserManagerHandler _handler = UserManagerHandler._();
+  factory UserManagerHandler() {
+    return _handler;
+  }
+
   final String baseUrl = "bogota.iptime.org:8081/user-manager/";
-  final Dio dio = Dio(
-    BaseOptions(
-        connectTimeout: const Duration(milliseconds: 1000),
-        contentType: Headers.jsonContentType,
-        receiveTimeout: const Duration(milliseconds: 3000)),
-  )..interceptors.add(CustomInterceptor());
+  String? accessToken;
+  String? refreshToken;
+  int? ownerId;
+  late Dio dio;
+
+  void initSettings(String? localAccessToken, String? localRefreshToken, int? localOwnerId) {
+    accessToken = localAccessToken;
+    refreshToken = localRefreshToken;
+    ownerId = localOwnerId;
+    dio = Dio(
+      BaseOptions(
+          connectTimeout: const Duration(milliseconds: 1000),
+          contentType: Headers.jsonContentType,
+          receiveTimeout: const Duration(milliseconds: 3000)
+      ),
+    )..interceptors.add(CustomInterceptor());
+  }
 
   // 회원가입
-  Future<void> signup(User newUser) async {}
+  Future<void> signup(User newUser, double lat, double lng) async {
+    String hostUrl = "$baseUrl/signup";
+    final response = await dio.post(hostUrl, data: {
+      'email' : newUser.email,
+      'password' : newUser.password,
+      'name' : newUser.name,
+      'lat' : lat,
+      'lng' : lng,
+    });
+    return;
+  }
 
   // 로그인
-  Future<void> signin(String email, String passwd) async {}
+  Future<SigninResponse> signin(String email, String passwd) async {
+    String hostUrl = "$baseUrl/signin";
+    final response = await dio.post(hostUrl);
+    return SigninResponse.fromJson(response.data);
+  }
 
   // 사용자 정보 조회 -> 프로필 조회
   Future<User> getUserInfo(int userId, String accessToken) async {
@@ -29,7 +62,7 @@ class UserManagerHandler {
   }
 
   // 토큰 검증
-  Future<String> validateToken(int userId, String accessToken, String refreshToken) async {
+  Future<String> validateToken(int userId) async {
     String hostUrl = "$baseUrl/token";
     try {
       final response = await dio.get(

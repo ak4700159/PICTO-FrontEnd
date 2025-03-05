@@ -9,9 +9,7 @@ class SessionSchedulerHandler {
 
   // private 생성자 선언 -> 외부에서 해당 클래스의 생성자 생성을 막는다.
   SessionSchedulerHandler._();
-
   static final SessionSchedulerHandler _handler = SessionSchedulerHandler._();
-
   factory SessionSchedulerHandler() {
     return _handler;
   }
@@ -19,6 +17,7 @@ class SessionSchedulerHandler {
   void connectWebSocket() {
     _stompClient = StompClient(
       config: StompConfig(
+        reconnectDelay: Duration.zero,
         url: baseUrl,
         onConnect: _onConnect,
         onWebSocketError: _onError,

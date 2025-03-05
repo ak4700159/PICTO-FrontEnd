@@ -5,6 +5,9 @@ class PictoThemeData {
   static const Color primarySeedColor = Color(0xFF6750A4);
   static const Color secondarySeedColor = Color(0xFF3871BB);
   static const Color tertiarySeedColor = Color(0xFF6CA450);
+  static const Color backgroundColor = Colors.white;
+  static const Color mainColor = Color(0xff7038ff);
+
   // 시드를 통해 전역적으로 사용될 컬러 테마 자동 생성
   static final kColorScheme = SeedColorScheme.fromSeeds(
     brightness: Brightness.light,
