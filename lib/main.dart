@@ -5,11 +5,15 @@ import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:picto_frontend/page_router.dart';
 import 'package:picto_frontend/theme.dart';
 
+import 'config/app_config.dart';
+
 void main() {
+  // 상단 상태바, 하단 네비게이션 바 설정
   SystemChrome.setSystemUIOverlayStyle(
     SystemUiOverlayStyle(
-      statusBarColor:  PictoThemeData.mainColor,
-      systemNavigationBarColor: PictoThemeData.mainColor,
+      statusBarColor:  Colors.transparent,
+      statusBarIconBrightness: Brightness.dark,
+      systemNavigationBarColor: AppConfig.mainColor,
     ),
   );
   runApp(const Picto());

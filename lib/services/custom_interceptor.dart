@@ -18,8 +18,7 @@ class CustomInterceptor extends Interceptor{
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
-    print('[ERROR] ${err.requestOptions.uri}:${err.response?.statusCode}\n');
-    print('[ERROR] ${err.type}:${err.message}\n');
+    print('[ERROR] ${err.requestOptions.uri}    [Status code]${err.response?.statusCode}\n');
     super.onError(err, handler);
   }
 }

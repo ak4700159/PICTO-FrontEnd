@@ -1,10 +1,10 @@
 import 'dart:convert';
-import 'dart:js_interop';
-
 import 'package:dio/dio.dart';
+import 'package:picto_frontend/config/app_config.dart';
 import 'package:picto_frontend/models/user.dart';
 import 'package:picto_frontend/services/custom_interceptor.dart';
 import 'package:picto_frontend/services/user_manager_service/signin_response.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class UserManagerHandler {
   // private 생성자 선언 -> 외부에서 해당 클래스의 생성자 생성을 막는다.
@@ -13,14 +13,14 @@ class UserManagerHandler {
   factory UserManagerHandler() {
     return _handler;
   }
-
-  final String baseUrl = "bogota.iptime.org:8081/user-manager/";
+  final String baseUrl = "${AppConfig.baseUrl}:8081/user-manager";
   String? accessToken;
   String? refreshToken;
   int? ownerId;
   late Dio dio;
 
-  void initSettings(String? localAccessToken, String? localRefreshToken, int? localOwnerId) {
+  void initSettings(
+      String? localAccessToken, String? localRefreshToken, int? localOwnerId) {
     accessToken = localAccessToken;
     refreshToken = localRefreshToken;
     ownerId = localOwnerId;
@@ -28,8 +28,7 @@ class UserManagerHandler {
       BaseOptions(
           connectTimeout: const Duration(milliseconds: 1000),
           contentType: Headers.jsonContentType,
-          receiveTimeout: const Duration(milliseconds: 3000)
-      ),
+          receiveTimeout: const Duration(milliseconds: 3000)),
     )..interceptors.add(CustomInterceptor());
   }
 
@@ -37,11 +36,11 @@ class UserManagerHandler {
   Future<void> signup(User newUser, double lat, double lng) async {
     String hostUrl = "$baseUrl/signup";
     final response = await dio.post(hostUrl, data: {
-      'email' : newUser.email,
-      'password' : newUser.password,
-      'name' : newUser.name,
-      'lat' : lat,
-      'lng' : lng,
+      'email': newUser.email,
+      'password': newUser.password,
+      'name': newUser.name,
+      'lat': lat,
+      'lng': lng,
     });
     return;
   }
@@ -49,16 +48,49 @@ class UserManagerHandler {
   // 로그인
   Future<SigninResponse> signin(String email, String passwd) async {
     String hostUrl = "$baseUrl/signin";
-    final response = await dio.post(hostUrl);
+    final response = await dio.post(
+      hostUrl,
+      data: {
+        "email": email,
+        "password": passwd,
+      },
+    );
     return SigninResponse.fromJson(response.data);
   }
 
-  // 사용자 정보 조회 -> 프로필 조회
-  Future<User> getUserInfo(int userId, String accessToken) async {
-    String hostUrl = "$baseUrl/$userId";
-    final response = await dio.get(hostUrl);
-    User user = User.fromJson(response.data);
-    return user;
+  // 사용자 전체 정보 조회
+  Future<void> setUserAllInfo(bool first) async {
+    String hostUrl = "$baseUrl/$ownerId";
+    if (first) {
+      print("[INFO]엑세스토큰으로 전체 정보 조회\n");
+    } else {
+      print("[INFO]리프레쉬토큰으로 전체 정보 조회\n");
+    }
+
+    try {
+        final response = await dio.get(
+          hostUrl,
+          options: first
+              ? Options(
+            headers: {
+              "Access-Token": accessToken,
+              "User-Id": ownerId,
+            },
+          )
+              : Options(headers: {
+            "Refresh-Token": refreshToken,
+            "User-Id": ownerId,
+          }),
+        );
+    } on DioException catch (e) {
+      if (e.message?.contains("[token]") ?? false) {
+        final preferences = await SharedPreferences.getInstance();
+        await preferences.setString(
+            "Access-Token", e.message?.substring(8) ?? "");
+        rethrow;
+      }
+      rethrow;
+    }
   }
 
   // 토큰 검증
@@ -69,13 +101,13 @@ class UserManagerHandler {
         hostUrl,
         options: Options(
           headers: {
-            "Access-Token" : accessToken,
-            "Refresh-Token" : refreshToken,
+            "Access-Token": accessToken,
+            "Refresh-Token": refreshToken,
           },
         ),
       );
-    } on DioException catch(e) {
-      if(e.message!.contains("[INFO]")){
+    } on DioException catch (e) {
+      if (e.message!.contains("[INFO]")) {
         String newAccessToken = e.message!.substring(5);
         return newAccessToken;
       }

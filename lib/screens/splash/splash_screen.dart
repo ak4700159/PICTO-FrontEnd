@@ -32,11 +32,12 @@ class SplashScreen extends StatelessWidget {
                         animatedTexts: [
                           FadeAnimatedText(
                             splashController.statusMsg.value,
-                            duration: Duration(milliseconds: 2000),
+                            duration: Duration(milliseconds: 3000),
                             textStyle: TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 16),
                           )
                         ],
+                        totalRepeatCount: 10,
                       ),
                     ),
                   ],

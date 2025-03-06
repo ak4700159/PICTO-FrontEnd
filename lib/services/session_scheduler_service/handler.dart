@@ -3,8 +3,9 @@ import 'dart:convert';
 import 'package:stomp_dart_client/stomp_dart_client.dart';
 
 class SessionSchedulerHandler {
-  String baseUrl = "ws://bogota.iptime.org:8084/session-scheduler";
+  String baseUrl = "ws://bogota.iptime.org/session-scheduler";
   late StompClient _stompClient;
+  bool _connected = false;
   Function? unsubscribeFunction;
 
   // private 생성자 선언 -> 외부에서 해당 클래스의 생성자 생성을 막는다.
@@ -15,6 +16,7 @@ class SessionSchedulerHandler {
   }
 
   void connectWebSocket() {
+    if(_connected) return;
     _stompClient = StompClient(
       config: StompConfig(
         reconnectDelay: Duration.zero,
@@ -24,6 +26,8 @@ class SessionSchedulerHandler {
       ),
     );
     _stompClient.activate();
+    _connected = true;
+    print("[INFO]WebSocket connected successfully");
   }
 
   void disconnectedWebSocket() {

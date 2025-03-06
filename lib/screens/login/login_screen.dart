@@ -1,11 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:picto_frontend/config/app_config.dart';
 import 'package:picto_frontend/screens/login/login_view_model.dart';
-import 'package:picto_frontend/theme.dart';
 import 'package:picto_frontend/utils/get_widget.dart';
+import 'package:picto_frontend/utils/validator.dart';
 import 'package:picto_frontend/widgets/picto_logo.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatelessWidget {
   LoginScreen({super.key});
@@ -15,6 +15,8 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double widgetHeight = context.mediaQuery.size.height;
+    double widgetWidth = context.mediaQuery.size.width;
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -28,15 +30,15 @@ class LoginScreen extends StatelessWidget {
                   height: context.mediaQuery.size.height * 0.05,
                 ),
                 PictoLogo(scale: 1.2, fontSize: 30),
-                SizedBox(height: context.mediaQuery.size.height * 0.02),
+                SizedBox(height: widgetHeight * 0.02),
                 TextFormField(
                   keyboardType: TextInputType.emailAddress,
                   decoration: getCustomInputDecoration(
                       label: "이메일", hintText: "your@eamil.com"),
-                  validator: _emailValidator,
+                  validator: emailValidator,
                   onSaved: (value) => _viewModel.email.value = value!,
                 ),
-                SizedBox(height: context.mediaQuery.size.height * 0.01),
+                SizedBox(height: widgetHeight * 0.01),
                 Obx(
                   () => TextFormField(
                     obscureText: _viewModel.isPasswordVisible.value,
@@ -44,7 +46,7 @@ class LoginScreen extends StatelessWidget {
                       label: "비밀번호",
                       suffixIcon: IconButton(
                         icon: Icon(
-                          _viewModel.isPasswordVisible.value
+                          !_viewModel.isPasswordVisible.value
                               ? Icons.visibility
                               : Icons.visibility_off,
                         ),
@@ -53,35 +55,23 @@ class LoginScreen extends StatelessWidget {
                         },
                       ),
                     ),
-                    validator: _passwdValidator,
+                    validator: passwdValidator,
                     onSaved: (value) => _viewModel.passwd.value = value!,
                   ),
                 ),
-                SizedBox(height: context.mediaQuery.size.height * 0.02),
+                SizedBox(height: widgetHeight * 0.02),
                 SizedBox(
-                  height: context.mediaQuery.size.height * 0.07,
-                  width: context.mediaQuery.size.width,
+                  height: widgetHeight * 0.07,
+                  width: widgetWidth,
                   child: TextButton(
                     style: TextButton.styleFrom(
-                      backgroundColor: PictoThemeData.mainColor,
+                      backgroundColor: AppConfig.mainColor,
                     ),
-                    onPressed: () {
-                      _viewModel.login();
-                      if (_formKey.currentState?.validate() ?? false) {
-                        _formKey.currentState?.save();
-                      }
-                      // 로그인 처리 로직
-                    },
-                    child: Text(
-                      "Login",
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold),
-                    ),
+                    onPressed: _login,
+                    child: Obx(() => _loginTextChild()),
                   ),
                 ),
-                SizedBox(height: context.mediaQuery.size.height * 0.01),
+                SizedBox(height: widgetHeight * 0.01),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -119,37 +109,41 @@ class LoginScreen extends StatelessWidget {
     );
   }
 
-  String? _emailValidator(String? value) {
-    String response = "";
-    if (value?.isEmpty ?? true) {
-      return '이메일을 입력해주세요.';
-    } else {
-      String pattern =
-          r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
-      RegExp regExp = RegExp(pattern);
-      if (!regExp.hasMatch(value!)) {
-        return '잘못된 이메일 형식입니다.';
-      } else if (response == "email") {
-        return '존재하지 않는 이메일입니다.';
-      }
-      return null;
+  void _login() {
+    // step1. 사용자 w
+    if (_formKey.currentState?.validate() ?? false) {
+      _formKey.currentState?.save();
+
+      // step2. 서버 로그인 시도
+      _viewModel.login();
     }
   }
 
-  String? _passwdValidator(String? value) {
-    String response = "";
-    if (value?.isEmpty ?? true) {
-      return '비밀번호를 입력해주세요.';
-    } else {
-      String pattern =
-          r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?~^<>,.&+=])[A-Za-z\d$@$!%*#?~^<>,.&+=]{8,15}$';
-      RegExp regExp = RegExp(pattern);
-      if (!regExp.hasMatch(value!)) {
-        return '특수문자, 영문, 숫자 포함 8자 이상 15자 이내로 입력해주세요.';
-      } else if (response == "passwd") {
-        return '비밀번호가 틀렸습니다..';
-      }
-      return null;
+  Widget _loginTextChild() {
+    if (_viewModel.loginStatus.value == "not") {
+      return Text(
+        "Login",
+        style: TextStyle(
+            color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+      );
+    } else if (_viewModel.loginStatus.value == "loading") {
+      return Transform.scale(
+        scale: 0.5,
+        child: CircularProgressIndicator(
+          color: AppConfig.backgroundColor,
+        ),
+      );
+    } else if (_viewModel.loginStatus.value == "fail") {
+      return Text(
+        "다시 로그인해주세요.",
+        style: TextStyle(
+            color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold),
+      );
     }
+    return Text(
+      "로그인 성공!",
+      style: TextStyle(
+          color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+    );
   }
 }

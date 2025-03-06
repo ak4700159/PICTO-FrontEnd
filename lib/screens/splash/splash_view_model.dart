@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:picto_frontend/services/session_scheduler_service/handler.dart';
 import 'package:picto_frontend/services/user_manager_service/handler.dart';
@@ -24,39 +25,53 @@ class SplashViewModel extends GetxController {
     String? accessToken;
     String? refreshToken;
 
-    try {
-      // 내부 저장된 데이터 로딩
-      userId = preferences.getInt("userId");
-      accessToken = preferences.getString("accessToken");
-      refreshToken = preferences.getString("refreshToken");
-      // 엑세스토큰 리프레쉬토큰 전달
-      UserManagerHandler().initSettings(accessToken, refreshToken, userId);
+    // 내부 저장된 데이터 로딩
+    userId = preferences.getInt("User-Id");
+    accessToken = preferences.getString("Access-Token");
+    refreshToken = preferences.getString("Refresh-Token");
 
-      if (userId == null || accessToken == null || refreshToken == null) {
-        // 로그인 화면으로 이동
-        statusMsg.value = "로그인 페이지로 이동 중";
-        // 토큰
-        await Future.delayed(Duration(seconds: 5));
-        Get.offNamed('/login');
+    // 엑세스토큰 리프레쉬토큰 세팅
+    UserManagerHandler().initSettings(accessToken, refreshToken, userId);
+    await Future.delayed(Duration(seconds: 3));
+    if (userId == null || accessToken == null || refreshToken == null) {
+      statusMsg.value = "자동 로그인 실패";
+      await Future.delayed(Duration(seconds: 3));
+
+      statusMsg.value = "로그인 화면으로 이동";
+      await Future.delayed(Duration(seconds: 3));
+
+      Get.offNamed('/login');
+      return;
+    }
+
+    // 사용자 정보(태그, 사진, 기본 설정) 블러오기
+    try {
+      statusMsg.value = "엑세스 토큰 전달...";
+      await Future.delayed(Duration(seconds: 3));
+      UserManagerHandler().setUserAllInfo(true);
+    } on DioException catch (e) {
+      try {
+        print("[WARN]엑세트 토큰 인증 실패");
+        statusMsg.value = "리프레쉬 토큰 전달...";
+        await Future.delayed(Duration(seconds: 3));
+        UserManagerHandler().setUserAllInfo(false);
+      } on DioException catch (e) {
+        if (e.message?.contains("[token]") ?? false) {
+          // 리프레쉬 토큰 정상 작동
+          SessionSchedulerHandler().connectWebSocket();
+          Get.offNamed('/map');
+          return;
+        }
       }
 
-      _loadProfile();
-      // _loadMapPhotos();
-      _sessionConnect();
-    } catch (e) {
-      print("[ERROR] " + e.toString());
+      // 리프레쉬 토큰 만료
+      SessionSchedulerHandler().connectWebSocket();
+      Get.offNamed('/login');
+      return;
     }
-  }
 
-  void _loadProfile() async {
-
-  }
-
-  void _loadMapPhotos() async {
-    // 지도 안에서 불러 올지는 대기
-  }
-
-  void _sessionConnect() async {
+    // 엑세스 토큰 정상 작동
     SessionSchedulerHandler().connectWebSocket();
+    Get.offNamed('/map');
   }
 }
