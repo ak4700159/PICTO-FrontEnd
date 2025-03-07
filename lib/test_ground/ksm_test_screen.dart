@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class TestScreen extends StatelessWidget {
   const TestScreen({super.key});
@@ -12,10 +13,12 @@ class TestScreen extends StatelessWidget {
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
-                "hello flutter",
-                style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold),
-              ),
+              Container(
+                width: context.mediaQuery.size.width,
+                height: context.mediaQuery.size.height * 0.3,
+                color: Theme.of(context).colorScheme.primaryFixed,
+                child: Center(child: Text("test color")),
+              )
             ],
           ),
         ],

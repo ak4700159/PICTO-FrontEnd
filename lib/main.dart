@@ -3,9 +3,19 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:picto_frontend/page_router.dart';
-import 'package:picto_frontend/test_ground/ksm_test_screen.dart';
+import 'package:picto_frontend/theme.dart';
+
+import 'config/app_config.dart';
 
 void main() {
+  // 상단 상태바, 하단 네비게이션 바 설정
+  SystemChrome.setSystemUIOverlayStyle(
+    SystemUiOverlayStyle(
+      statusBarColor:  Colors.transparent,
+      statusBarIconBrightness: Brightness.dark,
+      systemNavigationBarColor: AppConfig.mainColor,
+    ),
+  );
   runApp(const Picto());
 }
 
@@ -14,16 +24,11 @@ class Picto extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 상단바는 보이게 하고 하단바는 감추기
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: [SystemUiOverlay.top]);
     return GetMaterialApp(
       title: 'PICTO APP',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
+      theme: PictoThemeData.init(),
       getPages: PageRouter.getPages(),
-      initialRoute: '/test_ground',
+      initialRoute: '/splash',
       debugShowCheckedModeBanner: false,
     );
   }
