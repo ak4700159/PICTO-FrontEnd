@@ -3,10 +3,12 @@ import 'dart:async';
 import 'package:debounce_throttle/debounce_throttle.dart';
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
+import 'package:picto_frontend/config/app_config.dart';
 import 'package:picto_frontend/services/session_scheduler_service/handler.dart';
 import 'package:picto_frontend/services/user_manager_service/handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../models/user.dart';
+import '../../services/socket_controller.dart';
 
 /*
 1. 내부에 저장된 이메일, 비밀번호, 사용자 식별키, 엑세스 토큰, 리프레쉬 토큰을 로딩
@@ -18,7 +20,7 @@ import '../../models/user.dart';
 class SplashViewModel extends GetxController {
   // 유저 세팅 함수 최적화
   final userSettingDebouncer = Debouncer(
-    const Duration(seconds: 1),
+    const Duration(seconds: AppConfig.debounceSec),
     initialValue: null,
     checkEquality: false,
   );
@@ -26,41 +28,48 @@ class SplashViewModel extends GetxController {
   var statusMsg = "로딩중...".obs;
   User? owner;
 
+  // 뷰모델 생성자
   SplashViewModel() {
     // 로그인 api 호출 및 상태 변화 처리 리스너 등록
     userSettingDebouncer.values.listen((event) async {
+      SocketController interceptor = SocketController();
+
       // 사용자 정보(태그, 사진, 기본 설정) 블러오기
       try {
         statusMsg.value = "엑세스 토큰 전달...";
-        await Future.delayed(Duration(seconds: 2));
         await UserManagerHandler().setUserAllInfo(true);
+        // 엑세스 토큰 정상 작동
+        interceptor.connectSession();
+        await Future.delayed(Duration(seconds: AppConfig.latency));
+        Get.offNamed('/map');
+        return;
       } on DioException catch (e) {
-        print("[DEBUG]${e.error.toString()} ---[DEBUG END]\n");
         try {
           print("[WARN]엑세트 토큰 인증 실패");
           statusMsg.value = "리프레쉬 토큰 전달...";
-          await Future.delayed(Duration(seconds: 2));
           await UserManagerHandler().setUserAllInfo(false);
         } on DioException catch (e) {
+          /*
+          * 현재 가장 큰 문제 : 해당 로직 작동 X
+          * 에러를 처리하는 것이 아니라 정상 반환을 통해 처리하는 것이 맞아보임
+          * -> 엑세스 토큰 만료시 리프레쉬 토큰으로 복구가 안됨
+          * */
+          print("[DEBUG]${e.response?.data} ---[DEBUG END]\n");
           if (e.message?.contains("[token]") ?? false) {
             final preferences = await SharedPreferences.getInstance();
             await preferences.setString(
                 "Access-Token", e.message?.substring(8) ?? "");
             // 리프레쉬 토큰 정상 작동
-            SessionSchedulerHandler().connectWebSocket();
+            interceptor.connectSession();
+            await Future.delayed(Duration(seconds: AppConfig.latency));
             Get.offNamed('/map');
             return;
           }
         }
-
         // 리프레쉬 토큰 만료
-        SessionSchedulerHandler().connectWebSocket();
         Get.offNamed('/login');
         return;
       }
-      // 엑세스 토큰 정상 작동
-      SessionSchedulerHandler().connectWebSocket();
-      Get.offNamed('/map');
     });
   }
 

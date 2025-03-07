@@ -1,54 +1,60 @@
 import 'dart:convert';
 
+import 'package:get/get.dart';
 import 'package:picto_frontend/config/app_config.dart';
+import 'package:picto_frontend/services/user_manager_service/handler.dart';
 import 'package:stomp_dart_client/stomp_dart_client.dart';
 
-class SessionSchedulerHandler {
-  String baseUrl = "${AppConfig.wsUrl}/session-scheduler";
+class SessionSchedulerHandler extends GetxController {
+  String baseUrl = "${AppConfig.httpUrl}:8084/session-scheduler";
   late StompClient _stompClient;
-  bool _connected = false;
+  RxBool status = false.obs;
   Function? unsubscribeFunction;
 
-  // private 생성자 선언 -> 외부에서 해당 클래스의 생성자 생성을 막는다.
-  SessionSchedulerHandler._();
-  static final SessionSchedulerHandler _handler = SessionSchedulerHandler._();
-  factory SessionSchedulerHandler() {
-    return _handler;
-  }
-
-  void connectWebSocket() {
-    if(_connected) return;
+  SessionSchedulerHandler() {
     _stompClient = StompClient(
-      config: StompConfig(
+      config: StompConfig.sockJS(
         reconnectDelay: Duration.zero,
         url: baseUrl,
         onConnect: _onConnect,
         onWebSocketError: _onError,
       ),
     );
+  }
+
+  void connectWebSocket() {
+    if(_stompClient.connected) return;
     try {
       _stompClient.activate();
-      _connected = true;
+      print("[INFO] web socket activate");
+      status.value = true;
     } catch(e) {
-      print('[DEBUG]Web socket server missing');
+      print('[DEBUG] web socket server missing');
     }
   }
 
-  void disconnectedWebSocket() {
+  void disconnectWebSocket() {
     if (unsubscribeFunction != null) {
       unsubscribeFunction!();
+      print("[INFO] session unsubscribed");
     }
     _stompClient.deactivate();
+    status.value = false;
+    print("[INFO] web socket inactivate");
   }
+
 
   void _onError(err) {
     print("[ERROR]${err.toString()}\n");
-    disconnectedWebSocket();
-    print("[WARN]socket exited");
+    disconnectWebSocket();
+    print("[WARN] socket exited");
   }
 
   void _onConnect(StompFrame frame) {
     unsubscribeFunction = _stompClient.subscribe(
+      headers: {
+        "User-Id" : UserManagerHandler().ownerId.toString()
+      },
       destination: '/session',
       callback: (StompFrame frame) => {
         // 구독한 세션으로부터 전달 받은 메시지 처리
@@ -56,7 +62,7 @@ class SessionSchedulerHandler {
         print("[INFO]${frame.body}\n")
       },
     );
-    print("[INFO]Subscribe success\n");
+    print("[INFO] subscribe success\n");
   }
 
   // 위치 정보 전송 -> 세션 스케줄러에서 반영
@@ -79,9 +85,9 @@ class SessionSchedulerHandler {
         destination: destination,
         body: body,
       );
-      print('위치 전송 성공');
+      print('[INFO] send location to session');
     } catch (e) {
-      // throw SessionServiceException('위치 전송 실패: ${e.toString()}');
+      print('[ERROR] ${e.toString()}');
     }
   }
 }

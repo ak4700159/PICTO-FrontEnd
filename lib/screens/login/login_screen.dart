@@ -11,7 +11,7 @@ class LoginScreen extends StatelessWidget {
   LoginScreen({super.key});
 
   final _formKey = GlobalKey<FormState>();
-  final _viewModel = LoginViewModel(splashViewModel: Get.find());
+  final _viewModel = LoginViewModel();
 
   @override
   Widget build(BuildContext context) {

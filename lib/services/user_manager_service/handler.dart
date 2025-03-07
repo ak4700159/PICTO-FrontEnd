@@ -2,17 +2,20 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:picto_frontend/config/app_config.dart';
 import 'package:picto_frontend/models/user.dart';
-import 'package:picto_frontend/services/custom_interceptor.dart';
+import 'package:picto_frontend/services/http_interceptor.dart';
 import 'package:picto_frontend/services/user_manager_service/signin_response.dart';
 
 class UserManagerHandler {
   // private 생성자 선언 -> 외부에서 해당 클래스의 생성자 생성을 막는다.
   UserManagerHandler._();
+
   static final UserManagerHandler _handler = UserManagerHandler._();
+
   factory UserManagerHandler() {
     return _handler;
   }
-  final String baseUrl = "${AppConfig.baseUrl}:8081/user-manager";
+
+  final String baseUrl = "${AppConfig.httpUrl}:8081/user-manager";
   String? accessToken;
   String? refreshToken;
   int? ownerId;
@@ -60,6 +63,7 @@ class UserManagerHandler {
   // 사용자 전체 정보 조회
   Future<void> setUserAllInfo(bool first) async {
     String hostUrl = "$baseUrl/user-all/$ownerId";
+    final response;
     if (first) {
       print("[INFO]엑세스토큰으로 전체 정보 조회\n");
     } else {
@@ -67,23 +71,32 @@ class UserManagerHandler {
     }
 
     try {
-        final response = await dio.get(
-          hostUrl,
-          options: first
-              ? Options(
-            headers: {
-              "Access-Token": accessToken,
-              "User-Id": ownerId,
-            },
-          )
-              : Options(headers: {
-            "Refresh-Token": refreshToken,
-            "User-Id": ownerId,
-          }),
-        );
+      response = await dio.get(
+        hostUrl,
+        options: first
+            ? Options(
+                headers: {
+                  "Access-Token": accessToken,
+                  "User-Id": ownerId,
+                },
+              )
+            : Options(headers: {
+                "Refresh-Token": refreshToken,
+                "User-Id": ownerId,
+              }),
+      );
     } on DioException catch (e) {
       rethrow;
     }
+    // response["user"];
+    // response["filter"];
+    // response["userSetting"];
+    // response["tags"];
+    // response["titles"];
+    // response["folders"];
+    // response["photos"];
+    // response["marks"];
+    // response["blocks"];
   }
 
   // 토큰 검증

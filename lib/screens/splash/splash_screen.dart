@@ -5,14 +5,11 @@ import 'package:picto_frontend/screens/splash/splash_view_model.dart';
 import 'package:picto_frontend/widgets/picto_logo.dart';
 
 class SplashScreen extends StatelessWidget {
-  SplashScreen({super.key});
-
-  final splashController = Get.put<SplashViewModel>(SplashViewModel());
+  const SplashScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    splashController.initStatus();
-
+    final splashController = Get.find<SplashViewModel>();
     return Scaffold(
       body: Row(
         mainAxisAlignment: MainAxisAlignment.center,
