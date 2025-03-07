@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:debounce_throttle/debounce_throttle.dart';
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:picto_frontend/services/session_scheduler_service/handler.dart';
@@ -15,9 +16,53 @@ import '../../models/user.dart';
  */
 
 class SplashViewModel extends GetxController {
+  // 유저 세팅 함수 최적화
+  final userSettingDebouncer = Debouncer(
+    const Duration(seconds: 1),
+    initialValue: null,
+    checkEquality: false,
+  );
   late SharedPreferences preferences;
   var statusMsg = "로딩중...".obs;
   User? owner;
+
+  SplashViewModel() {
+    // 로그인 api 호출 및 상태 변화 처리 리스너 등록
+    userSettingDebouncer.values.listen((event) async {
+      // 사용자 정보(태그, 사진, 기본 설정) 블러오기
+      try {
+        statusMsg.value = "엑세스 토큰 전달...";
+        await Future.delayed(Duration(seconds: 2));
+        await UserManagerHandler().setUserAllInfo(true);
+      } on DioException catch (e) {
+        print("[DEBUG]${e.error.toString()} ---[DEBUG END]\n");
+        try {
+          print("[WARN]엑세트 토큰 인증 실패");
+          statusMsg.value = "리프레쉬 토큰 전달...";
+          await Future.delayed(Duration(seconds: 2));
+          await UserManagerHandler().setUserAllInfo(false);
+        } on DioException catch (e) {
+          if (e.message?.contains("[token]") ?? false) {
+            final preferences = await SharedPreferences.getInstance();
+            await preferences.setString(
+                "Access-Token", e.message?.substring(8) ?? "");
+            // 리프레쉬 토큰 정상 작동
+            SessionSchedulerHandler().connectWebSocket();
+            Get.offNamed('/map');
+            return;
+          }
+        }
+
+        // 리프레쉬 토큰 만료
+        SessionSchedulerHandler().connectWebSocket();
+        Get.offNamed('/login');
+        return;
+      }
+      // 엑세스 토큰 정상 작동
+      SessionSchedulerHandler().connectWebSocket();
+      Get.offNamed('/map');
+    });
+  }
 
   void initStatus() async {
     preferences = await SharedPreferences.getInstance();
@@ -43,35 +88,7 @@ class SplashViewModel extends GetxController {
       Get.offNamed('/login');
       return;
     }
-
-    // 사용자 정보(태그, 사진, 기본 설정) 블러오기
-    try {
-      statusMsg.value = "엑세스 토큰 전달...";
-      await Future.delayed(Duration(seconds: 3));
-      UserManagerHandler().setUserAllInfo(true);
-    } on DioException catch (e) {
-      try {
-        print("[WARN]엑세트 토큰 인증 실패");
-        statusMsg.value = "리프레쉬 토큰 전달...";
-        await Future.delayed(Duration(seconds: 3));
-        UserManagerHandler().setUserAllInfo(false);
-      } on DioException catch (e) {
-        if (e.message?.contains("[token]") ?? false) {
-          // 리프레쉬 토큰 정상 작동
-          SessionSchedulerHandler().connectWebSocket();
-          Get.offNamed('/map');
-          return;
-        }
-      }
-
-      // 리프레쉬 토큰 만료
-      SessionSchedulerHandler().connectWebSocket();
-      Get.offNamed('/login');
-      return;
-    }
-
-    // 엑세스 토큰 정상 작동
-    SessionSchedulerHandler().connectWebSocket();
-    Get.offNamed('/map');
+    //
+    userSettingDebouncer.setValue(null);
   }
 }

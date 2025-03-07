@@ -4,7 +4,6 @@ import 'package:picto_frontend/config/app_config.dart';
 import 'package:picto_frontend/models/user.dart';
 import 'package:picto_frontend/services/custom_interceptor.dart';
 import 'package:picto_frontend/services/user_manager_service/signin_response.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class UserManagerHandler {
   // private 생성자 선언 -> 외부에서 해당 클래스의 생성자 생성을 막는다.
@@ -60,7 +59,7 @@ class UserManagerHandler {
 
   // 사용자 전체 정보 조회
   Future<void> setUserAllInfo(bool first) async {
-    String hostUrl = "$baseUrl/$ownerId";
+    String hostUrl = "$baseUrl/user-all/$ownerId";
     if (first) {
       print("[INFO]엑세스토큰으로 전체 정보 조회\n");
     } else {
@@ -83,12 +82,6 @@ class UserManagerHandler {
           }),
         );
     } on DioException catch (e) {
-      if (e.message?.contains("[token]") ?? false) {
-        final preferences = await SharedPreferences.getInstance();
-        await preferences.setString(
-            "Access-Token", e.message?.substring(8) ?? "");
-        rethrow;
-      }
       rethrow;
     }
   }

@@ -1,9 +1,10 @@
 import 'dart:convert';
 
+import 'package:picto_frontend/config/app_config.dart';
 import 'package:stomp_dart_client/stomp_dart_client.dart';
 
 class SessionSchedulerHandler {
-  String baseUrl = "ws://bogota.iptime.org/session-scheduler";
+  String baseUrl = "${AppConfig.wsUrl}/session-scheduler";
   late StompClient _stompClient;
   bool _connected = false;
   Function? unsubscribeFunction;
@@ -25,9 +26,12 @@ class SessionSchedulerHandler {
         onWebSocketError: _onError,
       ),
     );
-    _stompClient.activate();
-    _connected = true;
-    print("[INFO]WebSocket connected successfully");
+    try {
+      _stompClient.activate();
+      _connected = true;
+    } catch(e) {
+      print('[DEBUG]Web socket server missing');
+    }
   }
 
   void disconnectedWebSocket() {
@@ -52,6 +56,7 @@ class SessionSchedulerHandler {
         print("[INFO]${frame.body}\n")
       },
     );
+    print("[INFO]Subscribe success\n");
   }
 
   // 위치 정보 전송 -> 세션 스케줄러에서 반영

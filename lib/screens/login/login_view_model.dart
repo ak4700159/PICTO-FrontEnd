@@ -21,7 +21,6 @@ class LoginViewModel extends GetxController {
   }
 
   void login() async {
-    print("[INFO]${splashViewModel.statusMsg.value}");
     loginStatus.value = "loading";
     await Future.delayed(Duration(seconds: 2));
     SigninResponse response;
