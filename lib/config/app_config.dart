@@ -5,11 +5,13 @@ class AppConfig {
   static final httpUrl = "http://$ip";
   static final wsUrl = "ws://$ip";
 
-  // 어플리케이션 지연 시간
-  static const int latency = 3;
+  // 최대 지연 시간
+  static const int maxLatency = 3;
 
   // 1초마다 API 호출 허용
   static const int debounceSec = 1;
+
+  static const int socketConnectionWait = 1;
 
   // theme data
   static const Color primarySeedColor = Color(0xFF6750A4);

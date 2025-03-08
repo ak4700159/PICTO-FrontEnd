@@ -42,6 +42,7 @@ class LoginViewModel extends GetxController {
     // 로그인 성공 ! 웹소켓 연결 후 지도
     final sessionController = Get.find<SessionSchedulerHandler>();
     sessionController.connectWebSocket();
+    UserManagerHandler().setUserAllInfo(true);
     await Future.delayed(Duration(seconds: 2));
     Get.offNamed('/map');
   }

@@ -8,7 +8,7 @@ import 'package:picto_frontend/services/session_scheduler_service/handler.dart';
 import 'package:picto_frontend/services/user_manager_service/handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../models/user.dart';
-import '../../services/socket_controller.dart';
+import '../../services/socket_function_controller.dart';
 
 /*
 1. 내부에 저장된 이메일, 비밀번호, 사용자 식별키, 엑세스 토큰, 리프레쉬 토큰을 로딩
@@ -32,15 +32,15 @@ class SplashViewModel extends GetxController {
   SplashViewModel() {
     // 로그인 api 호출 및 상태 변화 처리 리스너 등록
     userSettingDebouncer.values.listen((event) async {
-      SocketController interceptor = SocketController();
+      SocketFunctionController interceptor = SocketFunctionController();
 
       // 사용자 정보(태그, 사진, 기본 설정) 블러오기
       try {
         statusMsg.value = "엑세스 토큰 전달...";
         await UserManagerHandler().setUserAllInfo(true);
         // 엑세스 토큰 정상 작동
-        interceptor.connectSession();
-        await Future.delayed(Duration(seconds: AppConfig.latency));
+        interceptor.execSession(connected: true);
+        await Future.delayed(Duration(seconds: AppConfig.maxLatency));
         Get.offNamed('/map');
         return;
       } on DioException catch (e) {
@@ -60,8 +60,8 @@ class SplashViewModel extends GetxController {
             await preferences.setString(
                 "Access-Token", e.message?.substring(8) ?? "");
             // 리프레쉬 토큰 정상 작동
-            interceptor.connectSession();
-            await Future.delayed(Duration(seconds: AppConfig.latency));
+            interceptor.execSession(connected: true);
+            await Future.delayed(Duration(seconds: AppConfig.maxLatency));
             Get.offNamed('/map');
             return;
           }

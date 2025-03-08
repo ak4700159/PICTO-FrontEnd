@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 
 import '../config/app_config.dart';
 import '../services/session_scheduler_service/handler.dart';
-import '../services/socket_controller.dart';
+import '../services/socket_function_controller.dart';
 
 InputDecoration getCustomInputDecoration(
     {required String label, String? hintText, Widget? suffixIcon}) {
@@ -27,26 +27,27 @@ InputDecoration getCustomInputDecoration(
   );
 }
 
-Widget getTestConnectionFloatBtn(BuildContext context,
-    SocketController interceptor) {
+Widget getTestConnectionFloatBtn(
+    BuildContext context) {
+  SocketFunctionController interceptor = SocketFunctionController();
   SessionSchedulerHandler sessionHandler = Get.find<SessionSchedulerHandler>();
-  return SizedBox(
-    width: context.mediaQuery.size.width * 0.5,
-    child: FloatingActionButton(
-      backgroundColor: AppConfig.mainColor,
-      onPressed: () async {
-        if (sessionHandler.status.value) {
-          interceptor.disconnectSession();
-        } else {
-          interceptor.connectSession();
-        }
-      },
-      child: Obx(() => Text(
-            sessionHandler.status.value
-                ? '웹소켓 접속중'
-                : '웹소켓 연결 해제',
-            style: TextStyle(color: AppConfig.backgroundColor),
-          )),
-    ),
+  return Column(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      Obx(() => Text('/map/${sessionHandler.connected.value}')),
+      SizedBox(
+        width: context.mediaQuery.size.width * 0.5,
+        child: FloatingActionButton(
+          backgroundColor: AppConfig.mainColor,
+          onPressed: () {
+            interceptor.execSession(connected: !sessionHandler.connected.value);
+          },
+          child: Obx(() => Text(
+                sessionHandler.connected.value ? '웹소켓 접속중' : '웹소켓 연결 해제',
+                style: TextStyle(color: AppConfig.backgroundColor),
+              )),
+        ),
+      ),
+    ],
   );
 }
