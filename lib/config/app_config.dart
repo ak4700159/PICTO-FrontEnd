@@ -11,6 +11,9 @@ class AppConfig {
   // 1초마다 API 호출 허용
   static const int debounceSec = 1;
 
+  // 화면 정지
+  static const int stopScreenSec = 3;
+
   static const int socketConnectionWait = 1;
 
   // theme data

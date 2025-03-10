@@ -4,7 +4,6 @@ import 'package:debounce_throttle/debounce_throttle.dart';
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:picto_frontend/config/app_config.dart';
-import 'package:picto_frontend/services/session_scheduler_service/handler.dart';
 import 'package:picto_frontend/services/user_manager_service/handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../models/user.dart';
@@ -26,7 +25,16 @@ class SplashViewModel extends GetxController {
   );
   late SharedPreferences preferences;
   var statusMsg = "로딩중...".obs;
-  User? owner;
+  int? userId;
+  String? accessToken;
+  String? refreshToken;
+
+  @override
+  void onInit() async {
+    preferences = await SharedPreferences.getInstance();
+
+    super.onInit();
+  }
 
   // 뷰모델 생성자
   SplashViewModel() {
@@ -86,13 +94,13 @@ class SplashViewModel extends GetxController {
 
     // 엑세스토큰 리프레쉬토큰 세팅
     UserManagerHandler().initSettings(accessToken, refreshToken, userId);
-    await Future.delayed(Duration(seconds: 3));
+    await Future.delayed(Duration(seconds: AppConfig.stopScreenSec));
     if (userId == null || accessToken == null || refreshToken == null) {
       statusMsg.value = "자동 로그인 실패";
-      await Future.delayed(Duration(seconds: 3));
+      await Future.delayed(Duration(seconds: AppConfig.stopScreenSec));
 
       statusMsg.value = "로그인 화면으로 이동";
-      await Future.delayed(Duration(seconds: 3));
+      await Future.delayed(Duration(seconds: AppConfig.stopScreenSec));
 
       Get.offNamed('/login');
       return;
@@ -100,4 +108,10 @@ class SplashViewModel extends GetxController {
     //
     userSettingDebouncer.setValue(null);
   }
+
+  // 엑세스 토큰 사용
+
+  // 리프레쉬 토큰 사용
+
+  // 토큰 복구
 }
