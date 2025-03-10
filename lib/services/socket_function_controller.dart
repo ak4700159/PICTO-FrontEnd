@@ -6,7 +6,7 @@ import 'package:picto_frontend/services/session_scheduler_service/handler.dart';
 import '../config/app_config.dart';
 
 class SocketFunctionController {
-  final sessionController = Get.find<SessionSchedulerHandler>();
+  late SessionSchedulerHandler sessionController;
   final sessionDebouncer = Debouncer<bool>(
     const Duration(seconds: AppConfig.debounceSec),
     initialValue: false,
@@ -14,6 +14,7 @@ class SocketFunctionController {
   );
 
   SocketFunctionController() {
+    sessionController = Get.find<SessionSchedulerHandler>();
     sessionDebouncer.values.listen((connected) {
       if (connected) {
         sessionController.connectWebSocket();
@@ -23,9 +24,10 @@ class SocketFunctionController {
     });
   }
 
-  void execSession({required bool connected}) {
+  void callSession({required bool connected}) {
     sessionDebouncer.setValue(connected);
   }
 
   void connectChatting() {}
+
 }

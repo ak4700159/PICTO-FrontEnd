@@ -61,10 +61,10 @@ class UserManagerHandler {
   }
 
   // 사용자 전체 정보 조회
-  Future<void> setUserAllInfo(bool first) async {
+  Future<void> setUserAllInfo(bool isAccessToken) async {
     String hostUrl = "$baseUrl/user-all/$ownerId";
     final response;
-    if (first) {
+    if (isAccessToken) {
       print("[INFO]엑세스토큰으로 전체 정보 조회\n");
     } else {
       print("[INFO]리프레쉬토큰으로 전체 정보 조회\n");
@@ -73,7 +73,7 @@ class UserManagerHandler {
     try {
       response = await dio.get(
         hostUrl,
-        options: first
+        options: isAccessToken
             ? Options(
                 headers: {
                   "Access-Token": accessToken,

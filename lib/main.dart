@@ -13,7 +13,7 @@ void main() {
   // 상단 상태바, 하단 네비게이션 바 설정
   SystemChrome.setSystemUIOverlayStyle(
     SystemUiOverlayStyle(
-      statusBarColor:  Colors.transparent,
+      statusBarColor: Colors.transparent,
       statusBarIconBrightness: Brightness.dark,
       systemNavigationBarColor: AppConfig.mainColor,
     ),
@@ -23,12 +23,13 @@ void main() {
 
 class Picto extends StatelessWidget {
   Picto({super.key});
-  final splashController = Get.put<SplashViewModel>(SplashViewModel());
-  final sessionController = Get.put<SessionSchedulerHandler>(SessionSchedulerHandler());
 
   @override
   Widget build(BuildContext context) {
-    splashController.initStatus();
+    final sessionController =
+        Get.put<SessionSchedulerHandler>(SessionSchedulerHandler());
+    final splashController = Get.put<SplashViewModel>(SplashViewModel());
+    splashController.userSettingThrottle.setValue(null);
     return GetMaterialApp(
       title: 'PICTO APP',
       theme: PictoThemeData.init(),

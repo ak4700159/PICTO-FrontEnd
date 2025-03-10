@@ -13,7 +13,8 @@ class SessionSchedulerHandler extends GetxController {
   RxBool connected = false.obs;
   Function? unsubscribeFunction;
 
-  SessionSchedulerHandler() {
+  @override
+  void onInit() {
     _stompClient = StompClient(
       config: StompConfig.sockJS(
         reconnectDelay: Duration.zero,
@@ -24,6 +25,7 @@ class SessionSchedulerHandler extends GetxController {
         onWebSocketDone: _onDone,
       ),
     );
+    super.onInit();
   }
 
   void connectWebSocket() async {

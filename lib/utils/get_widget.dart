@@ -40,7 +40,7 @@ Widget getTestConnectionFloatBtn(
         child: FloatingActionButton(
           backgroundColor: AppConfig.mainColor,
           onPressed: () {
-            interceptor.execSession(connected: !sessionHandler.connected.value);
+            interceptor.callSession(connected: !sessionHandler.connected.value);
           },
           child: Obx(() => Text(
                 sessionHandler.connected.value ? '웹소켓 접속중' : '웹소켓 연결 해제',
@@ -51,3 +51,5 @@ Widget getTestConnectionFloatBtn(
     ],
   );
 }
+
+// stomp 테스트 .. ?
