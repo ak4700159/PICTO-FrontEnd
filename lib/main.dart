@@ -29,12 +29,11 @@ class Picto extends StatelessWidget {
     final sessionController =
         Get.put<SessionSchedulerHandler>(SessionSchedulerHandler());
     final splashController = Get.put<SplashViewModel>(SplashViewModel());
-    splashController.userSettingThrottle.setValue(null);
     return GetMaterialApp(
       title: 'PICTO APP',
       theme: PictoThemeData.init(),
       getPages: PageRouter.getPages(),
-      initialRoute: '/splash',
+      initialRoute: '/map',
       debugShowCheckedModeBanner: false,
     );
   }

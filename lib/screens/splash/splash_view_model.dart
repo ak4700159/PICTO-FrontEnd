@@ -38,7 +38,6 @@ class SplashViewModel extends GetxController {
     userId = preferences.getInt("User-Id");
     accessToken = preferences.getString("Access-Token");
     refreshToken = preferences.getString("Refresh-Token");
-    //
     userSettingThrottle.values.listen((event) {
       logging();
     });

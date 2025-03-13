@@ -10,6 +10,7 @@ class SplashScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final splashController = Get.find<SplashViewModel>();
+    splashController.userSettingThrottle.setValue(null);
     return Scaffold(
       body: Row(
         mainAxisAlignment: MainAxisAlignment.center,
