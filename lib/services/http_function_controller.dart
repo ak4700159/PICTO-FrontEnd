@@ -3,7 +3,7 @@ import 'package:picto_frontend/config/app_config.dart';
 import 'package:picto_frontend/services/user_manager_service/handler.dart';
 
 class HttpFunctionController {
-  final userSettingThrottle = Debouncer(
+  final userSettingThrottle = Throttle(
     Duration(seconds: AppConfig.debounceSec),
     initialValue: false,
     checkEquality: false,

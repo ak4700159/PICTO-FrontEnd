@@ -8,7 +8,9 @@ import '../screens/splash/splash_view_model.dart';
 import '../services/session_scheduler_service/handler.dart';
 
 class AppConfig {
-  static final ip = "bogota.iptime.org";
+  // 192.168.255.10 : LAB
+  // bogota.iptime.org : HOME
+  static final ip = "192.168.255.10";
   static final httpUrl = "http://$ip";
   static final wsUrl = "ws://$ip";
 
@@ -21,7 +23,7 @@ class AppConfig {
   // 화면 정지
   static const int stopScreenSec = 3;
 
-  static const int socketConnectionWait = 1;
+  static const int socketConnectionWaitSec = 1;
 
   // theme data
   static const Color primarySeedColor = Color(0xFF6750A4);

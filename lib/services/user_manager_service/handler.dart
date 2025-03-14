@@ -57,7 +57,10 @@ class UserManagerHandler {
         "password": passwd,
       },
     );
-    return SigninResponse.fromJson(response.data);
+    final result = SigninResponse.fromJson(response.data);
+    refreshToken = result.refreshToken;
+    accessToken = result.accessToken;
+    return result;
   }
 
   // 사용자 전체 정보 조회

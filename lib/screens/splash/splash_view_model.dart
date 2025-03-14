@@ -14,8 +14,6 @@ import '../../services/socket_function_controller.dart';
 // 2. 사용자 프로필 호출 -> 이때 리프레쉬 토큰까지 만료되었다면 재로그인.
 // 3. 지도 로딩 전 필요한 사진 데이터 로딩
 // 4. 세션 스케줄러와 연결
-
-
 class SplashViewModel extends GetxController {
   SocketFunctionController socketInterceptor = SocketFunctionController();
   Throttle userSettingThrottle = Throttle(
@@ -43,6 +41,29 @@ class SplashViewModel extends GetxController {
       logging();
     });
     super.onInit();
+  }
+
+  Future<void> logging() async {
+    // step1. 위치 권환 획득
+    final googleMapController = Get.find<GoogleMapViewModel>();
+    await googleMapController.getPermission();
+    // step2. 첫번째 접속 확인
+    if (await checkNullLoginData()) {return;}
+
+    // step3. 토큰 이용해 사용자 api 호출 -> 사용자 정보 초기화
+    try {
+      // step3-1. 엑세스 토큰으로 접근.
+      print("[INFO]엑세트 토큰 인증 시도");
+      await setUserConfigThroughToken(isAccessToken: true);
+    } on DioException catch (e) {
+      try {
+        // step3-2. 리프레시 토큰으로 접근
+        print("[WARN]엑세트 토큰 인증 실패");
+        await setUserConfigThroughToken(isAccessToken: false);
+      } on DioException catch (e) {
+        await recoverAccessToken(e);
+      }
+    }
   }
 
   Future<void> setUserConfigThroughToken({required bool isAccessToken}) async {
@@ -86,29 +107,8 @@ class SplashViewModel extends GetxController {
       Get.offNamed('/login');
       return true;
     }
+    // 이전에 로그인한 정보를 바탕으로 api 토큰 세팅
+    UserManagerHandler().initSettings(accessToken, refreshToken, userId);
     return false;
-  }
-
-  Future<void> logging() async {
-    // step1. 위치 권환 획득
-    final googleMapController = Get.find<GoogleMapViewModel>();
-    await googleMapController.getPermission();
-    // step2. 첫번째 접속 확인
-    if (await checkNullLoginData()) {return;}
-    
-    // step3. 토큰 이용해 사용자 api 호출 -> 사용자 정보 초기화
-    try {
-      // step3-1. 엑세스 토큰으로 접근.
-      print("[INFO]엑세트 토큰 인증 시도");
-      await setUserConfigThroughToken(isAccessToken: true);
-    } on DioException catch (e) {
-      try {
-        // step3-2. 리프레시 토큰으로 접근
-        print("[WARN]엑세트 토큰 인증 실패");
-        await setUserConfigThroughToken(isAccessToken: false);
-      } on DioException catch (e) {
-        await recoverAccessToken(e);
-      }
-    }
   }
 }

@@ -34,7 +34,7 @@ class GoogleMapViewModel extends GetxController {
       }
     }
 
-    // 최조 카메라 설정
+    // 최초 카메라 설정
     Position position = await Geolocator.getCurrentPosition();
     currentLat.value = position.latitude;
     currentLng.value = position.longitude;

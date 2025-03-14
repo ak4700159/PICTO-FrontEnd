@@ -37,7 +37,7 @@ class SessionSchedulerHandler extends GetxController {
 
     try {
       _stompClient.activate();
-      await Future.delayed(Duration(seconds: AppConfig.socketConnectionWait));
+      await Future.delayed(Duration(seconds: AppConfig.socketConnectionWaitSec));
       if (!_stompClient.connected) return;
       print("[INFO] web socket activate\n");
       connected.value = true;
