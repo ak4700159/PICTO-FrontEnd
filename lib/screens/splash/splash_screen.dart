@@ -18,7 +18,10 @@ class SplashScreen extends StatelessWidget {
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              PictoLogo(scale: 1, fontSize: 30,),
+              PictoLogo(
+                scale: 1,
+                fontSize: 30,
+              ),
               SizedBox(
                 width: context.mediaQuery.size.width,
                 height: context.mediaQuery.size.height * 0.03,
@@ -31,8 +34,7 @@ class SplashScreen extends StatelessWidget {
                           FadeAnimatedText(
                             splashController.statusMsg.value,
                             duration: Duration(seconds: 3),
-                            textStyle: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 16),
+                            textStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                           )
                         ],
                         totalRepeatCount: 10,

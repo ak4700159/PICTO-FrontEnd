@@ -11,7 +11,7 @@ import 'package:picto_frontend/theme.dart';
 
 import 'config/app_config.dart';
 
-void main() async{
+void main() async {
   // 상단 상태바, 하단 네비게이션 바 설정
   SystemChrome.setSystemUIOverlayStyle(
     SystemUiOverlayStyle(
@@ -28,10 +28,8 @@ class Picto extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final sessionController =
-        Get.put<SessionSchedulerHandler>(SessionSchedulerHandler());
-    final splashController = Get.put<SplashViewModel>(SplashViewModel());
-    final googleMapController = Get.put<GoogleMapViewModel>(GoogleMapViewModel());
+    // GetX 컨트롤러 등록
+    AppConfig.enrollGetxController();
 
     return GetMaterialApp(
       title: 'PICTO APP',

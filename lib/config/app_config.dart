@@ -1,4 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+
+import '../screens/login/login_view_model.dart';
+import '../screens/map/sub_screen/google_map_view_model.dart';
+import '../screens/splash/splash_view_model.dart';
+import '../services/session_scheduler_service/handler.dart';
 
 class AppConfig {
   static final ip = "bogota.iptime.org";
@@ -24,4 +31,12 @@ class AppConfig {
   // global
   static const Color backgroundColor = Colors.white;
   static const Color mainColor = Color(0xff7038ff);
+
+  // GetX 등록
+  static void enrollGetxController (){
+    final sessionController = Get.put<SessionSchedulerHandler>(SessionSchedulerHandler());
+    final splashController = Get.put<SplashViewModel>(SplashViewModel());
+    final googleMapController = Get.put<GoogleMapViewModel>(GoogleMapViewModel());
+    final loginController = Get.put<LoginViewModel>(LoginViewModel());
+  }
 }

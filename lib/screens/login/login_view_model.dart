@@ -9,8 +9,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../services/user_manager_service/signin_response.dart';
 
 class LoginViewModel extends GetxController {
-  LoginViewModel();
-
   RxBool isPasswordVisible = true.obs;
   RxString passwd = "".obs;
   RxString email = "".obs;
