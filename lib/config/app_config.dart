@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class AppConfig {
-  static final ip = "192.168.1.3";
+  static final ip = "bogota.iptime.org";
   static final httpUrl = "http://$ip";
   static final wsUrl = "ws://$ip";
 
