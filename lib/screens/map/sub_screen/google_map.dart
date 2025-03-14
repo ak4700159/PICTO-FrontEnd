@@ -2,52 +2,23 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:picto_frontend/screens/map/sub_screen/google_map_view_model.dart';
 
-class CustomGoogleMap extends StatefulWidget {
-  MapSample() {
-    // TODO: implement MapSample
-  }
+import 'google_map_view_model.dart';
 
-  @override
-  State<CustomGoogleMap> createState() => CustomGoogleMapState();
-}
-
-class CustomGoogleMapState extends State<CustomGoogleMap> {
-  final Completer<GoogleMapController> _controller =
-  Completer<GoogleMapController>();
-
-  static const CameraPosition _kGooglePlex = CameraPosition(
-    target: LatLng(37.42796133580664, -122.085749655962),
-    zoom: 14.4746,
-  );
-
-  static const CameraPosition _kLake = CameraPosition(
-      bearing: 192.8334901395799,
-      target: LatLng(37.43296265331129, -122.08832357078792),
-      tilt: 59.440717697143555,
-      zoom: 19.151926040649414);
-
+class CustomGoogleMap extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final googleMapViewModel = Get.find<GoogleMapViewModel>();
     return Scaffold(
       body: GoogleMap(
         mapType: MapType.normal,
-        initialCameraPosition: _kGooglePlex,
-        onMapCreated: (GoogleMapController controller) {
-          _controller.complete(controller);
-        },
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: _goToTheLake,
-        label: const Text('To the lake!'),
-        icon: const Icon(Icons.directions_boat),
+        initialCameraPosition: googleMapViewModel.initCameraPos,
+        onMapCreated: googleMapViewModel.setController,
       ),
     );
-  }
-
-  Future<void> _goToTheLake() async {
-    final GoogleMapController controller = await _controller.future;
-    await controller.animateCamera(CameraUpdate.newCameraPosition(_kLake));
   }
 }

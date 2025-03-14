@@ -17,7 +17,6 @@ class MapScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final _mapViewModel = Get.put(MapViewModel());
-    _getPermission();
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
@@ -34,40 +33,14 @@ class MapScreen extends StatelessWidget {
       bottomNavigationBar: _getBottomNavigationBar(context),
       body: SizedBox(
         width: context.mediaQuery.size.width,
-        child: Column(
+        child: Stack(
           children: [
+            Obx(() => _getMainFrame(context)),
             SelectionBar(),
-            SingleChildScrollView(
-              child: SizedBox(
-                  height: context.mediaQuery.size.height * 0.6,
-                  child: Obx(() => _getMainFrame(context))),
-            ),
           ],
         ),
       ),
     );
-  }
-
-  void _getPermission() async {
-    // 위치 정보 획득 가능한지 확인
-    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      return Future.error('Location services are disabled.');
-    }
-
-    LocationPermission permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        return Future.error('permissions are denied');
-      }
-    }
-
-    // 현재 위치 구하기
-    Position position = await Geolocator.getCurrentPosition();
-    String latitude = position.latitude.toString();
-    String longitude = position.longitude.toString();
-    print("[INFO] now location : $latitude/$longitude\n");
   }
 
   Widget _getMainFrame(BuildContext context) {
@@ -134,7 +107,7 @@ class MapScreen extends StatelessWidget {
     final mapViewModel = Get.find<MapViewModel>();
 
     return BottomAppBar(
-      color: Colors.deepPurple,
+      color: Colors.white,
       elevation: 0,
       notchMargin: 1,
       // 중요한 속성, 자식의 부모 위젯의 크기를 벗어날 경우 자동으로 잘라줌
@@ -157,7 +130,7 @@ class MapScreen extends StatelessWidget {
             iconSize: 30,
             selectedFontSize: 10,
             items: bottomNavigationBarItems,
-            backgroundColor: Colors.deepPurple,
+            backgroundColor: Colors.transparent,
             type: BottomNavigationBarType.fixed,
           )),
     );

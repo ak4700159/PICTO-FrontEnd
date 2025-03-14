@@ -11,15 +11,17 @@ class SelectionBar extends StatelessWidget {
     return Container(
       width: context.mediaQuery.size.width,
       height: context.mediaQuery.size.height * 0.15,
-      color: Colors.blue,
+      color: Colors.transparent,
       child: Column(
         children: [
           Container(
             width: context.mediaQuery.size.width,
             height: context.mediaQuery.size.height * 0.05,
-            color: Colors.grey,
           ),
-          Text('태그 검색 필터선택')
+          Text(
+            'PICTO로고 / 태그 / 검색 / 필터선택',
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          )
         ],
       ),
     );

@@ -4,6 +4,7 @@ import 'package:debounce_throttle/debounce_throttle.dart';
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:picto_frontend/config/app_config.dart';
+import 'package:picto_frontend/screens/map/sub_screen/google_map_view_model.dart';
 import 'package:picto_frontend/services/user_manager_service/handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../models/user.dart';
@@ -88,6 +89,8 @@ class SplashViewModel extends GetxController {
   }
 
   Future<void> logging() async {
+    final googleMapController = Get.find<GoogleMapViewModel>();
+    await googleMapController.getPermission();
     await autoLogin();
     UserManagerHandler().initSettings(accessToken, refreshToken, userId);
     // userSettingThrottle.setValue(null);
