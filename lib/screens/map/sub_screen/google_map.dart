@@ -10,15 +10,18 @@ import 'package:picto_frontend/screens/map/sub_screen/google_map_view_model.dart
 import 'google_map_view_model.dart';
 
 class CustomGoogleMap extends StatelessWidget {
+  const CustomGoogleMap({super.key});
+
   @override
   Widget build(BuildContext context) {
     final googleMapViewModel = Get.find<GoogleMapViewModel>();
-    return Scaffold(
-      body: GoogleMap(
-        mapType: MapType.normal,
-        initialCameraPosition: googleMapViewModel.initCameraPos,
-        onMapCreated: googleMapViewModel.setController,
-      ),
+    return GoogleMap(
+      zoomControlsEnabled: false,
+      compassEnabled: false,
+      mapType: MapType.normal,
+      initialCameraPosition: googleMapViewModel.initCameraPos,
+      onMapCreated: googleMapViewModel.setController,
+      style: googleMapViewModel.mapStyleString,
     );
   }
 }

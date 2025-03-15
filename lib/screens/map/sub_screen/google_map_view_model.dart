@@ -1,19 +1,29 @@
 import 'dart:async';
 
+import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class GoogleMapViewModel extends GetxController {
-  final Completer<GoogleMapController> _controller =
-  Completer<GoogleMapController>();
+  final Completer<GoogleMapController> _controller = Completer<GoogleMapController>();
   RxDouble currentLat = 0.0.obs;
   RxDouble currentLng = 0.0.obs;
+  late String mapStyleString;
   late CameraPosition initCameraPos;
+
+  @override
+  void onInit() {
+    rootBundle.loadString('assets/map_styles/map_style.json').then((string) {
+      mapStyleString = string;
+    });
+    // TODO: implement onInit
+    super.onInit();
+  }
 
   void setController(GoogleMapController controller) {
     if (!_controller.isCompleted) {
-      _controller.complete(controller);  // 최초 1회만 실행됨
+      _controller.complete(controller); // 최초 1회만 실행됨
     }
 
     // 스트림 연결 -> 위치 정보를

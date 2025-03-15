@@ -26,7 +26,6 @@ class LoginViewModel extends GetxController {
     try {
       response =
           await UserManagerHandler().signin(email.value, passwd.value);
-          await UserManagerHandler().setUserAllInfo(true);
     } on DioException catch (e) {
       loginStatus.value = "fail";
       return;
@@ -39,10 +38,8 @@ class LoginViewModel extends GetxController {
     await preferences.setString("Refresh-Token", response.refreshToken);
     loginStatus.value = "success";
 
-    // 로그인 성공 ! 웹소켓 연결 후 지도
-    final sessionController = Get.find<SessionSchedulerHandler>();
-    sessionController.connectWebSocket();
-    await Future.delayed(Duration(seconds: 2));
-    Get.offNamed('/map');
+    // 로그인 성공! 설정 초기화 후 메인 화면 이동
+    final splashController = Get.find<SplashViewModel>();
+    splashController.setUserConfigThroughToken(isAccessToken: true);
   }
 }

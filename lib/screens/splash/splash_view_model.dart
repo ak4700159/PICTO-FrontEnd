@@ -33,13 +33,13 @@ class SplashViewModel extends GetxController {
   // step0. 내장 데이터 로딩(사용자 아이디, 토큰), api 리스너 등록
   @override
   void onInit() async {
+    userSettingThrottle.values.listen((event) {
+      logging();
+    });
     preferences = await SharedPreferences.getInstance();
     userId = preferences.getInt("User-Id");
     accessToken = preferences.getString("Access-Token");
     refreshToken = preferences.getString("Refresh-Token");
-    userSettingThrottle.values.listen((event) {
-      logging();
-    });
     super.onInit();
   }
 
@@ -47,6 +47,7 @@ class SplashViewModel extends GetxController {
     // step1. 위치 권환 획득
     final googleMapController = Get.find<GoogleMapViewModel>();
     await googleMapController.getPermission();
+
     // step2. 첫번째 접속 확인
     if (await checkNullLoginData()) {return;}
 
@@ -80,11 +81,13 @@ class SplashViewModel extends GetxController {
           // -> 엑세스 토큰 만료시 리프레쉬 토큰으로 복구가 안됨
   Future<void> recoverAccessToken(DioException e) async {
     print("[DEBUG]${e.response?.data} ---[DEBUG END]\n");
-    if (e.message?.contains("[token]") ?? false) {
+    if (e.message?.contains("[TOKEN]") ?? false) {
+      // 다시 발급 받은 엑세스 토큰 저장
       final preferences = await SharedPreferences.getInstance();
-      await preferences.setString("Access-Token", e.message?.substring(8) ?? "");
-      // 리프레쉬 토큰 정상 작동
-      socketInterceptor.callSession(connected: true);
+      String newAccessToken = e.message!.substring("[TOKEN]".length);
+      UserManagerHandler().accessToken = newAccessToken;
+      await preferences.setString("Access-Token", newAccessToken);
+      setUserConfigThroughToken(isAccessToken: true);
       await Future.delayed(Duration(seconds: AppConfig.maxLatency));
       Get.offNamed('/map');
     } else {

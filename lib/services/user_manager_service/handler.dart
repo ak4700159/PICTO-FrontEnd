@@ -19,19 +19,18 @@ class UserManagerHandler {
   String? accessToken;
   String? refreshToken;
   int? ownerId;
-  late Dio dio;
+  Dio dio = Dio(
+    BaseOptions(
+        connectTimeout: const Duration(milliseconds: 1000),
+        contentType: Headers.jsonContentType,
+        receiveTimeout: const Duration(milliseconds: 3000)),
+  )..interceptors.add(CustomInterceptor());
 
   void initSettings(
       String? localAccessToken, String? localRefreshToken, int? localOwnerId) {
     accessToken = localAccessToken;
     refreshToken = localRefreshToken;
     ownerId = localOwnerId;
-    dio = Dio(
-      BaseOptions(
-          connectTimeout: const Duration(milliseconds: 1000),
-          contentType: Headers.jsonContentType,
-          receiveTimeout: const Duration(milliseconds: 3000)),
-    )..interceptors.add(CustomInterceptor());
   }
 
   // 회원가입
@@ -60,6 +59,7 @@ class UserManagerHandler {
     final result = SigninResponse.fromJson(response.data);
     refreshToken = result.refreshToken;
     accessToken = result.accessToken;
+    ownerId = result.userId;
     return result;
   }
 
@@ -89,15 +89,16 @@ class UserManagerHandler {
               }),
       );
     } on DioException catch (e) {
+      // 토큰 저장
       rethrow;
     }
-    // response["user"];
-    // response["filter"];
-    // response["userSetting"];
-    // response["tags"];
+    // response["user"]; >
+    // response["filter"]; >
+    // response["userSetting"]; >
+    // response["tags"]; >
     // response["titles"];
-    // response["folders"];
-    // response["photos"];
+    // response["folders"]; >
+    // response["photos"]; >
     // response["marks"];
     // response["blocks"];
   }
