@@ -16,6 +16,7 @@ String? passwdValidator(String? value) {
   if (value?.isEmpty ?? true) {
     return '비밀번호를 입력해주세요.';
   }
+
   // 사용자들에게 어려운 패턴을 강제
   // else {
   //   String pattern =

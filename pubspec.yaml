@@ -42,6 +42,7 @@ dependencies:
   google_maps_flutter: ^2.10.1
   geolocator: ^13.0.2
   flex_seed_scheme: ^3.5.0
+  debounce_throttle: ^2.0.0
 
 dev_dependencies:
   flutter_test:
@@ -68,6 +69,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/images/
+    - assets/map_styles/
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 

@@ -1,50 +1,70 @@
 import 'dart:convert';
 
+import 'package:get/get.dart';
+import 'package:picto_frontend/config/app_config.dart';
+import 'package:picto_frontend/services/session_scheduler_service/location_message.dart';
+import 'package:picto_frontend/services/user_manager_service/handler.dart';
 import 'package:stomp_dart_client/stomp_dart_client.dart';
 
-class SessionSchedulerHandler {
-  String baseUrl = "ws://bogota.iptime.org/session-scheduler";
+// _stompClient.connected 의 네트워크 지연 때문에 값이 늦게 들어올 수 있다
+class SessionSchedulerHandler extends GetxController {
+  String baseUrl = "${AppConfig.httpUrl}:8084/session-scheduler";
   late StompClient _stompClient;
-  bool _connected = false;
+  RxBool connected = false.obs;
   Function? unsubscribeFunction;
 
-  // private 생성자 선언 -> 외부에서 해당 클래스의 생성자 생성을 막는다.
-  SessionSchedulerHandler._();
-  static final SessionSchedulerHandler _handler = SessionSchedulerHandler._();
-  factory SessionSchedulerHandler() {
-    return _handler;
-  }
-
-  void connectWebSocket() {
-    if(_connected) return;
+  @override
+  void onInit() {
     _stompClient = StompClient(
-      config: StompConfig(
+      config: StompConfig.sockJS(
         reconnectDelay: Duration.zero,
         url: baseUrl,
         onConnect: _onConnect,
         onWebSocketError: _onError,
+        // 서버에서 강제 종료된 경우 호출되는 콜백함수
+        onWebSocketDone: _onDone,
       ),
     );
-    _stompClient.activate();
-    _connected = true;
-    print("[INFO]WebSocket connected successfully");
+    super.onInit();
   }
 
-  void disconnectedWebSocket() {
+  void connectWebSocket() async {
+    if (_stompClient.connected) {
+      print("[INFO] already connected\n");
+      connected.value = true;
+      return;
+    }
+
+    try {
+      _stompClient.activate();
+      await Future.delayed(Duration(seconds: AppConfig.socketConnectionWaitSec));
+      if (!_stompClient.connected) return;
+      print("[INFO] web socket activate\n");
+      connected.value = true;
+    } catch (e) {
+      print('[DEBUG] web socket server missing');
+    }
+  }
+
+  void disconnectWebSocket() {  
     if (unsubscribeFunction != null) {
       unsubscribeFunction!();
+      print("[INFO] session unsubscribed");
     }
     _stompClient.deactivate();
+    connected.value = false;
+    print("[INFO] web socket inactivate");
   }
 
   void _onError(err) {
     print("[ERROR]${err.toString()}\n");
-    disconnectedWebSocket();
-    print("[WARN]socket exited");
+    disconnectWebSocket();
+    print("[WARN] socket exited");
   }
 
   void _onConnect(StompFrame frame) {
     unsubscribeFunction = _stompClient.subscribe(
+      headers: {"User-Id": UserManagerHandler().ownerId.toString()},
       destination: '/session',
       callback: (StompFrame frame) => {
         // 구독한 세션으로부터 전달 받은 메시지 처리
@@ -52,6 +72,11 @@ class SessionSchedulerHandler {
         print("[INFO]${frame.body}\n")
       },
     );
+    print("[INFO] subscribe success\n");
+  }
+
+  void _onDone() {
+    disconnectWebSocket();
   }
 
   // 위치 정보 전송 -> 세션 스케줄러에서 반영
@@ -59,24 +84,23 @@ class SessionSchedulerHandler {
     print('위치 전송 중 - 사용자: $senderId, 위도: $lat, 경도: $lng');
 
     try {
-      final message = <String, Object>{
-        "messageType": 'LOCATION',
-        "senderId": senderId,
-        "lat": lat,
-        "lng": lng,
-        "sendDatetime": DateTime.now().toUtc().millisecondsSinceEpoch,
-      };
+      final message = LocationMsg(
+          messageType: "LOCATION",
+          senderId: senderId,
+          lat: lat,
+          lng: lng,
+          sendDatetime: DateTime.now().toUtc().millisecondsSinceEpoch);
 
       final destination = '/send/session/location';
-      final body = jsonEncode(message);
+      final body = jsonEncode(message.toJson());
 
       _stompClient.send(
         destination: destination,
         body: body,
       );
-      print('위치 전송 성공');
+      print('[INFO] send location to session');
     } catch (e) {
-      // throw SessionServiceException('위치 전송 실패: ${e.toString()}');
+      print('[ERROR] ${e.toString()}');
     }
   }
 }

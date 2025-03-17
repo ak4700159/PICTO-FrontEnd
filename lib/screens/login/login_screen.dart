@@ -9,9 +9,8 @@ import 'package:picto_frontend/widgets/picto_logo.dart';
 
 class LoginScreen extends StatelessWidget {
   LoginScreen({super.key});
-
   final _formKey = GlobalKey<FormState>();
-  final _viewModel = LoginViewModel(splashViewModel: Get.find());
+  final _loginController = Get.find<LoginViewModel>();
 
   @override
   Widget build(BuildContext context) {
@@ -36,27 +35,27 @@ class LoginScreen extends StatelessWidget {
                   decoration: getCustomInputDecoration(
                       label: "이메일", hintText: "your@eamil.com"),
                   validator: emailValidator,
-                  onSaved: (value) => _viewModel.email.value = value!,
+                  onSaved: (value) => _loginController.email.value = value!,
                 ),
                 SizedBox(height: widgetHeight * 0.01),
                 Obx(
                   () => TextFormField(
-                    obscureText: _viewModel.isPasswordVisible.value,
+                    obscureText: _loginController.isPasswordVisible.value,
                     decoration: getCustomInputDecoration(
                       label: "비밀번호",
                       suffixIcon: IconButton(
                         icon: Icon(
-                          !_viewModel.isPasswordVisible.value
+                          !_loginController.isPasswordVisible.value
                               ? Icons.visibility
                               : Icons.visibility_off,
                         ),
                         onPressed: () {
-                          _viewModel.togglePasswordVisible();
+                          _loginController.togglePasswordVisible();
                         },
                       ),
                     ),
                     validator: passwdValidator,
-                    onSaved: (value) => _viewModel.passwd.value = value!,
+                    onSaved: (value) => _loginController.passwd.value = value!,
                   ),
                 ),
                 SizedBox(height: widgetHeight * 0.02),
@@ -68,7 +67,7 @@ class LoginScreen extends StatelessWidget {
                       backgroundColor: AppConfig.mainColor,
                     ),
                     onPressed: _login,
-                    child: Obx(() => _loginTextChild()),
+                    child: Obx(() => _loggingText()),
                   ),
                 ),
                 SizedBox(height: widgetHeight * 0.01),
@@ -115,25 +114,25 @@ class LoginScreen extends StatelessWidget {
       _formKey.currentState?.save();
 
       // step2. 서버 로그인 시도
-      _viewModel.login();
+      _loginController.login();
     }
   }
 
-  Widget _loginTextChild() {
-    if (_viewModel.loginStatus.value == "not") {
+  Widget _loggingText() {
+    if (_loginController.loginStatus.value == "not") {
       return Text(
         "Login",
         style: TextStyle(
             color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
       );
-    } else if (_viewModel.loginStatus.value == "loading") {
+    } else if (_loginController.loginStatus.value == "loading") {
       return Transform.scale(
         scale: 0.5,
         child: CircularProgressIndicator(
           color: AppConfig.backgroundColor,
         ),
       );
-    } else if (_viewModel.loginStatus.value == "fail") {
+    } else if (_loginController.loginStatus.value == "fail") {
       return Text(
         "다시 로그인해주세요.",
         style: TextStyle(
