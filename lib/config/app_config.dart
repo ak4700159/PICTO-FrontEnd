@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:picto_frontend/screens/map/map_view_model.dart';
 
 import '../screens/login/login_view_model.dart';
-import '../screens/map/sub_screen/google_map_view_model.dart';
+import '../screens/map/sub_screen/google_map/google_map_view_model.dart';
+import '../screens/map/sub_screen/selection_bar_view_model.dart';
 import '../screens/splash/splash_view_model.dart';
 import '../services/session_scheduler_service/handler.dart';
 
 class AppConfig {
-  // 192.168.255.10 : LAB
   // bogota.iptime.org : HOME
-  static final ip = "192.168.255.10";
+  // 192.168.255.10 : LAB
+  static final ip = "bogota.iptime.org";
   static final httpUrl = "http://$ip";
   static final wsUrl = "ws://$ip";
 
@@ -18,7 +20,7 @@ class AppConfig {
   static const int maxLatency = 3;
 
   // 1초마다 API 호출 허용
-  static const int debounceSec = 1;
+  static const int throttleSec = 3;
 
   // 화면 정지
   static const int stopScreenSec = 3;
@@ -40,5 +42,7 @@ class AppConfig {
     final splashController = Get.put<SplashViewModel>(SplashViewModel());
     final googleMapController = Get.put<GoogleMapViewModel>(GoogleMapViewModel());
     final loginController = Get.put<LoginViewModel>(LoginViewModel());
+    final selectionViewModel = Get.put(SelectionBarViewModel());
+    final mapViewModel = Get.put(MapViewModel());
   }
 }

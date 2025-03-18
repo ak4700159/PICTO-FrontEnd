@@ -8,7 +8,7 @@ import 'package:stomp_dart_client/stomp_dart_client.dart';
 
 // _stompClient.connected 의 네트워크 지연 때문에 값이 늦게 들어올 수 있다
 class SessionSchedulerHandler extends GetxController {
-  String baseUrl = "${AppConfig.httpUrl}:8084/session-scheduler";
+  String baseUrl = "${AppConfig.wsUrl}:8084/session-scheduler";
   late StompClient _stompClient;
   RxBool connected = false.obs;
   Function? unsubscribeFunction;

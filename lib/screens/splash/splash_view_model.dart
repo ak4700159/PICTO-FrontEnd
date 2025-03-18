@@ -4,7 +4,8 @@ import 'package:debounce_throttle/debounce_throttle.dart';
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:picto_frontend/config/app_config.dart';
-import 'package:picto_frontend/screens/map/sub_screen/google_map_view_model.dart';
+import 'package:picto_frontend/screens/map/sub_screen/google_map/google_map_view_model.dart';
+import 'package:picto_frontend/services/http_function_controller.dart';
 import 'package:picto_frontend/services/user_manager_service/handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../services/socket_function_controller.dart';
@@ -16,16 +17,14 @@ import '../../services/socket_function_controller.dart';
 // 4. 세션 스케줄러와 연결
 class SplashViewModel extends GetxController {
   SocketFunctionController socketInterceptor = SocketFunctionController();
-  Throttle userSettingThrottle = Throttle(
-    const Duration(seconds: AppConfig.debounceSec),
+  Debouncer userSettingDebouncer = Debouncer(
+    const Duration(seconds: AppConfig.throttleSec),
     initialValue: null,
     checkEquality: false,
   );
 
   late SharedPreferences preferences;
-
   RxString statusMsg = "로딩중...".obs;
-
   int? userId;
   String? accessToken;
   String? refreshToken;
@@ -33,7 +32,7 @@ class SplashViewModel extends GetxController {
   // step0. 내장 데이터 로딩(사용자 아이디, 토큰), api 리스너 등록
   @override
   void onInit() async {
-    userSettingThrottle.values.listen((event) {
+    userSettingDebouncer.values.listen((event) {
       logging();
     });
     preferences = await SharedPreferences.getInstance();
@@ -49,7 +48,7 @@ class SplashViewModel extends GetxController {
     await googleMapController.getPermission();
 
     // step2. 첫번째 접속 확인
-    if (await checkNullLoginData()) {return;}
+    if (await _checkNullLoginData()) {return;}
 
     // step3. 토큰 이용해 사용자 api 호출 -> 사용자 정보 초기화
     try {
@@ -62,7 +61,7 @@ class SplashViewModel extends GetxController {
         print("[WARN]엑세트 토큰 인증 실패");
         await setUserConfigThroughToken(isAccessToken: false);
       } on DioException catch (e) {
-        await recoverAccessToken(e);
+        await _recoverAccessToken(e);
       }
     }
   }
@@ -76,15 +75,16 @@ class SplashViewModel extends GetxController {
     Get.offNamed('/map');
   }
 
-          // 현재 가장 큰 문제 : 해당 로직 작동 X
-          // 에러를 처리하는 것이 아니라 정상 반환을 통해 처리하는 것이 맞아보임
-          // -> 엑세스 토큰 만료시 리프레쉬 토큰으로 복구가 안됨
-  Future<void> recoverAccessToken(DioException e) async {
+    // 현재 가장 큰 문제 : 해당 로직 작동 X
+    // 에러를 처리하는 것이 아니라 정상 반환을 통해 처리하는 것이 맞아보임
+    // -> 엑세스 토큰 만료시 리프레쉬 토큰으로 복구가 안됨
+  Future<void> _recoverAccessToken(DioException e) async {
     print("[DEBUG]${e.response?.data} ---[DEBUG END]\n");
-    if (e.message?.contains("[TOKEN]") ?? false) {
+    if (e.response?.data.contains("[TOKEN]") ?? false) {
       // 다시 발급 받은 엑세스 토큰 저장
       final preferences = await SharedPreferences.getInstance();
-      String newAccessToken = e.message!.substring("[TOKEN]".length);
+      String newAccessToken = e.response?.data.split(']')[2];
+      print("[INFO]NEW Access-Token -> $newAccessToken");
       UserManagerHandler().accessToken = newAccessToken;
       await preferences.setString("Access-Token", newAccessToken);
       setUserConfigThroughToken(isAccessToken: true);
@@ -98,7 +98,7 @@ class SplashViewModel extends GetxController {
 
   // return true = 처음 접속
   // return false = 이전에 로그인한 적이 있음
-  Future<bool> checkNullLoginData() async {
+  Future<bool> _checkNullLoginData() async {
     await Future.delayed(Duration(seconds: AppConfig.stopScreenSec));
     if (userId == null || accessToken == null || refreshToken == null) {
       statusMsg.value = "처음 접속하시네요! 반가워요.";

@@ -3,9 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:picto_frontend/config/app_config.dart';
+import 'package:picto_frontend/screens/folder/folder_screen.dart';
 import 'package:picto_frontend/screens/map/map_view_model.dart';
-import 'package:picto_frontend/screens/map/sub_screen/google_map.dart';
+import 'package:picto_frontend/screens/map/sub_screen/google_map/google_map.dart';
 import 'package:picto_frontend/screens/map/sub_screen/selection_bar.dart';
+import 'package:picto_frontend/screens/map/sub_screen/selection_bar_view_model.dart';
+import 'package:picto_frontend/screens/photo/photo_book_screen.dart';
+import 'package:picto_frontend/screens/profile/profile_screen.dart';
+import 'package:picto_frontend/screens/setting/setting_screen.dart';
 
 // 맵은 크게 상단 선택바
 // 하단 네비게이션바
@@ -16,13 +21,14 @@ class MapScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _mapViewModel = Get.put(MapViewModel());
+    final _mapViewModel = Get.find<MapViewModel>();
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
         backgroundColor: AppConfig.mainColor,
         shape: CircleBorder(side: BorderSide(width: 1)),
         onPressed: () {
+          // index 2 = google map
           _mapViewModel.changeNavigationBarIndex(2);
         },
         child: Icon(
@@ -36,7 +42,6 @@ class MapScreen extends StatelessWidget {
         child: Stack(
           children: [
             Obx(() => _getMainFrame(context)),
-            SelectionBar(),
           ],
         ),
       ),
@@ -46,8 +51,12 @@ class MapScreen extends StatelessWidget {
   Widget _getMainFrame(BuildContext context) {
     final mapViewModel = Get.find<MapViewModel>();
     return switch (mapViewModel.navigationBarCurrentIndex.value) {
-      // 0 -> 확경설정, 1 -> 포토북, 3 -> 공유폴더, 4 -> 프로필설정
+      // 0 -> 환경설정, 1 -> 포토북, 2-> 지도, 3 -> 공유폴더, 4 -> 프로필설정
+      0 => SettingScreen(),
+      1 => PhotoBookScreen(),
       2 => CustomGoogleMap(),
+      3 => FolderScreen(),
+      4 => ProfileScreen(),
       _ => Center(
           child: Text('error'),
         ),

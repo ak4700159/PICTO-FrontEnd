@@ -14,10 +14,10 @@ class GoogleMapViewModel extends GetxController {
 
   @override
   void onInit() {
+    // 지도 양식 로딩
     rootBundle.loadString('assets/map_styles/map_style.json').then((string) {
       mapStyleString = string;
     });
-    // TODO: implement onInit
     super.onInit();
   }
 

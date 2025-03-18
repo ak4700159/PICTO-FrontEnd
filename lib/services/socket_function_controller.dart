@@ -5,13 +5,14 @@ import 'package:picto_frontend/services/session_scheduler_service/handler.dart';
 
 import '../config/app_config.dart';
 
-class SocketFunctionController {
+class SocketFunctionController{
   late SessionSchedulerHandler sessionController;
   final sessionDebouncer = Debouncer<bool>(
-    const Duration(seconds: AppConfig.debounceSec),
+    const Duration(seconds: AppConfig.throttleSec),
     initialValue: false,
     checkEquality: false,
   );
+
 
   SocketFunctionController() {
     sessionController = Get.find<SessionSchedulerHandler>();
