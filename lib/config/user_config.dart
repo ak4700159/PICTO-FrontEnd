@@ -1,32 +1,15 @@
 import 'package:get/get.dart';
 
 class UserConfig extends GetxController{
-  UserSetting setting = UserSetting();
-  Filter filter = Filter();
-  List<Title> titles = [];
-  List<int> blocks = [];
-  List<int> marks = [];
+  RxBool lightMode = true.obs;
+  RxBool autoRotation = true.obs;
+  RxBool aroundAlert = false.obs;
+  RxBool popularAlert = false.obs;
 
-}
-
-class UserSetting{
-  bool lightMode = true;
-  bool autoRotation = true;
-  bool aroundAlert = false;
-  bool popularAlert = false;
-}
-
-class Filter{
-  List<Tag> tags = [];
-  String sort = "좋아요순";
-  String period = "한달";
-}
-
-class Title{
-
-}
-
-class Tag{
-  Tag({required this.tagName});
-  String tagName;
+  void convertFromJson(Map json) {
+    lightMode.value = json["lightMode"];
+    autoRotation.value = json["autoRotation"];
+    aroundAlert.value = json["aroundAlert"];
+    popularAlert.value = json["popularAlert"];
+  }
 }

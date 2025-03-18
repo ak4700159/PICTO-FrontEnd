@@ -1,16 +1,20 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:picto_frontend/config/app_config.dart';
 import 'package:picto_frontend/models/user.dart';
+import 'package:picto_frontend/screens/map/sub_screen/selection_bar_view_model.dart';
+import 'package:picto_frontend/screens/profile/profile_view_model.dart';
 import 'package:picto_frontend/services/http_interceptor.dart';
 import 'package:picto_frontend/services/user_manager_service/signin_response.dart';
+
+import '../../config/user_config.dart';
 
 class UserManagerHandler {
   // private 생성자 선언 -> 외부에서 해당 클래스의 생성자 생성을 막는다.
   UserManagerHandler._();
-
   static final UserManagerHandler _handler = UserManagerHandler._();
-
   factory UserManagerHandler() {
     return _handler;
   }
@@ -92,15 +96,17 @@ class UserManagerHandler {
       // 토큰 저장
       rethrow;
     }
-    // response["user"]; >
-    // response["filter"]; >
-    // response["userSetting"]; >
-    // response["tags"]; >
-    // response["titles"];
-    // response["folders"]; >
-    // response["photos"]; >
-    // response["marks"];
-    // response["blocks"];
+    // 불러온 데이터를 view model에 입력
+    final selectionViewModel = Get.find<SelectionBarViewModel>();
+    selectionViewModel.convertFromJson(response.data["filter"]);
+
+    final profileViewModel = Get.find<ProfileViewModel>();
+    profileViewModel.convertFromJson(response.data["user"]);
+
+    final userConfig = Get.find<UserConfig>();
+    userConfig.convertFromJson(response.data["userSetting"]);
+
+    // response["folderPhotos"]; > folder view model
   }
 
   // 토큰 검증

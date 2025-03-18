@@ -25,6 +25,7 @@ class MapScreen extends StatelessWidget {
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
+        heroTag: "map",
         backgroundColor: AppConfig.mainColor,
         shape: CircleBorder(side: BorderSide(width: 1)),
         onPressed: () {
@@ -38,10 +39,16 @@ class MapScreen extends StatelessWidget {
       ),
       bottomNavigationBar: _getBottomNavigationBar(context),
       body: SizedBox(
-        width: context.mediaQuery.size.width,
         child: Stack(
           children: [
             Obx(() => _getMainFrame(context)),
+            Positioned(
+              bottom: context.mediaQuery.size.height * 0.02,
+                left: context.mediaQuery.size.width * 0.8,
+                child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: _getBottomRightFloatingButtons(context),
+            ))
           ],
         ),
       ),
@@ -61,6 +68,33 @@ class MapScreen extends StatelessWidget {
           child: Text('error'),
         ),
     };
+  }
+
+  List<Widget> _getBottomRightFloatingButtons(BuildContext context) {
+    return [
+      Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: FloatingActionButton(
+          onPressed: () {
+            // 사진 공유 화면으로 이동
+          },
+          backgroundColor: AppConfig.mainColor,
+          heroTag: "share",
+          child: Icon(Icons.add, color: AppConfig.backgroundColor, size: 45,),
+        ),
+      ),
+      Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: FloatingActionButton(
+          onPressed: () {
+            // 테스트 버튼 주입
+          },
+          backgroundColor: AppConfig.mainColor,
+          heroTag: "reload",
+          child: Icon(Icons.cached, color: AppConfig.backgroundColor, size: 35,),
+        ),
+      ),
+    ];
   }
 
   Widget _getBottomNavigationBar(BuildContext context) {

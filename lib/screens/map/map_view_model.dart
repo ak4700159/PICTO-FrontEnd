@@ -6,6 +6,4 @@ class MapViewModel extends GetxController {
   void changeNavigationBarIndex(int index) {
     navigationBarCurrentIndex.value = index;
   }
-
-
 }

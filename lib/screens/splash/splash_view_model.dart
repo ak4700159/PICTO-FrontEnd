@@ -110,6 +110,7 @@ class SplashViewModel extends GetxController {
       Get.offNamed('/login');
       return true;
     }
+
     // 이전에 로그인한 정보를 바탕으로 api 토큰 세팅
     UserManagerHandler().initSettings(accessToken, refreshToken, userId);
     return false;

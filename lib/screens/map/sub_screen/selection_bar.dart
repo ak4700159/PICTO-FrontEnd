@@ -1,3 +1,4 @@
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
@@ -24,31 +25,21 @@ class SelectionBar extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 PictoTextLogo(),
-                Spacer(),
                 Padding(
                   padding: const EdgeInsets.all(3.0),
-                  child: Obx(() => _getPeriodDropDownButton()),
+                  child: Obx(() => _getDropDownButton("sort", context)),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(3.0),
-                  child: Obx(() => _getSortDropDownButton()),
+                  child: Obx(() => _getDropDownButton("period", context)),
                 ),
                 SizedBox(
                   height: context.mediaQuery.size.height * 0.04,
                   width: context.mediaQuery.size.height * 0.04,
-                  child: FloatingActionButton(
-                    onPressed: () {
-                      // 어떻게 구현할지 고민중
-                      // Get.toNamed('/');
-                    },
-                    child: Icon(
-                      Icons.tag,
-                    ),
-                    shape: CircleBorder(side: BorderSide(width: 0)),
-                    backgroundColor: AppConfig.mainColor,
-                  ),
+                  child: _getTagFloatingButton(),
                 ),
               ],
             ),
@@ -60,40 +51,58 @@ class SelectionBar extends StatelessWidget {
 
   // 태그는 별도 설정창으로 이동
   // 필터 선택 : [좋아요순/조회수순] + [하루/일주일/한달/일년/전체] // 시작일은 지정 X
-  DecoratedBox _getSortDropDownButton() {
+  DropdownButtonHideUnderline _getDropDownButton(String field, BuildContext context) {
     final selectionViewModel = Get.find<SelectionBarViewModel>();
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: AppConfig.mainColor, // background color of dropdown button
-        borderRadius: BorderRadius.circular(50), // border raiuds of dropdown button
-      ),
-      child: DropdownButton(
-        borderRadius: BorderRadius.all(Radius.circular(2)),
-        items: selectionViewModel.sorts
+    return DropdownButtonHideUnderline(
+      child: DropdownButton2(
+        // 메뉴 아이템 생성
+        items: (field == "sort" ? selectionViewModel.sorts : selectionViewModel.periods)
             .map((sort) => DropdownMenuItem(
                   value: sort,
-                  child: Text(sort, style: TextStyle(fontSize: 15, color: AppConfig.backgroundColor),),
+                  child: Text(sort, style: TextStyle(fontSize: 15, color: Colors.black)),
                 ))
             .toList(),
-        onChanged: selectionViewModel.changeSort,
-        value: selectionViewModel.currentSelectedSort?.value,
-        dropdownColor: AppConfig.mainColor,
-
+        // 클릭 시 이벤트
+        onChanged: field == "sort" ? selectionViewModel.changeSort : selectionViewModel.changePeriod,
+        // 버튼값
+        value: field == "sort"
+            ? selectionViewModel.currentSelectedSort?.value
+            : selectionViewModel.currentSelectedPeriod?.value,
+        // 버튼 스타일
+        buttonStyleData: ButtonStyleData(
+          height: context.mediaQuery.size.height * 0.05,
+          decoration: BoxDecoration(
+            border: Border.all(width: 1),
+            color: AppConfig.backgroundColor,
+            borderRadius: BorderRadius.circular(40),
+            boxShadow: <BoxShadow>[BoxShadow(color: Color.fromRGBO(0, 0, 0, 0.57), blurRadius: 5)],
+          ),
+        ),
+        dropdownStyleData: DropdownStyleData(
+          decoration: BoxDecoration(
+            color: AppConfig.backgroundColor,
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: <BoxShadow>[BoxShadow(color: Color.fromRGBO(0, 0, 0, 0.57), blurRadius: 5)],
+          ),
+        ),
+        iconStyleData: IconStyleData(iconSize: 0.0),
+        alignment: AlignmentDirectional.center,
       ),
     );
   }
 
-  DropdownButton _getPeriodDropDownButton() {
-    final selectionViewModel = Get.find<SelectionBarViewModel>();
-    return DropdownButton(
-      items: selectionViewModel.periods
-          .map((period) => DropdownMenuItem(
-                value: period,
-                child: Text(period),
-              ))
-          .toList(),
-      onChanged: selectionViewModel.changePeriod,
-      value: selectionViewModel.currentSelectedPeriod?.value,
+  FloatingActionButton _getTagFloatingButton() {
+    return FloatingActionButton(
+      heroTag: "tag",
+      onPressed: () {
+        // 어떻게 구현할지 고민중 // 팝업 형식?
+        // Get.toNamed('/');
+      },
+      shape: BeveledRectangleBorder(side: BorderSide(width: 1)),
+      backgroundColor: AppConfig.backgroundColor,
+      child: Icon(
+        Icons.tag,
+      ),
     );
   }
 }

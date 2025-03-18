@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:picto_frontend/config/user_config.dart';
 import 'package:picto_frontend/screens/map/map_view_model.dart';
+import 'package:picto_frontend/screens/map/sub_screen/google_map/marker_manager.dart';
+import 'package:picto_frontend/screens/profile/profile_view_model.dart';
 
 import '../screens/login/login_view_model.dart';
 import '../screens/map/sub_screen/google_map/google_map_view_model.dart';
@@ -37,12 +40,20 @@ class AppConfig {
   static const Color mainColor = Color(0xff7038ff);
 
   // GetX 등록
-  static void enrollGetxController (){
-    final sessionController = Get.put<SessionSchedulerHandler>(SessionSchedulerHandler());
-    final splashController = Get.put<SplashViewModel>(SplashViewModel());
-    final googleMapController = Get.put<GoogleMapViewModel>(GoogleMapViewModel());
-    final loginController = Get.put<LoginViewModel>(LoginViewModel());
-    final selectionViewModel = Get.put(SelectionBarViewModel());
-    final mapViewModel = Get.put(MapViewModel());
+  static void enrollGetxController () {
+    // 필수 컨트롤러 ----------------------
+    final sessionHandler = Get.put<SessionSchedulerHandler>(SessionSchedulerHandler());
+    final splashViewModel = Get.put<SplashViewModel>(SplashViewModel());
+    final googleViewModel = Get.put<GoogleMapViewModel>(GoogleMapViewModel());
+    final loginViewModel = Get.put<LoginViewModel>(LoginViewModel());
+
+    // 로그인 이후 사용될 컨트롤러 ----------------------
+    final markerManager = Get.put<MarkerManager>(MarkerManager());
+    final selectionViewModel = Get.put<SelectionBarViewModel>(SelectionBarViewModel());
+    final mapViewModel = Get.put<MapViewModel>(MapViewModel());
+
+    // 사용자 정보 ----------------------
+    final profileViewModel = Get.put<ProfileViewModel>(ProfileViewModel());
+    final userConfig = Get.put<UserConfig>(UserConfig());
   }
 }
