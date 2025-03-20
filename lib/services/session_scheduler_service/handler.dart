@@ -1,5 +1,8 @@
+import 'dart:async';
+import 'dart:collection';
 import 'dart:convert';
 
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:picto_frontend/config/app_config.dart';
 import 'package:picto_frontend/services/session_scheduler_service/location_message.dart';
@@ -10,6 +13,7 @@ import 'package:stomp_dart_client/stomp_dart_client.dart';
 class SessionSchedulerHandler extends GetxController {
   String baseUrl = "${AppConfig.httpUrl}:8084/session-scheduler";
   late StompClient _stompClient;
+  late Timer _timer;
   RxBool connected = false.obs;
   Function? unsubscribeFunction;
 
@@ -29,16 +33,24 @@ class SessionSchedulerHandler extends GetxController {
   }
 
   void connectWebSocket() async {
+    // 접속 중인지 확인
     if (_stompClient.connected) {
       print("[INFO] already connected\n");
       connected.value = true;
       return;
     }
 
+    // 연결 시도 및 타이머 등록
     try {
       _stompClient.activate();
       await Future.delayed(Duration(seconds: AppConfig.socketConnectionWaitSec));
       if (!_stompClient.connected) return;
+      // 5초마다 위치 전송
+      Timer.periodic(Duration(seconds: AppConfig.locationSendPeriod), (timer) async {
+        _timer = timer;
+        Position position = await Geolocator.getCurrentPosition();
+        sendLocation(UserManagerHandler().ownerId!, position.latitude, position.longitude);
+      });
       print("[INFO] web socket activate\n");
       connected.value = true;
     } catch (e) {
@@ -46,11 +58,12 @@ class SessionSchedulerHandler extends GetxController {
     }
   }
 
-  void disconnectWebSocket() {  
+  void disconnectWebSocket() {
     if (unsubscribeFunction != null) {
       unsubscribeFunction!();
       print("[INFO] session unsubscribed");
     }
+    _timer.cancel();
     _stompClient.deactivate();
     connected.value = false;
     print("[INFO] web socket inactivate");
@@ -69,7 +82,7 @@ class SessionSchedulerHandler extends GetxController {
       callback: (StompFrame frame) => {
         // 구독한 세션으로부터 전달 받은 메시지 처리
         // -> 화면에 반영 -> photo view model 생성 -> 리스트 추가 -> 화면 반영
-        print("[INFO]${frame.body}\n")
+        print("[INFO] ${frame.body}\n")
       },
     );
     print("[INFO] subscribe success\n");
@@ -81,7 +94,7 @@ class SessionSchedulerHandler extends GetxController {
 
   // 위치 정보 전송 -> 세션 스케줄러에서 반영
   Future<void> sendLocation(int senderId, double lat, double lng) async {
-    print('위치 전송 중 - 사용자: $senderId, 위도: $lat, 경도: $lng');
+    print('[INFO]위치 전송 중 - 사용자: $senderId, 위도: $lat, 경도: $lng');
 
     try {
       final message = LocationMsg(

@@ -4,4 +4,7 @@ class PhotoStoreHandler {
   factory PhotoStoreHandler() {
     return _handler;
   }
+
+  // 사진 조회
+
 }

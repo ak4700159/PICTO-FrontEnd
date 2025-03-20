@@ -9,8 +9,22 @@ class GoogleMapViewModel extends GetxController {
   final Completer<GoogleMapController> _controller = Completer<GoogleMapController>();
   RxDouble currentLat = 0.0.obs;
   RxDouble currentLng = 0.0.obs;
+  int currentStep = 0;
   late String mapStyleString;
-  late CameraPosition initCameraPos;
+  late CameraPosition currentCameraPos;
+  // 지역대표 사진(줌에 따라 변화)
+  // zoom [max:] ? [min:]
+  // 단계 [large:도/특별시/광역시] ? [middle:시/군/구] ? [small:읍/면/동]
+  RxSet<Marker> representativePhotos = <Marker>{}.obs;
+
+  // 3km 이내 주변 사진(사용자 현재 위치 + 낮은 단계 줌배율인 경우)
+  RxSet<Marker> aroundPhotos = <Marker>{}.obs;
+
+  // 내 사진(항시)
+  RxSet<Marker> myPhotos = <Marker>{}.obs;
+
+  // 공유폴더 사진(항시)
+  RxSet<Marker> folderPhotos = <Marker>{}.obs;
 
   @override
   void onInit() {
@@ -21,12 +35,21 @@ class GoogleMapViewModel extends GetxController {
     super.onInit();
   }
 
+  Set<Marker> returnMarkerAccordingToZoom() {
+    switch(currentCameraPos.zoom) {
+
+    }
+    return folderPhotos;
+  }
+
+  void onCameraMove(CameraPosition pos) {
+    currentCameraPos = pos;
+  }
+
   void setController(GoogleMapController controller) {
     if (!_controller.isCompleted) {
       _controller.complete(controller); // 최초 1회만 실행됨
     }
-
-    // 스트림 연결 -> 위치 정보를
   }
 
   Future<void> getPermission() async {
@@ -48,7 +71,7 @@ class GoogleMapViewModel extends GetxController {
     Position position = await Geolocator.getCurrentPosition();
     currentLat.value = position.latitude;
     currentLng.value = position.longitude;
-    initCameraPos = CameraPosition(
+    currentCameraPos = CameraPosition(
       target: LatLng(currentLat.value, currentLng.value),
       zoom: 14.4746,
     );

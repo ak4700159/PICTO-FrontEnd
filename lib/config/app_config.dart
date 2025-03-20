@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:picto_frontend/config/user_config.dart';
 import 'package:picto_frontend/screens/map/map_view_model.dart';
-import 'package:picto_frontend/screens/map/sub_screen/google_map/marker_manager.dart';
+import 'package:picto_frontend/screens/map/sub_screen/google_map/marker_converter.dart';
 import 'package:picto_frontend/screens/profile/profile_view_model.dart';
 
 import '../screens/login/login_view_model.dart';
@@ -30,6 +30,9 @@ class AppConfig {
 
   static const int socketConnectionWaitSec = 1;
 
+  // location send period
+  static const int locationSendPeriod = 10;
+
   // theme data
   static const Color primarySeedColor = Color(0xFF6750A4);
   static const Color secondarySeedColor = Color(0xFF3871BB);
@@ -48,7 +51,6 @@ class AppConfig {
     final loginViewModel = Get.put<LoginViewModel>(LoginViewModel());
 
     // 로그인 이후 사용될 컨트롤러 ----------------------
-    final markerManager = Get.put<MarkerManager>(MarkerManager());
     final selectionViewModel = Get.put<SelectionBarViewModel>(SelectionBarViewModel());
     final mapViewModel = Get.put<MapViewModel>(MapViewModel());
 

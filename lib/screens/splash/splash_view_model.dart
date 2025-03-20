@@ -67,12 +67,24 @@ class SplashViewModel extends GetxController {
   }
 
   Future<void> setUserConfigThroughToken({required bool isAccessToken}) async {
-    statusMsg.value = isAccessToken ? "엑세스 토큰 전달..." : "리프레쉬 트콘 전달...";
-    await UserManagerHandler().setUserAllInfo(isAccessToken);
-    await Future.delayed(Duration(seconds: AppConfig.maxLatency));
-    // 엑세스 토큰 정상 작동
-    socketInterceptor.callSession(connected: true);
-    Get.offNamed('/map');
+    try {
+      statusMsg.value = isAccessToken ? "엑세스 토큰 전달..." : "리프레쉬 트콘 전달...";
+      await UserManagerHandler().setUserAllInfo(isAccessToken);
+      await Future.delayed(Duration(seconds: AppConfig.maxLatency));
+      // 엑세스 토큰 정상 작동
+      socketInterceptor.callSession(connected: true);
+      Get.offNamed('/map');
+    } on DioException catch(e){
+      print("[WARN]token error : ${e.response?.data}");
+      // 리프레시 토큰 만료된 경우
+      if(e.response?.data.contains("refresh")){
+        Get.offNamed('/login');
+      } else {
+        // 1. 리프레시 토큰 만료되지 않은 경우 -> 엑세스 토큰 재발행
+        // 2. 엑세스 토큰 만료된 경우
+        rethrow;
+      }
+    }
   }
 
     // 현재 가장 큰 문제 : 해당 로직 작동 X
@@ -87,9 +99,14 @@ class SplashViewModel extends GetxController {
       print("[INFO]NEW Access-Token -> $newAccessToken");
       UserManagerHandler().accessToken = newAccessToken;
       await preferences.setString("Access-Token", newAccessToken);
-      setUserConfigThroughToken(isAccessToken: true);
+      try{
+        setUserConfigThroughToken(isAccessToken: true);
+      } on Exception catch(e) {
+        // 엑세스 토큰 발행 문제.
+        print('[ERRO]New access token wrong : ${UserManagerHandler().accessToken}');
+        Get.offNamed('/login');
+      }
       await Future.delayed(Duration(seconds: AppConfig.maxLatency));
-      Get.offNamed('/map');
     } else {
       // 리프레쉬 토큰 만료
       Get.offNamed('/login');

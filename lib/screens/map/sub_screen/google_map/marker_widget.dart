@@ -1,0 +1,51 @@
+import 'dart:typed_data';
+
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:picto_frontend/config/app_config.dart';
+
+// 마커의 종류
+// 1. 내 사진
+// 2. 공유폴더에 올린 다른 사람 사진
+// 3. 지역 대표 사진
+// 4. 내 주변 사진
+
+// 실제 화면에 보여질 위젯
+class MarkerWidget extends StatelessWidget {
+  MarkerWidget({super.key, required this.imageData, required this.type});
+  Uint8List? imageData;
+  int type;
+
+  @override
+  Widget build(BuildContext context) {
+    final borderRadius = BorderRadius.circular(20);
+    Color borderColor = switch(type) {
+      1 => Colors.red,
+      2 => Colors.blue,
+      3 => AppConfig.mainColor,
+      _ => Colors.grey
+    };
+
+    return Container(
+      padding: EdgeInsets.all(8.0),
+      decoration: BoxDecoration(
+        color: borderColor,
+        borderRadius: borderRadius,
+        boxShadow: <BoxShadow>[BoxShadow(color: Color.fromRGBO(0, 0, 0, 0.57), blurRadius: 5)],
+      ),
+      child: ClipRRect(
+        borderRadius: borderRadius,
+        child: imageData != null
+            ? Image.memory(
+                imageData ?? Uint8List.fromList([0]),
+                cacheWidth: 40,
+              )
+            : Image.asset(
+                'assets/images/picto_logo.png',
+                // 비율에 맞게 미리 이미지 resize
+                cacheWidth: 80,
+              ),
+      ),
+    );
+  }
+}
