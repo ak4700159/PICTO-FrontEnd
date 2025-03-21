@@ -24,6 +24,8 @@ dependencies:
   debounce_throttle: ^2.0.0
   dropdown_button2: ^2.3.9
   widget_to_marker: ^1.0.6
+  mime: ^2.0.0
+  http_parser: ^4.1.2
 
 dev_dependencies:
   flutter_test:

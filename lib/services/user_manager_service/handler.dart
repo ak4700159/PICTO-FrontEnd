@@ -14,7 +14,9 @@ import '../../config/user_config.dart';
 class UserManagerHandler {
   // private 생성자 선언 -> 외부에서 해당 클래스의 생성자 생성을 막는다.
   UserManagerHandler._();
+
   static final UserManagerHandler _handler = UserManagerHandler._();
+
   factory UserManagerHandler() {
     return _handler;
   }
@@ -30,8 +32,7 @@ class UserManagerHandler {
         receiveTimeout: const Duration(milliseconds: 3000)),
   )..interceptors.add(CustomInterceptor());
 
-  void initSettings(
-      String? localAccessToken, String? localRefreshToken, int? localOwnerId) {
+  void initSettings(String? localAccessToken, String? localRefreshToken, int? localOwnerId) {
     accessToken = localAccessToken;
     refreshToken = localRefreshToken;
     ownerId = localOwnerId;
@@ -143,9 +144,42 @@ class UserManagerHandler {
     return Future<bool>.value(false);
   }
 
-// 사용자 정보 수정
+  // 태그 수정
+  Future<void> modifiedTag(List<String> tagNames) async {
+    String hostUrl = "$baseUrl/tag";
+    try {
+      final response = await dio.patch(
+        hostUrl,
+        data: jsonEncode(
+          {
+            "userId": ownerId,
+            "tagNames": tagNames,
+          },
+        ),
+      );
+    } on DioException catch (e) {
+      print("[ERROR] modified tag http error");
+    }
+  }
 
-// 태그 수정
+  // 필터 수정
+  Future<void> modifiedFilter(String sort, String period) async {
+    String hostUrl = "$baseUrl/filter";
+    try {
+      final response = await dio.patch(
+        hostUrl,
+        data: jsonEncode(
+          {
+            "userId": ownerId,
+            "sort": sort,
+            "period": period,
+          },
+        ),
+      );
+    } on DioException catch(e) {
+      print("[ERROR] modified filter http error");
+    }
+  }
 
 // 즐겨찾기 추가, 해제
 
