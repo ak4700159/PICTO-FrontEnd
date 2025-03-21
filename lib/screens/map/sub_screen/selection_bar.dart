@@ -16,35 +16,27 @@ class SelectionBar extends StatelessWidget {
       width: context.mediaQuery.size.width,
       height: context.mediaQuery.size.height * 0.15,
       color: Colors.transparent,
-      child: Column(
-        children: [
-          Container(
-            width: context.mediaQuery.size.width,
-            height: context.mediaQuery.size.height * 0.05,
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                PictoTextLogo(),
-                Padding(
-                  padding: const EdgeInsets.all(3.0),
-                  child: Obx(() => _getDropDownButton("sort", context)),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(3.0),
-                  child: Obx(() => _getDropDownButton("period", context)),
-                ),
-                SizedBox(
-                  height: context.mediaQuery.size.height * 0.04,
-                  width: context.mediaQuery.size.height * 0.04,
-                  child: _getTagFloatingButton(),
-                ),
-              ],
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            PictoTextLogo(),
+            Padding(
+              padding: const EdgeInsets.all(3.0),
+              child: Obx(() => _getDropDownButton("sort", context)),
             ),
-          )
-        ],
+            Padding(
+              padding: const EdgeInsets.all(3.0),
+              child: Obx(() => _getDropDownButton("period", context)),
+            ),
+            SizedBox(
+              height: context.mediaQuery.size.height * 0.04,
+              width: context.mediaQuery.size.height * 0.04,
+              child: _getTagFloatingButton(),
+            ),
+          ],
+        ),
       ),
     );
   }

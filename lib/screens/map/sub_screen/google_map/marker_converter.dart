@@ -13,6 +13,6 @@ class MarkerConverter{
 
   // photo manager api 호출 후 Photo json 입력
   // PhotoId를 통해 사진 데이터 다운로드(photo store api 호출)
-  // PictoMarker 변환 -> 이전 Set과 비교하여 겹치는 사진이 있는지 확인(자료형이 집합이여서 단순 추가만)
+  // PictoMarker 변환 -> 이전 Set과 비교하여 겹치는 사진이 있는지 확인(자료형이 집합이여서 고려 x)
   // Google Marker로 변환
 }

@@ -4,12 +4,15 @@ import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:picto_frontend/screens/map/sub_screen/google_map/marker_converter.dart';
 
 class GoogleMapViewModel extends GetxController {
   final Completer<GoogleMapController> _controller = Completer<GoogleMapController>();
   RxDouble currentLat = 0.0.obs;
   RxDouble currentLng = 0.0.obs;
+  RxDouble currentZoom = 0.0.obs;
   int currentStep = 0;
+  MarkerConverter _converter = MarkerConverter();
   late String mapStyleString;
   late CameraPosition currentCameraPos;
   // 지역대표 사진(줌에 따라 변화)
@@ -26,6 +29,10 @@ class GoogleMapViewModel extends GetxController {
   // 공유폴더 사진(항시)
   RxSet<Marker> folderPhotos = <Marker>{}.obs;
 
+  // 현재 선택된 마커들
+  RxSet<Marker> currentMarkers = <Marker>{}.obs;
+
+
   @override
   void onInit() {
     // 지도 양식 로딩
@@ -35,15 +42,21 @@ class GoogleMapViewModel extends GetxController {
     super.onInit();
   }
 
+  // 현재 배율에 따라 상태 변화
   Set<Marker> returnMarkerAccordingToZoom() {
-    switch(currentCameraPos.zoom) {
+    switch(currentZoom.value) {
 
     }
     return folderPhotos;
   }
 
+
+
+
   void onCameraMove(CameraPosition pos) {
     currentCameraPos = pos;
+    currentZoom.value = pos.zoom;
+
   }
 
   void setController(GoogleMapController controller) {
@@ -71,6 +84,7 @@ class GoogleMapViewModel extends GetxController {
     Position position = await Geolocator.getCurrentPosition();
     currentLat.value = position.latitude;
     currentLng.value = position.longitude;
+    currentZoom.value = 14.4746;
     currentCameraPos = CameraPosition(
       target: LatLng(currentLat.value, currentLng.value),
       zoom: 14.4746,

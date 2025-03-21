@@ -30,7 +30,6 @@ class PictoMarker {
 
   // 실제 이미지
   Future<Marker> toGoogleMarker() async {
-    switch (type) {}
     return Marker(
       position: LatLng(photo.lat, photo.lng),
       markerId: MarkerId(photo.photoId.toString()),
@@ -41,6 +40,8 @@ class PictoMarker {
         logicalSize: const Size(150, 150),
         imageSize: const Size(150, 150),
       ),
+      // 커스텀 InfoWindow 만드는 법 찾는 중
+      infoWindow: InfoWindow(title: photo.tag),
     );
   }
 }
