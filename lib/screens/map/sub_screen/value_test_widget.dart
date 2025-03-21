@@ -17,12 +17,12 @@ class ValueTestWidget extends StatelessWidget {
       children: [
         Obx(
           () => Text(
-            '[zoom] ${googleMapViewModel.currentZoom.value}',
+            '[zoom] ${googleMapViewModel.currentZoom.value.toStringAsFixed(3)}',
           ),
         ),
         Obx(
           () => Text(
-            '[pos] lat : ${googleMapViewModel.currentLat.value}/ lng : ${googleMapViewModel.currentLng.value}',
+            '[pos] lat : ${googleMapViewModel.currentLat.value.toStringAsFixed(3)}/ lng : ${googleMapViewModel.currentLng.value.toStringAsFixed(3)}',
           ),
         ),
         Obx(() => sessionController.connected.value

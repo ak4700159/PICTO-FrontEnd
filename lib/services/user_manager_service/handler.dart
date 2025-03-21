@@ -39,15 +39,15 @@ class UserManagerHandler {
   }
 
   // 회원가입
-  Future<void> signup(User newUser, double lat, double lng) async {
+  Future<void> signup({required User newUser, required double lat, required double lng}) async {
     String hostUrl = "$baseUrl/signup";
-    final response = await dio.post(hostUrl, data: {
+    final response = await dio.post(hostUrl, data: jsonEncode({
       'email': newUser.email,
       'password': newUser.password,
       'name': newUser.name,
       'lat': lat,
       'lng': lng,
-    });
+    }));
     return;
   }
 

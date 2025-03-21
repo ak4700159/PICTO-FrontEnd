@@ -40,6 +40,8 @@ class LoginViewModel extends GetxController {
 
     // 로그인 성공! 설정 초기화 후 메인 화면 이동
     final splashController = Get.find<SplashViewModel>();
+    UserManagerHandler().accessToken = response.accessToken;
+    UserManagerHandler().refreshToken = response.refreshToken;
     splashController.setUserConfigThroughToken(isAccessToken: true);
   }
 }

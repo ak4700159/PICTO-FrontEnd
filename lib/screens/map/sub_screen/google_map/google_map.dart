@@ -29,7 +29,7 @@ class CustomGoogleMap extends StatelessWidget {
         ),
         Column(
           children: [
-            TopBox(),
+            TopBox(size : 0.1),
             SelectionBar(),
             ValueTestWidget(),
           ],

@@ -7,6 +7,7 @@ import 'package:picto_frontend/screens/map/sub_screen/google_map/marker_converte
 import 'package:picto_frontend/screens/profile/profile_view_model.dart';
 
 import '../screens/login/login_view_model.dart';
+import '../screens/login/sub_screen/register_view_model.dart';
 import '../screens/map/sub_screen/google_map/google_map_view_model.dart';
 import '../screens/map/sub_screen/selection_bar_view_model.dart';
 import '../screens/splash/splash_view_model.dart';
@@ -44,6 +45,8 @@ class AppConfig {
 
   // GetX 등록
   static void enrollGetxController () {
+    final registerViewModle = Get.put<RegisterViewModel>(RegisterViewModel());
+
     // 필수 컨트롤러 ----------------------
     final sessionHandler = Get.put<SessionSchedulerHandler>(SessionSchedulerHandler());
     final splashViewModel = Get.put<SplashViewModel>(SplashViewModel());
