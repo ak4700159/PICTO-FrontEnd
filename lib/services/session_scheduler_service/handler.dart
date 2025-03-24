@@ -94,7 +94,7 @@ class SessionSchedulerHandler extends GetxController {
 
   // 위치 정보 전송 -> 세션 스케줄러에서 반영
   Future<void> sendLocation(int senderId, double lat, double lng) async {
-    print('[INFO]위치 전송 중 - 사용자: $senderId, 위도: $lat, 경도: $lng');
+    print('[INFO] sending location - USER ID: $senderId, lat: $lat, lng: $lng');
 
     try {
       final message = LocationMsg(

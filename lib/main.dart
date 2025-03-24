@@ -35,7 +35,7 @@ class Picto extends StatelessWidget {
       title: 'PICTO APP',
       theme: PictoThemeData.init(),
       getPages: PageRouter.getPages(),
-      initialRoute: '/login',
+      initialRoute: '/splash',
       debugShowCheckedModeBanner: false,
     );
   }

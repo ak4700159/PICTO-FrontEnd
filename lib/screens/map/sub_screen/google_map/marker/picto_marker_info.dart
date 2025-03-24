@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../config/app_config.dart';
+import '../../../../../config/app_config.dart';
 
 
 // 아직 미완성 -> 자료 조사중

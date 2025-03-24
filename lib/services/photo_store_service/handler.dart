@@ -1,6 +1,4 @@
-import 'dart:io';
-import 'dart:nativewrappers/_internal/vm/lib/typed_data_patch.dart';
-
+import 'dart:typed_data';
 import 'package:dio/dio.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:mime/mime.dart';

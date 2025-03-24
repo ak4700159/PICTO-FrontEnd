@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:picto_frontend/config/user_config.dart';
 import 'package:picto_frontend/screens/map/map_view_model.dart';
-import 'package:picto_frontend/screens/map/sub_screen/google_map/marker_converter.dart';
+import 'package:picto_frontend/screens/map/sub_screen/google_map/marker/marker_converter.dart';
 import 'package:picto_frontend/screens/profile/profile_view_model.dart';
 
 import '../screens/login/login_view_model.dart';

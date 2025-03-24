@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ffi';
 
 import 'package:debounce_throttle/debounce_throttle.dart';
 import 'package:dio/dio.dart';
@@ -75,15 +76,11 @@ class SplashViewModel extends GetxController {
       socketInterceptor.callSession(connected: true);
       Get.offNamed('/map');
     } on DioException catch(e){
-      print("[WARN]token error : ${e.response?.data}");
-      // 리프레시 토큰 만료된 경우
-      if(e.response?.data.contains("refresh")){
-        Get.offNamed('/login');
-      } else {
-        // 1. 리프레시 토큰 만료되지 않은 경우 -> 엑세스 토큰 재발행
-        // 2. 엑세스 토큰 만료된 경우
-        rethrow;
-      }
+      // 1. 리프레시 토큰 만료되지 않은 경우 -> 엑세스 토큰 재발행
+      // 2. 엑세스 토큰 만료된 경우
+      // print("[WARN]token error : ${e.response?.data}");
+      // throw DioException(requestOptions: e.requestOptions);
+      rethrow;
     }
   }
 
@@ -99,16 +96,19 @@ class SplashViewModel extends GetxController {
       print("[INFO]NEW Access-Token -> $newAccessToken");
       UserManagerHandler().accessToken = newAccessToken;
       await preferences.setString("Access-Token", newAccessToken);
-      try{
-        setUserConfigThroughToken(isAccessToken: true);
-      } on Exception catch(e) {
+      try {
+        await setUserConfigThroughToken(isAccessToken: true);
+      } on DioException catch(e) {
         // 엑세스 토큰 발행 문제.
-        print('[ERRO]New access token wrong : ${UserManagerHandler().accessToken}');
+        print('[ERROR]New access token wrong : ${UserManagerHandler().accessToken}');
+        statusMsg.value = "서버 오류 : 엑세스 토큰 발행 문제";
+        await Future.delayed(Duration(seconds: AppConfig.stopScreenSec));
         Get.offNamed('/login');
       }
-      await Future.delayed(Duration(seconds: AppConfig.maxLatency));
     } else {
-      // 리프레쉬 토큰 만료
+      print('[ERROR]server error');
+      statusMsg.value = "서버 오류 : 잠시 후 이용해주세요";
+      await Future.delayed(Duration(seconds: AppConfig.stopScreenSec + 1));
       Get.offNamed('/login');
     }
   }

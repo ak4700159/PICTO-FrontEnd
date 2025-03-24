@@ -94,7 +94,6 @@ class UserManagerHandler {
               }),
       );
     } on DioException catch (e) {
-      // 토큰 저장
       rethrow;
     }
     // 불러온 데이터를 view model에 입력
@@ -107,7 +106,7 @@ class UserManagerHandler {
     final userConfig = Get.find<UserConfig>();
     userConfig.convertFromJson(response.data["userSetting"]);
 
-    // response["folderPhotos"]; > folder view model
+    // response["folderPhotos"]; > folder view model required
   }
 
   // 토큰 검증
@@ -137,8 +136,7 @@ class UserManagerHandler {
   Future<bool> duplicatedEmail(String email) async {
     String hostUrl = "$baseUrl/email/$email";
     final response = await dio.get(hostUrl);
-    Map result = jsonDecode(response.data.toString());
-    if (result["result"] == "true") {
+    if (jsonDecode(response.data) == true) {
       return Future<bool>.value(true);
     }
     return Future<bool>.value(false);

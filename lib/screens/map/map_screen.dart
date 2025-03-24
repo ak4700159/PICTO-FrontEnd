@@ -1,11 +1,15 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:picto_frontend/config/app_config.dart';
 import 'package:picto_frontend/screens/folder/folder_screen.dart';
 import 'package:picto_frontend/screens/map/map_view_model.dart';
 import 'package:picto_frontend/screens/map/sub_screen/google_map/google_map.dart';
+import 'package:picto_frontend/screens/map/sub_screen/google_map/google_map_view_model.dart';
 import 'package:picto_frontend/screens/map/sub_screen/selection_bar.dart';
 import 'package:picto_frontend/screens/map/sub_screen/selection_bar_view_model.dart';
 import 'package:picto_frontend/screens/photo/photo_book_screen.dart';
@@ -39,22 +43,12 @@ class MapScreen extends StatelessWidget {
       ),
       bottomNavigationBar: _getBottomNavigationBar(context),
       body: SizedBox(
-        child: Stack(
-          children: [
-            Obx(() => _getMainFrame(context)),
-            Positioned(
-              bottom: context.mediaQuery.size.height * 0.02,
-                left: context.mediaQuery.size.width * 0.8,
-                child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: _getBottomRightFloatingButtons(context),
-            ))
-          ],
-        ),
+        child: Obx(() => _getMainFrame(context)),
       ),
     );
   }
 
+  // 하단 네비게이션바 호출마다 실행되는 함수
   Widget _getMainFrame(BuildContext context) {
     final mapViewModel = Get.find<MapViewModel>();
     return switch (mapViewModel.navigationBarCurrentIndex.value) {
@@ -68,33 +62,6 @@ class MapScreen extends StatelessWidget {
           child: Text('error'),
         ),
     };
-  }
-
-  List<Widget> _getBottomRightFloatingButtons(BuildContext context) {
-    return [
-      Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: FloatingActionButton(
-          onPressed: () {
-            // 사진 공유 화면으로 이동
-          },
-          backgroundColor: AppConfig.mainColor,
-          heroTag: "share",
-          child: Icon(Icons.add, color: AppConfig.backgroundColor, size: 45,),
-        ),
-      ),
-      Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: FloatingActionButton(
-          onPressed: () {
-            // 테스트 버튼 주입
-          },
-          backgroundColor: AppConfig.mainColor,
-          heroTag: "reload",
-          child: Icon(Icons.cached, color: AppConfig.backgroundColor, size: 35,),
-        ),
-      ),
-    ];
   }
 
   Widget _getBottomNavigationBar(BuildContext context) {

@@ -14,7 +14,7 @@ class SelectionBar extends StatelessWidget {
     // TODO: implement build
     return Container(
       width: context.mediaQuery.size.width,
-      height: context.mediaQuery.size.height * 0.15,
+      height: context.mediaQuery.size.height * 0.08,
       color: Colors.transparent,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
