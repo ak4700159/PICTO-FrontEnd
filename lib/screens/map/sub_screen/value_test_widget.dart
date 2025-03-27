@@ -21,7 +21,7 @@ class ValueTestWidget extends StatelessWidget {
               padding: const EdgeInsets.all(4.0),
               child: Obx(
                 () => Text(
-                  '[zoom] ${googleMapViewModel.currentZoom.value.toStringAsFixed(3)}',
+                  '[zoom] ${googleMapViewModel.currentZoom.value.toStringAsFixed(3)} : ${googleMapViewModel.currentStep}',
                 ),
               ),
             ),

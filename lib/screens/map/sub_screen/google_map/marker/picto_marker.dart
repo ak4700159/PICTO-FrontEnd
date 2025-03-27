@@ -7,6 +7,14 @@ import 'package:widget_to_marker/widget_to_marker.dart';
 import '../../../../../models/photo.dart';
 import 'marker_widget.dart';
 
+enum PictoMarkerType{
+  userPhoto,
+  folderPhoto,
+  aroundPhoto,
+  representativePhoto,
+  userPos,
+}
+
 class PictoMarker {
   // 마커의 종류
   // 1. 내 사진
@@ -14,7 +22,7 @@ class PictoMarker {
   // 3. 지역 대표 사진
   // 4. 내 주변 사진
   // 5. 사용자 위치
-  int type;
+  PictoMarkerType type;
 
   // not null == 실제 이미지 데이터를 메모리에 적재
   Uint8List? imageData;
@@ -22,7 +30,7 @@ class PictoMarker {
 
   PictoMarker({required this.photo, required this.type});
 
-  factory PictoMarker.fromPhoto(Photo photo, int type) {
+  factory PictoMarker.fromPhoto(Photo photo, PictoMarkerType type) {
     return PictoMarker(
       type: type,
       photo: photo,

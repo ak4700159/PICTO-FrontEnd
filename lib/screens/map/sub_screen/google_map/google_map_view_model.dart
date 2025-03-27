@@ -53,6 +53,8 @@ class GoogleMapViewModel extends GetxController {
 
   // 현재 배율에 따라 상태 변화 //
   Set<Marker> returnMarkerAccordingToZoom() {
+    // 1.
+    // 2. Marker Converter 를 통해 실제 구글 마커로 띄울 수 있도록 사진 다운로드
     switch (currentStep) {
 
     }
@@ -75,7 +77,7 @@ class GoogleMapViewModel extends GetxController {
       currentStep = "large";
     }
 
-    // 화면 중앙 정보 로딩 -> 최적화에 필요
+    // 화면 중앙 정보 로딩
     try {
       LatLngBounds bounds = await _googleMapController!.getVisibleRegion();
       currentScreenCenterLat.value = (bounds.northeast.latitude + bounds.southwest.latitude) / 2;
@@ -102,7 +104,6 @@ class GoogleMapViewModel extends GetxController {
     ));
   }
 
-  // 권환 획득
   Future<void> getPermission() async {
     // 위치 정보 획득 가능한지 확인
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
@@ -122,10 +123,10 @@ class GoogleMapViewModel extends GetxController {
     Position position = await Geolocator.getCurrentPosition();
     currentLat.value = position.latitude;
     currentLng.value = position.longitude;
-    currentZoom.value = 14.4746;
+    currentZoom.value = 14;
     currentCameraPos = CameraPosition(
       target: LatLng(currentLat.value, currentLng.value),
-      zoom: 14.4746,
+      zoom: 14,
     );
     print("[INFO] now location : ${currentLat.value}/${currentLng.value}\n");
 

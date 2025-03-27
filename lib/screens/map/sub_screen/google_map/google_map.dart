@@ -19,7 +19,7 @@ class CustomGoogleMap extends StatelessWidget {
     return Stack(
       children: [
         // 메인 지도 설정
-        GoogleMap(
+        Obx(() => GoogleMap(
           zoomControlsEnabled: false,
           compassEnabled: false,
           mapType: MapType.normal,
@@ -30,7 +30,7 @@ class CustomGoogleMap extends StatelessWidget {
           markers: googleMapViewModel.returnMarkerAccordingToZoom(),
           // small[2~7], middle[7~12], large[12~17]
           minMaxZoomPreference: MinMaxZoomPreference(2, 17),
-        ),
+        )),
         // 상단 위젯
         Column(
           children: [
