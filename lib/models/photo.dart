@@ -10,7 +10,9 @@ class Photo {
   final double lat;
   final double lng;
   final String location;
+  // 어플리케이션에 등록할 때 시각
   final int registerDatetime;
+  // 사진을 공유할 때 시각
   final int updateDatetime;
   final bool? frameActive;
   final bool? sharedActive;

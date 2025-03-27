@@ -43,6 +43,7 @@ class SplashViewModel extends GetxController {
     super.onInit();
   }
 
+  // 어플리케이션 접속 후 처음으로 실행되는 함수
   Future<void> logging() async {
     // step1. 위치 권환 획득
     final googleMapController = Get.find<GoogleMapViewModel>();
