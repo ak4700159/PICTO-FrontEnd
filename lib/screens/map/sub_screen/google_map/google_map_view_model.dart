@@ -4,8 +4,11 @@ import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:picto_frontend/models/photo.dart';
 import 'package:picto_frontend/screens/map/sub_screen/google_map/marker/marker_converter.dart';
+import 'package:picto_frontend/screens/map/sub_screen/google_map/marker/marker_widget.dart';
 import 'package:picto_frontend/screens/map/sub_screen/google_map/marker/picto_marker.dart';
+import 'package:widget_to_marker/widget_to_marker.dart';
 
 class GoogleMapViewModel extends GetxController {
   // ChatGPT 방안 completer 사용하지 말고 GoogleMapController 직접 관리
@@ -20,7 +23,6 @@ class GoogleMapViewModel extends GetxController {
   StreamSubscription<Position>? _positionStreamSubscription;
   late String mapStyleString;
   late CameraPosition currentCameraPos;
-
 
   // 지역대표 사진(줌에 따라 변화)
   // small[2~7], middle[7~12], large[12~17]
@@ -40,23 +42,40 @@ class GoogleMapViewModel extends GetxController {
   RxSet<Marker> currentMarkers = <Marker>{}.obs;
 
   // 사용자 현재 위치 마커(small)
-  late PictoMarker userMarker;
+  late Marker userMarker;
 
   @override
-  void onInit() {
+  void onInit() async {
     // 지도 양식 로딩
     rootBundle.loadString('assets/map_styles/map_style.json').then((string) {
       mapStyleString = string;
     });
+    userMarker = Marker(
+      position: LatLng(currentLat.value, currentLng.value),
+      markerId: MarkerId("user"),
+      icon: await MarkerWidget(
+        type: PictoMarkerType.userPos,
+      ).toBitmapDescriptor(
+        logicalSize: const Size(150, 150),
+        imageSize: const Size(150, 150),
+      ),
+      // 커스텀 InfoWindow 만드는 법 찾는 중
+      infoWindow: InfoWindow(title: "현재 위치"),
+    );
     super.onInit();
   }
+
+  // Future<Uint8List> _loadAssetImageAsBytes(String path) async {
+  //   final ByteData byteData = await rootBundle.load(path);
+  //   return byteData.buffer.asUint8List();
+  // }
 
   // 현재 배율에 따라 상태 변화 //
   Set<Marker> returnMarkerAccordingToZoom() {
     // 1.
     // 2. Marker Converter 를 통해 실제 구글 마커로 띄울 수 있도록 사진 다운로드
     switch (currentStep) {
-
+      case "":
     }
     return currentMarkers;
   }
@@ -69,9 +88,9 @@ class GoogleMapViewModel extends GetxController {
 
     // small[2~7], middle[7~12], large[12~17]
     // 단계 [large:도/특별시/광역시] ? [middle:시/군/구] ? [small:읍/면/동]
-    if(pos.zoom >= 2 && pos.zoom <7) {
+    if (pos.zoom >= 2 && pos.zoom < 7) {
       currentStep = "small";
-    } else if(pos.zoom >= 7 && pos.zoom < 12) {
+    } else if (pos.zoom >= 7 && pos.zoom < 12) {
       currentStep = "middle";
     } else {
       currentStep = "large";
@@ -132,11 +151,59 @@ class GoogleMapViewModel extends GetxController {
 
     // 현재 위치 주소를 구독하기
     _positionStreamSubscription = Geolocator.getPositionStream().listen(
-          (Position position) {
-          currentLat.value = position.latitude;
-          currentLng.value = position.longitude;
-          print("[INFO] get current pos -> lat : ${currentLat.value} / lng : ${currentLng.value}");
+      (Position position) {
+        currentLat.value = position.latitude;
+        currentLng.value = position.longitude;
+        _updateUserMarker();
+        print("[INFO] get current pos -> lat : ${currentLat.value} / lng : ${currentLng.value}");
       },
     );
+  }
+
+  // 로그인 후 내 사진과 공유 폴더 사진 마커 변환
+  void initPhotos(List<dynamic> photos) async {
+    print("[INFO] init photo ====================");
+    List<Photo> initPhotos = photos
+        .map((photo) => Photo(
+            photoId: photo["photoId"],
+            folderId: photo["folderId"],
+            userId: photo["userId"],
+            photoPath: photo["photoPath"],
+            registerDatetime: photo["registerDatetime"],
+            updateDatetime: photo["updateDatetime"],
+            lat: photo["lat"],
+            lng: photo["lng"],
+            likes: photo["likes"],
+            views: photo["views"],
+            location: photo["location"],
+            tag: photo["tag"]))
+        .toList();
+
+    // Google Marker로 변환
+    myPhotos = _converter.convertToPictoMarker(initPhotos.where((photo) => photo.folderId == null).toList());
+    folderPhotos = _converter.convertToPictoMarker(initPhotos.where((photo) => photo.folderId != null).toList());
+    for (PictoMarker photo in myPhotos) {
+      currentMarkers.add(await photo.toGoogleMarker());
+    }
+    for (PictoMarker photo in folderPhotos) {
+      currentMarkers.add(await photo.toGoogleMarker());
+    }
+    currentMarkers.add(userMarker);
+  }
+
+  void _updateUserMarker() async {
+    userMarker = Marker(
+      markerId: const MarkerId("user"),
+      position: LatLng(currentLat.value, currentLng.value),
+      icon: await MarkerWidget(type: PictoMarkerType.userPos).toBitmapDescriptor(
+        logicalSize: const Size(150, 150),
+        imageSize: const Size(150, 150),
+      ),
+      infoWindow: const InfoWindow(title: "현재 위치"),
+    );
+
+    // 마커 셋에서 이전 것 제거 후 다시 추가
+    currentMarkers.removeWhere((marker) => marker.markerId.value == "user");
+    currentMarkers.add(userMarker);
   }
 }

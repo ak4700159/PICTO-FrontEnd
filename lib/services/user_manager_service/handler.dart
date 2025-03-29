@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:picto_frontend/config/app_config.dart';
 import 'package:picto_frontend/models/user.dart';
+import 'package:picto_frontend/screens/map/sub_screen/google_map/google_map_view_model.dart';
 import 'package:picto_frontend/screens/map/sub_screen/selection_bar_view_model.dart';
 import 'package:picto_frontend/screens/profile/profile_view_model.dart';
 import 'package:picto_frontend/services/http_interceptor.dart';
@@ -106,7 +107,9 @@ class UserManagerHandler {
     final userConfig = Get.find<UserConfig>();
     userConfig.convertFromJson(response.data["userSetting"]);
 
-    // response["folderPhotos"]; > folder view model required
+    // 내 사진 + 공유 폴더 사진 전부 로딩
+    final googleMapViewModel = Get.find<GoogleMapViewModel>();
+    googleMapViewModel.initPhotos(response.data["folderPhotos"]);
   }
 
   // 토큰 검증

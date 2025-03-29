@@ -22,17 +22,18 @@ class PhotoStoreHandler {
         connectTimeout: const Duration(milliseconds: 1000),
         contentType: Headers.jsonContentType,
         receiveTimeout: const Duration(milliseconds: 3000)),
-  )
-    ..interceptors.add(CustomInterceptor());
-
+  )..interceptors.add(CustomInterceptor());
 
   // 사진 조회
   Future<Uint8List> downloadPhoto(int photoId) async {
     final hostUrl = "$baseUrl/photos/download/$photoId";
-    try{
-      final response = await dio.get(hostUrl);
+    try {
+      final response = await dio.get(
+        hostUrl,
+        options: Options(responseType: ResponseType.bytes), // 🔥 핵심 포인트
+      );
       return response.data;
-    } on DioException catch(e) {
+    } on DioException catch (e) {
       print("[ERROR]photo download error : ${e.message}");
     }
     return Uint8List(0);
@@ -47,16 +48,15 @@ class PhotoStoreHandler {
     final hostUrl = "$baseUrl/photos";
     final mimeType = lookupMimeType(request.file.path) ?? 'application/octet-stream';
     final formData = FormData.fromMap({
-      'file': await MultipartFile.fromFile(
-          request.file.path, filename: request.file.path, contentType: MediaType.parse(mimeType)),
+      'file': await MultipartFile.fromFile(request.file.path,
+          filename: request.file.path, contentType: MediaType.parse(mimeType)),
       'request': MultipartFile.fromString(request.toJson(), contentType: MediaType('application', 'json')),
     });
 
     try {
-      final response = await dio.post(hostUrl, data:  formData);
+      final response = await dio.post(hostUrl, data: formData);
     } on DioException catch (e) {
       print("[ERROR]photo upload error : ${e.message}");
     }
   }
-
 }

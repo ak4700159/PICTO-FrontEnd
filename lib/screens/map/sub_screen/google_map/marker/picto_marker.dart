@@ -12,7 +12,7 @@ enum PictoMarkerType{
   folderPhoto,
   aroundPhoto,
   representativePhoto,
-  userPos,
+  userPos
 }
 
 class PictoMarker {
@@ -21,7 +21,7 @@ class PictoMarker {
   // 2. 공유폴더에 올린 다른 사람 사진
   // 3. 지역 대표 사진
   // 4. 내 주변 사진
-  // 5. 사용자 위치
+
   PictoMarkerType type;
 
   // not null == 실제 이미지 데이터를 메모리에 적재
@@ -46,8 +46,8 @@ class PictoMarker {
         imageData: imageData,
         type: type,
       ).toBitmapDescriptor(
-        logicalSize: const Size(150, 150),
-        imageSize: const Size(150, 150),
+        logicalSize: const Size(300, 300),
+        imageSize: const Size(300, 300),
       ),
       // 커스텀 InfoWindow 만드는 법 찾는 중
       infoWindow: InfoWindow(title: photo.tag),
