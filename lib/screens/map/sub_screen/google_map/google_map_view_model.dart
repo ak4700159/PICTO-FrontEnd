@@ -19,6 +19,7 @@ class GoogleMapViewModel extends GetxController {
   RxDouble currentScreenCenterLat = 0.0.obs;
   RxDouble currentScreenCenterLng = 0.0.obs;
   String currentStep = "";
+  bool isCurrentPosInScreen = true;
   MarkerConverter _converter = MarkerConverter();
   StreamSubscription<Position>? _positionStreamSubscription;
   late String mapStyleString;
@@ -27,7 +28,11 @@ class GoogleMapViewModel extends GetxController {
   // 지역대표 사진(줌에 따라 변화)
   // small[2~7], middle[7~12], large[12~17]
   // 단계 [large:도/특별시/광역시] ? [middle:시/군/구] ? [small:읍/면/동]
-  Set<PictoMarker> representativePhotos = <PictoMarker>{};
+  Map<String, Set<PictoMarker>> representativePhotos = {
+    "small": <PictoMarker>{},
+    "middle": <PictoMarker>{},
+    "large": <PictoMarker>{},
+  };
 
   // 3km 이내 주변 사진(small)
   Set<PictoMarker> aroundPhotos = <PictoMarker>{};
@@ -65,11 +70,6 @@ class GoogleMapViewModel extends GetxController {
     super.onInit();
   }
 
-  // Future<Uint8List> _loadAssetImageAsBytes(String path) async {
-  //   final ByteData byteData = await rootBundle.load(path);
-  //   return byteData.buffer.asUint8List();
-  // }
-
   // 현재 배율에 따라 상태 변화 //
   Set<Marker> returnMarkerAccordingToZoom() {
     // 1.
@@ -86,21 +86,33 @@ class GoogleMapViewModel extends GetxController {
     currentCameraPos = pos;
     currentZoom.value = pos.zoom;
 
-    // small[2~7], middle[7~12], large[12~17]
-    // 단계 [large:도/특별시/광역시] ? [middle:시/군/구] ? [small:읍/면/동]
-    if (pos.zoom >= 2 && pos.zoom < 7) {
-      currentStep = "small";
-    } else if (pos.zoom >= 7 && pos.zoom < 12) {
-      currentStep = "middle";
-    } else {
-      currentStep = "large";
-    }
-
     // 화면 중앙 정보 로딩
     try {
       LatLngBounds bounds = await _googleMapController!.getVisibleRegion();
       currentScreenCenterLat.value = (bounds.northeast.latitude + bounds.southwest.latitude) / 2;
       currentScreenCenterLng.value = (bounds.northeast.longitude + bounds.southwest.longitude) / 2;
+      final latLng = LatLng(currentScreenCenterLat.value, currentScreenCenterLng.value);
+
+      // small[2~7], middle[7~12], large[12~17]
+      // 단계 [large:도/특별시/광역시] ? [middle:시/군/구] ? [small:읍/면/동]
+      if (pos.zoom >= 2 && pos.zoom < 7) {
+        currentStep = "large";
+        isCurrentPosInScreen = true;
+        _updateAllMarker();
+      } else if (pos.zoom >= 7 && pos.zoom < 12) {
+        currentStep = "middle";
+        isCurrentPosInScreen = true;
+        _updateAllMarker();
+        // 화면 안에 있을 경우 주변 사진만 보여준다.
+      } else if (_isPointInsideBounds(latLng, bounds) && pos.zoom >= 12) {
+        currentStep = "small";
+        isCurrentPosInScreen = true;
+        _updateAllMarker();
+      } else {
+        currentStep = "small";
+        isCurrentPosInScreen = false;
+        _updateAllMarker();
+      }
     } catch (e) {
       print("[ERROR] acquired screen location fail");
     }
@@ -160,7 +172,7 @@ class GoogleMapViewModel extends GetxController {
     );
   }
 
-  // 로그인 후 내 사진과 공유 폴더 사진 마커 변환
+  // 로그인 후 내 사진과 공유 폴더 사진, 지역 대표 사진 마커 변환
   void initPhotos(List<dynamic> photos) async {
     print("[INFO] init photo ====================");
     List<Photo> initPhotos = photos
@@ -179,13 +191,20 @@ class GoogleMapViewModel extends GetxController {
             tag: photo["tag"]))
         .toList();
 
-    // Google Marker로 변환
-    myPhotos = _converter.convertToPictoMarker(initPhotos.where((photo) => photo.folderId == null).toList());
-    folderPhotos = _converter.convertToPictoMarker(initPhotos.where((photo) => photo.folderId != null).toList());
+    // 초기 화면에 필요한 사진 로드 (내 사진, 공유 폴더 사진, 주변 사진)
+    myPhotos = _converter
+        .convertToPictoMarker(initPhotos.where((photo) => photo.folderId == null).toList());
+    folderPhotos = _converter
+        .convertToPictoMarker(initPhotos.where((photo) => photo.folderId != null).toList());
+    aroundPhotos = await _converter.getAroundPhotos();
     for (PictoMarker photo in myPhotos) {
       currentMarkers.add(await photo.toGoogleMarker());
     }
     for (PictoMarker photo in folderPhotos) {
+      currentMarkers.add(await photo.toGoogleMarker());
+    }
+    _converter.downloadPhotos(aroundPhotos);
+    for (PictoMarker photo in aroundPhotos) {
       currentMarkers.add(await photo.toGoogleMarker());
     }
     currentMarkers.add(userMarker);
@@ -205,5 +224,30 @@ class GoogleMapViewModel extends GetxController {
     // 마커 셋에서 이전 것 제거 후 다시 추가
     currentMarkers.removeWhere((marker) => marker.markerId.value == "user");
     currentMarkers.add(userMarker);
+  }
+
+  // 마커 업데이트
+  Future<void> _updateAllMarker() async {
+    if (currentStep == "large") {
+      currentMarkers.refresh();
+
+    } else if (currentStep == "middle") {
+      currentMarkers.refresh();
+
+    } else if (currentStep == "small" && isCurrentPosInScreen) {
+      currentMarkers.refresh();
+
+    } else {
+      currentMarkers.refresh();
+
+    }
+  }
+
+  // 화면에 내 위치가 잡혀있는지 아닌지 검사
+  bool _isPointInsideBounds(LatLng point, LatLngBounds bounds) {
+    return bounds.southwest.latitude <= point.latitude &&
+        bounds.northeast.latitude >= point.latitude &&
+        bounds.southwest.longitude <= point.longitude &&
+        bounds.northeast.longitude >= point.longitude;
   }
 }

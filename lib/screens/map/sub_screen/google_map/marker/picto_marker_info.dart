@@ -1,22 +1,24 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:picto_frontend/screens/map/sub_screen/google_map/marker/picto_marker.dart';
 
 import '../../../../../config/app_config.dart';
-
 
 // 아직 미완성 -> 자료 조사중
 class PictoMarkerInfo extends StatelessWidget {
   PictoMarkerInfo({super.key, required this.type});
-  int type;
+
+  PictoMarkerType type;
 
   @override
   Widget build(BuildContext context) {
     final borderRadius = BorderRadius.circular(20);
-    Color borderColor = switch(type) {
-      1 => Colors.red,
-      2 => Colors.blue,
-      3 => AppConfig.mainColor,
-      _ => Colors.grey
+    Color borderColor = switch (type) {
+      PictoMarkerType.userPhoto => Colors.red,
+      PictoMarkerType.folderPhoto => Colors.blue,
+      PictoMarkerType.aroundPhoto => AppConfig.mainColor,
+      PictoMarkerType.representativePhoto => Colors.grey,
+      _ => Colors.white,
     };
 
     return Container(

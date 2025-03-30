@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:get/get.dart';
 import 'package:picto_frontend/screens/map/sub_screen/google_map/google_map_view_model.dart';
 import 'package:picto_frontend/screens/map/sub_screen/google_map/marker/picto_marker.dart';
@@ -27,11 +25,15 @@ class MarkerConverter {
     return _converter;
   }
 
+  // 한꺼번에 PictoMarker로 변환
   Set<PictoMarker> convertToPictoMarker(List<Photo> photos) {
-    Set<PictoMarker> pictoMarkers = photos.map((photo) => PictoMarker(
-          photo: photo,
-          type: photo.folderId != null ? PictoMarkerType.folderPhoto : PictoMarkerType.userPhoto,
-        )).toSet();
+    Set<PictoMarker> pictoMarkers = photos
+        .map((photo) => PictoMarker(
+              photo: photo,
+              type:
+                  photo.folderId != null ? PictoMarkerType.folderPhoto : PictoMarkerType.userPhoto,
+            ))
+        .toSet();
     pictoMarkers.forEach((pictoMarker) async {
       pictoMarker.imageData = await PhotoStoreHandler().downloadPhoto(pictoMarker.photo.photoId);
     });
@@ -43,6 +45,9 @@ class MarkerConverter {
     final googleMapViewModel = Get.find<GoogleMapViewModel>();
     try {
       List<Photo> aroundPhotos = await PhotoManagerHandler().getAroundPhotos();
+      return aroundPhotos
+          .map((photo) => PictoMarker(photo: photo, type: PictoMarkerType.aroundPhoto))
+          .toSet();
     } catch (e) {
       print("[ERROR] MarkerConverter error -> getAroundPhotos function error");
     }
@@ -50,12 +55,11 @@ class MarkerConverter {
   }
 
   // 지역대표 사진 획득 , 아직 최적화는 안되어 있음
-  Future<Set<PictoMarker>> getRepresentativePhotos() async {
-    final googleMapViewModel = Get.find<GoogleMapViewModel>();
+  Future<Set<PictoMarker>> getRepresentativePhotos(int count, String type) async {
     try {
       // 지역별, 좋아요순, 상위 10개 항목 검색
-      List<Photo> newRepresentativePhotos = await PhotoManagerHandler()
-          .getRepresentative(count: 10, eventType: "top", locationType: googleMapViewModel.currentStep);
+      List<Photo> newRepresentativePhotos = await PhotoManagerHandler().getRepresentative(
+          count: count, eventType: "top", locationType: type);
       return newRepresentativePhotos
           .map((photo) => PictoMarker.fromPhoto(photo, PictoMarkerType.representativePhoto))
           .toSet();
@@ -69,11 +73,16 @@ class MarkerConverter {
   void addAroundPhoto(Photo sharedPhoto) async {
     final googleMapViewModel = Get.find<GoogleMapViewModel>();
     try {
-      // 공유된 사진?
-      // List<Photo> combinedAroundPhotos = await PhotoManagerHandler().getRepresentative(count: 10, eventType: "top", locationType: googleMapViewModel.currentStep);
-      // return combinedAroundPhotos.map((photo) => PictoMarker.fromPhoto(photo, 4)).toList();
+      googleMapViewModel.aroundPhotos.add(PictoMarker(photo: sharedPhoto, type: PictoMarkerType.aroundPhoto));
     } catch (e) {
       print("[ERROR] MarkerConverter error -> addAroundPhoto function error");
     }
+  }
+
+  // 이미지 다운로드
+  void downloadPhotos(Set<PictoMarker> pictoMarkers) {
+      pictoMarkers.forEach((pictoMarker) async {
+        pictoMarker.imageData ??= await PhotoStoreHandler().downloadPhoto(pictoMarker.photo.photoId);
+      });
   }
 }

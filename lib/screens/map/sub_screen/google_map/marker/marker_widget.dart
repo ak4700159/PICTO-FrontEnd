@@ -33,14 +33,13 @@ class MarkerWidget extends StatelessWidget {
       color: _borderColor,
       border: Border.all(width: 1, color: _borderColor),
       borderRadius: BorderRadius.circular(50),
-      // boxShadow: <BoxShadow>[BoxShadow(color: Color.fromRGBO(0, 0, 0, 0.57), blurRadius: 5)],
+      boxShadow: <BoxShadow>[BoxShadow(color: Color.fromRGBO(0, 0, 0, 0.57), blurRadius: 5)],
     );
 
     return Container(
       padding: EdgeInsets.all(8.0),
       decoration: _decoration,
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(100),
         child: imageData != null
             ? Image.memory(
                 imageData ?? Uint8List.fromList([0]),
