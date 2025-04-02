@@ -1,7 +1,8 @@
 import 'package:get/get.dart';
 import 'package:debounce_throttle/debounce_throttle.dart';
+import 'package:picto_frontend/services/user_manager_service/handler.dart';
 
-import '../../../config/app_config.dart';
+import '../../config/app_config.dart';
 
 class SelectionBarViewModel extends GetxController {
   late Debouncer userDebouncer;
@@ -27,12 +28,13 @@ class SelectionBarViewModel extends GetxController {
 
   void changeSort(sort) {
     currentSelectedSort?.value = sort ?? "좋아요순";
-    // api 호출
+    UserManagerHandler().modifiedFilter(currentSelectedSort!.value, currentSelectedPeriod!.value);
+
   }
 
   void changePeriod(period) {
     currentSelectedPeriod?.value = period ?? "하루";
-    // api 호출
+    UserManagerHandler().modifiedFilter(currentSelectedSort!.value, currentSelectedPeriod!.value);
   }
 
   void convertFromJson(Map json){

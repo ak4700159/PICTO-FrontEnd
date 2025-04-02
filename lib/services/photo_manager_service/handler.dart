@@ -7,7 +7,9 @@ import '../http_interceptor.dart';
 
 class PhotoManagerHandler {
   PhotoManagerHandler._();
+
   static final PhotoManagerHandler _handler = PhotoManagerHandler._();
+
   factory PhotoManagerHandler() {
     return _handler;
   }
@@ -22,36 +24,36 @@ class PhotoManagerHandler {
 
   // 반경 3km 내 주변 사진 조회
   Future<List<Photo>> getAroundPhotos() async {
-    String hostUrl = "$baseUrl/around";
-    final userManagerHandler = UserManagerHandler();
+    String hostUrl = "$baseUrl/photos/around";
     try {
-      final response = await dio.get(hostUrl, data:{
-        "senderId" : userManagerHandler.ownerId
-      });
-      return response.data.map( (json) => Photo.fromJson(json)).toList();
-    } on DioException catch(e) {
-      print('[ERROR] around photo error');
+      final response = await dio.get(hostUrl, data: {"senderId": UserManagerHandler().ownerId});
+      return !response.data.isEmpty
+          ? response.data.map((json) => Photo.fromJson(json)).toList()
+          : <Photo>[];
+    } on DioException catch (e) {
+      print('[ERROR] around photo error : $e');
     }
-    return [];
+    return <Photo>[];
   }
 
   // 지역별 대표 사진 조회
   Future<List<Photo>> getRepresentative(
       {String? eventType, String? locationType, String? locationName, required int count}) async {
-    String hostUrl = "$baseUrl/representative";
+    String hostUrl = "$baseUrl/photos/representative";
     try {
-      final response = await dio.get(hostUrl, data:{
-        "eventType" : eventType,
-        "locationType" : locationType,
-        "locationName" : locationName,
-        "count" : count,
+      final response = await dio.get(hostUrl, data: {
+        "senderId" : UserManagerHandler().ownerId,
+        "eventType": eventType,
+        "locationType": locationType,
+        "locationName": locationName,
+        "count": count,
       });
-      return response.data.map( (json) => Photo.fromJson(json)).toList();
-    } on DioException catch(e) {
-      print('[ERROR] representative photo error');
+      return !response.data.isEmpty
+          ? response.data.map((json) => Photo.fromJson(json)).toList()
+          : <Photo>[];
+    } on DioException catch (e) {
+      print('[ERROR] representative photo error' + e.toString());
     }
-    return [];
+    return <Photo>[];
   }
 }
-
-

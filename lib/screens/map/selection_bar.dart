@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:picto_frontend/config/app_config.dart';
-import 'package:picto_frontend/screens/map/sub_screen/selection_bar_view_model.dart';
+import 'package:picto_frontend/screens/map/selection_bar_view_model.dart';
 import 'package:picto_frontend/widgets/picto_text_logo.dart';
 
 class SelectionBar extends StatelessWidget {

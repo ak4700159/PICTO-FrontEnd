@@ -1,8 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:picto_frontend/models/user.dart';
-import 'package:picto_frontend/screens/map/sub_screen/google_map/google_map_view_model.dart';
 import 'package:picto_frontend/services/user_manager_service/handler.dart';
+
+import '../../map/google_map/google_map_view_model.dart';
 
 class RegisterViewModel extends GetxController{
   RxString email = "".obs;

@@ -1,14 +1,22 @@
 import 'dart:async';
 
+import 'package:custom_info_window/custom_info_window.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:picto_frontend/config/app_config.dart';
 import 'package:picto_frontend/models/photo.dart';
-import 'package:picto_frontend/screens/map/sub_screen/google_map/marker/marker_converter.dart';
-import 'package:picto_frontend/screens/map/sub_screen/google_map/marker/marker_widget.dart';
-import 'package:picto_frontend/screens/map/sub_screen/google_map/marker/picto_marker.dart';
+import 'package:picto_frontend/screens/map/selection_bar_view_model.dart';
+import 'package:picto_frontend/services/photo_manager_service/handler.dart';
+import 'package:picto_frontend/services/photo_store_service/handler.dart';
 import 'package:widget_to_marker/widget_to_marker.dart';
+
+import 'marker/marker_converter.dart';
+import 'marker/marker_widget.dart';
+import 'marker/picto_marker.dart';
 
 class GoogleMapViewModel extends GetxController {
   // ChatGPT 방안 completer 사용하지 말고 GoogleMapController 직접 관리
@@ -18,10 +26,16 @@ class GoogleMapViewModel extends GetxController {
   RxDouble currentZoom = 0.0.obs;
   RxDouble currentScreenCenterLat = 0.0.obs;
   RxDouble currentScreenCenterLng = 0.0.obs;
+  RxBool isCurrentPosInScreen = true.obs;
+  bool needUpdate = false;
   String currentStep = "";
-  bool isCurrentPosInScreen = true;
   MarkerConverter _converter = MarkerConverter();
+
+  // 사진 공유 스트림(서버로부터만 전달받음)
   StreamSubscription<Position>? _positionStreamSubscription;
+
+  // 마커 클릭 시 커스텀 위젯
+  final CustomInfoWindowController customInfoWindowController = CustomInfoWindowController();
   late String mapStyleString;
   late CameraPosition currentCameraPos;
 
@@ -55,33 +69,24 @@ class GoogleMapViewModel extends GetxController {
     rootBundle.loadString('assets/map_styles/map_style.json').then((string) {
       mapStyleString = string;
     });
-    userMarker = Marker(
-      position: LatLng(currentLat.value, currentLng.value),
-      markerId: MarkerId("user"),
-      icon: await MarkerWidget(
-        type: PictoMarkerType.userPos,
-      ).toBitmapDescriptor(
-        logicalSize: const Size(150, 150),
-        imageSize: const Size(150, 150),
-      ),
-      // 커스텀 InfoWindow 만드는 법 찾는 중
-      infoWindow: InfoWindow(title: "현재 위치"),
-    );
+    // 사용자 마커 생성
+    userMarker = await _buildUserMarker();
     super.onInit();
   }
 
-  // 현재 배율에 따라 상태 변화 //
-  Set<Marker> returnMarkerAccordingToZoom() {
-    // 1.
-    // 2. Marker Converter 를 통해 실제 구글 마커로 띄울 수 있도록 사진 다운로드
-    switch (currentStep) {
-      case "":
-    }
-    return currentMarkers;
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    _googleMapController?.dispose();
+    _positionStreamSubscription?.cancel();
+    customInfoWindowController.dispose();
+    super.dispose();
   }
 
   // 화면 이동할 때마다 호출되는 함수
   void onCameraMove(CameraPosition pos) async {
+    customInfoWindowController.onCameraMove!();
+
     // 화면 줌 정보
     currentCameraPos = pos;
     currentZoom.value = pos.zoom;
@@ -91,36 +96,54 @@ class GoogleMapViewModel extends GetxController {
       LatLngBounds bounds = await _googleMapController!.getVisibleRegion();
       currentScreenCenterLat.value = (bounds.northeast.latitude + bounds.southwest.latitude) / 2;
       currentScreenCenterLng.value = (bounds.northeast.longitude + bounds.southwest.longitude) / 2;
-      final latLng = LatLng(currentScreenCenterLat.value, currentScreenCenterLng.value);
+      final currentPos = LatLng(currentLat.value, currentLng.value);
 
       // small[2~7], middle[7~12], large[12~17]
       // 단계 [large:도/특별시/광역시] ? [middle:시/군/구] ? [small:읍/면/동]
       if (pos.zoom >= 2 && pos.zoom < 7) {
-        currentStep = "large";
-        isCurrentPosInScreen = true;
-        _updateAllMarker();
+        if (currentStep != "large") {
+          currentStep = "large";
+          needUpdate = true;
+        }
+        isCurrentPosInScreen.value = _isPointInsideBounds(currentPos, bounds);
       } else if (pos.zoom >= 7 && pos.zoom < 12) {
-        currentStep = "middle";
-        isCurrentPosInScreen = true;
-        _updateAllMarker();
+        if (currentStep != "middle") {
+          currentStep = "middle";
+          needUpdate = true;
+        }
+        isCurrentPosInScreen.value = _isPointInsideBounds(currentPos, bounds);
         // 화면 안에 있을 경우 주변 사진만 보여준다.
-      } else if (_isPointInsideBounds(latLng, bounds) && pos.zoom >= 12) {
-        currentStep = "small";
-        isCurrentPosInScreen = true;
-        _updateAllMarker();
       } else {
-        currentStep = "small";
-        isCurrentPosInScreen = false;
-        _updateAllMarker();
+        if (currentStep != "small" ||
+            isCurrentPosInScreen.value != _isPointInsideBounds(currentPos, bounds)) {
+          currentStep = "small";
+          needUpdate = true;
+          isCurrentPosInScreen.value = _isPointInsideBounds(currentPos, bounds);
+        }
       }
     } catch (e) {
       print("[ERROR] acquired screen location fail");
     }
   }
 
+  // 카메라 이동이 끝났을 때 호출
+  void onCameraIdle() {
+    if (needUpdate) {
+      _updateAllMarker();
+      needUpdate = false;
+    }
+  }
+
+  void onTap(position) {
+    customInfoWindowController.hideInfoWindow!();
+  }
+
+
+  // 지도가 새롭게 생성될 때 호출
   void setController(GoogleMapController controller) async {
     try {
       _googleMapController = controller;
+      customInfoWindowController.googleMapController = controller;
       LatLngBounds bounds = await controller.getVisibleRegion();
       currentScreenCenterLat.value = (bounds.northeast.latitude + bounds.southwest.latitude) / 2;
       currentScreenCenterLng.value = (bounds.northeast.longitude + bounds.southwest.longitude) / 2;
@@ -129,12 +152,14 @@ class GoogleMapViewModel extends GetxController {
     }
   }
 
+  // 현재 위치로 이동
   void moveCurrentPos() async {
     _googleMapController!.animateCamera(CameraUpdate.newCameraPosition(
       CameraPosition(target: LatLng(currentLat.value, currentLng.value), zoom: 17),
     ));
   }
 
+  // 위치 권환 획득
   Future<void> getPermission() async {
     // 위치 정보 획득 가능한지 확인
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
@@ -210,38 +235,124 @@ class GoogleMapViewModel extends GetxController {
     currentMarkers.add(userMarker);
   }
 
+  // 사용자 위치 마커 업데이트
   void _updateUserMarker() async {
-    userMarker = Marker(
-      markerId: const MarkerId("user"),
-      position: LatLng(currentLat.value, currentLng.value),
-      icon: await MarkerWidget(type: PictoMarkerType.userPos).toBitmapDescriptor(
-        logicalSize: const Size(150, 150),
-        imageSize: const Size(150, 150),
-      ),
-      infoWindow: const InfoWindow(title: "현재 위치"),
-    );
-
+    userMarker = await _buildUserMarker();
     // 마커 셋에서 이전 것 제거 후 다시 추가
-    currentMarkers.removeWhere((marker) => marker.markerId.value == "user");
-    currentMarkers.add(userMarker);
-  }
-
-  // 마커 업데이트
-  Future<void> _updateAllMarker() async {
-    if (currentStep == "large") {
-      currentMarkers.refresh();
-
-    } else if (currentStep == "middle") {
-      currentMarkers.refresh();
-
-    } else if (currentStep == "small" && isCurrentPosInScreen) {
-      currentMarkers.refresh();
-
-    } else {
-      currentMarkers.refresh();
-
+    if(currentStep != "large") {
+      currentMarkers.removeWhere((marker) => marker.markerId.value == "user");
+      currentMarkers.add(userMarker);
     }
   }
+
+  // 전체 마커 업데이트
+  // 1. 화면 정보에 맞게 사진 데이터 호출
+  // 2. photo -> pictoMarker -> googleMarker
+  // 3. 사진 다운로드, 중간에 화면 정보가 바뀌면 중지
+  Future<void> _updateAllMarker() async {
+    if (currentStep == "large") {
+      // 지역 대표 사진만 로딩
+      currentMarkers.clear();
+      _loadRepresentative(currentStep);
+    } else if (currentStep == "middle") {
+      // 지역 대표 사진 + 내 위치 + 폴더 사진 + 내 사진
+      currentMarkers.clear();
+      _loadRepresentative(currentStep);
+      _loadFolder(currentStep);
+      _loadMyPhotos();
+      currentMarkers.add(userMarker);
+    } else {
+      // (지역 대표 사진 OR 주변 사진) + 내 위치 + 폴더 사진 + 내 사진
+      currentMarkers.clear();
+      if (isCurrentPosInScreen.value) {
+        _loadAround(currentStep);
+      } else {
+        _loadRepresentative(currentStep);
+      }
+      _loadMyPhotos();
+      _loadFolder(currentStep);
+      currentMarkers.add(userMarker);
+    }
+  }
+
+  Future<void> updateAllMarkersByFilter() async {
+    SelectionBarViewModel selectionBarViewModel = Get.find<SelectionBarViewModel>();
+    // currentMarkers.removeWhere(test)
+  }
+
+  Future<void> updateAllMarkersByTag() async {
+    SelectionBarViewModel selectionBarViewModel = Get.find<SelectionBarViewModel>();
+
+  }
+
+
+
+  // 사용자 위치 마커 생성
+  Future<Marker> _buildUserMarker() async {
+    return Marker(
+        markerId: const MarkerId("user"),
+        position: LatLng(currentLat.value, currentLng.value),
+        icon: await MarkerWidget(type: PictoMarkerType.userPos).toBitmapDescriptor(
+          logicalSize: const Size(150, 150),
+          imageSize: const Size(150, 150),
+        ),
+        onTap: () {
+          customInfoWindowController.addInfoWindow!(
+            Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                SizedBox(
+                  height: 25,
+                  child: FloatingActionButton(
+                    backgroundColor: AppConfig.mainColor,
+                    heroTag: "Pos info",
+                    onPressed: () {},
+                    child: Text('현재 위치', style: TextStyle(color: Colors.white, fontSize: 12),),
+                  ),
+                ),
+              ],
+            ),
+            LatLng(currentLat.value, currentLng.value),
+          );
+        },
+        // 사영자 지정 커스텀 텝 구동, infoWindow 는 사용못함.
+        consumeTapEvents: true);
+  }
+
+  void _loadRepresentative(String downloadType) async {
+    List<Photo> photos = await PhotoManagerHandler()
+        .getRepresentative(count: 10, locationType: currentStep, eventType: "top");
+    Set<PictoMarker> pictoMarkers = _converter.convertToPictoMarker(photos);
+    pictoMarkers.forEach((pictoMarker) async {
+      representativePhotos[currentStep]?.add(pictoMarker);
+      pictoMarker.imageData = await PhotoStoreHandler().downloadPhoto(pictoMarker.photo.photoId);
+      if (currentStep != downloadType) {
+        return;
+      }
+      currentMarkers.add(await pictoMarker.toGoogleMarker());
+    });
+  }
+
+  void _loadAround(String downloadType) async {
+    List<Photo> photos = await PhotoManagerHandler().getAroundPhotos();
+    Set<PictoMarker> pictoMarkers = _converter.convertToPictoMarker(photos);
+    pictoMarkers.forEach((pictoMarker) async {
+      representativePhotos[currentStep]?.add(pictoMarker);
+      pictoMarker.imageData = await PhotoStoreHandler().downloadPhoto(pictoMarker.photo.photoId);
+      if (currentStep != downloadType) {
+        return;
+      }
+      currentMarkers.add(await pictoMarker.toGoogleMarker());
+    });
+  }
+
+  void _loadMyPhotos() async {
+    myPhotos.forEach((pictoMarker) async{
+      currentMarkers.add(await pictoMarker.toGoogleMarker());
+    });
+  }
+
+  void _loadFolder(String downloadType) async {}
 
   // 화면에 내 위치가 잡혀있는지 아닌지 검사
   bool _isPointInsideBounds(LatLng point, LatLngBounds bounds) {

@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:picto_frontend/config/app_config.dart';
 import 'package:picto_frontend/screens/login/sub_screen/register_view_model.dart';
-import 'package:picto_frontend/screens/map/sub_screen/top_box.dart';
+import 'package:picto_frontend/screens/map/top_box.dart';
 
 import '../../../utils/get_widget.dart';
 import '../../../utils/validator.dart';

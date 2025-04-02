@@ -2,8 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
-import 'package:picto_frontend/screens/map/sub_screen/google_map/google_map_view_model.dart';
 import 'package:picto_frontend/services/session_scheduler_service/handler.dart';
+
+import 'google_map/google_map_view_model.dart';
 
 class ValueTestWidget extends StatelessWidget {
   const ValueTestWidget({super.key});
@@ -36,6 +37,7 @@ class ValueTestWidget extends StatelessWidget {
                       color: Colors.red,
                     ),
             ),
+            Obx(() => Text('/ [isScreen] ${googleMapViewModel.isCurrentPosInScreen.value}'))
           ],
         ),
         Row(

@@ -1,10 +1,10 @@
 import 'package:get/get.dart';
-import 'package:picto_frontend/screens/map/sub_screen/google_map/google_map_view_model.dart';
-import 'package:picto_frontend/screens/map/sub_screen/google_map/marker/picto_marker.dart';
+import 'package:picto_frontend/screens/map/google_map/marker/picto_marker.dart';
 import 'package:picto_frontend/services/photo_manager_service/handler.dart';
 import 'package:picto_frontend/services/photo_store_service/handler.dart';
 
 import '../../../../../models/photo.dart';
+import '../google_map_view_model.dart';
 
 // -------컨버터의 주요역할
 // 1. Photo(Photo Manager API 호출) -> PictoMarker(Photo Strore API 호출) -> GoogleMarker(in GoogleMapViewModel)
@@ -42,7 +42,6 @@ class MarkerConverter {
 
   // api 호출 (List<Photo>) -> 중복 확인 -> 업데이트(사진 다운로드) -> 화면에 랜더링할 수 있는 PictoMarker로 변환
   Future<Set<PictoMarker>> getAroundPhotos() async {
-    final googleMapViewModel = Get.find<GoogleMapViewModel>();
     try {
       List<Photo> aroundPhotos = await PhotoManagerHandler().getAroundPhotos();
       return aroundPhotos

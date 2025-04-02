@@ -4,13 +4,13 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:picto_frontend/config/app_config.dart';
 import 'package:picto_frontend/models/user.dart';
-import 'package:picto_frontend/screens/map/sub_screen/google_map/google_map_view_model.dart';
-import 'package:picto_frontend/screens/map/sub_screen/selection_bar_view_model.dart';
+import 'package:picto_frontend/screens/map/selection_bar_view_model.dart';
 import 'package:picto_frontend/screens/profile/profile_view_model.dart';
 import 'package:picto_frontend/services/http_interceptor.dart';
 import 'package:picto_frontend/services/user_manager_service/signin_response.dart';
 
 import '../../config/user_config.dart';
+import '../../screens/map/google_map/google_map_view_model.dart';
 
 class UserManagerHandler {
   // private 생성자 선언 -> 외부에서 해당 클래스의 생성자 생성을 막는다.

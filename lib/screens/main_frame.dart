@@ -7,18 +7,12 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:picto_frontend/config/app_config.dart';
 import 'package:picto_frontend/screens/folder/folder_screen.dart';
-import 'package:picto_frontend/screens/map/map_view_model.dart';
-import 'package:picto_frontend/screens/map/sub_screen/google_map/google_map.dart';
-import 'package:picto_frontend/screens/map/sub_screen/google_map/google_map_view_model.dart';
-import 'package:picto_frontend/screens/map/sub_screen/selection_bar.dart';
-import 'package:picto_frontend/screens/map/sub_screen/selection_bar_view_model.dart';
+import 'package:picto_frontend/screens/main_frame_view_model.dart';
 import 'package:picto_frontend/screens/photo/photo_book_screen.dart';
 import 'package:picto_frontend/screens/profile/profile_screen.dart';
 import 'package:picto_frontend/screens/setting/setting_screen.dart';
 
-// 맵은 크게 상단 선택바
-// 하단 네비게이션바
-// 메인 지도 화면으로 이루어진다.
+import 'map/google_map/google_map.dart';
 
 class MapScreen extends StatelessWidget {
   MapScreen({super.key});
@@ -59,7 +53,7 @@ class MapScreen extends StatelessWidget {
       3 => FolderScreen(),
       4 => ProfileScreen(),
       _ => Center(
-          child: Text('error'),
+          child: Text('error', style: TextStyle(color: Colors.red, fontSize: 24),),
         ),
     };
   }

@@ -1,3 +1,5 @@
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+
 String? emailValidator(String? value) {
   if (value?.isEmpty ?? true) {
     return '이메일을 입력해주세요.';
@@ -46,11 +48,17 @@ String? passwdCheckValidator(String? value) {
   return null;
 }
 
-
-
 String? nameValidator(String? value) {
   if(value?.isEmpty ?? true) {
     return '이름을 입력해주세요.';
   }
   return null;
+}
+
+// 화면에 내 위치가 잡혀있는지 아닌지 검사
+bool _isPointInsideBounds(LatLng point, LatLngBounds bounds) {
+  return bounds.southwest.latitude <= point.latitude &&
+      bounds.northeast.latitude >= point.latitude &&
+      bounds.southwest.longitude <= point.longitude &&
+      bounds.northeast.longitude >= point.longitude;
 }

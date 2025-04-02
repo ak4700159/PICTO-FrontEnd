@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:picto_frontend/page_router.dart';
-import 'package:picto_frontend/screens/map/sub_screen/google_map/google_map_view_model.dart';
-import 'package:picto_frontend/screens/splash/splash_view_model.dart';
-import 'package:picto_frontend/services/session_scheduler_service/handler.dart';
 import 'package:picto_frontend/theme.dart';
 
 import 'config/app_config.dart';

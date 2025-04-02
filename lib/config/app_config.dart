@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:picto_frontend/config/user_config.dart';
-import 'package:picto_frontend/screens/map/map_view_model.dart';
-import 'package:picto_frontend/screens/map/sub_screen/google_map/marker/marker_converter.dart';
+import 'package:picto_frontend/screens/main_frame_view_model.dart';
+import 'package:picto_frontend/screens/photo/photo_view_model.dart';
 import 'package:picto_frontend/screens/profile/profile_view_model.dart';
 
 import '../screens/login/login_view_model.dart';
 import '../screens/login/sub_screen/register_view_model.dart';
-import '../screens/map/sub_screen/google_map/google_map_view_model.dart';
-import '../screens/map/sub_screen/selection_bar_view_model.dart';
+import '../screens/map/google_map/google_map_view_model.dart';
+import '../screens/map/selection_bar_view_model.dart';
 import '../screens/splash/splash_view_model.dart';
 import '../services/session_scheduler_service/handler.dart';
 
@@ -52,6 +52,7 @@ class AppConfig {
     final splashViewModel = Get.put<SplashViewModel>(SplashViewModel());
     final googleViewModel = Get.put<GoogleMapViewModel>(GoogleMapViewModel());
     final loginViewModel = Get.put<LoginViewModel>(LoginViewModel());
+    final photoViewModel = Get.put<PhotoViewModel>(PhotoViewModel());
 
     // 로그인 이후 사용될 컨트롤러 ----------------------
     final selectionViewModel = Get.put<SelectionBarViewModel>(SelectionBarViewModel());

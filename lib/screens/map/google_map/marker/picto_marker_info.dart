@@ -1,13 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:picto_frontend/screens/map/sub_screen/google_map/marker/picto_marker.dart';
-
+import 'package:picto_frontend/screens/map/google_map/marker/picto_marker.dart';
 import '../../../../../config/app_config.dart';
+import '../../../../../models/photo.dart';
 
 // 아직 미완성 -> 자료 조사중
 class PictoMarkerInfo extends StatelessWidget {
-  PictoMarkerInfo({super.key, required this.type});
+  PictoMarkerInfo({super.key, required this.type, required this.photo});
 
+  Photo photo;
   PictoMarkerType type;
 
   @override
@@ -30,6 +31,7 @@ class PictoMarkerInfo extends StatelessWidget {
       ),
       child: Row(
         children: [
+          FloatingActionButton(onPressed: () {}, heroTag: photo.photoId.toString(), child: Text("상세 보기"),),
           // 사진 정보 -> 자세히 보기 버튼 구현하기
           //Text(data)
         ],

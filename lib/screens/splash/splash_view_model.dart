@@ -1,15 +1,12 @@
 import 'dart:async';
-import 'dart:ffi';
-
 import 'package:debounce_throttle/debounce_throttle.dart';
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:picto_frontend/config/app_config.dart';
-import 'package:picto_frontend/screens/map/sub_screen/google_map/google_map_view_model.dart';
-import 'package:picto_frontend/services/http_function_controller.dart';
 import 'package:picto_frontend/services/user_manager_service/handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../services/socket_function_controller.dart';
+import '../map/google_map/google_map_view_model.dart';
 
 
 // 1. 내부에 저장된 이메일, 비밀번호, 사용자 식별키, 엑세스 토큰, 리프레쉬 토큰을 로딩
