@@ -30,6 +30,7 @@ class PictoMarker {
 
   PictoMarker({required this.photo, required this.type});
 
+
   factory PictoMarker.fromPhoto(Photo photo, PictoMarkerType type) {
     return PictoMarker(
       type: type,

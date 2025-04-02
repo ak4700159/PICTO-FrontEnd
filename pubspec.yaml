@@ -27,6 +27,7 @@ dependencies:
   mime: ^2.0.0
   http_parser: ^4.1.2
   custom_info_window: ^1.0.1
+  google_maps_cluster_manager_2: ^3.2.0
 
 dev_dependencies:
   flutter_test:
