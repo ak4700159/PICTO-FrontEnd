@@ -11,6 +11,7 @@ class PhotoViewModel extends GetxController {
     super.onInit();
   }
 
+  // 가로 세로 비율에 따라 가로 세로 모드 전환
   Future<BoxFit> determineFit(Uint8List data) async {
     final codec = await ui.instantiateImageCodec(data);
     final frame = await codec.getNextFrame();

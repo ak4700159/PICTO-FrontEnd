@@ -11,9 +11,9 @@ class Photo {
   final double lng;
   final String location;
   // 어플리케이션에 등록할 때 시각
-  final int registerDatetime;
+  final int? registerDatetime;
   // 사진을 공유할 때 시각
-  final int updateDatetime;
+  final int? updateDatetime;
   final bool? frameActive;
   final bool? sharedActive;
   final int likes;
@@ -29,8 +29,8 @@ class Photo {
       lat: json['lat'] as double,
       lng: json['lng'] as double,
       location: json['location'] as String,
-      registerDatetime: json['uploadTime'] as int,
-      updateDatetime: json['uploadTime'] as int,
+      registerDatetime: json['registerDatetime'] as int?,
+      updateDatetime: json['updateDatetime'] as int?,
       frameActive: json['frameActive'] as bool?,
       sharedActive: json['sharedActive'] as bool?,
       likes: json['likes'] as int,
@@ -43,8 +43,8 @@ class Photo {
     required this.photoId,
     required this.userId,
     required this.photoPath,
-    required this.registerDatetime,
-    required this.updateDatetime,
+    this.registerDatetime,
+    this.updateDatetime,
     required this.lat,
     required this.lng,
     required this.likes,

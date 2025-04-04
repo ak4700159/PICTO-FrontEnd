@@ -8,6 +8,7 @@ import 'package:picto_frontend/screens/profile/profile_view_model.dart';
 
 import '../screens/login/login_view_model.dart';
 import '../screens/login/sub_screen/register_view_model.dart';
+import '../screens/map/google_map/cluster/picto_cluster_manager.dart';
 import '../screens/map/google_map/google_map_view_model.dart';
 import '../screens/map/selection_bar_view_model.dart';
 import '../screens/splash/splash_view_model.dart';
@@ -23,7 +24,6 @@ class AppConfig {
   // 최대 지연 시간
   static const int maxLatency = 3;
 
-  // 1초마다 API 호출 허용
   static const int throttleSec = 3;
 
   // 화면 정지
@@ -45,21 +45,24 @@ class AppConfig {
 
   // GetX 등록
   static void enrollGetxController () {
-    final registerViewModle = Get.put<RegisterViewModel>(RegisterViewModel());
-
-    // 필수 컨트롤러 ----------------------
+    // 로그인 관련 컨트롤러 ----------------------
     final sessionHandler = Get.put<SessionSchedulerHandler>(SessionSchedulerHandler());
+    final registerViewModle = Get.put<RegisterViewModel>(RegisterViewModel());
     final splashViewModel = Get.put<SplashViewModel>(SplashViewModel());
-    final googleViewModel = Get.put<GoogleMapViewModel>(GoogleMapViewModel());
     final loginViewModel = Get.put<LoginViewModel>(LoginViewModel());
-    final photoViewModel = Get.put<PhotoViewModel>(PhotoViewModel());
 
     // 로그인 이후 사용될 컨트롤러 ----------------------
+    final pictoClusterManager = Get.put<PictoClusterManager>(PictoClusterManager());
     final selectionViewModel = Get.put<SelectionBarViewModel>(SelectionBarViewModel());
+    final googleViewModel = Get.put<GoogleMapViewModel>(GoogleMapViewModel());
     final mapViewModel = Get.put<MapViewModel>(MapViewModel());
+    final photoViewModel = Get.put<PhotoViewModel>(PhotoViewModel());
 
     // 사용자 정보 ----------------------
     final profileViewModel = Get.put<ProfileViewModel>(ProfileViewModel());
     final userConfig = Get.put<UserConfig>(UserConfig());
+
+    // 스트리밍 ----------------------
+
   }
 }

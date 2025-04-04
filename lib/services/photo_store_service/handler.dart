@@ -19,9 +19,9 @@ class PhotoStoreHandler {
   final String baseUrl = "${AppConfig.httpUrl}:8086/photo-store";
   Dio dio = Dio(
     BaseOptions(
-        connectTimeout: const Duration(milliseconds: 1000),
+        connectTimeout: const Duration(milliseconds: 10000),
         contentType: Headers.jsonContentType,
-        receiveTimeout: const Duration(milliseconds: 3000)),
+        receiveTimeout: const Duration(milliseconds: 10000)),
   )..interceptors.add(CustomInterceptor());
 
   // 사진 조회

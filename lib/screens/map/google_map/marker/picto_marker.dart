@@ -88,7 +88,6 @@ class PictoMarker {
   @override
   bool operator ==(Object other) {
     // TODO: implement ==
-    return identical(this, other) ||
-        (other is PictoMarker && other.photo.photoId == this.photo.photoId);
+    return (other is PictoMarker && other.photo.photoId == photo.photoId);
   }
 }

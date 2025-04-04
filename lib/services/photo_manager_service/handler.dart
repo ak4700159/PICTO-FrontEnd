@@ -17,9 +17,9 @@ class PhotoManagerHandler {
   final String baseUrl = "${AppConfig.httpUrl}:8083/photo-manager";
   Dio dio = Dio(
     BaseOptions(
-        connectTimeout: const Duration(milliseconds: 1000),
+        connectTimeout: const Duration(milliseconds: 10000),
         contentType: Headers.jsonContentType,
-        receiveTimeout: const Duration(milliseconds: 3000)),
+        receiveTimeout: const Duration(milliseconds: 10000)),
   )..interceptors.add(CustomInterceptor());
 
   // 반경 3km 내 주변 사진 조회
@@ -27,9 +27,8 @@ class PhotoManagerHandler {
     String hostUrl = "$baseUrl/photos/around";
     try {
       final response = await dio.get(hostUrl, data: {"senderId": UserManagerHandler().ownerId});
-      return !response.data.isEmpty
-          ? response.data.map((json) => Photo.fromJson(json)).toList()
-          : <Photo>[];
+      List<dynamic> photos = response.data;
+      return photos.map((json) => Photo.fromJson(json)).toList();
     } on DioException catch (e) {
       print('[ERROR] around photo error : $e');
     }
@@ -48,9 +47,8 @@ class PhotoManagerHandler {
         "locationName": locationName,
         "count": count,
       });
-      return !response.data.isEmpty
-          ? response.data.map((json) => Photo.fromJson(json)).toList()
-          : <Photo>[];
+      List<dynamic> photos = response.data;
+      return photos.map((json) => Photo.fromJson(json)).toList();
     } on DioException catch (e) {
       print('[ERROR] representative photo error' + e.toString());
     }

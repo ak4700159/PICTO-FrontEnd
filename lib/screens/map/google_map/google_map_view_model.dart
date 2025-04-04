@@ -1,6 +1,6 @@
 import 'dart:async';
-
 import 'package:custom_info_window/custom_info_window.dart';
+import 'package:debounce_throttle/debounce_throttle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -9,8 +9,6 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:picto_frontend/config/app_config.dart';
 import 'package:picto_frontend/models/photo.dart';
-import 'package:picto_frontend/screens/map/selection_bar_view_model.dart';
-import 'package:picto_frontend/services/photo_manager_service/handler.dart';
 import 'package:picto_frontend/services/photo_store_service/handler.dart';
 import 'package:widget_to_marker/widget_to_marker.dart';
 
@@ -24,17 +22,18 @@ class GoogleMapViewModel extends GetxController {
   RxDouble currentLat = 0.0.obs;
   RxDouble currentLng = 0.0.obs;
   RxDouble currentZoom = 0.0.obs;
+  late LatLngBounds bounds;
   RxDouble currentScreenCenterLat = 0.0.obs;
   RxDouble currentScreenCenterLng = 0.0.obs;
   RxBool isCurrentPosInScreen = true.obs;
   bool needUpdate = false;
   String currentStep = "";
-  MarkerConverter _converter = MarkerConverter();
+  final MarkerConverter _converter = MarkerConverter();
 
   // 사진 공유 스트림(서버로부터만 전달받음)
   StreamSubscription<Position>? _positionStreamSubscription;
 
-  // 마커 클릭 시 커스텀 위젯
+  // 마커 클릭 시 커스텀 위젯 컨트롤러
   final CustomInfoWindowController customInfoWindowController = CustomInfoWindowController();
   late String mapStyleString;
   late CameraPosition currentCameraPos;
@@ -58,10 +57,18 @@ class GoogleMapViewModel extends GetxController {
   Set<PictoMarker> folderPhotos = <PictoMarker>{};
 
   // 현재 선택된 마커들(all zoom)
+  RxSet<PictoMarker> currentPictoMarkers = <PictoMarker>{}.obs;
   RxSet<Marker> currentMarkers = <Marker>{}.obs;
 
   // 사용자 현재 위치 마커(small)
   late Marker userMarker;
+
+  // 사진 중복 호출 방지
+  final Throttle _callUpdatePhoto = Throttle(
+    const Duration(seconds: AppConfig.throttleSec),
+    initialValue: null,
+    checkEquality: false,
+  );
 
   @override
   void onInit() async {
@@ -71,6 +78,9 @@ class GoogleMapViewModel extends GetxController {
     });
     // 사용자 마커 생성
     userMarker = await _buildUserMarker();
+    _callUpdatePhoto.values.listen((event) {
+      _updateAllMarker();
+    });
     super.onInit();
   }
 
@@ -93,7 +103,7 @@ class GoogleMapViewModel extends GetxController {
 
     // 화면 중앙 정보 로딩
     try {
-      LatLngBounds bounds = await _googleMapController!.getVisibleRegion();
+      bounds = await _googleMapController!.getVisibleRegion();
       currentScreenCenterLat.value = (bounds.northeast.latitude + bounds.southwest.latitude) / 2;
       currentScreenCenterLng.value = (bounds.northeast.longitude + bounds.southwest.longitude) / 2;
       final currentPos = LatLng(currentLat.value, currentLng.value);
@@ -101,16 +111,12 @@ class GoogleMapViewModel extends GetxController {
       // small[2~7], middle[7~12], large[12~17]
       // 단계 [large:도/특별시/광역시] ? [middle:시/군/구] ? [small:읍/면/동]
       if (pos.zoom >= 2 && pos.zoom < 7) {
-        if (currentStep != "large") {
-          currentStep = "large";
-          needUpdate = true;
-        }
+        currentStep = "large";
+        needUpdate = true;
         isCurrentPosInScreen.value = _isPointInsideBounds(currentPos, bounds);
       } else if (pos.zoom >= 7 && pos.zoom < 12) {
-        if (currentStep != "middle") {
-          currentStep = "middle";
-          needUpdate = true;
-        }
+        currentStep = "middle";
+        needUpdate = true;
         isCurrentPosInScreen.value = _isPointInsideBounds(currentPos, bounds);
         // 화면 안에 있을 경우 주변 사진만 보여준다.
       } else {
@@ -129,15 +135,15 @@ class GoogleMapViewModel extends GetxController {
   // 카메라 이동이 끝났을 때 호출
   void onCameraIdle() {
     if (needUpdate) {
-      _updateAllMarker();
+      _callUpdatePhoto.setValue(null);
       needUpdate = false;
     }
   }
 
+  // 지도에 탭하면 보기창 없애기
   void onTap(position) {
     customInfoWindowController.hideInfoWindow!();
   }
-
 
   // 지도가 새롭게 생성될 때 호출
   void setController(GoogleMapController controller) async {
@@ -217,20 +223,20 @@ class GoogleMapViewModel extends GetxController {
         .toList();
 
     // 초기 화면에 필요한 사진 로드 (내 사진, 공유 폴더 사진, 주변 사진)
-    myPhotos = _converter
-        .convertToPictoMarker(initPhotos.where((photo) => photo.folderId == null).toList());
-    folderPhotos = _converter
-        .convertToPictoMarker(initPhotos.where((photo) => photo.folderId != null).toList());
+    myPhotos = _converter.convertToPictoMarker(
+        initPhotos.where((photo) => photo.folderId == null).toList(), PictoMarkerType.userPhoto);
+    folderPhotos = _converter.convertToPictoMarker(
+        initPhotos.where((photo) => photo.folderId != null).toList(), PictoMarkerType.folderPhoto);
     aroundPhotos = await _converter.getAroundPhotos();
     for (PictoMarker photo in myPhotos) {
-      currentMarkers.add(await photo.toGoogleMarker());
+      currentPictoMarkers.add(photo);
     }
     for (PictoMarker photo in folderPhotos) {
-      currentMarkers.add(await photo.toGoogleMarker());
+      currentPictoMarkers.add(photo);
     }
     _converter.downloadPhotos(aroundPhotos);
     for (PictoMarker photo in aroundPhotos) {
-      currentMarkers.add(await photo.toGoogleMarker());
+      currentPictoMarkers.add(photo);
     }
     currentMarkers.add(userMarker);
   }
@@ -239,7 +245,7 @@ class GoogleMapViewModel extends GetxController {
   void _updateUserMarker() async {
     userMarker = await _buildUserMarker();
     // 마커 셋에서 이전 것 제거 후 다시 추가
-    if(currentStep != "large") {
+    if (currentStep != "large") {
       currentMarkers.removeWhere((marker) => marker.markerId.value == "user");
       currentMarkers.add(userMarker);
     }
@@ -252,40 +258,46 @@ class GoogleMapViewModel extends GetxController {
   Future<void> _updateAllMarker() async {
     if (currentStep == "large") {
       // 지역 대표 사진만 로딩
+      currentPictoMarkers.clear();
       currentMarkers.clear();
+
+      // _callUpdatePhoto.setValue("representative");
       _loadRepresentative(currentStep);
     } else if (currentStep == "middle") {
       // 지역 대표 사진 + 내 위치 + 폴더 사진 + 내 사진
+      currentPictoMarkers.clear();
       currentMarkers.clear();
+
+      // _callUpdatePhoto.setValue("representative");
       _loadRepresentative(currentStep);
       _loadFolder(currentStep);
       _loadMyPhotos();
       currentMarkers.add(userMarker);
     } else {
       // (지역 대표 사진 OR 주변 사진) + 내 위치 + 폴더 사진 + 내 사진
+      currentPictoMarkers.clear();
       currentMarkers.clear();
+
       if (isCurrentPosInScreen.value) {
+        // _callUpdatePhoto.setValue("around");
         _loadAround(currentStep);
       } else {
+        // _callUpdatePhoto.setValue("representative");
         _loadRepresentative(currentStep);
       }
-      _loadMyPhotos();
       _loadFolder(currentStep);
+      _loadMyPhotos();
       currentMarkers.add(userMarker);
     }
   }
 
-  Future<void> updateAllMarkersByFilter() async {
-    SelectionBarViewModel selectionBarViewModel = Get.find<SelectionBarViewModel>();
+  Future<void> updateAllMarkersByFilter(String sort, String period) async {
     // currentMarkers.removeWhere(test)
   }
 
-  Future<void> updateAllMarkersByTag() async {
-    SelectionBarViewModel selectionBarViewModel = Get.find<SelectionBarViewModel>();
-
+  Future<void> updateAllMarkersByTag(List<String> tags) async {
+    // 현재 설정된 태그를 바탕으로
   }
-
-
 
   // 사용자 위치 마커 생성
   Future<Marker> _buildUserMarker() async {
@@ -307,7 +319,10 @@ class GoogleMapViewModel extends GetxController {
                     backgroundColor: AppConfig.mainColor,
                     heroTag: "Pos info",
                     onPressed: () {},
-                    child: Text('현재 위치', style: TextStyle(color: Colors.white, fontSize: 12),),
+                    child: Text(
+                      '현재 위치',
+                      style: TextStyle(color: Colors.white, fontSize: 12),
+                    ),
                   ),
                 ),
               ],
@@ -320,34 +335,37 @@ class GoogleMapViewModel extends GetxController {
   }
 
   void _loadRepresentative(String downloadType) async {
-    List<Photo> photos = await PhotoManagerHandler()
-        .getRepresentative(count: 10, locationType: currentStep, eventType: "top");
-    Set<PictoMarker> pictoMarkers = _converter.convertToPictoMarker(photos);
-    pictoMarkers.forEach((pictoMarker) async {
-      representativePhotos[currentStep]?.add(pictoMarker);
-      pictoMarker.imageData = await PhotoStoreHandler().downloadPhoto(pictoMarker.photo.photoId);
-      if (currentStep != downloadType) {
-        return;
+    Set<PictoMarker> pictoMarkers = await _converter.getRepresentativePhotos(1, currentStep);
+    representativePhotos[currentStep]?.addAll(pictoMarkers);
+    // print("[INFO]...? ${representativePhotos[currentStep]!}");
+    for (PictoMarker pictoMarker in representativePhotos[currentStep]!) {
+      if (_isPointInsideBounds(LatLng(pictoMarker.photo.lat, pictoMarker.photo.lng), bounds)) {
+        pictoMarker.imageData ??=
+            await PhotoStoreHandler().downloadPhoto(pictoMarker.photo.photoId);
+        currentPictoMarkers.add(pictoMarker);
+        currentMarkers.add(await pictoMarker.toGoogleMarker());
       }
-      currentMarkers.add(await pictoMarker.toGoogleMarker());
-    });
+      if (currentStep != downloadType) return;
+    }
   }
 
   void _loadAround(String downloadType) async {
-    List<Photo> photos = await PhotoManagerHandler().getAroundPhotos();
-    Set<PictoMarker> pictoMarkers = _converter.convertToPictoMarker(photos);
-    pictoMarkers.forEach((pictoMarker) async {
-      representativePhotos[currentStep]?.add(pictoMarker);
-      pictoMarker.imageData = await PhotoStoreHandler().downloadPhoto(pictoMarker.photo.photoId);
-      if (currentStep != downloadType) {
-        return;
+    Set<PictoMarker> pictoMarkers = await _converter.getAroundPhotos();
+    aroundPhotos.addAll(pictoMarkers);
+    for (PictoMarker pictoMarker in aroundPhotos) {
+      if (_isPointInsideBounds(LatLng(pictoMarker.photo.lat, pictoMarker.photo.lng), bounds)) {
+        pictoMarker.imageData ??=
+            await PhotoStoreHandler().downloadPhoto(pictoMarker.photo.photoId);
+        currentPictoMarkers.add(pictoMarker);
+        currentMarkers.add(await pictoMarker.toGoogleMarker());
       }
-      currentMarkers.add(await pictoMarker.toGoogleMarker());
-    });
+      if (currentStep != downloadType) return;
+    }
   }
 
   void _loadMyPhotos() async {
-    myPhotos.forEach((pictoMarker) async{
+    myPhotos.forEach((pictoMarker) async {
+      currentPictoMarkers.add(pictoMarker);
       currentMarkers.add(await pictoMarker.toGoogleMarker());
     });
   }
