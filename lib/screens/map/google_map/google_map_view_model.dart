@@ -12,6 +12,7 @@ import 'package:picto_frontend/models/photo.dart';
 import 'package:picto_frontend/services/photo_store_service/handler.dart';
 import 'package:widget_to_marker/widget_to_marker.dart';
 
+import '../../../utils/etc.dart';
 import 'marker/marker_converter.dart';
 import 'marker/marker_widget.dart';
 import 'marker/picto_marker.dart';
@@ -287,29 +288,38 @@ class GoogleMapViewModel extends GetxController {
     }
   }
 
-  Future<void> updateAllMarkersByFilter(String sort, String period) async {
-    // currentMarkers.removeWhere(test)
-    if(sort == "좋아요순") {
+  Future<void> updateAllMarkersByPeriod(String period) async {
+    // 기준 시간 계산
+    final now = DateTime.now();
+    DateTime periodThreshold;
 
-    } else {
-
+    switch (period) {
+      case "일년":  periodThreshold = now.subtract(Duration(days: 365)); break;
+      case "한달":  periodThreshold = now.subtract(Duration(days: 30)); break;
+      case "일주일":periodThreshold = now.subtract(Duration(days: 7)); break;
+      case "하루":  periodThreshold = now.subtract(Duration(days: 1)); break;
+      default:     periodThreshold = DateTime.fromMillisecondsSinceEpoch(0); // 전체 포함
     }
 
-    if(period == "일년") {
-
-    } else if(period == "한달") {
-
-    } else if(period == "일주일") {
-
-    } else if(period == "하루") {
-
-    } else {
-
-    }
+    currentPictoMarkers.removeWhere((marker) => !withinPeriod(marker, periodThreshold));
+    aroundPhotos.removeWhere((marker) => !withinPeriod(marker, periodThreshold));
+    representativePhotos["large"]!.removeWhere((marker) => !withinPeriod(marker, periodThreshold));
+    representativePhotos["middle"]!.removeWhere((marker) => !withinPeriod(marker, periodThreshold));
+    representativePhotos["small"]!.removeWhere((marker) => !withinPeriod(marker, periodThreshold));
+    _updateAllMarker();
   }
 
   Future<void> updateAllMarkersByTag(List<String> tags) async {
-    // 현재 설정된 태그를 바탕으로
+    currentPictoMarkers.removeWhere((marker) => !tags.contains(marker.photo.tag));
+    aroundPhotos.removeWhere((marker) => !tags.contains(marker.photo.tag));
+    representativePhotos["large"]?.removeWhere((marker) => !tags.contains(marker.photo.tag));
+    representativePhotos["middle"]?.removeWhere((marker) => !tags.contains(marker.photo.tag));
+    representativePhotos["small"]?.removeWhere((marker) => !tags.contains(marker.photo.tag));
+    _updateAllMarker();
+  }
+
+  Future<void> updateAllMarkersBySort() async {
+    _updateAllMarker();
   }
 
   // 사용자 위치 마커 생성
