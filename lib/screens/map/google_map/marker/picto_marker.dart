@@ -27,8 +27,9 @@ class PictoMarker {
   // not null == 실제 이미지 데이터를 메모리에 적재
   Uint8List? imageData;
   Photo photo;
+  Function? onTap;
 
-  PictoMarker({required this.photo, required this.type});
+  PictoMarker({required this.photo, required this.type, this.onTap});
 
 
   factory PictoMarker.fromPhoto(Photo photo, PictoMarkerType type) {
@@ -90,4 +91,8 @@ class PictoMarker {
     // TODO: implement ==
     return (other is PictoMarker && other.photo.photoId == photo.photoId);
   }
+
+  @override
+  int get hashCode => photo.photoId.hashCode;
 }
+

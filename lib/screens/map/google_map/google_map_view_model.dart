@@ -261,14 +261,12 @@ class GoogleMapViewModel extends GetxController {
       currentPictoMarkers.clear();
       currentMarkers.clear();
 
-      // _callUpdatePhoto.setValue("representative");
       _loadRepresentative(currentStep);
     } else if (currentStep == "middle") {
       // 지역 대표 사진 + 내 위치 + 폴더 사진 + 내 사진
       currentPictoMarkers.clear();
       currentMarkers.clear();
 
-      // _callUpdatePhoto.setValue("representative");
       _loadRepresentative(currentStep);
       _loadFolder(currentStep);
       _loadMyPhotos();
@@ -279,10 +277,8 @@ class GoogleMapViewModel extends GetxController {
       currentMarkers.clear();
 
       if (isCurrentPosInScreen.value) {
-        // _callUpdatePhoto.setValue("around");
         _loadAround(currentStep);
       } else {
-        // _callUpdatePhoto.setValue("representative");
         _loadRepresentative(currentStep);
       }
       _loadFolder(currentStep);
@@ -293,6 +289,23 @@ class GoogleMapViewModel extends GetxController {
 
   Future<void> updateAllMarkersByFilter(String sort, String period) async {
     // currentMarkers.removeWhere(test)
+    if(sort == "좋아요순") {
+
+    } else {
+
+    }
+
+    if(period == "일년") {
+
+    } else if(period == "한달") {
+
+    } else if(period == "일주일") {
+
+    } else if(period == "하루") {
+
+    } else {
+
+    }
   }
 
   Future<void> updateAllMarkersByTag(List<String> tags) async {

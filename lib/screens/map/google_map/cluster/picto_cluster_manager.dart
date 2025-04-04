@@ -7,10 +7,19 @@ import 'package:google_maps_cluster_manager_2/google_maps_cluster_manager_2.dart
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:picto_frontend/screens/map/google_map/cluster/picto_cluster_item.dart';
 import 'package:picto_frontend/screens/map/google_map/google_map_view_model.dart';
+import 'package:picto_frontend/screens/map/google_map/marker/marker_widget.dart';
 
 import '../../../../models/photo.dart';
 
-class PictoClusterManager extends GetxController {
+class PictoClusterManager {
+  PictoClusterManager._();
+
+  static final PictoClusterManager _manager = PictoClusterManager._();
+
+  factory PictoClusterManager() {
+    return _manager;
+  }
+
   late cluster.ClusterManager<PictoItem> clusterManager;
 
   // 클러스터 매니저 초기화
@@ -38,22 +47,18 @@ class PictoClusterManager extends GetxController {
     // 가장 좋아요를 많이 맏은 사진
     final mostLiked = cluster.items
         .reduce((a, b) => a.pictoMarker.photo.likes > b.pictoMarker.photo.likes ? a : b);
-    final image = await _getThumbnailImage(mostLiked.pictoMarker.imageData!); // 썸네일 비트맵으로 변환
-    return Marker(
-      markerId: MarkerId(cluster.getId()),
-      position: cluster.location,
-      icon: image,
-      onTap: () {
-        if (cluster.isMultiple) {
-          // Get.to(() => ClusterPhotoListScreen(items: cluster.items.map((e) => e.photo).toList()));
-          Get.toNamed('/cluster',
-              arguments: {"items": cluster.items.map((e) => e.pictoMarker).toList()});
-        } else {
-          // 단일 사진인 경우 상세보기
-          Get.toNamed('/photo', arguments: {"photo": mostLiked.pictoMarker.photo});
-        }
-      },
-    );
+    // final image = await _getThumbnailImage(mostLiked.pictoMarker.imageData!);
+    mostLiked.pictoMarker.onTap = () {
+      if (cluster.isMultiple) {
+        // Get.to(() => ClusterPhotoListScreen(items: cluster.items.map((e) => e.photo).toList()));
+        // Get.toNamed('/cluster',
+        //     arguments: {"items": cluster.items.map((e) => e.pictoMarker).toList()});
+      } else {
+        // 단일 사진인 경우 상세보기
+        Get.toNamed('/photo', arguments: {"photo": mostLiked.pictoMarker.photo});
+      }
+    };
+    return mostLiked.pictoMarker.toGoogleMarker();
   }
 
   // 마커 전체 업데이트

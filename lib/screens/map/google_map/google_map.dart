@@ -6,6 +6,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:picto_frontend/screens/map/top_box.dart';
 import 'package:picto_frontend/screens/map/value_test_widget.dart';
+import 'package:picto_frontend/utils/popup.dart';
 
 import '../../../../config/app_config.dart';
 import '../selection_bar.dart';
@@ -86,6 +87,7 @@ class CustomGoogleMap extends StatelessWidget {
           child: FloatingActionButton(
             onPressed: () {
               // 저장된 shared preferences 초기화 후 로그인 화면으로 이동
+              Get.offNamed('/login');
             },
             backgroundColor: AppConfig.mainColor,
             heroTag: "exit",
@@ -125,6 +127,7 @@ class CustomGoogleMap extends StatelessWidget {
             onPressed: () {
               // 테스트 버튼 주입
               googleMapViewModel.moveCurrentPos();
+              showErrorPopup("test");
             },
             backgroundColor: AppConfig.mainColor,
             heroTag: "reload",

@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:debounce_throttle/debounce_throttle.dart';
 import 'package:picto_frontend/services/user_manager_service/handler.dart';
+import 'package:picto_frontend/utils/popup.dart';
 
 import '../../config/app_config.dart';
 
@@ -28,13 +29,20 @@ class SelectionBarViewModel extends GetxController {
 
   void changeSort(sort) {
     currentSelectedSort?.value = sort ?? "좋아요순";
-    UserManagerHandler().modifiedFilter(currentSelectedSort!.value, currentSelectedPeriod!.value);
-
+    try{
+      UserManagerHandler().modifiedFilter(currentSelectedSort!.value, currentSelectedPeriod!.value);
+    } catch(e) {
+      showErrorPopup(e.toString());
+    }
   }
 
   void changePeriod(period) {
     currentSelectedPeriod?.value = period ?? "하루";
-    UserManagerHandler().modifiedFilter(currentSelectedSort!.value, currentSelectedPeriod!.value);
+    try{
+      UserManagerHandler().modifiedFilter(currentSelectedSort!.value, currentSelectedPeriod!.value);
+    } catch(e) {
+      showErrorPopup(e.toString());
+    }
   }
 
   void convertFromJson(Map json){
