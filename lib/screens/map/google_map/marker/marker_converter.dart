@@ -40,13 +40,6 @@ class MarkerConverter {
     return pictoMarkers;
   }
 
-  void convertGoogleMarker(Set<PictoMarker> pictoMarkers) {
-    final googleViewModel = Get.find<GoogleMapViewModel>();
-    pictoMarkers.forEach((pictoMarker) async {
-      googleViewModel.currentMarkers.add(await pictoMarker.toGoogleMarker());
-    });
-  }
-
   // api 호출 (List<Photo>) -> 중복 확인 -> 업데이트(사진 다운로드) -> 화면에 랜더링할 수 있는 PictoMarker로 변환
   Future<Set<PictoMarker>> getAroundPhotos() async {
     try {

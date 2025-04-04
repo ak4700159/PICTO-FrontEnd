@@ -27,7 +27,8 @@ class PictoMarker {
   // not null == 실제 이미지 데이터를 메모리에 적재
   Uint8List? imageData;
   Photo photo;
-  Function? onTap;
+  VoidCallback? onTap;
+  VoidCallback? _onTap;
 
   PictoMarker({required this.photo, required this.type, this.onTap});
 
@@ -40,7 +41,7 @@ class PictoMarker {
   }
 
   // 실제 이미지
-  Future<Marker> toGoogleMarker() async {
+  Future<Marker> toGoogleMarker({required bool most}) async {
     return Marker(
       position: LatLng(photo.lat, photo.lng),
       markerId: MarkerId(photo.photoId.toString()),
@@ -53,35 +54,7 @@ class PictoMarker {
         imageSize: const Size(500, 500),
       ),
       consumeTapEvents: true,
-      onTap: () {
-        GoogleMapViewModel googleMapViewModel = Get.find<GoogleMapViewModel>();
-        PhotoViewModel photoViewModel = Get.find<PhotoViewModel>();
-        googleMapViewModel.customInfoWindowController.addInfoWindow!(
-            Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                SizedBox(
-                  height: 25,
-                  child: FloatingActionButton(
-                    backgroundColor: AppConfig.mainColor,
-                    onPressed: () async {
-                      BoxFit fit = await photoViewModel.determineFit(imageData!);
-                      Get.toNamed("/photo", arguments: {
-                        "photo" : photo,
-                        "data" : imageData,
-                        "fit" : fit,
-                      });
-                    },
-                    child: Text(
-                      "상세 보기",
-                      style: TextStyle(color: Colors.white, fontSize: 12),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            LatLng(photo.lat, photo.lng));
-      },
+      onTap: most ? onTap : _onTap,
     );
   }
 

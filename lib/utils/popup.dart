@@ -22,3 +22,7 @@ void showErrorPopup(String errorMsg) {
     ),
   );
 }
+
+void exitPopup(String msg) {
+
+}

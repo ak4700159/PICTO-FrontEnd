@@ -9,10 +9,12 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:picto_frontend/config/app_config.dart';
 import 'package:picto_frontend/models/photo.dart';
+import 'package:picto_frontend/screens/map/google_map/cluster/picto_cluster_item.dart';
 import 'package:picto_frontend/services/photo_store_service/handler.dart';
 import 'package:widget_to_marker/widget_to_marker.dart';
 
-import '../../../utils/etc.dart';
+import '../../../utils/util.dart';
+import 'cluster/picto_cluster_manager.dart';
 import 'marker/marker_converter.dart';
 import 'marker/marker_widget.dart';
 import 'marker/picto_marker.dart';
@@ -71,6 +73,9 @@ class GoogleMapViewModel extends GetxController {
     checkEquality: false,
   );
 
+  // 클러스터 매니저
+  PictoClusterManager pictoCluster = PictoClusterManager();
+
   @override
   void onInit() async {
     // 지도 양식 로딩
@@ -96,8 +101,8 @@ class GoogleMapViewModel extends GetxController {
 
   // 화면 이동할 때마다 호출되는 함수
   void onCameraMove(CameraPosition pos) async {
+    pictoCluster.manager.onCameraMove(pos);
     customInfoWindowController.onCameraMove!();
-
     // 화면 줌 정보
     currentCameraPos = pos;
     currentZoom.value = pos.zoom;
@@ -149,11 +154,14 @@ class GoogleMapViewModel extends GetxController {
   // 지도가 새롭게 생성될 때 호출
   void setController(GoogleMapController controller) async {
     try {
+      pictoCluster.initClusterManager();
       _googleMapController = controller;
       customInfoWindowController.googleMapController = controller;
       LatLngBounds bounds = await controller.getVisibleRegion();
       currentScreenCenterLat.value = (bounds.northeast.latitude + bounds.southwest.latitude) / 2;
       currentScreenCenterLng.value = (bounds.northeast.longitude + bounds.southwest.longitude) / 2;
+      pictoCluster.manager.setMapId(controller.mapId);
+      pictoCluster.manager.setItems(currentPictoMarkers.map((p) => PictoItem(pictoMarker: p)).toList());
     } catch (e) {
       print("[ERROR] : controller setting error");
     }
@@ -252,31 +260,23 @@ class GoogleMapViewModel extends GetxController {
     }
   }
 
-  // 전체 마커 업데이트
-  // 1. 화면 정보에 맞게 사진 데이터 호출
-  // 2. photo -> pictoMarker -> googleMarker
-  // 3. 사진 다운로드, 중간에 화면 정보가 바뀌면 중지
+  // 전체 마커 업데이트 -> 해당 부분 최적화 가능
   Future<void> _updateAllMarker() async {
+    currentPictoMarkers.clear();
+    currentMarkers.clear();
+    pictoCluster.manager.setItems([]);
+
     if (currentStep == "large") {
       // 지역 대표 사진만 로딩
-      currentPictoMarkers.clear();
-      currentMarkers.clear();
-
       _loadRepresentative(currentStep);
     } else if (currentStep == "middle") {
       // 지역 대표 사진 + 내 위치 + 폴더 사진 + 내 사진
-      currentPictoMarkers.clear();
-      currentMarkers.clear();
-
       _loadRepresentative(currentStep);
       _loadFolder(currentStep);
       _loadMyPhotos();
       currentMarkers.add(userMarker);
     } else {
       // (지역 대표 사진 OR 주변 사진) + 내 위치 + 폴더 사진 + 내 사진
-      currentPictoMarkers.clear();
-      currentMarkers.clear();
-
       if (isCurrentPosInScreen.value) {
         _loadAround(currentStep);
       } else {
@@ -358,7 +358,7 @@ class GoogleMapViewModel extends GetxController {
   }
 
   void _loadRepresentative(String downloadType) async {
-    Set<PictoMarker> pictoMarkers = await _converter.getRepresentativePhotos(1, currentStep);
+    Set<PictoMarker> pictoMarkers = await _converter.getRepresentativePhotos(3, currentStep);
     representativePhotos[currentStep]?.addAll(pictoMarkers);
     // print("[INFO]...? ${representativePhotos[currentStep]!}");
     for (PictoMarker pictoMarker in representativePhotos[currentStep]!) {
@@ -366,7 +366,7 @@ class GoogleMapViewModel extends GetxController {
         pictoMarker.imageData ??=
             await PhotoStoreHandler().downloadPhoto(pictoMarker.photo.photoId);
         currentPictoMarkers.add(pictoMarker);
-        currentMarkers.add(await pictoMarker.toGoogleMarker());
+        pictoCluster.manager.addItem(PictoItem(pictoMarker: pictoMarker));
       }
       if (currentStep != downloadType) return;
     }
@@ -380,7 +380,7 @@ class GoogleMapViewModel extends GetxController {
         pictoMarker.imageData ??=
             await PhotoStoreHandler().downloadPhoto(pictoMarker.photo.photoId);
         currentPictoMarkers.add(pictoMarker);
-        currentMarkers.add(await pictoMarker.toGoogleMarker());
+        pictoCluster.manager.addItem(PictoItem(pictoMarker: pictoMarker));
       }
       if (currentStep != downloadType) return;
     }
@@ -389,7 +389,7 @@ class GoogleMapViewModel extends GetxController {
   void _loadMyPhotos() async {
     myPhotos.forEach((pictoMarker) async {
       currentPictoMarkers.add(pictoMarker);
-      currentMarkers.add(await pictoMarker.toGoogleMarker());
+      pictoCluster.manager.addItem(PictoItem(pictoMarker: pictoMarker));
     });
   }
 
