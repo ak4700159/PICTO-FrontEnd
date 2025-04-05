@@ -34,7 +34,7 @@ class PictoClusterManager {
       levels: [1, 4.25, 6.75, 8.25, 11.5, 14.5, 16.0, 16.5], // 클러스터 해상도 단계 지정
       markerBuilder: _markerBuilder,
       stopClusteringZoom: 16, //
-      extraPercent: 0.2, // 외곽 추가 거리 비율
+      extraPercent: 0.5, // 외곽 추가 거리 비율
     );
   }
 
@@ -42,10 +42,12 @@ class PictoClusterManager {
   Future<Marker> _markerBuilder(cluster.Cluster<PictoItem> cluster) async {
     print("[DEBUG] Cluster count: ${cluster.items.length}, isMultiple: ${cluster.isMultiple}");
     // 가장 좋아요를 많이 맏은 사진
-    Set<PictoMarker> markers = cluster.items.map((item) => item.pictoMarker).toSet();
+    List<PictoMarker> markers = {
+      for (var pictoItem in cluster.items) pictoItem.pictoMarker.photo.photoId: pictoItem.pictoMarker
+    }.values.toList();
     final mostLiked = markers.toList().reduce((a, b) => a.photo.likes > b.photo.likes ? a : b);
     mostLiked.onTap = () {
-      if (cluster.isMultiple && (markers.length == 1)) {
+      if (cluster.isMultiple && (markers.length != 1)) {
         _openClusterBottomSheet(cluster.items.map((e) => e.pictoMarker).toList());
       } else {
         _setSinglePhoto(mostLiked);

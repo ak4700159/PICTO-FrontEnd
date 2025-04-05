@@ -296,9 +296,9 @@ class GoogleMapViewModel extends GetxController {
     switch (period) {
       case "일년":  periodThreshold = now.subtract(Duration(days: 365)); break;
       case "한달":  periodThreshold = now.subtract(Duration(days: 30)); break;
-      case "일주일":periodThreshold = now.subtract(Duration(days: 7)); break;
+      case "일주일": periodThreshold = now.subtract(Duration(days: 7)); break;
       case "하루":  periodThreshold = now.subtract(Duration(days: 1)); break;
-      default:     periodThreshold = DateTime.fromMillisecondsSinceEpoch(0); // 전체 포함
+      default:      periodThreshold = DateTime.fromMillisecondsSinceEpoch(0); // 전체 포함
     }
 
     currentPictoMarkers.removeWhere((marker) => !withinPeriod(marker, periodThreshold));

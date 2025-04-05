@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:picto_frontend/config/user_config.dart';
 import 'package:picto_frontend/screens/main_frame_view_model.dart';
+import 'package:picto_frontend/screens/map/tag/tag_selection_screen.dart';
 import 'package:picto_frontend/screens/photo/photo_view_model.dart';
 import 'package:picto_frontend/screens/profile/profile_view_model.dart';
 
@@ -54,6 +55,7 @@ class AppConfig {
     // 로그인 이후 사용될 컨트롤러 ----------------------
     final pictoClusterManager = Get.put<PictoClusterManager>(PictoClusterManager());
     final selectionViewModel = Get.put<SelectionBarViewModel>(SelectionBarViewModel());
+    final tagSelectionViewModel = Get.put<TagSelectionScreen>(TagSelectionScreen());
     final googleViewModel = Get.put<GoogleMapViewModel>(GoogleMapViewModel());
     final mapViewModel = Get.put<MapViewModel>(MapViewModel());
     final photoViewModel = Get.put<PhotoViewModel>(PhotoViewModel());

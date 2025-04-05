@@ -88,7 +88,7 @@ class SelectionBar extends StatelessWidget {
       heroTag: "tag",
       onPressed: () {
         // 어떻게 구현할지 고민중 // 팝업 형식?
-        // Get.toNamed('/');
+        Get.toNamed('/tag');
       },
       shape: BeveledRectangleBorder(side: BorderSide(width: 1)),
       backgroundColor: AppConfig.backgroundColor,

@@ -12,6 +12,7 @@ dependencies:
   flutter:
     sdk: flutter
 
+  textfield_tags: ^3.0.1
   cupertino_icons: ^1.0.8
   get: ^4.7.2
   dio: ^5.8.0+1
