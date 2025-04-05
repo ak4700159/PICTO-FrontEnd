@@ -360,7 +360,6 @@ class GoogleMapViewModel extends GetxController {
   void _loadRepresentative(String downloadType) async {
     Set<PictoMarker> pictoMarkers = await _converter.getRepresentativePhotos(3, currentStep);
     representativePhotos[currentStep]?.addAll(pictoMarkers);
-    // print("[INFO]...? ${representativePhotos[currentStep]!}");
     for (PictoMarker pictoMarker in representativePhotos[currentStep]!) {
       if (_isPointInsideBounds(LatLng(pictoMarker.photo.lat, pictoMarker.photo.lng), bounds)) {
         pictoMarker.imageData ??=
@@ -394,6 +393,7 @@ class GoogleMapViewModel extends GetxController {
   }
 
   void _loadFolder(String downloadType) async {}
+
 
   // 화면에 내 위치가 잡혀있는지 아닌지 검사
   bool _isPointInsideBounds(LatLng point, LatLngBounds bounds) {

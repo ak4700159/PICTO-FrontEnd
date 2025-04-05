@@ -5,6 +5,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:picto_frontend/config/app_config.dart';
 import 'package:picto_frontend/models/user.dart';
 import 'package:picto_frontend/screens/map/selection_bar_view_model.dart';
+import 'package:picto_frontend/screens/map/tag/tag_selection_view_model.dart';
 import 'package:picto_frontend/screens/profile/profile_view_model.dart';
 import 'package:picto_frontend/services/http_interceptor.dart';
 import 'package:picto_frontend/services/user_manager_service/signin_response.dart';
@@ -97,19 +98,17 @@ class UserManagerHandler {
     } on DioException catch (e) {
       rethrow;
     }
-    // 불러온 데이터를 view model에 입력
     final selectionViewModel = Get.find<SelectionBarViewModel>();
-    selectionViewModel.convertFromJson(response.data["filter"]);
-
+    final tagSelectionViewModel = Get.find<TagSelectionViewModel>();
     final profileViewModel = Get.find<ProfileViewModel>();
-    profileViewModel.convertFromJson(response.data["user"]);
-
     final userConfig = Get.find<UserConfig>();
-    userConfig.convertFromJson(response.data["userSetting"]);
-
-    // 내 사진 + 공유 폴더 사진 전부 로딩
     final googleMapViewModel = Get.find<GoogleMapViewModel>();
+
+    selectionViewModel.convertFromJson(response.data["filter"]);
+    profileViewModel.convertFromJson(response.data["user"]);
+    userConfig.convertFromJson(response.data["userSetting"]);
     googleMapViewModel.initPhotos(response.data["folderPhotos"]);
+    tagSelectionViewModel.initTags(response.data["tags"]);
   }
 
   // 토큰 검증

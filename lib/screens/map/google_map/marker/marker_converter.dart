@@ -79,9 +79,9 @@ class MarkerConverter {
   }
 
   // 이미지 다운로드
-  void downloadPhotos(Set<PictoMarker> pictoMarkers) {
-      pictoMarkers.forEach((pictoMarker) async {
-        pictoMarker.imageData ??= await PhotoStoreHandler().downloadPhoto(pictoMarker.photo.photoId);
-      });
+  Future<void> downloadPhotos(Set<PictoMarker> pictoMarkers) async {
+    await Future.wait(pictoMarkers.map((pictoMarker) async {
+      pictoMarker.imageData ??= await PhotoStoreHandler().downloadPhoto(pictoMarker.photo.photoId);
+    }));
   }
 }

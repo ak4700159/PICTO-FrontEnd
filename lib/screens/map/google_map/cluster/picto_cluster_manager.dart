@@ -31,16 +31,16 @@ class PictoClusterManager {
     manager = cluster.ClusterManager<PictoItem>(
       googleMapViewModel.currentPictoMarkers.map((p) => PictoItem(pictoMarker: p)).toList(),
       _updateMarkers, // 마커가 업데이트될 때 마다 호출됨
-      levels: [1, 4.25, 6.75, 8.25, 11.5, 14.5, 16.0, 16.5], // 클러스터 해상도 단계 지정
+      levels: [4.25, 8.25, 12.5, 16], // 클러스터 해상도 단계 지정
       markerBuilder: _markerBuilder,
       stopClusteringZoom: 16, //
-      extraPercent: 0.5, // 외곽 추가 거리 비율
+      extraPercent: 0.2, // 외곽 추가 거리 비율
     );
   }
 
   // 클러스터 매니저에서 생성하는 마커
   Future<Marker> _markerBuilder(cluster.Cluster<PictoItem> cluster) async {
-    print("[DEBUG] Cluster count: ${cluster.items.length}, isMultiple: ${cluster.isMultiple}");
+    print("[DEBUG] cluster count: ${cluster.items.length}, isMultiple: ${cluster.isMultiple}");
     // 가장 좋아요를 많이 맏은 사진
     List<PictoMarker> markers = {
       for (var pictoItem in cluster.items) pictoItem.pictoMarker.photo.photoId: pictoItem.pictoMarker

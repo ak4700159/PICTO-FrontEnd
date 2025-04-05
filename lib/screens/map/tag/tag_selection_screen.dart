@@ -1,217 +1,176 @@
-import 'package:textfield_tags/textfield_tags.dart';
-import 'dart:math';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:flutter/material.dart';
+import 'package:picto_frontend/config/app_config.dart';
+import 'package:picto_frontend/screens/map/tag/tag_selection_view_model.dart';
+import 'package:picto_frontend/screens/map/top_box.dart';
+import 'package:picto_frontend/screens/map/tag/tag_item.dart';
 
-/*
- * Dynamic Tags
- */
-class ButtonData {
-  final Color buttonColor;
-  final String emoji;
-  const ButtonData(this.buttonColor, this.emoji);
-}
+import '../../../utils/get_widget.dart';
 
-class TagSelectionScreen extends StatefulWidget {
+class TagSelectionScreen extends StatelessWidget {
   const TagSelectionScreen({Key? key}) : super(key: key);
 
   @override
-  State<TagSelectionScreen> createState() => _TagSelectionScreenState();
-}
-
-class _TagSelectionScreenState extends State<TagSelectionScreen> {
-  late double _distanceToField;
-  final random = Random();
-  late DynamicTagController<DynamicTagData<ButtonData>> _dynamicTagController;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _distanceToField = MediaQuery.of(context).size.width;
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _dynamicTagController.dispose();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _dynamicTagController = DynamicTagController<DynamicTagData<ButtonData>>();
-  }
-
-  static final List<DynamicTagData<ButtonData>> _initialTags = [
-    DynamicTagData<ButtonData>(
-      'cat',
-      const ButtonData(
-        Color.fromARGB(255, 200, 232, 255),
-        "😽",
-      ),
-    ),
-    DynamicTagData(
-      'penguin',
-      const ButtonData(
-        Color.fromARGB(255, 255, 201, 243),
-        '🐧',
-      ),
-    ),
-    DynamicTagData(
-      'tiger',
-      const ButtonData(
-        Color.fromARGB(255, 240, 255, 200),
-        '🐯',
-      ),
-    ),
-  ];
-
-  @override
   Widget build(BuildContext context) {
+    final tagSelectionViewModel = Get.find<TagSelectionViewModel>();
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 74, 137, 92),
-        centerTitle: true,
-        title: const Text(
-          'Dynamic Tag Demo...',
-          style: TextStyle(color: Colors.white),
+        automaticallyImplyLeading: false,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Icon(
+              Icons.tag,
+              color: AppConfig.mainColor,
+            ),
+            Text("태그 선택", style: TextStyle(fontWeight: FontWeight.bold)),
+          ],
         ),
-      ),
-      body: Column(
-        children: [
-          TextFieldTags<DynamicTagData<ButtonData>>(
-            textfieldTagsController: _dynamicTagController,
-            initialTags: _initialTags,
-            textSeparators: const [' ', ','],
-            letterCase: LetterCase.normal,
-            validator: (DynamicTagData<ButtonData> tag) {
-              if (tag.tag == 'lion') {
-                return 'Not envited per tiger request';
-              } else if (_dynamicTagController.getTags!
-                  .any((element) => element.tag == tag.tag)) {
-                return 'Already in the club';
-              }
-              return null;
-            },
-            inputFieldBuilder: (context, inputFieldValues) {
-              return Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: TextField(
-                  controller: inputFieldValues.textEditingController,
-                  focusNode: inputFieldValues.focusNode,
-                  decoration: InputDecoration(
-                    isDense: true,
-                    border: const OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Color.fromARGB(255, 74, 137, 92),
-                        width: 3.0,
-                      ),
-                    ),
-                    focusedBorder: const OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Color.fromARGB(255, 74, 137, 92),
-                        width: 3.0,
-                      ),
-                    ),
-                    helperText: 'Zootopia club...',
-                    helperStyle: const TextStyle(
-                      color: Color.fromARGB(255, 74, 137, 92),
-                    ),
-                    hintText: inputFieldValues.tags.isNotEmpty
-                        ? ''
-                        : "Register name...",
-                    errorText: inputFieldValues.error,
-                    prefixIconConstraints:
-                    BoxConstraints(maxWidth: _distanceToField * 0.75),
-                    prefixIcon: inputFieldValues.tags.isNotEmpty
-                        ? SingleChildScrollView(
-                      controller: inputFieldValues.tagScrollController,
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                          children: inputFieldValues.tags
-                              .map((DynamicTagData<ButtonData> tag) {
-                            return Container(
-                              decoration: BoxDecoration(
-                                borderRadius: const BorderRadius.all(
-                                  Radius.circular(20.0),
-                                ),
-                                color: tag.data.buttonColor,
-                              ),
-                              margin:
-                              const EdgeInsets.symmetric(horizontal: 5.0),
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 10.0, vertical: 5.0),
-                              child: Row(
-                                mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
-                                children: [
-                                  InkWell(
-                                    child: Text(
-                                      '${tag.data.emoji} ${tag.tag}',
-                                      style: const TextStyle(
-                                          color:
-                                          Color.fromARGB(255, 0, 0, 0)),
-                                    ),
-                                    onTap: () {
-                                      // print("${tag.tag} selected");
-                                    },
-                                  ),
-                                  const SizedBox(width: 4.0),
-                                  InkWell(
-                                    child: const Icon(
-                                      Icons.cancel,
-                                      size: 14.0,
-                                      color: Color.fromARGB(255, 0, 0, 0),
-                                    ),
-                                    onTap: () {
-                                      inputFieldValues.onTagRemoved(tag);
-                                    },
-                                  )
-                                ],
-                              ),
-                            );
-                          }).toList()),
-                    )
-                        : null,
-                  ),
-                  onChanged: (value) {
-                    final getColor = Color.fromARGB(
-                        random.nextInt(256),
-                        random.nextInt(256),
-                        random.nextInt(256),
-                        random.nextInt(256));
-                    final button = ButtonData(getColor, '✨');
-                    final tagData = DynamicTagData(value, button);
-                    inputFieldValues.onTagChanged(tagData);
+        actions: [
+          Column(
+            children: [
+              SizedBox(
+                height: 40,
+                child: IconButton(
+                  onPressed: () {
+                    // tagSelectionViewModel.addedTag;
                   },
-                  onSubmitted: (value) {
-                    final getColor = Color.fromARGB(
-                        random.nextInt(256),
-                        random.nextInt(256),
-                        random.nextInt(256),
-                        random.nextInt(256));
-                    final button = ButtonData(getColor, '✨');
-                    final tagData = DynamicTagData(value, button);
-                    inputFieldValues.onTagSubmitted(tagData);
-                  },
+                  icon: !tagSelectionViewModel.isChanged.value
+                      ? Icon(
+                          Icons.not_interested,
+                          color: Colors.grey,
+                          size: 35,
+                        )
+                      : Icon(
+                          Icons.add_box_outlined,
+                          color: Colors.green,
+                          size: 35,
+                        ),
+                  color: Colors.white,
                 ),
-              );
-            },
-          ),
-          ElevatedButton(
-            style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all<Color>(
-                const Color.fromARGB(255, 74, 137, 92),
               ),
-            ),
-            onPressed: () {
-              _dynamicTagController.clearTags();
-            },
-            child: const Text(
-              'CLEAR TAGS',
-              style: TextStyle(color: Colors.white),
-            ),
+              !tagSelectionViewModel.isChanged.value
+                  ? Text(
+                      "변경사항 없음",
+                      style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
+                    )
+                  : Text(
+                      "변경사항 저장",
+                      style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
+                    ),
+            ],
+          ),
+          SizedBox(
+            width: context.mediaQuery.size.width * 0.05,
           ),
         ],
+        backgroundColor: Colors.white,
+      ),
+      body: Stack(
+        children: [
+          // 로고
+          Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    "assets/images/picto_logo.png",
+                    colorBlendMode: BlendMode.modulate,
+                    opacity: const AlwaysStoppedAnimation(0.5),
+                  )
+                ],
+              ),
+              TopBox(size: 0.2),
+            ],
+          ),
+          // 텍스트폼 필드 + 선택된 태그 목록
+          Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              TopBox(size: 0.1),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  SizedBox(
+                    width: context.mediaQuery.size.width * 0.9,
+                    child: _getTagTextFromField(context),
+                  ),
+                ],
+              ),
+              TopBox(size: 0.01),
+              Text(
+                "선택한 태그 목록",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+              ),
+              SingleChildScrollView(child: Obx(() => _getTagList(context))),
+            ],
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget _getTagList(BuildContext context) {
+    final tagSelectionViewModel = Get.find<TagSelectionViewModel>();
+    return Wrap(
+      children: tagSelectionViewModel.selectedTags
+          .map(
+            (tag) => TagItem(
+              tagName: tag,
+              remove: () {
+                tagSelectionViewModel.removeTag(tag);
+              },
+            ),
+          )
+          .toList(),
+    );
+  }
+
+  Widget _getTagTextFromField(BuildContext context) {
+    final tagSelectionViewModel = Get.find<TagSelectionViewModel>();
+    return Form(
+      key: tagSelectionViewModel.formKey,
+      child: TextFormField(
+        controller: tagSelectionViewModel.textController,
+        style: TextStyle(fontWeight: FontWeight.bold),
+        decoration: InputDecoration(
+          errorMaxLines: 2,
+          errorBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.red, width: 2),
+            borderRadius: BorderRadius.all(Radius.circular(0)),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.black, width: 2),
+            borderRadius: BorderRadius.all(Radius.circular(0)),
+          ),
+          border: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.black, width: 2),
+            borderRadius: BorderRadius.all(Radius.circular(0)),
+          ),
+          labelStyle: TextStyle(fontWeight: FontWeight.bold),
+          labelText: "태그 입력",
+          hintText: "10글자 이하 태그명을 입력해주세요",
+        ),
+        validator: (String? input) {
+          if (input?.isEmpty ?? true) {
+            return "1글자 이상의 태그명을 입력해주세요";
+          } else if (input!.length > 10) {
+            return "10글자 이하의 태그명을 입력해주세요.";
+          } else if (tagSelectionViewModel.selectedTags.contains(input)) {
+            return "이미 존재하는 태그명입니다.";
+          }
+          return null;
+        },
+        onSaved: (String? input) {
+          tagSelectionViewModel.addTag(input!);
+        },
+        onFieldSubmitted: (String? input) {
+          tagSelectionViewModel.submitTag();
+          tagSelectionViewModel.textController.text = "";
+        },
       ),
     );
   }
