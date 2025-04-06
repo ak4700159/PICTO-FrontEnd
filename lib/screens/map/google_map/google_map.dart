@@ -58,7 +58,7 @@ class CustomGoogleMap extends StatelessWidget {
           children: [
             TopBox(size: 0.05),
             SelectionBar(),
-            ValueTestWidget(),
+            // ValueTestWidget(),
           ],
         ),
         // 하단 Floating buttons
@@ -90,7 +90,7 @@ class CustomGoogleMap extends StatelessWidget {
               // 저장된 shared preferences 초기화 후 로그인 화면으로 이동
               Get.offNamed('/login');
             },
-            backgroundColor: AppConfig.mainColor,
+            backgroundColor: Colors.orange,
             heroTag: "exit",
             child: Icon(
               Icons.exit_to_app,
@@ -110,7 +110,7 @@ class CustomGoogleMap extends StatelessWidget {
               // 사진 공유 화면으로 이동
               Get.toNamed('/upload');
             },
-            backgroundColor: AppConfig.mainColor,
+            backgroundColor: Colors.blueAccent,
             heroTag: "share",
             child: Icon(
               Icons.add,
@@ -136,7 +136,7 @@ class CustomGoogleMap extends StatelessWidget {
                   longitude: googleViewModel.currentLng.value);
               print("[INFO] ${location.toString()}");
             },
-            backgroundColor: AppConfig.mainColor,
+            backgroundColor: Colors.grey,
             heroTag: "test",
             child: Icon(
               Icons.hourglass_empty,

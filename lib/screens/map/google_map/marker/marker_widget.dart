@@ -49,7 +49,7 @@ class MarkerWidget extends StatelessWidget {
         decoration: _decoration,
         child: ClipRRect(
           // ClipRRect 하위 위젯 테두리 지정
-          borderRadius: BorderRadius.circular(20), // 이미지도 같이 둥글게 잘림
+          borderRadius: BorderRadius.circular(18), // 이미지도 같이 둥글게 잘림
           child: imageData != null
               ? Image.memory(
                   imageData!,
