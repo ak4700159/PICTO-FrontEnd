@@ -6,6 +6,7 @@ import 'package:picto_frontend/screens/main_frame_view_model.dart';
 import 'package:picto_frontend/screens/map/tag/tag_selection_view_model.dart';
 import 'package:picto_frontend/screens/photo/photo_view_model.dart';
 import 'package:picto_frontend/screens/profile/profile_view_model.dart';
+import 'package:picto_frontend/screens/upload/upload_view_model.dart';
 
 import '../screens/login/login_view_model.dart';
 import '../screens/login/sub_screen/register_view_model.dart';
@@ -59,12 +60,13 @@ class AppConfig {
     final googleViewModel = Get.put<GoogleMapViewModel>(GoogleMapViewModel());
     final mapViewModel = Get.put<MapViewModel>(MapViewModel());
     final photoViewModel = Get.put<PhotoViewModel>(PhotoViewModel());
+    final uploadViewModel = Get.put<UploadViewModel>(UploadViewModel());
 
     // 사용자 정보 ----------------------
     final profileViewModel = Get.put<ProfileViewModel>(ProfileViewModel());
     final userConfig = Get.put<UserConfig>(UserConfig());
 
-    // 스트리밍 ----------------------
-
+    // 챗봇 스트리밍 ----------------------
+    //
   }
 }

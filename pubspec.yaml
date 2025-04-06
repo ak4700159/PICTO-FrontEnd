@@ -29,6 +29,8 @@ dependencies:
   http_parser: ^4.1.2
   custom_info_window: ^1.0.1
   google_maps_cluster_manager_2: ^3.2.0
+  image_picker: ^1.1.2
+  flutter_dotenv: ^5.2.1
 
 dev_dependencies:
   flutter_test:
@@ -41,6 +43,7 @@ flutter:
   uses-material-design: true
 
   assets:
+    - .env
     - assets/images/
     - assets/map_styles/
 

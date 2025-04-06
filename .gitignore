@@ -47,3 +47,5 @@ app.*.map.json
 **/Debug/**
 
 local.properties
+
+*.env

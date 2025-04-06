@@ -6,6 +6,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:picto_frontend/screens/map/top_box.dart';
 import 'package:picto_frontend/screens/map/value_test_widget.dart';
+import 'package:picto_frontend/utils/location.dart';
 import 'package:picto_frontend/utils/popup.dart';
 
 import '../../../../config/app_config.dart';
@@ -107,6 +108,7 @@ class CustomGoogleMap extends StatelessWidget {
           child: FloatingActionButton(
             onPressed: () {
               // 사진 공유 화면으로 이동
+              Get.toNamed('/upload');
             },
             backgroundColor: AppConfig.mainColor,
             heroTag: "share",
@@ -124,15 +126,20 @@ class CustomGoogleMap extends StatelessWidget {
         child: SizedBox(
           height: context.mediaQuery.size.height * 0.06,
           child: FloatingActionButton(
-            onPressed: () {
+            onPressed: () async {
               // 테스트 버튼 주입
-              googleMapViewModel.moveCurrentPos();
-              showErrorPopup("test");
+              // googleMapViewModel.moveCurrentPos();
+              // showErrorPopup("test");
+              final googleViewModel = Get.find<GoogleMapViewModel>();
+              final location = await fetchAddressFromKakao(
+                  latitude: googleViewModel.currentLat.value,
+                  longitude: googleViewModel.currentLng.value);
+              print("[INFO] ${location.toString()}");
             },
             backgroundColor: AppConfig.mainColor,
-            heroTag: "reload",
+            heroTag: "test",
             child: Icon(
-              Icons.cached,
+              Icons.hourglass_empty,
               color: AppConfig.backgroundColor,
               size: 30,
             ),
