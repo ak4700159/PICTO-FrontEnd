@@ -34,7 +34,8 @@ class TagSelectionScreen extends StatelessWidget {
                 height: 40,
                 child: IconButton(
                   onPressed: () {
-                    // tagSelectionViewModel.addedTag;
+                    tagSelectionViewModel.updateMap();
+                    Get.back();
                   },
                   icon: !tagSelectionViewModel.isChanged.value
                       ? Icon(

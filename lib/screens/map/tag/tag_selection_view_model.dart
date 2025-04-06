@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:picto_frontend/screens/map/google_map/google_map_view_model.dart';
+import 'package:picto_frontend/services/user_manager_service/handler.dart';
 
 // 내려오는 상단바? 일단 대기
 class TagSelectionViewModel extends GetxController {
@@ -39,8 +40,11 @@ class TagSelectionViewModel extends GetxController {
     isChanged.value = true;
   }
 
-  void updateMap() {
+  void updateMap() async {
     final googleMapViewModel = Get.find<GoogleMapViewModel>();
+    List<String> modify = selectedTags.map((t) => t.toString()).toList();
+    print('[INFO] tags : $modify');
+    await UserManagerHandler().modifiedTag(modify);
     googleMapViewModel.updateAllMarkersByTag(selectedTags.map<String>((t) => t).toList());
   }
 }

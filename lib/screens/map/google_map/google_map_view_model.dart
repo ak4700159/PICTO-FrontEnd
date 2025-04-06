@@ -13,6 +13,7 @@ import 'package:picto_frontend/screens/map/google_map/cluster/picto_cluster_item
 import 'package:picto_frontend/services/photo_store_service/handler.dart';
 import 'package:widget_to_marker/widget_to_marker.dart';
 
+import '../../../utils/distance.dart';
 import '../../../utils/util.dart';
 import 'cluster/picto_cluster_manager.dart';
 import 'marker/marker_converter.dart';
@@ -25,7 +26,8 @@ class GoogleMapViewModel extends GetxController {
   RxDouble currentLat = 0.0.obs;
   RxDouble currentLng = 0.0.obs;
   RxDouble currentZoom = 0.0.obs;
-  late LatLngBounds bounds;
+  late LatLngBounds screenBounds;
+  late LatLng currentScreenCenterLatLng;
   RxDouble currentScreenCenterLat = 0.0.obs;
   RxDouble currentScreenCenterLng = 0.0.obs;
   RxBool isCurrentPosInScreen = true.obs;
@@ -66,13 +68,6 @@ class GoogleMapViewModel extends GetxController {
   // 사용자 현재 위치 마커(small)
   late Marker userMarker;
 
-  // 사진 중복 호출 방지
-  final Throttle _callUpdatePhoto = Throttle(
-    const Duration(seconds: AppConfig.throttleSec),
-    initialValue: null,
-    checkEquality: false,
-  );
-
   // 클러스터 매니저
   PictoClusterManager pictoCluster = PictoClusterManager();
 
@@ -84,9 +79,6 @@ class GoogleMapViewModel extends GetxController {
     });
     // 사용자 마커 생성
     userMarker = await _buildUserMarker();
-    _callUpdatePhoto.values.listen((event) {
-      _updateAllMarker();
-    });
     super.onInit();
   }
 
@@ -101,6 +93,10 @@ class GoogleMapViewModel extends GetxController {
 
   // 화면 이동할 때마다 호출되는 함수
   void onCameraMove(CameraPosition pos) async {
+    // 몇 배율 변화까지 허용
+    const double zoomThreshold = 0.5;
+    // m 이동 기준
+    const double centerDistanceThreshold = 500;
     pictoCluster.manager.onCameraMove(pos);
     customInfoWindowController.onCameraMove!();
     // 화면 줌 정보
@@ -109,39 +105,48 @@ class GoogleMapViewModel extends GetxController {
 
     // 화면 중앙 정보 로딩
     try {
-      bounds = await _googleMapController!.getVisibleRegion();
-      currentScreenCenterLat.value = (bounds.northeast.latitude + bounds.southwest.latitude) / 2;
-      currentScreenCenterLng.value = (bounds.northeast.longitude + bounds.southwest.longitude) / 2;
+      screenBounds = await _googleMapController!.getVisibleRegion();
+      currentScreenCenterLat.value =
+          (screenBounds.northeast.latitude + screenBounds.southwest.latitude) / 2;
+      currentScreenCenterLng.value =
+          (screenBounds.northeast.longitude + screenBounds.southwest.longitude) / 2;
+      final newLatLng = LatLng(currentScreenCenterLat.value, currentScreenCenterLng.value);
       final currentPos = LatLng(currentLat.value, currentLng.value);
 
       // small[2~7], middle[7~12], large[12~17]
       // 단계 [large:도/특별시/광역시] ? [middle:시/군/구] ? [small:읍/면/동]
       if (pos.zoom >= 2 && pos.zoom < 7) {
         currentStep = "large";
-        needUpdate = true;
-        isCurrentPosInScreen.value = _isPointInsideBounds(currentPos, bounds);
+        isCurrentPosInScreen.value = _isPointInsideBounds(currentPos, screenBounds);
+        if ((currentZoom.value - pos.zoom).abs() > zoomThreshold ||
+            distance(currentScreenCenterLatLng, newLatLng) > centerDistanceThreshold) {
+          needUpdate = true;
+        }
       } else if (pos.zoom >= 7 && pos.zoom < 12) {
         currentStep = "middle";
-        needUpdate = true;
-        isCurrentPosInScreen.value = _isPointInsideBounds(currentPos, bounds);
+        isCurrentPosInScreen.value = _isPointInsideBounds(currentPos, screenBounds);
+        if ((currentZoom.value - pos.zoom).abs() > zoomThreshold ||
+            distance(currentScreenCenterLatLng, newLatLng) > centerDistanceThreshold) {
+          needUpdate = true;
+        }
         // 화면 안에 있을 경우 주변 사진만 보여준다.
       } else {
-        if (currentStep != "small" ||
-            isCurrentPosInScreen.value != _isPointInsideBounds(currentPos, bounds)) {
-          currentStep = "small";
+        currentStep = "small";
+        isCurrentPosInScreen.value = _isPointInsideBounds(currentPos, screenBounds);
+        if ((currentZoom.value - pos.zoom).abs() > zoomThreshold ||
+            distance(currentScreenCenterLatLng, newLatLng) > centerDistanceThreshold) {
           needUpdate = true;
-          isCurrentPosInScreen.value = _isPointInsideBounds(currentPos, bounds);
         }
       }
     } catch (e) {
-      print("[ERROR] acquired screen location fail");
+      print("[ERROR] acquired screen location fail ${e.toString()}");
     }
   }
 
   // 카메라 이동이 끝났을 때 호출
   void onCameraIdle() {
     if (needUpdate) {
-      _callUpdatePhoto.setValue(null);
+      _updateAllMarker();
       needUpdate = false;
     }
   }
@@ -161,7 +166,8 @@ class GoogleMapViewModel extends GetxController {
       currentScreenCenterLat.value = (bounds.northeast.latitude + bounds.southwest.latitude) / 2;
       currentScreenCenterLng.value = (bounds.northeast.longitude + bounds.southwest.longitude) / 2;
       pictoCluster.manager.setMapId(controller.mapId);
-      pictoCluster.manager.setItems(currentPictoMarkers.map((p) => PictoItem(pictoMarker: p)).toList());
+      pictoCluster.manager
+          .setItems(currentPictoMarkers.map((p) => PictoItem(pictoMarker: p)).toList());
     } catch (e) {
       print("[ERROR] : controller setting error");
     }
@@ -199,6 +205,7 @@ class GoogleMapViewModel extends GetxController {
       target: LatLng(currentLat.value, currentLng.value),
       zoom: 14,
     );
+    currentScreenCenterLatLng = LatLng(position.latitude, position.longitude);
     print("[INFO] now location : ${currentLat.value}/${currentLng.value}\n");
 
     // 현재 위치 주소를 구독하기
@@ -268,23 +275,26 @@ class GoogleMapViewModel extends GetxController {
 
     if (currentStep == "large") {
       // 지역 대표 사진만 로딩
-      _loadRepresentative(currentStep);
+      await _loadRepresentative(currentStep);
     } else if (currentStep == "middle") {
       // 지역 대표 사진 + 내 위치 + 폴더 사진 + 내 사진
-      _loadRepresentative(currentStep);
+      await _loadRepresentative(currentStep);
       _loadFolder(currentStep);
       _loadMyPhotos();
       currentMarkers.add(userMarker);
+      // 확인해야됨
+      // pictoCluster.manager.addItem(PictoItem(pictoMarker: userMarker));
     } else {
       // (지역 대표 사진 OR 주변 사진) + 내 위치 + 폴더 사진 + 내 사진
       if (isCurrentPosInScreen.value) {
-        _loadAround(currentStep);
+        await _loadAround(currentStep);
       } else {
-        _loadRepresentative(currentStep);
+        await _loadRepresentative(currentStep);
       }
       _loadFolder(currentStep);
       _loadMyPhotos();
       currentMarkers.add(userMarker);
+      // pictoCluster.manager.addItem(PictoItem(pictoMarker: userMarker));
     }
   }
 
@@ -294,11 +304,20 @@ class GoogleMapViewModel extends GetxController {
     DateTime periodThreshold;
 
     switch (period) {
-      case "일년":  periodThreshold = now.subtract(Duration(days: 365)); break;
-      case "한달":  periodThreshold = now.subtract(Duration(days: 30)); break;
-      case "일주일": periodThreshold = now.subtract(Duration(days: 7)); break;
-      case "하루":  periodThreshold = now.subtract(Duration(days: 1)); break;
-      default:      periodThreshold = DateTime.fromMillisecondsSinceEpoch(0); // 전체 포함
+      case "일년":
+        periodThreshold = now.subtract(Duration(days: 365));
+        break;
+      case "한달":
+        periodThreshold = now.subtract(Duration(days: 30));
+        break;
+      case "일주일":
+        periodThreshold = now.subtract(Duration(days: 7));
+        break;
+      case "하루":
+        periodThreshold = now.subtract(Duration(days: 1));
+        break;
+      default:
+        periodThreshold = DateTime.fromMillisecondsSinceEpoch(0); // 전체 포함
     }
 
     currentPictoMarkers.removeWhere((marker) => !withinPeriod(marker, periodThreshold));
@@ -357,27 +376,36 @@ class GoogleMapViewModel extends GetxController {
         consumeTapEvents: true);
   }
 
-  void _loadRepresentative(String downloadType) async {
-    Set<PictoMarker> pictoMarkers = await _converter.getRepresentativePhotos(3, currentStep);
-    representativePhotos[currentStep]?.addAll(pictoMarkers);
-    for (PictoMarker pictoMarker in representativePhotos[currentStep]!) {
-      if (_isPointInsideBounds(LatLng(pictoMarker.photo.lat, pictoMarker.photo.lng), bounds)) {
-        pictoMarker.imageData ??=
-            await PhotoStoreHandler().downloadPhoto(pictoMarker.photo.photoId);
+  Future<void> _loadRepresentative(String downloadType) async {
+    Set<PictoMarker> newMarkers = await _converter.getRepresentativePhotos(3, downloadType);
+    // Set<PictoMarker>? toRemove = representativePhotos[downloadType]?.difference(newMarkers);
+    // Set<PictoMarker>? toAdd = newMarkers.difference(representativePhotos[downloadType]!);
+    representativePhotos[downloadType]?.addAll(newMarkers);
+    // representativePhotos[downloadType]?.removeAll(toRemove!);
+    Set<PictoMarker> toAdd = { };
+    for (PictoMarker pictoMarker in representativePhotos[downloadType]!) {
+      if (_isPointInsideBounds(
+          LatLng(pictoMarker.photo.lat, pictoMarker.photo.lng), screenBounds)) {
         currentPictoMarkers.add(pictoMarker);
-        pictoCluster.manager.addItem(PictoItem(pictoMarker: pictoMarker));
+        toAdd.add(pictoMarker);
+        // pictoCluster.manager.addItem(PictoItem(pictoMarker: pictoMarker));
       }
       if (currentStep != downloadType) return;
     }
+    pictoCluster.manager.setItems(toAdd.map((p) => PictoItem(pictoMarker: p)).toList());
   }
 
-  void _loadAround(String downloadType) async {
-    Set<PictoMarker> pictoMarkers = await _converter.getAroundPhotos();
-    aroundPhotos.addAll(pictoMarkers);
+  Future<void> _loadAround(String downloadType) async {
+    Set<PictoMarker> newMarkers = await _converter.getAroundPhotos();
+    // Set<PictoMarker> toRemove = aroundPhotos.difference(newMarkers);
+    // Set<PictoMarker> toAdd = newMarkers.difference(aroundPhotos);
+    aroundPhotos.addAll(newMarkers);
+    // aroundPhotos.removeAll(toRemove);
     for (PictoMarker pictoMarker in aroundPhotos) {
-      if (_isPointInsideBounds(LatLng(pictoMarker.photo.lat, pictoMarker.photo.lng), bounds)) {
-        pictoMarker.imageData ??=
-            await PhotoStoreHandler().downloadPhoto(pictoMarker.photo.photoId);
+      if (_isPointInsideBounds(
+          LatLng(pictoMarker.photo.lat, pictoMarker.photo.lng), screenBounds)) {
+        // pictoMarker.imageData ??=
+        //     await PhotoStoreHandler().downloadPhoto(pictoMarker.photo.photoId);
         currentPictoMarkers.add(pictoMarker);
         pictoCluster.manager.addItem(PictoItem(pictoMarker: pictoMarker));
       }
@@ -385,15 +413,15 @@ class GoogleMapViewModel extends GetxController {
     }
   }
 
-  void _loadMyPhotos() async {
+  Future<void> _loadMyPhotos() async {
     myPhotos.forEach((pictoMarker) async {
       currentPictoMarkers.add(pictoMarker);
       pictoCluster.manager.addItem(PictoItem(pictoMarker: pictoMarker));
     });
   }
 
-  void _loadFolder(String downloadType) async {}
-
+  // 시간 남으면 구현
+  Future<void> _loadFolder(String downloadType) async {}
 
   // 화면에 내 위치가 잡혀있는지 아닌지 검사
   bool _isPointInsideBounds(LatLng point, LatLngBounds bounds) {

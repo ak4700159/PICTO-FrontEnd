@@ -43,13 +43,14 @@ class UserManagerHandler {
   // 회원가입
   Future<void> signup({required User newUser, required double lat, required double lng}) async {
     String hostUrl = "$baseUrl/signup";
-    final response = await dio.post(hostUrl, data: jsonEncode({
-      'email': newUser.email,
-      'password': newUser.password,
-      'name': newUser.name,
-      'lat': lat,
-      'lng': lng,
-    }));
+    final response = await dio.post(hostUrl,
+        data: jsonEncode({
+          'email': newUser.email,
+          'password': newUser.password,
+          'name': newUser.name,
+          'lat': lat,
+          'lng': lng,
+        }));
     return;
   }
 
@@ -148,14 +149,18 @@ class UserManagerHandler {
   Future<void> modifiedTag(List<String> tagNames) async {
     String hostUrl = "$baseUrl/tag";
     try {
-      final response = await dio.patch(
+      final response = await dio.put(
         hostUrl,
-        data: jsonEncode(
-          {
-            "userId": ownerId,
-            "tagNames": tagNames,
+        options: Options(
+          headers: {
+            "Access-Token": accessToken,
+            "User-Id": ownerId,
           },
         ),
+        data: {
+          "userId": ownerId,
+          "tagNames": tagNames,
+        },
       );
     } on DioException catch (e) {
       print("[ERROR] modified tag http error");
@@ -168,6 +173,12 @@ class UserManagerHandler {
     try {
       final response = await dio.patch(
         hostUrl,
+        options: Options(
+          headers: {
+            "Access-Token": accessToken,
+            "User-Id": ownerId,
+          },
+        ),
         data: jsonEncode(
           {
             "userId": ownerId,
@@ -176,8 +187,8 @@ class UserManagerHandler {
           },
         ),
       );
-    } on DioException catch(e) {
-      print("[ERROR] modified filter http error");
+    } on DioException catch (e) {
+      print("[ERROR] modified filter http error : ${e.toString()}");
     }
   }
 

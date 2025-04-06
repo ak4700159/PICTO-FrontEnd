@@ -9,6 +9,7 @@ import 'package:google_maps_cluster_manager_2/google_maps_cluster_manager_2.dart
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:picto_frontend/screens/map/google_map/cluster/picto_cluster_item.dart';
 import 'package:picto_frontend/screens/map/google_map/google_map_view_model.dart';
+import 'package:picto_frontend/services/photo_store_service/handler.dart';
 import '../../../../config/app_config.dart';
 import '../../../photo/photo_view_model.dart';
 import '../marker/marker_widget.dart';
@@ -31,7 +32,7 @@ class PictoClusterManager {
     manager = cluster.ClusterManager<PictoItem>(
       googleMapViewModel.currentPictoMarkers.map((p) => PictoItem(pictoMarker: p)).toList(),
       _updateMarkers, // 마커가 업데이트될 때 마다 호출됨
-      levels: [4.25, 8.25, 12.5, 16], // 클러스터 해상도 단계 지정
+      levels: [1, 4.25, 6.75, 8.25, 11.5, 14.5, 16.0, 16.5], // 클러스터 해상도 단계 지정
       markerBuilder: _markerBuilder,
       stopClusteringZoom: 16, //
       extraPercent: 0.2, // 외곽 추가 거리 비율
@@ -43,7 +44,8 @@ class PictoClusterManager {
     print("[DEBUG] cluster count: ${cluster.items.length}, isMultiple: ${cluster.isMultiple}");
     // 가장 좋아요를 많이 맏은 사진
     List<PictoMarker> markers = {
-      for (var pictoItem in cluster.items) pictoItem.pictoMarker.photo.photoId: pictoItem.pictoMarker
+      for (var pictoItem in cluster.items)
+        pictoItem.pictoMarker.photo.photoId: pictoItem.pictoMarker
     }.values.toList();
     final mostLiked = markers.toList().reduce((a, b) => a.photo.likes > b.photo.likes ? a : b);
     mostLiked.onTap = () {
@@ -53,12 +55,13 @@ class PictoClusterManager {
         _setSinglePhoto(mostLiked);
       }
     };
+    mostLiked.imageData ??= await PhotoStoreHandler().downloadPhoto(mostLiked.photo.photoId);
     return mostLiked.toGoogleMarker(most: true);
   }
 
   // 마커 전체 업데이트
   void _updateMarkers(Set<Marker> markers) {
-    print('[INFO] cluster marker update');
+    print('[INFO] cluster marker update markers length : ${markers.length}');
     final googleViewModel = Get.find<GoogleMapViewModel>();
     googleViewModel.currentMarkers.addAll(markers);
   }
@@ -85,10 +88,31 @@ class PictoClusterManager {
                       "fit": fit,
                     });
                   },
-                  child: MarkerWidget(
-                    type: markers[index].type,
-                    imageData: markers[index].imageData,
-                  ),
+                  child: markers[index].imageData == null
+                      ? FutureBuilder(
+                          builder: (BuildContext context, AsyncSnapshot snapshot) {
+                            if (snapshot.data == null || snapshot.data == false) {
+                              return CircularProgressIndicator(color: AppConfig.mainColor,);
+                            } else if (snapshot.hasError) {
+                              return Image.asset(
+                                'assets/images/picto_logo.png',
+                                fit: BoxFit.cover,
+                              );
+                            } else {
+                              Uint8List data = snapshot.data;
+                              markers[index].imageData = data;
+                              return MarkerWidget(
+                                type: markers[index].type,
+                                imageData: markers[index].imageData,
+                              );
+                            }
+                          },
+                          future: PhotoStoreHandler().downloadPhoto(markers[index].photo.photoId),
+                        )
+                      : MarkerWidget(
+                          type: markers[index].type,
+                          imageData: markers[index].imageData,
+                        ),
                 ),
               ),
             );

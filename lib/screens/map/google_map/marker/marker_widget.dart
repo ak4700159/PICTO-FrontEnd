@@ -54,6 +54,12 @@ class MarkerWidget extends StatelessWidget {
               ? Image.memory(
                   imageData!,
                   fit: BoxFit.cover,
+                  errorBuilder: (context, object, trace) {
+                    return Image.asset(
+                      'assets/images/picto_logo.png',
+                      fit: BoxFit.cover,
+                    );
+                  },
                 )
               : type == PictoMarkerType.userPos
                   ? null
