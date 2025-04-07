@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:picto_frontend/config/user_config.dart';
+import 'package:picto_frontend/screens/folder/folder_view_model.dart';
 import 'package:picto_frontend/screens/main_frame_view_model.dart';
 import 'package:picto_frontend/screens/map/tag/tag_selection_view_model.dart';
 import 'package:picto_frontend/screens/photo/photo_view_model.dart';
@@ -61,6 +62,7 @@ class AppConfig {
     final mapViewModel = Get.put<MapViewModel>(MapViewModel());
     final photoViewModel = Get.put<PhotoViewModel>(PhotoViewModel());
     final uploadViewModel = Get.put<UploadViewModel>(UploadViewModel());
+    final folderViewModel = Get.put<FolderViewModel>(FolderViewModel());
 
     // 사용자 정보 ----------------------
     final profileViewModel = Get.put<ProfileViewModel>(ProfileViewModel());

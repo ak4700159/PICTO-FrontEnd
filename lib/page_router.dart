@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:picto_frontend/screens/folder/folder_screen.dart';
+import 'package:picto_frontend/screens/folder/folder_list_screen.dart';
 import 'package:picto_frontend/screens/login/login_screen.dart';
 import 'package:picto_frontend/screens/login/sub_screen/passwd_setting_screen.dart';
 import 'package:picto_frontend/screens/main_frame.dart';
@@ -19,7 +19,7 @@ class PageRouter{
       GetPage(name: '/map', page: () => MapScreen()),
       GetPage(name: '/passwd_setting', page: () => PasswdSettingScreen()),
       GetPage(name: '/photo', page: () => PhotoScreen()),
-      GetPage(name: '/folder', page: () => FolderScreen()),
+      GetPage(name: '/folder', page: () => FolderListScreen()),
       GetPage(name: '/upload', page: () => UploadScreen()),
       GetPage(name: '/tag', page: () => TagSelectionScreen()),
       // AI 챗봇 화면

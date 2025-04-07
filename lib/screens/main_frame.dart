@@ -6,7 +6,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:picto_frontend/config/app_config.dart';
-import 'package:picto_frontend/screens/folder/folder_screen.dart';
+import 'package:picto_frontend/screens/folder/folder_list_screen.dart';
 import 'package:picto_frontend/screens/main_frame_view_model.dart';
 import 'package:picto_frontend/screens/photo/photo_book_screen.dart';
 import 'package:picto_frontend/screens/profile/profile_screen.dart';
@@ -50,7 +50,7 @@ class MapScreen extends StatelessWidget {
       0 => SettingScreen(),
       1 => PhotoBookScreen(),
       2 => CustomGoogleMap(),
-      3 => FolderScreen(),
+      3 => FolderListScreen(),
       4 => ProfileScreen(),
       _ => Center(
           child: Text('error', style: TextStyle(color: Colors.red, fontSize: 24),),
