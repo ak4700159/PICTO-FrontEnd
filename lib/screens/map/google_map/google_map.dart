@@ -45,6 +45,8 @@ class CustomGoogleMap extends StatelessWidget {
             // 3D 건물 표현
             buildingsEnabled: false,
             onTap: googleMapViewModel.onTap,
+            // 사용자 위치 중심 반경 3km 원
+            circles: googleMapViewModel.circles,
           ),
         ),
         CustomInfoWindow(
@@ -129,17 +131,12 @@ class CustomGoogleMap extends StatelessWidget {
             onPressed: () async {
               // 테스트 버튼 주입
               // googleMapViewModel.moveCurrentPos();
-              // showErrorPopup("test");
-              final googleViewModel = Get.find<GoogleMapViewModel>();
-              final location = await fetchAddressFromKakao(
-                  latitude: googleViewModel.currentLat.value,
-                  longitude: googleViewModel.currentLng.value);
-              print("[INFO] ${location.toString()}");
+              showErrorPopup("test");
             },
             backgroundColor: Colors.grey,
             heroTag: "test",
             child: Icon(
-              Icons.hourglass_empty,
+              Icons.newspaper_outlined,
               color: AppConfig.backgroundColor,
               size: 30,
             ),

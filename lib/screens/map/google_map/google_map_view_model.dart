@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:custom_info_window/custom_info_window.dart';
-import 'package:debounce_throttle/debounce_throttle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -10,7 +9,6 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:picto_frontend/config/app_config.dart';
 import 'package:picto_frontend/models/photo.dart';
 import 'package:picto_frontend/screens/map/google_map/cluster/picto_cluster_item.dart';
-import 'package:picto_frontend/services/photo_store_service/handler.dart';
 import 'package:widget_to_marker/widget_to_marker.dart';
 
 import '../../../utils/distance.dart';
@@ -52,6 +50,7 @@ class GoogleMapViewModel extends GetxController {
     "large": <PictoMarker>{},
   };
 
+
   // 3km 이내 주변 사진(small)
   Set<PictoMarker> aroundPhotos = <PictoMarker>{};
 
@@ -61,9 +60,10 @@ class GoogleMapViewModel extends GetxController {
   // 공유폴더 사진(middle)
   Set<PictoMarker> folderPhotos = <PictoMarker>{};
 
-  // 현재 선택된 마커들(all zoom)
+  // 지도에 반영되는 주요 구성
   RxSet<PictoMarker> currentPictoMarkers = <PictoMarker>{}.obs;
   RxSet<Marker> currentMarkers = <Marker>{}.obs;
+  RxSet<Circle> circles = <Circle>{}.obs;
 
   // 사용자 현재 위치 마커(small)
   late Marker userMarker;
@@ -213,7 +213,7 @@ class GoogleMapViewModel extends GetxController {
       (Position position) {
         currentLat.value = position.latitude;
         currentLng.value = position.longitude;
-        _updateUserMarker();
+        _updateComponent();
         print("[INFO] get current pos -> lat : ${currentLat.value} / lng : ${currentLng.value}");
       },
     );
@@ -255,16 +255,34 @@ class GoogleMapViewModel extends GetxController {
       currentPictoMarkers.add(photo);
     }
     currentMarkers.add(userMarker);
+
+    circles.add(Circle(
+      circleId: CircleId("user_area"),
+      center: LatLng(currentLat.value, currentLng.value), // 사용자 현재 위치
+      radius: 3000, // 3km == 3000m
+      fillColor: Colors.transparent,
+      strokeColor: AppConfig.mainColor,
+      strokeWidth: 2,
+    ));
   }
 
-  // 사용자 위치 마커 업데이트
-  void _updateUserMarker() async {
+  // 사용자 위치 + 원  변경
+  void _updateComponent() async {
     userMarker = await _buildUserMarker();
     // 마커 셋에서 이전 것 제거 후 다시 추가
     if (currentStep != "large") {
       currentMarkers.removeWhere((marker) => marker.markerId.value == "user");
       currentMarkers.add(userMarker);
     }
+    circles.clear();
+    circles.add(Circle(
+      circleId: CircleId("user_area"),
+      center: LatLng(currentLat.value, currentLng.value),
+      radius: 3000,
+      fillColor: Colors.transparent,
+      strokeColor: AppConfig.mainColor,
+      strokeWidth: 2,
+    ));
   }
 
   // 전체 마커 업데이트 -> 해당 부분 최적화 가능

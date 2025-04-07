@@ -74,9 +74,10 @@ class UploadScreen extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
+          // 사진 OR 사진 선택 화면
           Container(
             width: width,
-            // height: , 높이는 이미지 너비에 따라 변동
+            // 높이는 이미지 너비에 따라 변동
             decoration: BoxDecoration(
               color: Colors.white,
               border: Border.all(width: 2, color: Colors.black),
