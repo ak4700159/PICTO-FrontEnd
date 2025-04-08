@@ -5,7 +5,7 @@ import 'dart:convert';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:picto_frontend/config/app_config.dart';
-import 'package:picto_frontend/services/session_scheduler_service/location_message.dart';
+import 'package:picto_frontend/models/location_msg.dart';
 import 'package:picto_frontend/services/user_manager_service/user_api.dart';
 import 'package:stomp_dart_client/stomp_dart_client.dart';
 

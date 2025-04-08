@@ -65,6 +65,7 @@ class UserManagerApi {
         'lng': lng,
       });
     } on DioException catch (e) {
+      showErrorPopup(e.toString());
       rethrow;
     }
   }
@@ -90,6 +91,7 @@ class UserManagerApi {
       preferences.setString("access-token", accessToken!);
       preferences.setInt("owner-id", ownerId!);
     } on DioException catch (e) {
+      showErrorPopup(e.toString());
       rethrow;
     }
   }
@@ -203,6 +205,20 @@ class UserManagerApi {
         } catch (e) {}
       }
     }
+  }
+
+  // 다른 사용자 정보 불러오기
+  Future<User?> getUserInfo({required int userId}) async {
+    try {
+      final response = await dio.get(
+        '$baseUrl/users/$userId',
+        options: _authOptions(),
+      );
+      return User.fromJson(response.data);
+    } on DioException catch(e) {
+      showErrorPopup(e.toString());
+    }
+    return null;
   }
 
   void _sendInitValue(response) {

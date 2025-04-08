@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'folder_chat_screen.dart';
-import 'folder_screen.dart';
+import 'sub_screen/folder_chat_screen.dart';
+import 'sub_screen/folder_photo_screen.dart';
 
 class FolderFrame extends StatelessWidget {
   const FolderFrame({super.key});

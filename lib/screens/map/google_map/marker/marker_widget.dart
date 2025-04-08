@@ -25,7 +25,7 @@ class MarkerWidget extends StatelessWidget {
 
     // 사용자가 위치 표시만 다르게
     // 사진을 감싸고 있는 Container 모양
-    BoxDecoration _decoration = type == PictoMarkerType.userPos
+    BoxDecoration decoration = type == PictoMarkerType.userPos
         ? BoxDecoration(
             color: _borderColor,
             // border: Border.all(width: 4),
@@ -46,7 +46,7 @@ class MarkerWidget extends StatelessWidget {
       child: Container(
         width: type == PictoMarkerType.userPos ? 30 : 100, // 원하는 마커 크기
         height: type == PictoMarkerType.userPos ? 30 : 100,
-        decoration: _decoration,
+        decoration: decoration,
         child: ClipRRect(
           // ClipRRect 하위 위젯 테두리 지정
           borderRadius: BorderRadius.circular(18), // 이미지도 같이 둥글게 잘림

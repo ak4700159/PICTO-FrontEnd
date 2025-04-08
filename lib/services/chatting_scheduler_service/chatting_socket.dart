@@ -1,18 +1,22 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:get/get.dart';
+import 'package:picto_frontend/models/chatting_msg.dart';
+import 'package:picto_frontend/utils/popup.dart';
 import 'package:stomp_dart_client/stomp_dart_client.dart';
 
 import '../../config/app_config.dart';
 
 // 채팅방마다 스케줄러 작동
 class ChattingSocket {
-  final baseUrl = "${AppConfig.httpUrl}:8085/ws-connected";
-  bool connected = false;
-  Function? unsubscribeFunction;
-  StompFrameCallback receive;
   late int folderId;
   late StompClient _stompClient;
+
+  final baseUrl = "${AppConfig.httpUrl}:8085/ws-connected";
+  StompFrameCallback receive;
+  Function? unsubscribeFunction;
+  bool connected = false;
 
   ChattingSocket({required this.folderId, required this.receive}) {
     _stompClient = StompClient(
@@ -26,7 +30,6 @@ class ChattingSocket {
       ),
     );
   }
-
   void connectWebSocket() async {
     // 접속 중인지 확인
     if (_stompClient.connected) {
@@ -68,5 +71,17 @@ class ChattingSocket {
     disconnectWebSocket();
   }
 
-
+  // 채팅 전송
+  Future<void> sendChatMsg(ChatMsg msg) async {
+    try {
+      final destination = '/publish/chat.$folderId';
+      final body = jsonEncode(msg.toJson());
+      _stompClient.send(
+        destination: destination,
+        body: body,
+      );
+    } catch (e) {
+      showErrorPopup(e.toString());
+    }
+  }
 }

@@ -31,7 +31,6 @@ class Picto extends StatelessWidget {
   Widget build(BuildContext context) {
     // GetX 컨트롤러 등록
     AppConfig.enrollGetxController();
-
     return GetMaterialApp(
       title: 'PICTO APP',
       theme: PictoThemeData.init(),

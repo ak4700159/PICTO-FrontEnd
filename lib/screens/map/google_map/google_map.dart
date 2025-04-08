@@ -80,7 +80,6 @@ class CustomGoogleMap extends StatelessWidget {
   }
 
   List<Widget> _getBottomRightFloatingButtons(BuildContext context) {
-    final googleMapViewModel = Get.find<GoogleMapViewModel>();
     return [
       // 로그아웃
       Padding(

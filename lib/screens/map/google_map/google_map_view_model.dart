@@ -262,7 +262,7 @@ class GoogleMapViewModel extends GetxController {
       radius: 3000, // 3km == 3000m
       fillColor: Colors.transparent,
       strokeColor: AppConfig.mainColor,
-      strokeWidth: 2,
+      strokeWidth: 1,
     ));
   }
 

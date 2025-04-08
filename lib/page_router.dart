@@ -13,6 +13,8 @@ import 'package:picto_frontend/test_ground/ksm_test_screen.dart';
 class PageRouter{
   static List<GetPage> getPages() {
     List<GetPage> pages = [
+      GetPage(name: '/test', page: () => TestScreen()),
+
       GetPage(name: '/splash', page: () => SplashScreen()),
       GetPage(name: '/login', page: () => LoginScreen()),
       GetPage(name: '/register', page: () => RegisterScreen()),
@@ -22,6 +24,7 @@ class PageRouter{
       GetPage(name: '/folder', page: () => FolderListScreen()),
       GetPage(name: '/upload', page: () => UploadScreen()),
       GetPage(name: '/tag', page: () => TagSelectionScreen()),
+
       // AI 챗봇 화면
       // ComfyUI 상호 작용 화면
     ];
