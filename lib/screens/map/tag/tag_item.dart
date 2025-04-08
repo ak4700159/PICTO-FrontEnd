@@ -18,7 +18,7 @@ class TagItem extends StatelessWidget {
         decoration: BoxDecoration(
           border: Border.all(
             color: Colors.black, // 테두리 색상
-            width: 2, // 테두리 두께
+            width: 1, // 테두리 두께
           ),
           color: AppConfig.mainColor,
           borderRadius: BorderRadius.circular(20), // 전체 둥글게

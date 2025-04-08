@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
-import 'package:picto_frontend/services/session_scheduler_service/handler.dart';
+import 'package:picto_frontend/services/session_scheduler_service/session_socket.dart';
 
 import 'google_map/google_map_view_model.dart';
 
@@ -12,7 +12,7 @@ class ValueTestWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final googleMapViewModel = Get.find<GoogleMapViewModel>();
-    final sessionController = Get.find<SessionSchedulerHandler>();
+    final sessionController = Get.find<SessionSocket>();
     return Column(
       children: [
         Row(

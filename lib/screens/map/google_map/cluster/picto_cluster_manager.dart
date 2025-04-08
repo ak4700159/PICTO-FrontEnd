@@ -9,7 +9,7 @@ import 'package:google_maps_cluster_manager_2/google_maps_cluster_manager_2.dart
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:picto_frontend/screens/map/google_map/cluster/picto_cluster_item.dart';
 import 'package:picto_frontend/screens/map/google_map/google_map_view_model.dart';
-import 'package:picto_frontend/services/photo_store_service/handler.dart';
+import 'package:picto_frontend/services/photo_store_service/photo_store_api.dart';
 import '../../../../config/app_config.dart';
 import '../../../photo/photo_view_model.dart';
 import '../marker/marker_widget.dart';

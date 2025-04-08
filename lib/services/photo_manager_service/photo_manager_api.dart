@@ -1,16 +1,16 @@
 import 'package:dio/dio.dart';
 import 'package:picto_frontend/models/photo.dart';
-import 'package:picto_frontend/services/user_manager_service/handler.dart';
+import 'package:picto_frontend/services/user_manager_service/user_api.dart';
 
 import '../../config/app_config.dart';
 import '../http_interceptor.dart';
 
-class PhotoManagerHandler {
-  PhotoManagerHandler._();
+class PhotoManagerApi {
+  PhotoManagerApi._();
 
-  static final PhotoManagerHandler _handler = PhotoManagerHandler._();
+  static final PhotoManagerApi _handler = PhotoManagerApi._();
 
-  factory PhotoManagerHandler() {
+  factory PhotoManagerApi() {
     return _handler;
   }
 
@@ -26,7 +26,7 @@ class PhotoManagerHandler {
   Future<List<Photo>> getAroundPhotos() async {
     String hostUrl = "$baseUrl/photos/around";
     try {
-      final response = await dio.get(hostUrl, data: {"senderId": UserManagerHandler().ownerId});
+      final response = await dio.get(hostUrl, data: {"senderId": UserManagerApi().ownerId});
       List<dynamic> photos = response.data;
       return photos.map((json) => Photo.fromJson(json)).toList();
     } on DioException catch (e) {
@@ -41,7 +41,7 @@ class PhotoManagerHandler {
     String hostUrl = "$baseUrl/photos/representative";
     try {
       final response = await dio.get(hostUrl, data: {
-        "senderId" : UserManagerHandler().ownerId,
+        "senderId" : UserManagerApi().ownerId,
         "eventType": eventType,
         "locationType": locationType,
         "locationName": locationName,

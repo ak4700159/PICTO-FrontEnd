@@ -7,9 +7,9 @@ class SigninResponse {
 
   factory SigninResponse.fromJson(Map<String, dynamic> json) {
     return SigninResponse(
-      accessToken: json["accessToken"],
-      refreshToken: json["refreshToken"],
-      userId: json["userId"],
+      accessToken: json["data"]["accessToken"],
+      refreshToken: json["data"]["refreshToken"],
+      userId: json["data"]["userId"],
     );
   }
 }

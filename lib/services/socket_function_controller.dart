@@ -1,12 +1,12 @@
 import 'package:debounce_throttle/debounce_throttle.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
-import 'package:picto_frontend/services/session_scheduler_service/handler.dart';
+import 'package:picto_frontend/services/session_scheduler_service/session_socket.dart';
 
 import '../config/app_config.dart';
 
 class SocketFunctionController{
-  late SessionSchedulerHandler sessionController;
+  late SessionSocket sessionController;
   final sessionDebouncer = Debouncer<bool>(
     const Duration(seconds: AppConfig.throttleSec),
     initialValue: false,
@@ -15,7 +15,7 @@ class SocketFunctionController{
 
 
   SocketFunctionController() {
-    sessionController = Get.find<SessionSchedulerHandler>();
+    sessionController = Get.find<SessionSocket>();
     sessionDebouncer.values.listen((connected) {
       if (connected) {
         sessionController.connectWebSocket();

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../config/app_config.dart';
-import '../services/session_scheduler_service/handler.dart';
+import '../services/session_scheduler_service/session_socket.dart';
 import '../services/socket_function_controller.dart';
 
 InputDecoration getCustomInputDecoration(
@@ -30,7 +30,7 @@ InputDecoration getCustomInputDecoration(
 Widget getTestConnectionFloatBtn(
     BuildContext context) {
   SocketFunctionController socketInterceptor = Get.find<SocketFunctionController>();
-  SessionSchedulerHandler sessionHandler = Get.find<SessionSchedulerHandler>();
+  SessionSocket sessionHandler = Get.find<SessionSocket>();
   return Column(
     mainAxisAlignment: MainAxisAlignment.center,
     children: [

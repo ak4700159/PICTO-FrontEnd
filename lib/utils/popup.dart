@@ -12,7 +12,7 @@ void showErrorPopup(String errorMsg) {
           const Text('[ERROR INFO]'),
         ],
       ),
-      content: Text(errorMsg, style: TextStyle(),),
+      content: SingleChildScrollView(child: Text(errorMsg,)),
       actions: [
         TextButton(
           child: const Text("닫기"),

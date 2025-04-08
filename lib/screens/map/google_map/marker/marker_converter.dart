@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 import 'package:picto_frontend/screens/map/google_map/marker/picto_marker.dart';
-import 'package:picto_frontend/services/photo_manager_service/handler.dart';
-import 'package:picto_frontend/services/photo_store_service/handler.dart';
+import 'package:picto_frontend/services/photo_manager_service/photo_manager_api.dart';
+import 'package:picto_frontend/services/photo_store_service/photo_store_api.dart';
 
 import '../../../../../models/photo.dart';
 import '../google_map_view_model.dart';
@@ -43,7 +43,7 @@ class MarkerConverter {
   // api 호출 (List<Photo>) -> 중복 확인 -> 업데이트(사진 다운로드) -> 화면에 랜더링할 수 있는 PictoMarker로 변환
   Future<Set<PictoMarker>> getAroundPhotos() async {
     try {
-      List<Photo> aroundPhotos = await PhotoManagerHandler().getAroundPhotos();
+      List<Photo> aroundPhotos = await PhotoManagerApi().getAroundPhotos();
       return aroundPhotos
           .map((photo) => PictoMarker(photo: photo, type: PictoMarkerType.aroundPhoto))
           .toSet();
@@ -57,7 +57,7 @@ class MarkerConverter {
   Future<Set<PictoMarker>> getRepresentativePhotos(int count, String type) async {
     try {
       // 지역별, 좋아요순, 상위 10개 항목 검색
-      List<Photo> newRepresentativePhotos = await PhotoManagerHandler().getRepresentative(
+      List<Photo> newRepresentativePhotos = await PhotoManagerApi().getRepresentative(
           count: count, eventType: "top", locationType: type);
       return newRepresentativePhotos
           .map((photo) => PictoMarker.fromPhoto(photo, PictoMarkerType.representativePhoto))

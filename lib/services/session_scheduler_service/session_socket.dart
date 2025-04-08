@@ -6,11 +6,11 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:picto_frontend/config/app_config.dart';
 import 'package:picto_frontend/services/session_scheduler_service/location_message.dart';
-import 'package:picto_frontend/services/user_manager_service/handler.dart';
+import 'package:picto_frontend/services/user_manager_service/user_api.dart';
 import 'package:stomp_dart_client/stomp_dart_client.dart';
 
 // _stompClient.connected 의 네트워크 지연 때문에 값이 늦게 들어올 수 있다
-class SessionSchedulerHandler extends GetxController {
+class SessionSocket extends GetxController {
   String baseUrl = "${AppConfig.httpUrl}:8084/session-scheduler";
   late StompClient _stompClient;
   late Timer _timer;
@@ -49,7 +49,7 @@ class SessionSchedulerHandler extends GetxController {
       Timer.periodic(Duration(seconds: AppConfig.locationSendPeriod), (timer) async {
         _timer = timer;
         Position position = await Geolocator.getCurrentPosition();
-        sendLocation(UserManagerHandler().ownerId!, position.latitude, position.longitude);
+        sendLocation(UserManagerApi().ownerId!, position.latitude, position.longitude);
       });
       print("[INFO] web socket activate\n");
       connected.value = true;
@@ -77,7 +77,7 @@ class SessionSchedulerHandler extends GetxController {
 
   void _onConnect(StompFrame frame) {
     unsubscribeFunction = _stompClient.subscribe(
-      headers: {"User-Id": UserManagerHandler().ownerId.toString()},
+      headers: {"User-Id": UserManagerApi().ownerId.toString()},
       destination: '/session',
       callback: (StompFrame frame) => {
         // 구독한 세션으로부터 전달 받은 메시지 처리

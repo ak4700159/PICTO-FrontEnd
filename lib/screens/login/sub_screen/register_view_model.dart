@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:picto_frontend/models/user.dart';
-import 'package:picto_frontend/services/user_manager_service/handler.dart';
+import 'package:picto_frontend/services/user_manager_service/user_api.dart';
 
 import '../../map/google_map/google_map_view_model.dart';
 
@@ -16,13 +16,12 @@ class RegisterViewModel extends GetxController{
 
   void validateEmail() async {
     try{
-      await UserManagerHandler().duplicatedEmail(email.value);
+      await UserManagerApi().duplicatedEmail(email.value);
       emailDuplicatedMsg.value = "사용 가능";
     } on DioException catch(e) {
       print("[ERROR]duplicate error");
       emailDuplicatedMsg.value = "다시 검사해주세요";
     }
-
   }
 
   void togglePasswordVisible() {
@@ -32,13 +31,15 @@ class RegisterViewModel extends GetxController{
   Future<void> signup() async {
     final googleMapViewModel = Get.find<GoogleMapViewModel>();
     try {
-      UserManagerHandler().signup(
+      UserManagerApi().signup(
           newUser: User(name: name.value, password: passwd.value, email: email.value),
           lat: googleMapViewModel.currentLat.value,
           lng: googleMapViewModel.currentLng.value);
     } on DioException catch(e) {
-      registerMsg.value = "네트워크 오류";
-      print("[ERROR]${e.message}");
+      if(e.response?.statusCode == 406) {
+        registerMsg.value = "네트워크 오류";
+        print("[ERROR]${e.message}");
+      }
     }
   }
 }

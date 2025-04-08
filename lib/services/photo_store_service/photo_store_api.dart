@@ -2,7 +2,7 @@ import 'dart:typed_data';
 import 'package:dio/dio.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:mime/mime.dart';
-import 'package:picto_frontend/services/photo_store_service/upload_request.dart';
+import 'package:picto_frontend/screens/upload/upload_request.dart';
 
 import '../../config/app_config.dart';
 import '../http_interceptor.dart';
@@ -56,7 +56,7 @@ class PhotoStoreHandler {
     try {
       final response = await dio.post(hostUrl, data: formData);
     } on DioException catch (e) {
-      print("[ERROR]photo upload error : ${e.message}");
+      rethrow;
     }
   }
 }
