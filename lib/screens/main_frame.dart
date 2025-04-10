@@ -47,6 +47,7 @@ class MapScreen extends StatelessWidget {
     final mapViewModel = Get.find<MapViewModel>();
     return switch (mapViewModel.navigationBarCurrentIndex.value) {
       // 0 -> 환경설정, 1 -> 포토북, 2-> 지도, 3 -> 공유폴더, 4 -> 프로필설정
+    // 수정필요 : 0 -> chat bot / 1 -> comfy ui / 2 -> google map / 3 -> folder / 4 -> profile /
       0 => SettingScreen(),
       1 => PhotoBookScreen(),
       2 => CustomGoogleMap(),

@@ -74,7 +74,8 @@ class FolderManagerApi {
   // 공유 폴더 사용자 조회
   Future<List<User>> getUsersInFolder({required int folderId}) async {
     try {
-      final response = await dio.get('$baseUrl/folders/shares/$folderId');
+      final response = await dio.get('$baseUrl/folders/shares/$folderId',
+          queryParameters: {"userId": UserManagerApi().ownerId});
       List<dynamic> data = response.data;
       List<User> users = [];
       for (var json in data) {
@@ -91,10 +92,11 @@ class FolderManagerApi {
     return <User>[];
   }
 
-  // 폴더 안 사진 조회
+  // 폴더 안 전체 사진 조회
   Future<List<Photo>> getPhotosInFolder({required int folderId}) async {
     try {
-      final response = await dio.get('$baseUrl/folders/$folderId/photos');
+      final response = await dio.get('$baseUrl/folders/$folderId/photos',
+          queryParameters: {"userId": UserManagerApi().ownerId});
       List<dynamic> data = response.data;
       return data.map((json) => Photo.fromJson(json)).toList();
     } on DioException catch (e) {
@@ -134,7 +136,7 @@ class FolderManagerApi {
     return [];
   }
 
-  // 공유 폴더 초대
+  // 공유 폴더 초대 수락/거절
   Future<bool> eventFolderInvitation(
       {required bool isAccept, required int receiverId, required int noticeId}) async {
     try {

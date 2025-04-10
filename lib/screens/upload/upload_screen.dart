@@ -97,7 +97,8 @@ class UploadScreen extends StatelessWidget {
                           borderRadius: const BorderRadius.only(
                             topRight: Radius.circular(12),
                             topLeft: Radius.circular(12),
-                          ),                          child: Image.file(
+                          ),
+                          child: Image.file(
                             File(uploadViewModel.selectedImage.value!.path),
                             height: height * 0.6,
                           ),
@@ -146,36 +147,41 @@ class UploadScreen extends StatelessWidget {
                                             "PICTO에 사진을 공유하시겠습니까?",
                                           ),
                                           actions: [
-                                            Row(
-                                              children: [
-                                                TextButton(
-                                                  child: const Text(
-                                                    "공유하고 저장",
-                                                    style: TextStyle(
-                                                      fontWeight: FontWeight.bold,
+                                            Obx(
+                                              () => uploadViewModel.isLoading.value
+                                                  ? Center(
+                                                    child: CircularProgressIndicator(
+                                                        color: AppConfig.mainColor, strokeWidth: 6),
+                                                  )
+                                                  : Row(
+                                                      children: [
+                                                        TextButton(
+                                                          child: const Text(
+                                                            "공유하고 저장",
+                                                            style: TextStyle(
+                                                              fontWeight: FontWeight.bold,
+                                                            ),
+                                                          ),
+                                                          onPressed: () {
+                                                            uploadViewModel.savePhoto(
+                                                                isShared: true);
+                                                          },
+                                                        ),
+                                                        TextButton(
+                                                          child: const Text(
+                                                            "공유하지 않고 저장",
+                                                            style: TextStyle(
+                                                              fontWeight: FontWeight.bold,
+                                                            ),
+                                                          ),
+                                                          onPressed: () {
+                                                            uploadViewModel.savePhoto(
+                                                                isShared: false);
+                                                          },
+                                                        )
+                                                      ],
                                                     ),
-                                                  ),
-                                                  onPressed: () {
-                                                    //
-                                                  },
-                                                ),
-                                                TextButton(
-                                                  child: const Text(
-                                                    "공유하지 않고 저장",
-                                                    style: TextStyle(
-                                                      fontWeight: FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                  onPressed: () {
-                                                    //
-                                                  },
-                                                ),
-                                                // TextButton(
-                                                //   child: const Text("취소"),
-                                                //   onPressed: () => Get.back(),
-                                                // ),
-                                              ],
-                                            )
+                                            ),
                                           ],
                                         ),
                                       );
@@ -255,13 +261,15 @@ class UploadScreen extends StatelessWidget {
                 bottomRight: Radius.circular(12),
               ),
             ),
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Obx(
-                () => Text(
-                  uploadViewModel.result.value,
-                  maxLines: 4,
-                  overflow: TextOverflow.visible,
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Obx(
+                  () => Text(
+                    uploadViewModel.result.value,
+                    maxLines: 10,
+                    overflow: TextOverflow.visible,
+                  ),
                 ),
               ),
             ),

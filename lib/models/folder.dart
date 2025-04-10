@@ -18,6 +18,7 @@ class Folder {
     required this.generatorId,
     required this.sharedDatetime,
   }) {
+    if(folderId == -1) return;
     initFolder();
   }
 

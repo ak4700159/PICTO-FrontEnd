@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:get/get.dart';
 import 'package:picto_frontend/models/chatting_msg.dart';
 import 'package:picto_frontend/utils/popup.dart';
 import 'package:stomp_dart_client/stomp_dart_client.dart';
@@ -31,14 +30,11 @@ class ChattingSocket {
     );
   }
   void connectWebSocket() async {
-    // 접속 중인지 확인
     if (_stompClient.connected) {
       print("[INFO] already connected\n");
       connected = true;
       return;
     }
-
-    // 연결 시도 및 타이머 등록
     try {
       _stompClient.activate();
       connected = true;

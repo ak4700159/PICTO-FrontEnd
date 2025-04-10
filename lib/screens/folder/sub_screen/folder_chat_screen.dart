@@ -1,11 +1,16 @@
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:picto_frontend/screens/folder/folder_view_model.dart';
 
 class FolderChatScreen extends StatelessWidget {
-  const FolderChatScreen({super.key});
+  const FolderChatScreen({super.key, required this.folderId});
+  final int folderId;
 
   @override
   Widget build(BuildContext context) {
+    final folderViewModel = Get.find<FolderViewModel>();
     return Column(
       children: [
         Expanded(
@@ -34,7 +39,9 @@ class FolderChatScreen extends StatelessWidget {
               ),
               IconButton(
                 icon: const Icon(Icons.send, color: Colors.purple),
-                onPressed: () {},
+                onPressed: () {
+                  // 메시지 전송
+                },
               ),
             ],
           ),

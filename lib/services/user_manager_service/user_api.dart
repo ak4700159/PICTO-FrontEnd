@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:picto_frontend/config/app_config.dart';
@@ -133,18 +134,22 @@ class UserManagerApi {
       _sendInitValue(response);
     } on DioException catch (e) {
       if (e.response?.statusCode == 402) {
+        print('[ERROR] access token fail');
         try {
           await republishAccessToken();
           final response = await dio.get(hostUrl, options: _authOptions());
           _sendInitValue(response);
         } catch (e) {
+          print('[ERROR] refresh token fail');
           Get.find<LoginViewModel>().loginStatus.value = "fail";
         }
       } else {
+        print('[ERROR] login server error');
         Get.find<LoginViewModel>().loginStatus.value = "fail";
         Get.offNamed('/login');
       }
     }
+
   }
 
   // 태그 수정

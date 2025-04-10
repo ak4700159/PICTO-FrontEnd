@@ -1,29 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:picto_frontend/screens/folder/folder_view_model.dart';
 
 import 'sub_screen/folder_chat_screen.dart';
 import 'sub_screen/folder_photo_screen.dart';
 
 class FolderFrame extends StatelessWidget {
-  const FolderFrame({super.key});
-
+  FolderFrame({super.key});
+  final int folderId = Get.arguments["folderId"];
   @override
   Widget build(BuildContext context) {
+    final folderViewModel = Get.find<FolderViewModel>();
     return DefaultTabController(
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text("PICTO"),
+          automaticallyImplyLeading: false,
+          backgroundColor: Colors.white,
+          title: Text(folderViewModel.getFolder(folderId: folderId)!.name),
           bottom: const TabBar(
             tabs: [
-              Tab(text: "공유된 사진"),
+              Tab(text: "갤러리"),
               Tab(text: "채팅"),
             ],
           ),
         ),
-        body: const TabBarView(
+        body: TabBarView(
           children: [
-            FolderPhotoScreen(),
-            FolderChatScreen(),
+            FolderPhotoScreen(folderId: folderId,),
+            FolderChatScreen(folderId: folderId),
           ],
         ),
       ),
