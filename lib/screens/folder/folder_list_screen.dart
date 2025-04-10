@@ -10,14 +10,13 @@ import '../../services/user_manager_service/user_api.dart';
 import '../profile/profile_view_model.dart';
 
 class FolderListScreen extends StatelessWidget {
-  FolderListScreen({super.key});
+  const FolderListScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     final profileViewModel = Get.find<ProfileViewModel>();
     final folderViewModel = Get.find<FolderViewModel>();
     return Scaffold(
-      drawer: _getDrawer(context),
       appBar: AppBar(
         // shape: BeveledRectangleBorder(side: BorderSide(width: 0.5)),
         backgroundColor: Colors.white,
@@ -33,6 +32,12 @@ class FolderListScreen extends StatelessWidget {
         ),
         automaticallyImplyLeading: false,
         actions: [
+          IconButton(
+              onPressed: () {},
+              icon: Icon(
+                Icons.menu,
+                color: AppConfig.mainColor,
+              )),
           // _getDropBox(context),
           // 드롭박스 버튼 추가
           // 폴더 생성 , 삭제 , 폴더 초대 확인(수락 및 거절)
@@ -53,13 +58,23 @@ class FolderListScreen extends StatelessWidget {
     );
   }
 
-  Widget _getDrawer(BuildContext context) {
+  void _showFolderEventList() {
     List<String> items = ["폴더 생성", "폴더 삭제", "초대 알림 확인", "초대 알림 전송"];
-    return ListView.builder(
-      itemBuilder: (context, idx) {
-        return ListTile(title: Text(items[idx]));
-      },
-      itemCount: items.length,
+    Get.dialog(
+      Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.only(
+            topRight: Radius.circular(10),
+            topLeft: Radius.circular(10),
+          )
+        ),
+        child: Column(
+          children: [
+            // 메뉴 리스트
+          ],
+        ),
+      ),
+      barrierColor: Colors.white,
     );
   }
 
@@ -83,9 +98,7 @@ class FolderListScreen extends StatelessWidget {
             },
             icon: Icon(
               Icons.folder,
-              color: folder.generatorId == UserManagerApi().ownerId
-                  ? AppConfig.mainColor
-                  : Colors.white,
+              color: folder.generatorId == UserManagerApi().ownerId ? AppConfig.mainColor : Colors.white,
               weight: 1,
               size: 60,
             ),
@@ -131,24 +144,30 @@ class FolderListScreen extends StatelessWidget {
               border: Border.all(width: 1),
               color: AppConfig.backgroundColor,
               // borderRadius: BorderRadius.circular(40),
-              boxShadow: <BoxShadow>[
-                BoxShadow(color: Color.fromRGBO(0, 0, 0, 0.57), blurRadius: 5)
-              ],
+              boxShadow: <BoxShadow>[BoxShadow(color: Color.fromRGBO(0, 0, 0, 0.57), blurRadius: 5)],
             ),
           ),
           dropdownStyleData: DropdownStyleData(
             decoration: BoxDecoration(
               color: AppConfig.backgroundColor,
               // borderRadius: BorderRadius.circular(10),
-              boxShadow: <BoxShadow>[
-                BoxShadow(color: Color.fromRGBO(0, 0, 0, 0.57), blurRadius: 5)
-              ],
+              boxShadow: <BoxShadow>[BoxShadow(color: Color.fromRGBO(0, 0, 0, 0.57), blurRadius: 5)],
             ),
           ),
           iconStyleData: IconStyleData(iconSize: 0.0),
           alignment: AlignmentDirectional.center,
         ),
       ),
+    );
+  }
+
+  Widget _getDrawer(BuildContext context) {
+    List<String> items = ["폴더 생성", "폴더 삭제", "초대 알림 확인", "초대 알림 전송"];
+    return ListView.builder(
+      itemBuilder: (context, idx) {
+        return ListTile(title: Text(items[idx]));
+      },
+      itemCount: items.length,
     );
   }
 }

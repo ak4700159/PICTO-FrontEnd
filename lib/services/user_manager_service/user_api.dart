@@ -60,7 +60,7 @@ class UserManagerApi {
       final response = await dio.post(hostUrl, data: {
         'email': newUser.email,
         'password': newUser.password,
-        'accountName': newUser.email,
+        'accountName': newUser.accountName,
         'name': newUser.name,
         'lat': lat,
         'lng': lng,

@@ -60,6 +60,16 @@ class RegisterScreen extends StatelessWidget {
                 onSaved: (value) => _registerController.name.value = value!,
               ),
             ),
+            // 별칭 FormField
+            Padding(
+              padding: const EdgeInsets.all(4.0),
+              child: TextFormField(
+                keyboardType: TextInputType.name,
+                decoration: getCustomInputDecoration(label: "계정명", hintText: "Hong"),
+                validator: accountValidator,
+                onSaved: (value) => _registerController.accountName.value = value!,
+              ),
+            ),
             // 이메일 FormField + 중복 검사 버튼
             Padding(
               padding: const EdgeInsets.all(4.0),

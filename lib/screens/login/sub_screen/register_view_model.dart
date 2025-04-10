@@ -8,6 +8,7 @@ import '../../map/google_map/google_map_view_model.dart';
 class RegisterViewModel extends GetxController{
   RxString email = "".obs;
   RxString name = "".obs;
+  RxString accountName = "".obs;
   RxString passwd = "".obs;
   RxString passwdCheck = "".obs;
   RxString registerMsg = "회원 가입".obs;
@@ -32,7 +33,7 @@ class RegisterViewModel extends GetxController{
     final googleMapViewModel = Get.find<GoogleMapViewModel>();
     try {
       UserManagerApi().signup(
-          newUser: User(name: name.value, password: passwd.value, email: email.value),
+          newUser: User(name: name.value, password: passwd.value, email: email.value, accountName: accountName.value),
           lat: googleMapViewModel.currentLat.value,
           lng: googleMapViewModel.currentLng.value);
     } on DioException catch(e) {
