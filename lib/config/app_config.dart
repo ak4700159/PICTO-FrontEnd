@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:picto_frontend/config/user_config.dart';
 import 'package:picto_frontend/screens/folder/folder_view_model.dart';
 import 'package:picto_frontend/screens/main_frame_view_model.dart';
@@ -9,6 +8,7 @@ import 'package:picto_frontend/screens/photo/photo_view_model.dart';
 import 'package:picto_frontend/screens/profile/profile_view_model.dart';
 import 'package:picto_frontend/screens/upload/upload_view_model.dart';
 
+import '../screens/folder/sub_screen/folder_invitation_view_model.dart';
 import '../screens/login/login_view_model.dart';
 import '../screens/login/sub_screen/register_view_model.dart';
 import '../screens/map/google_map/cluster/picto_cluster_manager.dart';
@@ -63,12 +63,14 @@ class AppConfig {
     final photoViewModel = Get.put<PhotoViewModel>(PhotoViewModel());
     final uploadViewModel = Get.put<UploadViewModel>(UploadViewModel());
     final folderViewModel = Get.put<FolderViewModel>(FolderViewModel());
+    final folderInvitationViewModel = Get.put<FolderInvitationViewModel>(FolderInvitationViewModel());
 
     // 사용자 정보 ----------------------
     final profileViewModel = Get.put<ProfileViewModel>(ProfileViewModel());
     final userConfig = Get.put<UserConfig>(UserConfig());
 
-    // 챗봇 스트리밍 ----------------------
-    //
+    // NEW VIEWMODEL ----------------------
+    // 챗봇 스트리밍
+    // ComfyUI
   }
 }

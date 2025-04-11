@@ -5,11 +5,10 @@ import 'package:picto_frontend/config/app_config.dart';
 import 'package:picto_frontend/screens/folder/folder_list_screen.dart';
 import 'package:picto_frontend/screens/main_frame_view_model.dart';
 import 'package:picto_frontend/screens/photo/photo_book_screen.dart';
-import 'package:picto_frontend/screens/profile/profile_screen.dart';
 import 'package:picto_frontend/screens/setting/setting_screen.dart';
 
 import '../icon/picto_icons.dart';
-import '../test_ground/ksm_test_screen.dart';
+import '../test_screens/ksm_test_screen.dart';
 import 'map/google_map/google_map.dart';
 
 class MapScreen extends StatelessWidget {

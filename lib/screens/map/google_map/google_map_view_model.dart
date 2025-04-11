@@ -303,7 +303,6 @@ class GoogleMapViewModel extends GetxController {
       // 지역 대표 사진 + 내 위치 + 폴더 사진 + 내 사진
       await _loadRepresentative(currentStep);
       _loadFolder(currentStep);
-      _loadMyPhotos();
       currentMarkers.add(userMarker);
       // 확인해야됨
       // pictoCluster.manager.addItem(PictoItem(pictoMarker: userMarker));
@@ -315,7 +314,6 @@ class GoogleMapViewModel extends GetxController {
         await _loadRepresentative(currentStep);
       }
       _loadFolder(currentStep);
-      _loadMyPhotos();
       currentMarkers.add(userMarker);
       // pictoCluster.manager.addItem(PictoItem(pictoMarker: userMarker));
     }
@@ -436,14 +434,7 @@ class GoogleMapViewModel extends GetxController {
     }
   }
 
-  Future<void> _loadMyPhotos() async {
-    // myPhotos.forEach((pictoMarker) async {
-    //   currentPictoMarkers.add(pictoMarker);
-    //   pictoCluster.manager.addItem(PictoItem(pictoMarker: pictoMarker));
-    // });
-  }
-
-  // 시간 남으면 구현
+  // 폴더 안에 있는 사진 로딩
   Future<void> _loadFolder(String downloadType) async {
     final folderViewModel = Get.find<FolderViewModel>();
     final newPhotos = <Photo>{};
