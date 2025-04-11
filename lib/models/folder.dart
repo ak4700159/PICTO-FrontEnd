@@ -44,4 +44,12 @@ class Folder {
       }
     }
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+          other is Folder && runtimeType == other.runtimeType && folderId == other.folderId;
+
+  @override
+  int get hashCode => folderId.hashCode;
 }

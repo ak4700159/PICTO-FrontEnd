@@ -13,12 +13,24 @@ class FolderViewModel extends GetxController {
   Rxn<Folder> currentFolder = Rxn<Folder>();
   Rxn<ChattingSocket> currentSocket = Rxn<ChattingSocket>();
 
-  //  사용자 기준 폴더 초기화
+  //  폴더 초기화
   void initFolder() async {
-    folders.clear();
     List<Folder> search = await FolderManagerApi().getFoldersByOwnerId();
+    final existingKeys = folders.keys.toList();
+    final newFolderIds = search.map((f) => f.folderId).toSet();
+
+    for (var oldFolder in existingKeys) {
+      if (!newFolderIds.contains(oldFolder.folderId)) {
+        folders.remove(oldFolder);
+      }
+    }
     for (Folder newFolder in search) {
-      folders[newFolder] = await ChattingApi().getMessagesByFolderId(newFolder.folderId);
+      // any 함수는 콜백함수에서 한번이라도 ture를 반환하면 함수에서 true를 반환한다.
+      final exists = folders.keys.any((f) => f.folderId == newFolder.folderId);
+      // exists = false 는 기존에 존재하지 않았던 폴더를 의미한다. => 추가
+      if (!exists) {
+        folders[newFolder] = await ChattingApi().getMessagesByFolderId(newFolder.folderId);
+      }
     }
   }
 

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 
+import '../config/app_config.dart';
+
 void showErrorPopup(String errorMsg) {
   Get.dialog(
     AlertDialog(
@@ -22,6 +24,28 @@ void showErrorPopup(String errorMsg) {
     ),
   );
 }
+
+void showPositivePopup(String errorMsg) {
+  Get.dialog(
+    AlertDialog(
+      shape: BeveledRectangleBorder(),
+      title: Row(
+        children: [
+          const Icon(Icons.info,  color: AppConfig.mainColor,),
+          const Text(' 성공'),
+        ],
+      ),
+      content: SingleChildScrollView(child: Text(errorMsg,)),
+      actions: [
+        TextButton(
+          child: const Text("닫기"),
+          onPressed: () => Get.back(),
+        ),
+      ],
+    ),
+  );
+}
+
 
 void exitPopup(String msg) {
 

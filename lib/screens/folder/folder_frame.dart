@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:picto_frontend/config/app_config.dart';
 import 'package:picto_frontend/screens/folder/folder_view_model.dart';
+import 'package:picto_frontend/services/folder_manager_service/folder_api.dart';
+import 'package:picto_frontend/utils/popup.dart';
 
 import 'sub_screen/folder_chat_screen.dart';
 import 'sub_screen/folder_photo_screen.dart';
@@ -30,21 +32,32 @@ class FolderFrame extends StatelessWidget {
             ),
           ),
           leading: PopupMenuButton<String>(
-            icon: const Icon(Icons.more_vert, color: Colors.purple),
+            icon: const Icon(Icons.more_vert, color: AppConfig.mainColor),
             onSelected: (value) {
               switch (value) {
                 case "delete":
                   break;
                 case "notify":
                   break;
-                case "send":
-                  break;
               }
             },
             itemBuilder: (context) => [
-              const PopupMenuItem(value: "create", child: Text("폴더 생성")),
-              const PopupMenuItem(value: "delete", child: Text("폴더 삭제")),
-              const PopupMenuItem(value: "send", child: Text("초대 알림 전송")),
+              PopupMenuItem(
+                value: "delete",
+                onTap: _showFolderDeleteCheck,
+                child: const Text(
+                  "폴더 삭제",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ),
+              PopupMenuItem(
+                value: "send",
+                onTap: _showFolderInvitationSend,
+                child: Text(
+                  "초대 알림 전송",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ),
             ],
           ),
           bottom: TabBar(
@@ -68,13 +81,59 @@ class FolderFrame extends StatelessWidget {
         ),
         body: TabBarView(
           children: [
-            FolderPhotoScreen(
-              folderId: folderId,
-            ),
+            FolderPhotoScreen(folderId: folderId),
             FolderChatScreen(folderId: folderId),
           ],
         ),
       ),
     );
+  }
+
+  _showFolderDeleteCheck() {
+    Get.dialog(
+      AlertDialog(
+        backgroundColor: Colors.white,
+        title: Row(
+          children: [
+            Icon(Icons.delete),
+            Text(
+              "폴더 삭제",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+        content: Text("폴더를 삭제하시겠습니까?"),
+        actions: [
+          TextButton(
+            onPressed: () async {
+              bool isSuccess = await FolderManagerApi().removeFolder(folderId: folderId);
+              Get.back();
+              if (isSuccess) {
+                showPositivePopup("폴더가 삭제되었습니다");
+                Get.offNamed('/map');
+              } else {
+                showErrorPopup("서버 오류 발생(삭제 실패)");
+              }
+            },
+            child: Text("네"),
+          ),
+          TextButton(
+            onPressed: () {
+              Get.back();
+            },
+            child: Text("아니요"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // 고민중...
+  _showFolderInvitationSend() {
+    Get.dialog(AlertDialog(
+      content: Column(
+
+      ),
+    ));
   }
 }

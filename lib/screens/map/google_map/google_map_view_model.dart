@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 import 'package:custom_info_window/custom_info_window.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,9 +9,12 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:picto_frontend/config/app_config.dart';
 import 'package:picto_frontend/models/photo.dart';
+import 'package:picto_frontend/screens/folder/folder_view_model.dart';
 import 'package:picto_frontend/screens/map/google_map/cluster/picto_cluster_item.dart';
+import 'package:picto_frontend/services/user_manager_service/user_api.dart';
 import 'package:widget_to_marker/widget_to_marker.dart';
 
+import '../../../models/folder.dart';
 import '../../../utils/distance.dart';
 import '../../../utils/util.dart';
 import 'cluster/picto_cluster_manager.dart';
@@ -49,7 +53,6 @@ class GoogleMapViewModel extends GetxController {
     "middle": <PictoMarker>{},
     "large": <PictoMarker>{},
   };
-
 
   // 3km 이내 주변 사진(small)
   Set<PictoMarker> aroundPhotos = <PictoMarker>{};
@@ -258,8 +261,10 @@ class GoogleMapViewModel extends GetxController {
 
     circles.add(Circle(
       circleId: CircleId("user_area"),
-      center: LatLng(currentLat.value, currentLng.value), // 사용자 현재 위치
-      radius: 3000, // 3km == 3000m
+      center: LatLng(currentLat.value, currentLng.value),
+      // 사용자 현재 위치
+      radius: 3000,
+      // 3km == 3000m
       fillColor: Colors.transparent,
       strokeColor: AppConfig.mainColor,
       strokeWidth: 1,
@@ -400,7 +405,7 @@ class GoogleMapViewModel extends GetxController {
     // Set<PictoMarker>? toAdd = newMarkers.difference(representativePhotos[downloadType]!);
     representativePhotos[downloadType]?.addAll(newMarkers);
     // representativePhotos[downloadType]?.removeAll(toRemove!);
-    Set<PictoMarker> toAdd = { };
+    Set<PictoMarker> toAdd = {};
     for (PictoMarker pictoMarker in representativePhotos[downloadType]!) {
       if (_isPointInsideBounds(
           LatLng(pictoMarker.photo.lat, pictoMarker.photo.lng), screenBounds)) {
@@ -432,14 +437,30 @@ class GoogleMapViewModel extends GetxController {
   }
 
   Future<void> _loadMyPhotos() async {
-    myPhotos.forEach((pictoMarker) async {
-      currentPictoMarkers.add(pictoMarker);
-      pictoCluster.manager.addItem(PictoItem(pictoMarker: pictoMarker));
-    });
+    // myPhotos.forEach((pictoMarker) async {
+    //   currentPictoMarkers.add(pictoMarker);
+    //   pictoCluster.manager.addItem(PictoItem(pictoMarker: pictoMarker));
+    // });
   }
 
   // 시간 남으면 구현
-  Future<void> _loadFolder(String downloadType) async {}
+  Future<void> _loadFolder(String downloadType) async {
+    final folderViewModel = Get.find<FolderViewModel>();
+    final newPhotos = <Photo>{};
+    for (Folder folder in folderViewModel.folders.keys) {
+      newPhotos.addAll(folder.photos);
+    }
+    for (Photo photo in newPhotos) {
+      final pictoMarker = PictoMarker(
+          photo: photo,
+          type: photo.userId == UserManagerApi().ownerId
+              ? PictoMarkerType.userPhoto
+              : PictoMarkerType.folderPhoto);
+      folderPhotos.add(pictoMarker);
+      currentPictoMarkers.add(pictoMarker);
+      pictoCluster.manager.addItem(PictoItem(pictoMarker: pictoMarker));
+    }
+  }
 
   // 화면에 내 위치가 잡혀있는지 아닌지 검사
   bool _isPointInsideBounds(LatLng point, LatLngBounds bounds) {

@@ -70,4 +70,12 @@ class Photo {
         'views': views,
         'tag': tag,
       };
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+          other is Photo && runtimeType == other.runtimeType && photoId == other.photoId;
+
+  @override
+  int get hashCode => photoId.hashCode;
 }
