@@ -1,7 +1,5 @@
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:picto_frontend/screens/folder/folder_view_model.dart';
 
 import '../../config/app_config.dart';
@@ -16,6 +14,7 @@ class FolderListScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final profileViewModel = Get.find<ProfileViewModel>();
     final folderViewModel = Get.find<FolderViewModel>();
+    folderViewModel.initFolder();
     return Scaffold(
       appBar: AppBar(
         // shape: BeveledRectangleBorder(side: BorderSide(width: 0.5)),
@@ -33,49 +32,135 @@ class FolderListScreen extends StatelessWidget {
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
-              onPressed: () {},
+              onPressed: () {
+                _showFolderEventList(context);
+              },
               icon: Icon(
                 Icons.menu,
                 color: AppConfig.mainColor,
               )),
-          // _getDropBox(context),
           // 드롭박스 버튼 추가
           // 폴더 생성 , 삭제 , 폴더 초대 확인(수락 및 거절)
         ],
       ),
-      body: GridView.builder(
-        padding: const EdgeInsets.all(10),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
-          crossAxisSpacing: 10,
-          mainAxisSpacing: 10,
-        ),
-        itemCount: folderViewModel.folders.keys.length,
-        itemBuilder: (context, index) {
-          return _getFolderWidget(folderViewModel.folders.keys.toList()[index]);
-        },
-      ),
+      body: Obx(() => GridView.builder(
+            padding: const EdgeInsets.all(10),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3,
+              crossAxisSpacing: 10,
+              mainAxisSpacing: 10,
+            ),
+            itemCount: folderViewModel.folders.keys.length,
+            itemBuilder: (context, index) {
+              return _getFolderWidget(folderViewModel.folders.keys.toList()[index]);
+            },
+          )),
     );
   }
 
-  void _showFolderEventList() {
+  void _showFolderEventList(BuildContext context) {
     List<String> items = ["폴더 생성", "폴더 삭제", "초대 알림 확인", "초대 알림 전송"];
+    // final width = context.mediaQuery.size.width * 0.4;
+    // final height = context.mediaQuery.size.height * 0.8;
     Get.dialog(
-      Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.only(
-            topRight: Radius.circular(10),
-            topLeft: Radius.circular(10),
-          )
-        ),
-        child: Column(
-          children: [
-            // 메뉴 리스트
-          ],
-        ),
-      ),
-      barrierColor: Colors.white,
+      AlertDialog(
+          // insetPadding: EdgeInsets.all(2),
+          backgroundColor: Colors.white,
+          scrollable: true,
+          title: Row(
+            children: [
+              Icon(
+                Icons.folder_open,
+                color: AppConfig.mainColor,
+                weight: 10,
+              ),
+              Text(
+                "  기능",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
+              ),
+            ],
+          ),
+          content: Container(
+            height: context.mediaQuery.size.height * 0.35,
+            decoration: BoxDecoration(
+              color: Colors.white,
+            ),
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemBuilder: (context, idx) {
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: GestureDetector(
+                    onTap: switch (idx) {
+                      0 => () {
+                          Get.back();
+                          Get.toNamed('/folder/create');
+                        },
+                      1 => () {},
+                      2 => () {},
+                      3 => () {},
+                      _ => () {}
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          // border: Border.all(width: 1),
+                          borderRadius: BorderRadius.all(Radius.circular(5)),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                              spreadRadius: 3,
+                              blurRadius: 5,
+                              offset: Offset(0, 3), // changes position of shadow
+                            ),
+                          ]),
+                      child: Center(
+                        child: Row(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: _getFolderIcon(idx),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                items[idx],
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
+              itemCount: items.length,
+            ),
+          )),
     );
+  }
+
+  Widget _getFolderIcon(int idx) {
+    return switch (idx) {
+      0 => Icon(
+          Icons.create_new_folder_rounded,
+          color: AppConfig.mainColor,
+        ),
+      1 => Icon(
+          Icons.folder_delete,
+          color: AppConfig.mainColor,
+        ),
+      2 => Icon(
+          Icons.email,
+          color: AppConfig.mainColor,
+        ),
+      3 => Icon(
+          Icons.send,
+          color: AppConfig.mainColor,
+        ),
+      _ => Icon(Icons.hourglass_empty),
+    };
   }
 
   Widget _getFolderWidget(Folder folder) {
@@ -98,7 +183,9 @@ class FolderListScreen extends StatelessWidget {
             },
             icon: Icon(
               Icons.folder,
-              color: folder.generatorId == UserManagerApi().ownerId ? AppConfig.mainColor : Colors.white,
+              color: folder.generatorId == UserManagerApi().ownerId
+                  ? AppConfig.mainColor
+                  : Colors.white,
               weight: 1,
               size: 60,
             ),
@@ -109,65 +196,6 @@ class FolderListScreen extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _getDropBox(BuildContext context) {
-    List<String> items = ["폴더 생성", "폴더 삭제", "초대 알림 확인", "초대 알림 전송"];
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton2(
-          // 메뉴 아이템 생성
-          items: items
-              .map((name) => DropdownMenuItem(
-                    value: name,
-                    child: Text(name),
-                  ))
-              .toList(),
-          hint: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Text("선택"),
-              Icon(Icons.arrow_drop_down_circle_outlined),
-            ],
-          ),
-          onChanged: (val) {},
-          // 클릭 시 이벤트
-          // onChanged:
-          //     field == "sort" ? selectionViewModel.changeSort : selectionViewModel.changePeriod,
-          // 버튼 스타일
-          buttonStyleData: ButtonStyleData(
-            width: context.mediaQuery.size.height * 0.18,
-            height: context.mediaQuery.size.height * 0.05,
-            decoration: BoxDecoration(
-              border: Border.all(width: 1),
-              color: AppConfig.backgroundColor,
-              // borderRadius: BorderRadius.circular(40),
-              boxShadow: <BoxShadow>[BoxShadow(color: Color.fromRGBO(0, 0, 0, 0.57), blurRadius: 5)],
-            ),
-          ),
-          dropdownStyleData: DropdownStyleData(
-            decoration: BoxDecoration(
-              color: AppConfig.backgroundColor,
-              // borderRadius: BorderRadius.circular(10),
-              boxShadow: <BoxShadow>[BoxShadow(color: Color.fromRGBO(0, 0, 0, 0.57), blurRadius: 5)],
-            ),
-          ),
-          iconStyleData: IconStyleData(iconSize: 0.0),
-          alignment: AlignmentDirectional.center,
-        ),
-      ),
-    );
-  }
-
-  Widget _getDrawer(BuildContext context) {
-    List<String> items = ["폴더 생성", "폴더 삭제", "초대 알림 확인", "초대 알림 전송"];
-    return ListView.builder(
-      itemBuilder: (context, idx) {
-        return ListTile(title: Text(items[idx]));
-      },
-      itemCount: items.length,
     );
   }
 }

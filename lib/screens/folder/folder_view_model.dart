@@ -15,17 +15,11 @@ class FolderViewModel extends GetxController {
 
   //  사용자 기준 폴더 초기화
   void initFolder() async {
+    folders.clear();
     List<Folder> search = await FolderManagerApi().getFoldersByOwnerId();
-    for (Folder folder in search) {
-      folders[folder] = await ChattingApi().getMessagesByFolderId(folder.folderId);
+    for (Folder newFolder in search) {
+      folders[newFolder] = await ChattingApi().getMessagesByFolderId(newFolder.folderId);
     }
-    // final myFolder = Folder(
-    //   folderId: -1,
-    //   name: "PICTO",
-    //   generatorId: UserManagerApi().ownerId as int,
-    //   sharedDatetime: -1,
-    // );
-    // folders[myFolder] = [];
   }
 
   // 폴더 화면 변화
@@ -74,6 +68,7 @@ class FolderViewModel extends GetxController {
     ));
   }
 
+  //폴더 조회
   Folder? getFolder({required int folderId}) {
     for(Folder folder in folders.keys) {
       if(folder.folderId == folderId) return folder;

@@ -30,7 +30,7 @@ class Photo {
       lng: json['lng'] as double,
       location: json['location'] as String,
       registerDatetime: json['registerDatetime'] as int?,
-      updateDatetime: json['updateDatetime'] as int?,
+      updateDatetime: json['updateDatetime'] ?? json['uploadTime'],
       frameActive: json['frameActive'] as bool?,
       sharedActive: json['sharedActive'] as bool?,
       likes: json['likes'] as int,

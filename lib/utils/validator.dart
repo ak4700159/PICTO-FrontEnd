@@ -50,10 +50,7 @@ String? passwdCheckValidator(String? value) {
 
 String? folderValidator(String? value) {
   if(value?.isEmpty ?? true) {
-    return '폴더이름을 입력해주세요.';
-  }
-  if(value!.length > 10){
-    return "10자 이하로 입력해주세요";
+    return '텍스트를 입력해주세요.';
   }
   return null;
 }

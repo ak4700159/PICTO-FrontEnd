@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:picto_frontend/config/app_config.dart';
 import 'package:picto_frontend/screens/folder/folder_list_screen.dart';
+import 'package:picto_frontend/screens/folder/folder_view_model.dart';
 import 'package:picto_frontend/screens/main_frame_view_model.dart';
 import 'package:picto_frontend/screens/photo/photo_book_screen.dart';
 import 'package:picto_frontend/screens/profile/profile_screen.dart';
@@ -36,17 +37,15 @@ class MapScreen extends StatelessWidget {
         ),
       ),
       bottomNavigationBar: _getBottomNavigationBar(context),
-      body: SizedBox(
-        child: Obx(() => _getMainFrame(context)),
-      ),
+      body: _getMainFrame(context),
     );
   }
 
   // 하단 네비게이션바 호출마다 실행되는 함수
   Widget _getMainFrame(BuildContext context) {
     final mapViewModel = Get.find<MapViewModel>();
-    return switch (mapViewModel.navigationBarCurrentIndex.value) {
-      // 0 -> 환경설정, 1 -> 포토북, 2-> 지도, 3 -> 공유폴더, 4 -> 프로필설정
+    return Obx(() => switch (mapViewModel.navigationBarCurrentIndex.value) {
+    // 0 -> 환경설정, 1 -> 포토북, 2-> 지도, 3 -> 공유폴더, 4 -> 프로필설정
     // 수정필요 : 0 -> chat bot / 1 -> comfy ui / 2 -> google map / 3 -> folder / 4 -> profile /
       0 => SettingScreen(),
       1 => PhotoBookScreen(),
@@ -54,32 +53,41 @@ class MapScreen extends StatelessWidget {
       3 => FolderListScreen(),
       4 => ProfileScreen(),
       _ => Center(
-          child: Text('error', style: TextStyle(color: Colors.red, fontSize: 24),),
+        child: Text(
+          'error',
+          style: TextStyle(color: Colors.red, fontSize: 24),
         ),
-    };
+      ),
+    });
   }
 
   Widget _getBottomNavigationBar(BuildContext context) {
     final List<BottomNavigationBarItem> bottomNavigationBarItems = [
       BottomNavigationBarItem(
-          icon: Icon(
-            Icons.settings,
-            color: Colors.grey,
+          icon: Image.asset(
+            'assets/images/pictory_grey.png',
+            fit: BoxFit.fitWidth,
+            cacheWidth: 30,
           ),
-          activeIcon: Icon(
-            Icons.settings,
-            color: Colors.black,
-          ),
-          label: "환경 설정"),
+          activeIcon: SizedBox(
+              child: Image.asset(
+            'assets/images/pictory_color.png',
+            fit: BoxFit.fitWidth,
+            cacheWidth: 34,
+          )),
+          label: "챗봇 "),
       BottomNavigationBarItem(
-          icon: Icon(
-            Icons.bookmark,
-            color: Colors.grey,
+          icon: Image.asset(
+            'assets/images/edit_image.png',
+            fit: BoxFit.fitWidth,
+            cacheWidth: 30,
           ),
-          activeIcon: Icon(
-            Icons.bookmark,
-            color: Colors.black,
-          ),
+          activeIcon: SizedBox(
+              child: Image.asset(
+                'assets/images/edit_image.png',
+                fit: BoxFit.fitWidth,
+                cacheWidth: 34,
+              )),
           label: "포토북"),
       BottomNavigationBarItem(
         icon: Icon(
@@ -133,7 +141,7 @@ class MapScreen extends StatelessWidget {
             showUnselectedLabels: false,
             currentIndex: mapViewModel.navigationBarCurrentIndex.value,
             iconSize: 30,
-            selectedFontSize: 10,
+            selectedFontSize: 0,
             items: bottomNavigationBarItems,
             backgroundColor: Colors.transparent,
             type: BottomNavigationBarType.fixed,

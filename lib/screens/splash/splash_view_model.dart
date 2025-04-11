@@ -3,7 +3,6 @@ import 'package:debounce_throttle/debounce_throttle.dart';
 import 'package:get/get.dart';
 import 'package:picto_frontend/config/app_config.dart';
 import 'package:picto_frontend/services/user_manager_service/user_api.dart';
-import '../folder/folder_view_model.dart';
 import '../map/google_map/google_map_view_model.dart';
 
 // 1. 내부에 저장된 이메일, 비밀번호, 사용자 식별키, 엑세스 토큰, 리프레쉬 토큰을 로딩
@@ -40,7 +39,7 @@ class SplashViewModel extends GetxController {
 
     // step3. 토큰 이용해 사용자 api 호출 -> 사용자 정보 초기화
     await UserManagerApi().setUserAllInfo();
-    Get.find<FolderViewModel>().initFolder();
+    // Get.find<FolderViewModel>().initFolder();
   }
 
   // 현재 가장 큰 문제 : 해당 로직 작동 X

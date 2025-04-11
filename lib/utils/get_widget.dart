@@ -27,6 +27,29 @@ InputDecoration getCustomInputDecoration(
   );
 }
 
+InputDecoration getCustomInputDecoration2(
+    {required String label, String? hintText, Widget? suffixIcon}) {
+  return InputDecoration(
+    labelStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+    errorMaxLines: 2,
+    errorBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: Colors.red),
+      borderRadius: BorderRadius.all(Radius.circular(10)),
+    ),
+    enabledBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: Colors.black, width: 2),
+      borderRadius: BorderRadius.all(Radius.circular(10)),
+    ),
+    border: OutlineInputBorder(
+      borderSide: BorderSide(color: Colors.black),
+      borderRadius: BorderRadius.all(Radius.circular(10)),
+    ),
+    labelText: label,
+    hintText: hintText,
+    suffixIcon: suffixIcon,
+  );
+}
+
 Widget getTestConnectionFloatBtn(
     BuildContext context) {
   SocketFunctionController socketInterceptor = Get.find<SocketFunctionController>();

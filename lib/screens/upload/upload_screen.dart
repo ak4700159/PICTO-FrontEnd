@@ -4,7 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:picto_frontend/config/app_config.dart';
 import 'package:picto_frontend/screens/map/google_map/google_map_view_model.dart';
 import 'package:picto_frontend/screens/map/top_box.dart';
@@ -26,6 +25,7 @@ class UploadScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
+        backgroundColor: Colors.white,
         title: FutureBuilder(
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             if (snapshot.data == null || snapshot.data == false) {

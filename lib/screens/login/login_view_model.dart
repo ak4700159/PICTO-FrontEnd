@@ -34,6 +34,6 @@ class LoginViewModel extends GetxController {
     // 이메일 오류 = "email" 비밀번호 오류 = "passwd"
     // 로그인 성공! 설정 초기화 후 메인 화면 이동
     await UserManagerApi().setUserAllInfo();
-    Get.find<FolderViewModel>().initFolder();
+    // Get.find<FolderViewModel>().initFolder();
   }
 }

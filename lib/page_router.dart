@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:picto_frontend/screens/folder/folder_frame.dart';
 import 'package:picto_frontend/screens/folder/folder_list_screen.dart';
 import 'package:picto_frontend/screens/folder/sub_screen/folder_chat_screen.dart';
+import 'package:picto_frontend/screens/folder/sub_screen/folder_create_screen.dart';
 import 'package:picto_frontend/screens/folder/sub_screen/folder_photo_screen.dart';
 import 'package:picto_frontend/screens/login/login_screen.dart';
 import 'package:picto_frontend/screens/login/sub_screen/passwd_setting_screen.dart';
@@ -16,7 +17,7 @@ import 'package:picto_frontend/test_ground/ksm_test_screen.dart';
 class PageRouter{
   static List<GetPage> getPages() {
     List<GetPage> pages = [
-      GetPage(name: '/test', page: () => TestScreen()),
+      GetPage(name: '/', page: () => TestScreen()),
       GetPage(name: '/splash', page: () => SplashScreen()),
       GetPage(name: '/login', page: () => LoginScreen()),
       GetPage(name: '/register', page: () => RegisterScreen()),
@@ -24,6 +25,7 @@ class PageRouter{
       GetPage(name: '/passwd_setting', page: () => PasswdSettingScreen()),
       GetPage(name: '/photo', page: () => PhotoScreen()),
       GetPage(name: '/folder', page: () => FolderFrame()),
+      GetPage(name: '/folder/create', page: () => FolderCreateScreen()),
       GetPage(name: '/upload', page: () => UploadScreen()),
       GetPage(name: '/tag', page: () => TagSelectionScreen()),
 
