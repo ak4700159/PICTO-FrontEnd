@@ -53,3 +53,7 @@ flutter:
        fonts:
          - asset: assets/fonts/Roboto-Bold.ttf
            weight: 700
+     - family: PictoIcons
+       fonts:
+         - asset: assets/fonts/Picto-Icons.ttf
+

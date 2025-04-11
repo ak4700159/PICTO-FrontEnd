@@ -34,10 +34,7 @@ class FolderPhotoScreen extends StatelessWidget {
                     return SpinKitSpinningCircle(
                       itemBuilder: (context, index) {
                         return Center(
-                          child: Text(
-                            "🐶",
-                            style: TextStyle(fontSize: 40),
-                          ),
+                          child: Image.asset('assets/images/pictory_color.png'),
                         );
                       },
                     );
@@ -48,7 +45,7 @@ class FolderPhotoScreen extends StatelessWidget {
                     );
                   } else {
                     Uint8List? data = snapshot.data;
-                    folder?.markers.toList()[index].imageData = data;
+                    folder.markers.toList()[index].imageData = data;
                     return _getPhotoTile(folder.markers.toList()[index]);
                   }
                 },
@@ -79,11 +76,11 @@ class FolderPhotoScreen extends StatelessWidget {
             width: 2, // 테두리 두께
           ),
           // Container 위젯의 테두리
-          borderRadius: BorderRadius.circular(20), // 전체 둥글게
+          borderRadius: BorderRadius.circular(16), // 전체 둥글게
         ),
         child: ClipRRect(
           // ClipRRect 하위 위젯 테두리 지정
-          borderRadius: BorderRadius.circular(16), // 이미지도 같이 둥글게 잘림
+          borderRadius: BorderRadius.circular(12), // 이미지도 같이 둥글게 잘림
           child: Image.memory(
             marker.imageData!,
             fit: BoxFit.cover,

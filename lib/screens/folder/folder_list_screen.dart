@@ -59,7 +59,7 @@ class FolderListScreen extends StatelessWidget {
   }
 
   void _showFolderEventList(BuildContext context) {
-    List<String> items = ["폴더 생성", "폴더 삭제", "초대 알림 확인", "초대 알림 전송"];
+    List<String> items = ["폴더 생성", "초대 알림 확인", "초대 알림 전송"];
     // final width = context.mediaQuery.size.width * 0.4;
     // final height = context.mediaQuery.size.height * 0.8;
     Get.dialog(
@@ -81,7 +81,7 @@ class FolderListScreen extends StatelessWidget {
             ],
           ),
           content: Container(
-            height: context.mediaQuery.size.height * 0.35,
+            height: context.mediaQuery.size.height * 0.3,
             decoration: BoxDecoration(
               color: Colors.white,
             ),
@@ -147,15 +147,15 @@ class FolderListScreen extends StatelessWidget {
           Icons.create_new_folder_rounded,
           color: AppConfig.mainColor,
         ),
+      // 1 => Icon(
+      //     Icons.folder_delete,
+      //     color: AppConfig.mainColor,
+      //   ),
       1 => Icon(
-          Icons.folder_delete,
-          color: AppConfig.mainColor,
-        ),
-      2 => Icon(
           Icons.email,
           color: AppConfig.mainColor,
         ),
-      3 => Icon(
+      2 => Icon(
           Icons.send,
           color: AppConfig.mainColor,
         ),

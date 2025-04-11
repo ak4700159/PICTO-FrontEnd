@@ -29,6 +29,24 @@ class FolderFrame extends StatelessWidget {
               style: TextStyle(color: AppConfig.mainColor),
             ),
           ),
+          leading: PopupMenuButton<String>(
+            icon: const Icon(Icons.more_vert, color: Colors.purple),
+            onSelected: (value) {
+              switch (value) {
+                case "delete":
+                  break;
+                case "notify":
+                  break;
+                case "send":
+                  break;
+              }
+            },
+            itemBuilder: (context) => [
+              const PopupMenuItem(value: "create", child: Text("폴더 생성")),
+              const PopupMenuItem(value: "delete", child: Text("폴더 삭제")),
+              const PopupMenuItem(value: "send", child: Text("초대 알림 전송")),
+            ],
+          ),
           bottom: TabBar(
             indicatorSize: TabBarIndicatorSize.tab,
             dividerColor: Colors.grey,
@@ -43,7 +61,7 @@ class FolderFrame extends StatelessWidget {
             unselectedLabelColor: Colors.grey,
             labelStyle: TextStyle(fontWeight: FontWeight.bold),
             tabs: [
-              Tab(text: "공유된 사진"),
+              Tab(text: "저장된 사진"),
               Tab(text: "채팅"),
             ],
           ),
