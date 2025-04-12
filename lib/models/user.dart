@@ -1,5 +1,5 @@
 class User {
-  final int userId;
+  final int? userId;
   final String? accountName;
   final String? name;
   final String? email;
@@ -9,14 +9,14 @@ class User {
   final String? password;
 
   User({
-    required this.accountName,
-    required this.userId,
-    required this.intro,
-    required this.profilePath,
     required this.name,
-    required this.profileActive,
-    required this.email,
     required this.password,
+    required this.email,
+    this.accountName,
+    this.userId,
+    this.intro,
+    this.profilePath,
+    this.profileActive,
   });
 
   factory User.fromJson(Map<String, dynamic> json) => User(

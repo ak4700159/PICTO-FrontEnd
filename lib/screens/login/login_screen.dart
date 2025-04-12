@@ -109,7 +109,7 @@ class LoginScreen extends StatelessWidget {
   }
 
   void _login() {
-    // step1. 사용자 w
+    // step1. FormField 검사 -> value 저장
     if (_formKey.currentState?.validate() ?? false) {
       _formKey.currentState?.save();
 

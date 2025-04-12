@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../config/app_config.dart';
-import '../services/session_scheduler_service/handler.dart';
+import '../services/session_scheduler_service/session_socket.dart';
 import '../services/socket_function_controller.dart';
 
 InputDecoration getCustomInputDecoration(
@@ -27,10 +27,33 @@ InputDecoration getCustomInputDecoration(
   );
 }
 
+InputDecoration getCustomInputDecoration2(
+    {required String label, String? hintText, Widget? suffixIcon}) {
+  return InputDecoration(
+    labelStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+    errorMaxLines: 2,
+    errorBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: Colors.red),
+      borderRadius: BorderRadius.all(Radius.circular(10)),
+    ),
+    enabledBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: Colors.black, width: 2),
+      borderRadius: BorderRadius.all(Radius.circular(10)),
+    ),
+    border: OutlineInputBorder(
+      borderSide: BorderSide(color: Colors.black),
+      borderRadius: BorderRadius.all(Radius.circular(10)),
+    ),
+    labelText: label,
+    hintText: hintText,
+    suffixIcon: suffixIcon,
+  );
+}
+
 Widget getTestConnectionFloatBtn(
     BuildContext context) {
-  SocketFunctionController interceptor = SocketFunctionController();
-  SessionSchedulerHandler sessionHandler = Get.find<SessionSchedulerHandler>();
+  SocketFunctionController socketInterceptor = Get.find<SocketFunctionController>();
+  SessionSocket sessionHandler = Get.find<SessionSocket>();
   return Column(
     mainAxisAlignment: MainAxisAlignment.center,
     children: [
@@ -40,7 +63,7 @@ Widget getTestConnectionFloatBtn(
         child: FloatingActionButton(
           backgroundColor: AppConfig.mainColor,
           onPressed: () {
-            interceptor.callSession(connected: !sessionHandler.connected.value);
+            socketInterceptor.callSession(connected: !sessionHandler.connected.value);
           },
           child: Obx(() => Text(
                 sessionHandler.connected.value ? '웹소켓 접속중' : '웹소켓 연결 해제',

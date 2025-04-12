@@ -1,6 +1,7 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:picto_frontend/config/app_config.dart';
 import 'package:picto_frontend/screens/splash/splash_view_model.dart';
 import 'package:picto_frontend/widgets/picto_logo.dart';
 
@@ -10,7 +11,7 @@ class SplashScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final splashController = Get.find<SplashViewModel>();
-    splashController.userSettingThrottle.setValue(null);
+    splashController.userSettingDebouncer.setValue(null);
     return Scaffold(
       body: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -33,8 +34,8 @@ class SplashScreen extends StatelessWidget {
                         animatedTexts: [
                           FadeAnimatedText(
                             splashController.statusMsg.value,
-                            duration: Duration(seconds: 3),
-                            textStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                            duration: Duration(seconds: AppConfig.stopScreenSec),
+                            textStyle: _getTextStyle(),
                           )
                         ],
                         totalRepeatCount: 10,
@@ -48,5 +49,14 @@ class SplashScreen extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  TextStyle _getTextStyle() {
+    final splashController = Get.find<SplashViewModel>();
+    return switch(splashController.statusMsg.value) {
+      "서버 오류 : 엑세스 토큰 발행 문제" => TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.orange),
+      "서버 오류 : 잠시 후 이용해주세요" => TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.red),
+      _ => TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+    };
   }
 }
