@@ -8,7 +8,7 @@ import 'package:picto_frontend/screens/photo/photo_view_model.dart';
 import 'package:picto_frontend/screens/profile/profile_view_model.dart';
 import 'package:picto_frontend/screens/upload/upload_view_model.dart';
 
-import '../screens/folder/sub_screen/folder_invitation_view_model.dart';
+import '../screens/folder/sub_screen/invite/folder_invitation_view_model.dart';
 import '../screens/login/login_view_model.dart';
 import '../screens/login/sub_screen/register_view_model.dart';
 import '../screens/map/google_map/cluster/picto_cluster_manager.dart';

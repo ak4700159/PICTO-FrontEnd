@@ -5,8 +5,6 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:picto_frontend/screens/map/top_box.dart';
-import 'package:picto_frontend/screens/map/value_test_widget.dart';
-import 'package:picto_frontend/utils/location.dart';
 import 'package:picto_frontend/utils/popup.dart';
 
 import '../../../../config/app_config.dart';

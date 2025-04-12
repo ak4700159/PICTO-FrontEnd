@@ -36,7 +36,8 @@ class FolderInvitationViewModel extends GetxController {
 
   void getInvitation() async {
     notices.clear();
-    notices.addAll(await FolderManagerApi().getFolderInvitations(receiverId: UserManagerApi().ownerId!));
+    notices.addAll(
+        await FolderManagerApi().getFolderInvitations(receiverId: UserManagerApi().ownerId!));
   }
 
   void eventInvitation(Notice target) async {
@@ -46,6 +47,7 @@ class FolderInvitationViewModel extends GetxController {
       noticeId: target.noticeId,
     );
     if (isSuccess) {
+      Get.find<FolderViewModel>().initFolder();
       showPositivePopup("공유 폴더를 추가하였습니다.");
     }
     notices.removeWhere((n) => n.noticeId == target.noticeId);
@@ -53,16 +55,18 @@ class FolderInvitationViewModel extends GetxController {
 
   void sendInvitation() async {
     final folderViewModel = Get.find<FolderViewModel>();
+    List<bool> isSuccess = [];
     for (User send in selectedUsers) {
-      bool isSuccess = await FolderManagerApi().sendFolderInvitation(
+      bool success = await FolderManagerApi().sendFolderInvitation(
           folderId: folderViewModel.currentFolder.value!.folderId,
           senderId: UserManagerApi().ownerId!,
           receiverId: send.userId!);
-      if (isSuccess) {
-        showPositivePopup("공유 초대하였습니다.");
-      }
-      selectedUsers.clear();
-      selectedEmail.clear();
+      isSuccess.add(success);
     }
+    if (!isSuccess.contains(false)) {
+      showPositivePopup("공유 초대하였습니다.");
+    }
+    selectedUsers.clear();
+    selectedEmail.clear();
   }
 }

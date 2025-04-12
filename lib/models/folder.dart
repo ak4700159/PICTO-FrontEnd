@@ -29,6 +29,7 @@ class Folder {
       folderId: json["folderId"],
       name: json["folderName"],
       generatorId: json["userId"],
+      // generatorId: json["generatorId"],
       sharedDatetime: json["sharedDatetime"],
     );
   }

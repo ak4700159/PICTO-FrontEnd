@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:picto_frontend/config/app_config.dart';
 import 'package:picto_frontend/screens/folder/folder_view_model.dart';
+import 'package:picto_frontend/screens/folder/sub_screen/chat_photo/folder_chat_screen.dart';
 import 'package:picto_frontend/services/folder_manager_service/folder_api.dart';
 import 'package:picto_frontend/utils/popup.dart';
 
-import 'sub_screen/folder_chat_screen.dart';
-import 'sub_screen/folder_photo_screen.dart';
+import 'sub_screen/chat_photo/folder_photo_screen.dart';
 
 class FolderFrame extends StatelessWidget {
   FolderFrame({super.key});

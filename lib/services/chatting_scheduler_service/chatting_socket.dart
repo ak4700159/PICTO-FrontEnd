@@ -12,7 +12,7 @@ class ChattingSocket {
   late int folderId;
   late StompClient _stompClient;
 
-  final baseUrl = "${AppConfig.httpUrl}:8085/ws-connected";
+  final baseUrl = "${AppConfig.httpUrl}:8085/ws-connect";
   StompFrameCallback receive;
   Function? unsubscribeFunction;
   bool connected = false;
@@ -27,15 +27,19 @@ class ChattingSocket {
           onWebSocketError: _onError,
           // 서버에서 강제 종료된 경우 호출되는 콜백함수
           onWebSocketDone: _onDone,
+          onStompError: (frame) {
+            print("[ERROR] stomp error : ${frame.toString()}");
+          },
+          // onDebugMessage: (frame) {
+          //   print("[WARN] stomp debug : ${frame.toString()}");
+          // }
         ),
       );
-      connectWebSocket();
-      print("[INFO] chatting socket[$folderId] connected success");
     } catch(e) {
       showErrorPopup(e.toString());
     }
   }
-  void connectWebSocket() async {
+  Future<void> connectWebSocket() async {
     if (_stompClient.connected) {
       print("[INFO] already connected\n");
       connected = true;
@@ -44,9 +48,14 @@ class ChattingSocket {
     try {
       _stompClient.activate();
       connected = true;
+      // print("[INFO] chatting socket[$folderId] connected success");
     } catch (e) {
       print('[DEBUG] web socket server missing');
     }
+  }
+
+  bool getConnected() {
+    return _stompClient.connected;
   }
 
   void disconnectWebSocket() {

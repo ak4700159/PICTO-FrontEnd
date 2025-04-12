@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:picto_frontend/screens/folder/folder_view_model.dart';
+import 'package:picto_frontend/utils/popup.dart';
 
 import '../../config/app_config.dart';
 import '../../models/folder.dart';
@@ -179,8 +180,8 @@ class FolderListScreen extends StatelessWidget {
             onPressed: () async {
               // 폴더 사진 화면 이동
               final folderViewModel = Get.find<FolderViewModel>();
-              folderViewModel.changeFolder(folderId: folder.folderId);
-              folderViewModel.changeSocket();
+              folderViewModel.changeFolder(folderId: folder.folderId, generatorId: folder.generatorId);
+              // showBlockingLoading(Duration(seconds: 1));
               print("[INFO] target folder Id : ${folder.folderId}");
               Get.toNamed('/folder', arguments: {
                 "folderId": folder.folderId,
@@ -190,7 +191,7 @@ class FolderListScreen extends StatelessWidget {
               Icons.folder,
               color: folder.generatorId == UserManagerApi().ownerId
                   ? AppConfig.mainColor
-                  : Colors.white,
+                  : Colors.blue ,
               weight: 1,
               size: 60,
             ),

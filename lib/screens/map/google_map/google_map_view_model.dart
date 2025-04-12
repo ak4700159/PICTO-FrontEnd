@@ -11,6 +11,7 @@ import 'package:picto_frontend/config/app_config.dart';
 import 'package:picto_frontend/models/photo.dart';
 import 'package:picto_frontend/screens/folder/folder_view_model.dart';
 import 'package:picto_frontend/screens/map/google_map/cluster/picto_cluster_item.dart';
+import 'package:picto_frontend/services/session_scheduler_service/session_socket.dart';
 import 'package:picto_frontend/services/user_manager_service/user_api.dart';
 import 'package:widget_to_marker/widget_to_marker.dart';
 
@@ -171,6 +172,7 @@ class GoogleMapViewModel extends GetxController {
       pictoCluster.manager.setMapId(controller.mapId);
       pictoCluster.manager
           .setItems(currentPictoMarkers.map((p) => PictoItem(pictoMarker: p)).toList());
+      Get.find<SessionSocket>().connectWebSocket();
     } catch (e) {
       print("[ERROR] : controller setting error");
     }

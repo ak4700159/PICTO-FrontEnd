@@ -25,6 +25,7 @@ Color getColorFromUserId(int userId) {
 }
 
 String formatDate(int timestamp) {
+  print("[INFO] time : $timestamp");
   final date = DateTime.fromMillisecondsSinceEpoch(timestamp);
   return date.toLocal().toString().substring(0, "0000-00-00 00:00".length);
 }

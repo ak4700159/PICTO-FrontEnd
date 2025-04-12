@@ -5,9 +5,9 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:picto_frontend/screens/folder/folder_view_model.dart';
 import 'package:picto_frontend/screens/map/google_map/marker/picto_marker.dart';
-import '../../../models/folder.dart';
-import '../../../services/photo_store_service/photo_store_api.dart';
-import '../../photo/photo_view_model.dart';
+import '../../../../models/folder.dart';
+import '../../../../services/photo_store_service/photo_store_api.dart';
+import '../../../photo/photo_view_model.dart';
 
 class FolderPhotoScreen extends StatelessWidget {
   const FolderPhotoScreen({super.key, required this.folderId});

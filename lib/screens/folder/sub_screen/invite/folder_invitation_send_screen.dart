@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:picto_frontend/config/app_config.dart';
-import 'package:picto_frontend/screens/folder/sub_screen/folder_invitation_view_model.dart';
+import 'package:picto_frontend/screens/folder/sub_screen/invite/folder_invitation_view_model.dart';
 import 'package:picto_frontend/screens/map/top_box.dart';
 import 'package:picto_frontend/utils/validator.dart';
 
-import '../../../models/user.dart';
-import '../../../utils/util.dart';
+import '../../../../models/user.dart';
+import '../../../../utils/util.dart';
 
 class FolderInvitationSendScreen extends StatelessWidget {
   const FolderInvitationSendScreen({super.key});

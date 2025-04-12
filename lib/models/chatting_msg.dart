@@ -18,7 +18,7 @@ class ChatMsg {
   factory ChatMsg.fromJson(Map<String, dynamic> json) {
     return ChatMsg(
       userId: json['userId'],
-      sendDatetime: json['sendDatetime'],
+      sendDatetime: json['sendDatetime'] < 10000000000 ? json['sendDatetime'] * 1000 : json['sendDatetime'],
       accountName: json['accountName'],
       content: json['content'],
     );
@@ -28,7 +28,7 @@ class ChatMsg {
     final data = jsonDecode(frame.body!);
     return ChatMsg(
       userId: data["userId"],
-      sendDatetime: data['sendDatetime'],
+      sendDatetime: data['sendDatetime'] < 10000000000 ? data['sendDatetime'] * 1000 : data['sendDatetime'],
       accountName: data['accountName'],
       content: data['content'],
     );
@@ -36,7 +36,7 @@ class ChatMsg {
 
   Map<String, dynamic> toJson() {
     return {
-      "userId": userId,
+      "senderId": userId,
       "sendDatetime": sendDatetime,
       "accountName": accountName,
       "content": content,

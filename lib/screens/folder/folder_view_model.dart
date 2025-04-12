@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:picto_frontend/models/chatting_msg.dart';
 import 'package:picto_frontend/models/folder.dart';
@@ -15,6 +18,21 @@ class FolderViewModel extends GetxController {
   Rxn<Folder> currentFolder = Rxn<Folder>();
   RxList<PictoMarker> currentMarkers = <PictoMarker>[].obs;
   Rxn<ChattingSocket> currentSocket = Rxn<ChattingSocket>();
+  RxList<ChatMsg> currentMsgList = <ChatMsg>[].obs;
+  ScrollController chatScrollController = ScrollController();
+
+  @override
+  void onInit() {
+    super.onInit();
+    ever(currentMsgList, (_) {
+      // 현재 메시지가 하단에 있을 때만 스크롤
+      if (isAtBottom) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          scrollToBottom();
+        });
+      }
+    });
+  }
 
   //  폴더 초기화
   Future<void> initFolder() async {
@@ -50,19 +68,18 @@ class FolderViewModel extends GetxController {
 
         // markers도 갱신하고 싶다면 여기에 추가 (선택)
         final oldMarkerIds = pre.markers.map((m) => m.photo.photoId).toSet();
-        final newMarkers = newFolder.markers.where((m) => !oldMarkerIds.contains(m.photo.photoId)).toList();
+        final newMarkers =
+            newFolder.markers.where((m) => !oldMarkerIds.contains(m.photo.photoId)).toList();
         if (newMarkers.isNotEmpty) {
           pre.markers.addAll(newMarkers);
         }
-
-        // 메시지는 그대로 유지
       }
     }
   }
 
   // 폴더 화면 변화
-  void changeFolder({required int folderId}) {
-    print("[INFO] exchange folder : $folderId");
+  void changeFolder({required int folderId, required int generatorId}) {
+    // print("[INFO] exchange folderId : $folderId / generatorId : $generatorId");
     for (Folder folder in folders.keys) {
       if (folder.folderId == folderId) {
         // print("[INFO] exchange <-> ${folder.markers.length}");
@@ -72,18 +89,27 @@ class FolderViewModel extends GetxController {
       }
     }
     // print("[INFO] current markers len : ${currentMarkers.length}");
+    changeSocket();
   }
 
   // 현재 선택된 폴더에 소켓 연결
   void changeSocket() {
-    if (currentSocket.value == null) return;
+    // if (currentSocket.value == null) return;
     currentSocket.value?.disconnectWebSocket();
+    print("[INFO] chatting socket change try...");
     currentSocket.value = ChattingSocket(
       folderId: currentFolder.value!.folderId,
       receive: (frame) {
-        folders[currentFolder.value]?.add(ChatMsg.fromFrame(frame));
+        final data = jsonDecode(frame.body ?? "");
+        if (data["userId"] == UserManagerApi().ownerId) return;
+        folders[currentFolder.value]?.add(ChatMsg.fromJson(data));
+        currentMsgList.add(ChatMsg.fromJson(data));
       },
     );
+    currentSocket.value?.connectWebSocket();
+    currentMsgList.clear();
+    currentMsgList.addAll(folders[currentFolder.value]!);
+    print("[INFO] chatting socket change completed...?");
   }
 
   // 폴더 삭제
@@ -113,9 +139,28 @@ class FolderViewModel extends GetxController {
 
   //폴더 조회
   Folder? getFolder({required int folderId}) {
-    for(Folder folder in folders.keys) {
-      if(folder.folderId == folderId) return folder;
+    for (Folder folder in folders.keys) {
+      if (folder.folderId == folderId) return folder;
     }
     return null;
+  }
+
+  // 최하단으로 스크롤 이동
+  void scrollToBottom() {
+    if (chatScrollController.hasClients) {
+      chatScrollController.animateTo(
+        chatScrollController.position.maxScrollExtent,
+        duration: Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    }
+  }
+
+  // 현재 스크롤이 하단에 잇는지 확인 -> 당장은 의미 X 제대로 동작하지 않음
+  bool get isAtBottom {
+    if (!chatScrollController.hasClients) return false;
+    final max = chatScrollController.position.maxScrollExtent;
+    final current = chatScrollController.offset;
+    return (max - current).abs() < 50; // 여유값 50px
   }
 }

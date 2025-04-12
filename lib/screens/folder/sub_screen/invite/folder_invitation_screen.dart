@@ -3,16 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:picto_frontend/config/app_config.dart';
-import 'package:picto_frontend/screens/folder/sub_screen/folder_invitation_view_model.dart';
+import 'package:picto_frontend/screens/folder/sub_screen/invite/folder_invitation_view_model.dart';
 import 'package:picto_frontend/screens/map/top_box.dart';
 import 'package:picto_frontend/services/folder_manager_service/folder_api.dart';
 import 'package:picto_frontend/services/user_manager_service/user_api.dart';
 import 'package:picto_frontend/utils/popup.dart';
 import 'package:picto_frontend/widgets/picto_logo.dart';
 
-import '../../../models/notice.dart';
-import '../../../models/user.dart';
-import '../../../utils/util.dart';
+import '../../../../models/notice.dart';
+import '../../../../models/user.dart';
+import '../../../../utils/util.dart';
 
 class FolderInvitationScreen extends StatelessWidget {
   @override
