@@ -3,6 +3,8 @@ import 'package:dio/dio.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:mime/mime.dart';
 import 'package:picto_frontend/screens/upload/upload_request.dart';
+import 'package:picto_frontend/services/user_manager_service/user_api.dart';
+import 'package:picto_frontend/utils/popup.dart';
 
 import '../../config/app_config.dart';
 import '../http_interceptor.dart';
@@ -50,7 +52,8 @@ class PhotoStoreHandler {
     final formData = FormData.fromMap({
       'file': await MultipartFile.fromFile(request.file.path,
           filename: request.file.path, contentType: MediaType.parse(mimeType)),
-      'request': MultipartFile.fromString(request.toJson(), contentType: MediaType('application', 'json')),
+      'request':
+          MultipartFile.fromString(request.toJson(), contentType: MediaType('application', 'json')),
     });
 
     try {
@@ -58,5 +61,16 @@ class PhotoStoreHandler {
     } on DioException catch (e) {
       rethrow;
     }
+  }
+
+  Future<bool> deletePhoto(int photoId) async {
+    try {
+      final response =
+          dio.delete('$baseUrl/photos/$photoId', queryParameters: {"userId": UserManagerApi().ownerId});
+      return true;
+    } catch (e) {
+      showErrorPopup(e.toString());
+    }
+    return false;
   }
 }

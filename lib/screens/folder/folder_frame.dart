@@ -12,10 +12,9 @@ import 'sub_screen/folder_photo_screen.dart';
 class FolderFrame extends StatelessWidget {
   FolderFrame({super.key});
 
-  final int folderId = Get.arguments["folderId"];
-
   @override
   Widget build(BuildContext context) {
+    final int folderId = Get.arguments["folderId"];
     final folderViewModel = Get.find<FolderViewModel>();
     return DefaultTabController(
       length: 2,
@@ -31,35 +30,63 @@ class FolderFrame extends StatelessWidget {
               style: TextStyle(color: AppConfig.mainColor),
             ),
           ),
-          leading: PopupMenuButton<String>(
-            icon: const Icon(Icons.more_vert, color: AppConfig.mainColor),
-            onSelected: (value) {
-              switch (value) {
-                case "delete":
-                  break;
-                case "notify":
-                  break;
-              }
-            },
-            itemBuilder: (context) => [
-              PopupMenuItem(
-                value: "delete",
-                onTap: _showFolderDeleteCheck,
-                child: const Text(
-                  "폴더 삭제",
-                  style: TextStyle(fontWeight: FontWeight.bold),
+          actions: [
+            PopupMenuButton<String>(
+              color: Colors.white,
+              icon: const Icon(Icons.more_vert, color: AppConfig.mainColor),
+              onSelected: (value) {
+                switch (value) {
+                  case "delete":
+                    break;
+                  case "notify":
+                    break;
+                  case "share" :
+                    break;
+                }
+              },
+              itemBuilder: (context) => [
+                PopupMenuItem(
+                  value: "delete",
+                  onTap: _showFolderDeleteCheck,
+                  child: Row(
+                    children: [
+                      Icon(Icons.folder_delete),
+                      const Text(
+                        " 폴더 삭제",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              PopupMenuItem(
-                value: "send",
-                onTap: _showFolderInvitationSend,
-                child: Text(
-                  "초대 알림 전송",
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                PopupMenuItem(
+                  value: "send",
+                  onTap: () => Get.toNamed('/folder/invite/send', arguments: {"folderId": folderId}),
+                  child: Row(
+                    children: [
+                      Icon(Icons.send),
+                      Text(
+                        " 초대 알림 전송",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          ),
+                PopupMenuItem(
+                  value: "share",
+                  // onTap: () => Get.toNamed('/folder/invite/send', arguments: {"folderId": folderId}),
+                  child: Row(
+                    children: [
+                      Icon(Icons.share),
+                      Text(
+                        " 폴더 공유 정보",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            )
+          ],
           bottom: TabBar(
             indicatorSize: TabBarIndicatorSize.tab,
             dividerColor: Colors.grey,
@@ -72,7 +99,7 @@ class FolderFrame extends StatelessWidget {
             indicatorColor: Colors.white,
             labelColor: Colors.white,
             unselectedLabelColor: Colors.grey,
-            labelStyle: TextStyle(fontWeight: FontWeight.bold),
+            labelStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
             tabs: [
               Tab(text: "저장된 사진"),
               Tab(text: "채팅"),
@@ -89,7 +116,9 @@ class FolderFrame extends StatelessWidget {
     );
   }
 
+  // 폴더 삭제 팝업
   _showFolderDeleteCheck() {
+    final int folderId = Get.arguments["folderId"];
     Get.dialog(
       AlertDialog(
         backgroundColor: Colors.white,
@@ -102,38 +131,46 @@ class FolderFrame extends StatelessWidget {
             ),
           ],
         ),
-        content: Text("폴더를 삭제하시겠습니까?"),
+        content: Text(
+          "폴더를 삭제하시겠습니까?",
+          style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+        ),
         actions: [
           TextButton(
             onPressed: () async {
+              final folderViewModel = Get.find<FolderViewModel>();
+              if (folderViewModel.getFolder(folderId: folderId)!.name == "default") {
+                Get.back();
+                showErrorPopup("기본 폴더는 삭제할 수 없습니다.");
+                return;
+              }
+
               bool isSuccess = await FolderManagerApi().removeFolder(folderId: folderId);
               Get.back();
+              Get.back();
               if (isSuccess) {
+                Get.find<FolderViewModel>().initFolder();
                 showPositivePopup("폴더가 삭제되었습니다");
-                Get.offNamed('/map');
               } else {
                 showErrorPopup("서버 오류 발생(삭제 실패)");
               }
             },
-            child: Text("네"),
+            child: Text(
+              "네",
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+            ),
           ),
           TextButton(
             onPressed: () {
               Get.back();
             },
-            child: Text("아니요"),
+            child: Text(
+              "아니요",
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+            ),
           ),
         ],
       ),
     );
-  }
-
-  // 고민중...
-  _showFolderInvitationSend() {
-    Get.dialog(AlertDialog(
-      content: Column(
-
-      ),
-    ));
   }
 }

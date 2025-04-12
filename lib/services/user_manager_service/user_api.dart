@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:picto_frontend/config/app_config.dart';
 import 'package:picto_frontend/models/user.dart';
+import 'package:picto_frontend/screens/folder/folder_view_model.dart';
 import 'package:picto_frontend/screens/login/login_view_model.dart';
 import 'package:picto_frontend/screens/map/selection_bar_view_model.dart';
 import 'package:picto_frontend/screens/map/tag/tag_selection_view_model.dart';
@@ -133,7 +134,7 @@ class UserManagerApi {
       final response = await dio.get(hostUrl, options: _authOptions());
       _sendInitValue(response);
     } on DioException catch (e) {
-      if (e.response?.statusCode == 402) {
+      if (e.response?.statusCode == 403) {
         print('[ERROR] access token fail');
         try {
           await republishAccessToken();
@@ -149,7 +150,6 @@ class UserManagerApi {
         Get.offNamed('/login');
       }
     }
-
   }
 
   // 태그 수정
@@ -220,24 +220,46 @@ class UserManagerApi {
         options: _authOptions(),
       );
       return User.fromJson(response.data);
-    } on DioException catch(e) {
+    } on DioException catch (e) {
+      showErrorPopup(e.toString());
+    }
+    return null;
+  }
+
+  Future<User?> getUserByEmail({required String email}) async {
+    try {
+      final response = await dio.get(
+        '$baseUrl/users',
+        data: {"email": email},
+        options: _authOptions(),
+      );
+      return User.fromJson(response.data);
+    } on DioException catch (e) {
+      showErrorPopup(e.toString());
+    }
+    return null;
+  }
+
+  Future<User?> getUserByUserId({required int userId}) async {
+    try {
+      final response = await dio.get(
+        '$baseUrl/users/$userId',
+        options: _authOptions(),
+      );
+      return User.fromJson(response.data);
+    } on DioException catch (e) {
       showErrorPopup(e.toString());
     }
     return null;
   }
 
   void _sendInitValue(response) {
-    final selectionViewModel = Get.find<SelectionBarViewModel>();
-    final tagSelectionViewModel = Get.find<TagSelectionViewModel>();
-    final profileViewModel = Get.find<ProfileViewModel>();
-    final userConfig = Get.find<UserConfig>();
-    final googleMapViewModel = Get.find<GoogleMapViewModel>();
-
-    selectionViewModel.convertFromJson(response.data["filter"]);
-    profileViewModel.convertFromJson(response.data["user"]);
-    userConfig.convertFromJson(response.data["userSetting"]);
-    googleMapViewModel.initPhotos(response.data["folderPhotos"]);
-    tagSelectionViewModel.initTags(response.data["tags"]);
+    Get.find<SelectionBarViewModel>().convertFromJson(response.data["filter"]);
+    Get.find<ProfileViewModel>().convertFromJson(response.data["user"]);
+    Get.find<UserConfig>().convertFromJson(response.data["userSetting"]);
+    Get.find<GoogleMapViewModel>().initPhotos(response.data["folderPhotos"]);
+    Get.find<TagSelectionViewModel>().initTags(response.data["tags"]);
+    Get.find<FolderViewModel>().initFolder();
 
     final socketInterceptor = SocketFunctionController();
     socketInterceptor.callSession(connected: true);
@@ -249,6 +271,7 @@ class UserManagerApi {
           "Authorization": "Bearer $accessToken",
         },
       );
+
 // 시간되면 구현할 기능
 // 1. 즐겨찾기 추가, 해제
 // 2. 차단 추가, 해제

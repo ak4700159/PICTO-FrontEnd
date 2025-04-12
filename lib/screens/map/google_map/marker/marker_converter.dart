@@ -35,7 +35,7 @@ class MarkerConverter {
             ))
         .toSet();
     pictoMarkers.forEach((pictoMarker) async {
-      pictoMarker.imageData = await PhotoStoreHandler().downloadPhoto(pictoMarker.photo.photoId);
+      // pictoMarker.imageData = await PhotoStoreHandler().downloadPhoto(pictoMarker.photo.photoId);
     });
     return pictoMarkers;
   }

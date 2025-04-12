@@ -1,46 +1,77 @@
 import 'package:get/get.dart';
 import 'package:picto_frontend/models/chatting_msg.dart';
 import 'package:picto_frontend/models/folder.dart';
+import 'package:picto_frontend/screens/map/google_map/marker/picto_marker.dart';
 import 'package:picto_frontend/services/chatting_scheduler_service/chatting_socket.dart';
 import 'package:picto_frontend/services/folder_manager_service/folder_api.dart';
 import 'package:picto_frontend/services/user_manager_service/user_api.dart';
 
 import '../../services/chatting_scheduler_service/chatting_api.dart';
+import '../../utils/popup.dart';
 
 class FolderViewModel extends GetxController {
   // 각 폴더 안의 메시지
   RxMap<Folder, List<ChatMsg>> folders = <Folder, List<ChatMsg>>{}.obs;
   Rxn<Folder> currentFolder = Rxn<Folder>();
+  RxList<PictoMarker> currentMarkers = <PictoMarker>[].obs;
   Rxn<ChattingSocket> currentSocket = Rxn<ChattingSocket>();
 
   //  폴더 초기화
-  void initFolder() async {
+  Future<void> initFolder() async {
     List<Folder> search = await FolderManagerApi().getFoldersByOwnerId();
+    await showBlockingLoading(Duration(seconds: 1));
     final existingKeys = folders.keys.toList();
     final newFolderIds = search.map((f) => f.folderId).toSet();
-
     for (var oldFolder in existingKeys) {
       if (!newFolderIds.contains(oldFolder.folderId)) {
         folders.remove(oldFolder);
       }
     }
     for (Folder newFolder in search) {
-      // any 함수는 콜백함수에서 한번이라도 ture를 반환하면 함수에서 true를 반환한다.
       final exists = folders.keys.any((f) => f.folderId == newFolder.folderId);
-      // exists = false 는 기존에 존재하지 않았던 폴더를 의미한다. => 추가
+      final pre = getFolder(folderId: newFolder.folderId);
+
+      // 새 폴더 추가
       if (!exists) {
         folders[newFolder] = await ChattingApi().getMessagesByFolderId(newFolder.folderId);
+      }
+      // 기존 폴더 → 사진만 업데이트
+      else if (pre != null) {
+        // 새로 추가된 사진만 추출
+        // print("[INFO] {pre} photos: ${pre.photos.length}/ markers: ${pre.markers.length}");
+        // print("[INFO] {new} photos: ${newFolder.photos.length}/ markers: ${newFolder.markers.length}");
+        final oldPhotoIds = pre.photos.map((p) => p.photoId).toSet();
+        final newPhotos = newFolder.photos.where((p) => !oldPhotoIds.contains(p.photoId)).toList();
+
+        if (newPhotos.isNotEmpty) {
+          pre.photos.addAll(newPhotos);
+          // print("[INFO] ${newPhotos.length} new photos added to folder ${pre.folderId}");
+        }
+
+        // markers도 갱신하고 싶다면 여기에 추가 (선택)
+        final oldMarkerIds = pre.markers.map((m) => m.photo.photoId).toSet();
+        final newMarkers = newFolder.markers.where((m) => !oldMarkerIds.contains(m.photo.photoId)).toList();
+        if (newMarkers.isNotEmpty) {
+          pre.markers.addAll(newMarkers);
+        }
+
+        // 메시지는 그대로 유지
       }
     }
   }
 
   // 폴더 화면 변화
   void changeFolder({required int folderId}) {
+    print("[INFO] exchange folder : $folderId");
     for (Folder folder in folders.keys) {
       if (folder.folderId == folderId) {
+        // print("[INFO] exchange <-> ${folder.markers.length}");
         currentFolder.value = folder;
+        currentMarkers.clear();
+        currentMarkers.addAll(folder.markers);
       }
     }
+    // print("[INFO] current markers len : ${currentMarkers.length}");
   }
 
   // 현재 선택된 폴더에 소켓 연결

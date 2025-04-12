@@ -19,19 +19,20 @@ class MapScreen extends StatelessWidget {
     final _mapViewModel = Get.find<MapViewModel>();
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: FloatingActionButton(
-        heroTag: "map",
-        backgroundColor: AppConfig.mainColor,
-        shape: CircleBorder(side: BorderSide(width: 1)),
-        onPressed: () {
-          // index 2 = google map
-          _mapViewModel.changeNavigationBarIndex(2);
-        },
-        child: Icon(
-          Icons.location_on,
-          color: Colors.white,
-        ),
-      ),
+      floatingActionButton: Obx(() => FloatingActionButton(
+            heroTag: "map",
+            backgroundColor: 2 == _mapViewModel.navigationBarCurrentIndex.value
+                ? AppConfig.mainColor
+                : Colors.grey,
+            shape: CircleBorder(side: BorderSide(width: 1)),
+            onPressed: () {
+              _mapViewModel.changeNavigationBarIndex(2);
+            },
+            child: Icon(
+              Icons.location_on,
+              color: Colors.white,
+            ),
+          )),
       bottomNavigationBar: _getBottomNavigationBar(context),
       body: _getMainFrame(context),
     );
@@ -77,11 +78,15 @@ class MapScreen extends StatelessWidget {
           ),
           activeIcon: Icon(
             PictoIcons.edit,
-            color: Colors.black,
+            color: AppConfig.mainColor,
           ),
           label: "ComfyUI"),
       BottomNavigationBarItem(
         icon: Icon(
+          Icons.line_weight_sharp,
+          color: Colors.grey,
+        ),
+        activeIcon: Icon(
           Icons.line_weight_sharp,
           color: AppConfig.mainColor,
         ),
@@ -94,7 +99,7 @@ class MapScreen extends StatelessWidget {
           ),
           activeIcon: Icon(
             Icons.folder,
-            color: Colors.black,
+            color: AppConfig.mainColor,
           ),
           label: "폴더"),
       BottomNavigationBarItem(
@@ -104,9 +109,9 @@ class MapScreen extends StatelessWidget {
           ),
           activeIcon: Icon(
             Icons.perm_device_info_outlined,
-            color: Colors.black,
+            color: AppConfig.mainColor,
           ),
-          label: "프로필")
+          label: "프로필"),
     ];
     final mapViewModel = Get.find<MapViewModel>();
 

@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:picto_frontend/screens/folder/folder_view_model.dart';
 import 'package:picto_frontend/screens/map/top_box.dart';
 import 'package:picto_frontend/services/folder_manager_service/folder_api.dart';
 import 'package:picto_frontend/widgets/picto_logo.dart';
@@ -78,7 +79,12 @@ class FolderCreateScreen extends StatelessWidget {
                       if (formKey.currentState?.validate() ?? false) {
                         formKey.currentState?.save();
                       }
-                      Folder? newFolder = await FolderManagerApi().createFolder(folderName: folderName!, content: folderContent!);
+                      Folder? newFolder = await FolderManagerApi()
+                          .createFolder(folderName: folderName!, content: folderContent!);
+                      if (newFolder != null) {
+                        Get.find<FolderViewModel>().initFolder();
+                      }
+                      Get.back();
                       Get.back();
                     },
                     child: Text(

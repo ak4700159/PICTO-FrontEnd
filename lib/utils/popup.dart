@@ -7,19 +7,25 @@ import '../config/app_config.dart';
 void showErrorPopup(String errorMsg) {
   Get.dialog(
     AlertDialog(
-      shape: BeveledRectangleBorder(),
+      backgroundColor: Colors.white,
       title: Row(
         children: [
-          const Icon(Icons.error,  color: Colors.red,),
+          const Icon(
+            Icons.error,
+            color: Colors.red,
+          ),
           const Text('[ERROR INFO]'),
         ],
       ),
-      content: SingleChildScrollView(child: Text(errorMsg,)),
+      content: SingleChildScrollView(
+          child: Text(
+        errorMsg,
+      )),
       actions: [
-        TextButton(
-          child: const Text("닫기"),
-          onPressed: () => Get.back(),
-        ),
+        // TextButton(
+        //   child: const Text("닫기"),
+        //   onPressed: () => Get.back(),
+        // ),
       ],
     ),
   );
@@ -28,25 +34,61 @@ void showErrorPopup(String errorMsg) {
 void showPositivePopup(String errorMsg) {
   Get.dialog(
     AlertDialog(
-      shape: BeveledRectangleBorder(),
+      backgroundColor: Colors.white,
       title: Row(
         children: [
-          const Icon(Icons.info,  color: AppConfig.mainColor,),
-          const Text(' 성공'),
+          const Icon(
+            Icons.info,
+            color: AppConfig.mainColor,
+          ),
+          const Text('[INFO]'),
         ],
       ),
-      content: SingleChildScrollView(child: Text(errorMsg,)),
-      actions: [
-        TextButton(
-          child: const Text("닫기"),
-          onPressed: () => Get.back(),
+      content: SingleChildScrollView(
+          child: Text(
+        errorMsg,
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
         ),
+      )),
+      actions: [
+        // TextButton(
+        //   child: const Text("닫기"),
+        //   onPressed: () => Get.back(),
+        // ),
       ],
     ),
   );
 }
 
-
-void exitPopup(String msg) {
-
+Future<void> showBlockingLoading(Duration duration) async {
+  Get.dialog(
+    PopScope(
+      canPop: false, // ← 뒤로가기 버튼도 막음
+      child: Center(
+        child: Container(
+          width: 150,
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.transparent,
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const CircularProgressIndicator(
+                color: Colors.black,
+              ),
+            ],
+          ),
+        ),
+      ),
+    ),
+    barrierDismissible: false,
+    barrierColor: Colors.black.withOpacity(0.4),
+  );
+  await Future.delayed(duration);
+  Get.back();
 }
+
+void exitPopup(String msg) {}

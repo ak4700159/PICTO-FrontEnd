@@ -18,42 +18,43 @@ class FolderPhotoScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final folderViewModel = Get.find<FolderViewModel>();
     Folder? folder = folderViewModel.getFolder(folderId: folderId);
-    return GridView.builder(
-      padding: const EdgeInsets.all(10),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3,
-        crossAxisSpacing: 10,
-        mainAxisSpacing: 10,
-      ),
-      itemCount: folder?.markers.length ?? 0,
-      itemBuilder: (context, index) {
-        return folder?.markers.toList()[index].imageData == null
-            ? FutureBuilder(
-                builder: (BuildContext context, AsyncSnapshot snapshot) {
-                  if (snapshot.data == null || snapshot.data == false) {
-                    return SpinKitSpinningCircle(
-                      itemBuilder: (context, index) {
-                        return Center(
-                          child: Image.asset('assets/images/pictory_color.png'),
+    return Obx(() => GridView.builder(
+          padding: const EdgeInsets.all(10),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 10,
+            mainAxisSpacing: 10,
+          ),
+          itemCount: folderViewModel.currentMarkers.length,
+          itemBuilder: (context, index) {
+            return folderViewModel.currentMarkers[index].imageData == null
+                ? FutureBuilder(
+                    builder: (BuildContext context, AsyncSnapshot snapshot) {
+                      if (snapshot.data == null || snapshot.data == false) {
+                        return SpinKitSpinningCircle(
+                          itemBuilder: (context, index) {
+                            return Center(
+                              child: Image.asset('assets/images/pictory_color.png'),
+                            );
+                          },
                         );
-                      },
-                    );
-                  } else if (snapshot.hasError) {
-                    return Image.asset(
-                      'assets/images/picto_logo.png',
-                      fit: BoxFit.cover,
-                    );
-                  } else {
-                    Uint8List? data = snapshot.data;
-                    folder.markers.toList()[index].imageData = data;
-                    return _getPhotoTile(folder.markers.toList()[index]);
-                  }
-                },
-                future: PhotoStoreHandler().downloadPhoto(folder!.photos[index].photoId),
-              )
-            : _getPhotoTile(folder!.markers.toList()[index]);
-      },
-    );
+                      } else if (snapshot.hasError) {
+                        return Image.asset(
+                          'assets/images/picto_logo.png',
+                          fit: BoxFit.cover,
+                        );
+                      } else {
+                        Uint8List? data = snapshot.data;
+                        folderViewModel.currentMarkers[index].imageData = data;
+                        return _getPhotoTile(folderViewModel.currentMarkers[index]);
+                      }
+                    },
+                    future: PhotoStoreHandler()
+                        .downloadPhoto(folderViewModel.currentMarkers[index].photo.photoId),
+                  )
+                : _getPhotoTile(folderViewModel.currentMarkers[index]);
+          },
+        ));
   }
 
   _getPhotoTile(PictoMarker marker) {
@@ -61,26 +62,29 @@ class FolderPhotoScreen extends StatelessWidget {
       onTap: () async {
         PhotoViewModel photoViewModel = Get.find<PhotoViewModel>();
         BoxFit fit = await photoViewModel.determineFit(marker.imageData!);
-        Get.toNamed("/photo", arguments: {
-          "photo": marker.photo,
-          "data": marker.imageData,
-          "fit": fit,
-        });
+        Get.toNamed(
+          "/photo",
+          arguments: {
+            "photo": marker.photo,
+            "data": marker.imageData,
+            "fit": fit,
+          },
+        );
       },
       child: Container(
         width: 100, // 원하는 마커 크기
         height: 100,
         decoration: BoxDecoration(
           border: Border.all(
-            color: Colors.black, // 테두리 색상
-            width: 2, // 테두리 두께
+            color: Colors.white, // 테두리 색상
+            width: 1, // 테두리 두께
           ),
           // Container 위젯의 테두리
-          borderRadius: BorderRadius.circular(16), // 전체 둥글게
+          borderRadius: BorderRadius.circular(4), // 전체 둥글게
         ),
         child: ClipRRect(
           // ClipRRect 하위 위젯 테두리 지정
-          borderRadius: BorderRadius.circular(12), // 이미지도 같이 둥글게 잘림
+          borderRadius: BorderRadius.circular(8), // 이미지도 같이 둥글게 잘림
           child: Image.memory(
             marker.imageData!,
             fit: BoxFit.cover,

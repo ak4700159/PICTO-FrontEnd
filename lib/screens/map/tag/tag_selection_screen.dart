@@ -6,8 +6,6 @@ import 'package:picto_frontend/screens/map/tag/tag_selection_view_model.dart';
 import 'package:picto_frontend/screens/map/top_box.dart';
 import 'package:picto_frontend/screens/map/tag/tag_item.dart';
 
-import '../../../utils/get_widget.dart';
-
 class TagSelectionScreen extends StatelessWidget {
   const TagSelectionScreen({Key? key}) : super(key: key);
 

@@ -109,7 +109,7 @@ class FolderManagerApi {
   Future<bool> sendFolderInvitation(
       {required int folderId, required int senderId, required int receiverId}) async {
     try {
-      final response = await dio.post('$baseUrl/folders/shared', data: {
+      final response = await dio.post('$baseUrl/folders/shares', data: {
         "folderId": folderId,
         "senderId": senderId,
         "receiverId": receiverId,
@@ -144,7 +144,7 @@ class FolderManagerApi {
         '$baseUrl/folders/shares/notices/$noticeId',
         data: {
           "receiverId": receiverId,
-          "isAccept": isAccept,
+          "accept": isAccept,
         },
       );
       return true;

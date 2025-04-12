@@ -305,7 +305,6 @@ class GoogleMapViewModel extends GetxController {
       _loadFolder(currentStep);
       currentMarkers.add(userMarker);
       // 확인해야됨
-      // pictoCluster.manager.addItem(PictoItem(pictoMarker: userMarker));
     } else {
       // (지역 대표 사진 OR 주변 사진) + 내 위치 + 폴더 사진 + 내 사진
       if (isCurrentPosInScreen.value) {
@@ -315,8 +314,8 @@ class GoogleMapViewModel extends GetxController {
       }
       _loadFolder(currentStep);
       currentMarkers.add(userMarker);
-      // pictoCluster.manager.addItem(PictoItem(pictoMarker: userMarker));
     }
+    pictoCluster.manager.setItems(currentPictoMarkers.map((p) => PictoItem(pictoMarker: p)).toList());
   }
 
   Future<void> updateAllMarkersByPeriod(String period) async {
@@ -399,34 +398,24 @@ class GoogleMapViewModel extends GetxController {
 
   Future<void> _loadRepresentative(String downloadType) async {
     Set<PictoMarker> newMarkers = await _converter.getRepresentativePhotos(3, downloadType);
-    // Set<PictoMarker>? toRemove = representativePhotos[downloadType]?.difference(newMarkers);
-    // Set<PictoMarker>? toAdd = newMarkers.difference(representativePhotos[downloadType]!);
     representativePhotos[downloadType]?.addAll(newMarkers);
-    // representativePhotos[downloadType]?.removeAll(toRemove!);
     Set<PictoMarker> toAdd = {};
     for (PictoMarker pictoMarker in representativePhotos[downloadType]!) {
       if (_isPointInsideBounds(
           LatLng(pictoMarker.photo.lat, pictoMarker.photo.lng), screenBounds)) {
         currentPictoMarkers.add(pictoMarker);
         toAdd.add(pictoMarker);
-        // pictoCluster.manager.addItem(PictoItem(pictoMarker: pictoMarker));
       }
       if (currentStep != downloadType) return;
     }
-    pictoCluster.manager.setItems(toAdd.map((p) => PictoItem(pictoMarker: p)).toList());
   }
 
   Future<void> _loadAround(String downloadType) async {
     Set<PictoMarker> newMarkers = await _converter.getAroundPhotos();
-    // Set<PictoMarker> toRemove = aroundPhotos.difference(newMarkers);
-    // Set<PictoMarker> toAdd = newMarkers.difference(aroundPhotos);
     aroundPhotos.addAll(newMarkers);
-    // aroundPhotos.removeAll(toRemove);
     for (PictoMarker pictoMarker in aroundPhotos) {
       if (_isPointInsideBounds(
           LatLng(pictoMarker.photo.lat, pictoMarker.photo.lng), screenBounds)) {
-        // pictoMarker.imageData ??=
-        //     await PhotoStoreHandler().downloadPhoto(pictoMarker.photo.photoId);
         currentPictoMarkers.add(pictoMarker);
         pictoCluster.manager.addItem(PictoItem(pictoMarker: pictoMarker));
       }
@@ -435,21 +424,17 @@ class GoogleMapViewModel extends GetxController {
   }
 
   // 폴더 안에 있는 사진 로딩
+  // 수정 필요 계쏙 로딩됨
   Future<void> _loadFolder(String downloadType) async {
     final folderViewModel = Get.find<FolderViewModel>();
-    final newPhotos = <Photo>{};
+    final newMarkers = <PictoMarker>{};
     for (Folder folder in folderViewModel.folders.keys) {
-      newPhotos.addAll(folder.photos);
+      newMarkers.addAll(folder.markers);
     }
-    for (Photo photo in newPhotos) {
-      final pictoMarker = PictoMarker(
-          photo: photo,
-          type: photo.userId == UserManagerApi().ownerId
-              ? PictoMarkerType.userPhoto
-              : PictoMarkerType.folderPhoto);
-      folderPhotos.add(pictoMarker);
-      currentPictoMarkers.add(pictoMarker);
-      pictoCluster.manager.addItem(PictoItem(pictoMarker: pictoMarker));
+    for (PictoMarker marker in newMarkers) {
+      folderPhotos.add(marker);
+      currentPictoMarkers.add(marker);
+      if (currentStep != downloadType) return;
     }
   }
 

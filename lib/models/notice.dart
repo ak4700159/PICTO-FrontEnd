@@ -19,8 +19,8 @@ class Notice {
         folderId: json["folderId"],
         folderName: json["folderName"],
         type: json["type"],
-        createDatetime: json["createDatetime"],
-        noticeId: json["noticeId"],
+        createDatetime: json["createdDatetime"],
+        noticeId: json["id"],
         senderId: json["senderId"]);
   }
 }

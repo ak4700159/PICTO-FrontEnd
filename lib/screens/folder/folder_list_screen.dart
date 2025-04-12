@@ -58,8 +58,9 @@ class FolderListScreen extends StatelessWidget {
     );
   }
 
+  // 폴더 이벤트 다이얼로그
   void _showFolderEventList(BuildContext context) {
-    List<String> items = ["폴더 생성", "초대 알림 확인", "초대 알림 전송"];
+    List<String> items = ["폴더 생성", "초대 알림 확인"];
     // final width = context.mediaQuery.size.width * 0.4;
     // final height = context.mediaQuery.size.height * 0.8;
     Get.dialog(
@@ -81,7 +82,7 @@ class FolderListScreen extends StatelessWidget {
             ],
           ),
           content: Container(
-            height: context.mediaQuery.size.height * 0.3,
+            height: context.mediaQuery.size.height * 0.2,
             decoration: BoxDecoration(
               color: Colors.white,
             ),
@@ -96,9 +97,14 @@ class FolderListScreen extends StatelessWidget {
                           Get.back();
                           Get.toNamed('/folder/create');
                         },
-                      1 => () {},
-                      2 => () {},
-                      3 => () {},
+                      1 => () {
+                        Get.back();
+                        Get.toNamed('/folder/invite');
+                      },
+                      2 => () {
+                        Get.back();
+
+                      },
                       _ => () {}
                     },
                     child: Container(
@@ -141,28 +147,26 @@ class FolderListScreen extends StatelessWidget {
     );
   }
 
+  // 폴더 메뉴 아이콘
   Widget _getFolderIcon(int idx) {
     return switch (idx) {
       0 => Icon(
           Icons.create_new_folder_rounded,
           color: AppConfig.mainColor,
         ),
-      // 1 => Icon(
-      //     Icons.folder_delete,
-      //     color: AppConfig.mainColor,
-      //   ),
       1 => Icon(
           Icons.email,
           color: AppConfig.mainColor,
         ),
       2 => Icon(
-          Icons.send,
+          Icons.folder_shared,
           color: AppConfig.mainColor,
         ),
       _ => Icon(Icons.hourglass_empty),
     };
   }
 
+  // 폴더 위젯
   Widget _getFolderWidget(Folder folder) {
     return Container(
       decoration: BoxDecoration(
@@ -172,11 +176,12 @@ class FolderListScreen extends StatelessWidget {
       child: Column(
         children: [
           IconButton(
-            onPressed: () {
+            onPressed: () async {
               // 폴더 사진 화면 이동
               final folderViewModel = Get.find<FolderViewModel>();
               folderViewModel.changeFolder(folderId: folder.folderId);
               folderViewModel.changeSocket();
+              print("[INFO] target folder Id : ${folder.folderId}");
               Get.toNamed('/folder', arguments: {
                 "folderId": folder.folderId,
               });

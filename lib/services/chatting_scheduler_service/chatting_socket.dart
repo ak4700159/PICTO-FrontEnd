@@ -18,16 +18,22 @@ class ChattingSocket {
   bool connected = false;
 
   ChattingSocket({required this.folderId, required this.receive}) {
-    _stompClient = StompClient(
-      config: StompConfig.sockJS(
-        reconnectDelay: Duration.zero,
-        url: baseUrl,
-        onConnect: _onConnect,
-        onWebSocketError: _onError,
-        // 서버에서 강제 종료된 경우 호출되는 콜백함수
-        onWebSocketDone: _onDone,
-      ),
-    );
+    try {
+      _stompClient = StompClient(
+        config: StompConfig.sockJS(
+          reconnectDelay: Duration.zero,
+          url: baseUrl,
+          onConnect: _onConnect,
+          onWebSocketError: _onError,
+          // 서버에서 강제 종료된 경우 호출되는 콜백함수
+          onWebSocketDone: _onDone,
+        ),
+      );
+      connectWebSocket();
+      print("[INFO] chatting socket[$folderId] connected success");
+    } catch(e) {
+      showErrorPopup(e.toString());
+    }
   }
   void connectWebSocket() async {
     if (_stompClient.connected) {

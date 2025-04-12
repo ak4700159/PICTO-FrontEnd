@@ -5,16 +5,16 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:picto_frontend/config/app_config.dart';
+import 'package:picto_frontend/screens/folder/folder_view_model.dart';
+import 'package:picto_frontend/services/photo_store_service/photo_store_api.dart';
+import 'package:picto_frontend/services/user_manager_service/user_api.dart';
+import 'package:picto_frontend/utils/popup.dart';
 
 import '../../models/photo.dart';
+import '../../utils/util.dart';
 
 class PhotoScreen extends StatelessWidget {
   const PhotoScreen({super.key});
-
-  String _formatDate(int timestamp) {
-    final date = DateTime.fromMillisecondsSinceEpoch(timestamp);
-    return date.toLocal().toString().substring(0, "0000-00-00 00:00".length);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,10 +31,69 @@ class PhotoScreen extends StatelessWidget {
             child: Image.memory(
               data,
               fit: fit,
-              errorBuilder: (context, object, trace) =>
-              const Center(child: Text("No", style: TextStyle(color: Colors.red, fontSize: 30),)),
+              errorBuilder: (context, object, trace) => const Center(
+                  child: Text(
+                "[ERROR]",
+                style: TextStyle(color: Colors.red, fontSize: 30),
+              )),
             ),
           ),
+          if (photo.userId == UserManagerApi().ownerId) Positioned(
+                  top: 20,
+                  right: 20,
+                  child: PopupMenuButton<String>(
+                    color: Colors.white,
+                    icon: const Icon(Icons.more_vert, color: AppConfig.mainColor, size: 25,),
+                    onSelected: (value) {
+                      switch (value) {
+                        case "delete":
+                          break;
+                        case "move":
+                          break;
+                      }
+                    },
+                    itemBuilder: (context) => [
+                      PopupMenuItem(
+                        value: "delete",
+                        onTap: () async {
+                          final folderViewModle = Get.find<FolderViewModel>();
+                          bool isSuccess = await PhotoStoreHandler().deletePhoto(photo.photoId);
+                          if(isSuccess) {
+                            // showPositivePopup("삭제에 성공했습니다!");
+                            folderViewModle.currentFolder.value!.photos.removeWhere((p) => p.photoId == photo.photoId);
+                            folderViewModle.currentFolder.value!.markers.removeWhere((m) => m.photo.photoId == photo.photoId);
+                            folderViewModle.currentMarkers.removeWhere((m) => m.photo.photoId == photo.photoId);
+                            await folderViewModle.initFolder();
+                            Get.back();
+                            // Get.back()
+                          }
+                        },
+                        child: Row(
+                          children: [
+                            Icon(Icons.folder_delete),
+                            const Text(
+                              " 사진 삭제",
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                      ),
+                      PopupMenuItem(
+                        value: "move",
+                        // onTap: () =>
+                        //     Get.toNamed('/folder/invite/send', arguments: {"folderId": folderId}),
+                        child: Row(
+                          children: [
+                            Icon(Icons.drive_file_move),
+                            Text(
+                              " 사진 이동",
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  )) else Icon(Icons.photo_camera_back),
           // 하단 정보 오버레이
           Positioned(
             bottom: 0,
@@ -81,22 +140,33 @@ class PhotoScreen extends StatelessWidget {
                 //     style: TextStyle(color: Colors.white, fontSize: 14)),
                 Row(
                   children: [
-                    Icon(Icons.tag_sharp, color: Colors.white70, size: 15,),
-                    Text('  ${photo.tag}',
-                        style: TextStyle(color: Colors.white70, fontSize: 12)),
+                    Icon(
+                      Icons.tag_sharp,
+                      color: Colors.white70,
+                      size: 15,
+                    ),
+                    Text('  ${photo.tag}', style: TextStyle(color: Colors.white70, fontSize: 12)),
                   ],
                 ),
                 Row(
                   children: [
-                    Icon(Icons.location_on, color: Colors.white70, size: 15,),
+                    Icon(
+                      Icons.location_on,
+                      color: Colors.white70,
+                      size: 15,
+                    ),
                     Text('  ${photo.location}',
                         style: TextStyle(color: Colors.white70, fontSize: 12)),
                   ],
                 ),
                 Row(
                   children: [
-                    Icon(Icons.date_range, color: Colors.white70, size: 15,),
-                    Text('  ${_formatDate(photo.updateDatetime ?? 0)}',
+                    Icon(
+                      Icons.date_range,
+                      color: Colors.white70,
+                      size: 15,
+                    ),
+                    Text('  ${formatDate(photo.updateDatetime ?? 0)}',
                         style: TextStyle(color: Colors.white70, fontSize: 12)),
                   ],
                 ),
@@ -109,8 +179,7 @@ class PhotoScreen extends StatelessWidget {
             children: [
               Icon(Icons.favorite, color: AppConfig.mainColor),
               const SizedBox(height: 4),
-              Text('${photo.likes}',
-                  style: TextStyle(color: Colors.white)),
+              Text('${photo.likes}', style: TextStyle(color: Colors.white)),
             ],
           ),
         ],
