@@ -109,66 +109,65 @@ class FolderSelectionScreen extends StatelessWidget {
         ],
         color: Colors.white,
       ),
-      child: Obx(() =>
-          folderViewModel.folders[folder.folderId]!.photos.any((p) => p.photoId == selectedPhotoId)
-              ? Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    IconButton(
-                        onPressed: () {
-                          // 폴더 정보 화면으로 이동
-                          Get.toNamed('/folder/info', arguments: {
-                            "folder": folder,
-                          });
-                        },
-                        icon: Icon(
-                          Icons.info,
-                          color: AppConfig.mainColor,
-                        )),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "[폴더명] ${folder.name}",
-                          style: TextStyle(fontWeight: FontWeight.bold, fontFamily: "Roboto"),
-                        ),
-                        Text(
-                          "[생성 시점] ${formatDate(folder.sharedDatetime)}",
-                          style: TextStyle(fontWeight: FontWeight.bold, fontFamily: "Roboto"),
-                        ),
-                        Text(
-                          "[생성자 이메일] ${folder.users.firstWhere((u) => u.userId == folder.generatorId).email}",
-                          style: TextStyle(fontWeight: FontWeight.bold, fontFamily: "Roboto"),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        Text(
-                          "[계정명] ${folder.users.firstWhere((u) => u.userId == folder.generatorId).accountName}",
-                          style: TextStyle(fontWeight: FontWeight.bold, fontFamily: "Roboto"),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
-                    ),
-                    Checkbox(
-                      value: folderSelectionViewModel.selectedList[folder.folderId],
-                      onChanged: (val) {
-                        folderSelectionViewModel.selectedList[folder.folderId] = val!;
-                      },
-                    ),
-                  ],
-                )
-              : Row(
-                  children: [
-                    // IconButton(
-                    //   onPressed: () {},
-                    //   icon: Icon(Icons.folder_open),
-                    //   color: AppConfig.mainColor,
-                    // ),
-                    Text(
-                      " ${folder.name} 에는 사진이 존재합니다.",
-                      style: TextStyle(fontWeight: FontWeight.bold, fontFamily: "Roboto"),
-                    ),
-                  ],
-                )),
+      child: folder.photos.any((p) => p.photoId == selectedPhotoId)
+          ? Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          IconButton(
+              onPressed: () {
+                // 폴더 정보 화면으로 이동
+                Get.toNamed('/folder/info', arguments: {
+                  "folder": folder,
+                });
+              },
+              icon: Icon(
+                Icons.info,
+                color: AppConfig.mainColor,
+              )),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "[폴더명] ${folder.name}",
+                style: TextStyle(fontWeight: FontWeight.bold, fontFamily: "Roboto"),
+              ),
+              Text(
+                "[생성 시점] ${formatDate(folder.sharedDatetime)}",
+                style: TextStyle(fontWeight: FontWeight.bold, fontFamily: "Roboto"),
+              ),
+              Text(
+                "[생성자 이메일] ${folder.users.firstWhere((u) => u.userId == folder.generatorId).email}",
+                style: TextStyle(fontWeight: FontWeight.bold, fontFamily: "Roboto"),
+                overflow: TextOverflow.ellipsis,
+              ),
+              Text(
+                "[계정명] ${folder.users.firstWhere((u) => u.userId == folder.generatorId).accountName}",
+                style: TextStyle(fontWeight: FontWeight.bold, fontFamily: "Roboto"),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
+          Checkbox(
+            value: folderSelectionViewModel.selectedList[folder.folderId],
+            onChanged: (val) {
+              folderSelectionViewModel.selectedList[folder.folderId] = val!;
+            },
+          ),
+        ],
+      )
+          : Row(
+        children: [
+          // IconButton(
+          //   onPressed: () {},
+          //   icon: Icon(Icons.folder_open),
+          //   color: AppConfig.mainColor,
+          // ),
+          Text(
+            " ${folder.name} 에는 사진이 존재합니다.",
+            style: TextStyle(fontWeight: FontWeight.bold, fontFamily: "Roboto"),
+          ),
+        ],
+      ),
     );
   }
 }
