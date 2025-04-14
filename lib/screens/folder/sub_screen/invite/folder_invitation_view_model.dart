@@ -47,7 +47,7 @@ class FolderInvitationViewModel extends GetxController {
       noticeId: target.noticeId,
     );
     if (isSuccess) {
-      Get.find<FolderViewModel>().initFolder();
+      Get.find<FolderViewModel>().resetFolder();
       showPositivePopup("공유 폴더를 추가하였습니다.");
     }
     notices.removeWhere((n) => n.noticeId == target.noticeId);

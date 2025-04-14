@@ -39,7 +39,7 @@ class FolderFrame extends StatelessWidget {
                     break;
                   case "notify":
                     break;
-                  case "share" :
+                  case "info" :
                     break;
                 }
               },
@@ -71,13 +71,13 @@ class FolderFrame extends StatelessWidget {
                   ),
                 ),
                 PopupMenuItem(
-                  value: "share",
-                  // onTap: () => Get.toNamed('/folder/invite/send', arguments: {"folderId": folderId}),
+                  value: "info",
+                  onTap: () => Get.toNamed('/folder/info', arguments: {"folder": folderViewModel.currentFolder.value}),
                   child: Row(
                     children: [
-                      Icon(Icons.share),
+                      Icon(Icons.info),
                       Text(
-                        " 폴더 공유 정보",
+                        " 폴더 정보",
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ],
@@ -103,6 +103,9 @@ class FolderFrame extends StatelessWidget {
               Tab(text: "저장된 사진"),
               Tab(text: "채팅"),
             ],
+            onTap: (idx) {
+
+            },
           ),
         ),
         body: TabBarView(
@@ -148,7 +151,7 @@ class FolderFrame extends StatelessWidget {
               Get.back();
               Get.back();
               if (isSuccess) {
-                Get.find<FolderViewModel>().initFolder();
+                Get.find<FolderViewModel>().resetFolder();
                 showPositivePopup("폴더가 삭제되었습니다");
               } else {
                 showErrorPopup("서버 오류 발생(삭제 실패)");

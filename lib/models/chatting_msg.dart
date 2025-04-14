@@ -18,7 +18,8 @@ class ChatMsg {
   factory ChatMsg.fromJson(Map<String, dynamic> json) {
     return ChatMsg(
       userId: json['userId'],
-      sendDatetime: json['sendDatetime'] < 10000000000 ? json['sendDatetime'] * 1000 : json['sendDatetime'],
+      sendDatetime:
+          json['sendDatetime'] < 10000000000 ? json['sendDatetime'] * 1000 : json['sendDatetime'],
       accountName: json['accountName'],
       content: json['content'],
     );
@@ -28,7 +29,8 @@ class ChatMsg {
     final data = jsonDecode(frame.body!);
     return ChatMsg(
       userId: data["userId"],
-      sendDatetime: data['sendDatetime'] < 10000000000 ? data['sendDatetime'] * 1000 : data['sendDatetime'],
+      sendDatetime:
+          data['sendDatetime'] < 10000000000 ? data['sendDatetime'] * 1000 : data['sendDatetime'],
       accountName: data['accountName'],
       content: data['content'],
     );
@@ -42,4 +44,16 @@ class ChatMsg {
       "content": content,
     };
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ChatMsg &&
+          runtimeType == other.runtimeType &&
+          userId == other.userId &&
+          sendDatetime == other.sendDatetime &&
+          content == other.content);
+
+  @override
+  int get hashCode => "$userId/$sendDatetime/$content".hashCode;
 }

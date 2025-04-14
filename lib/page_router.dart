@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:picto_frontend/screens/folder/folder_frame.dart';
 import 'package:picto_frontend/screens/folder/sub_screen/folder_create_screen.dart';
 import 'package:picto_frontend/screens/folder/sub_screen/folder_info_screen.dart';
+import 'package:picto_frontend/screens/folder/sub_screen/folder_selection_screen.dart';
 import 'package:picto_frontend/screens/folder/sub_screen/invite/folder_invitation_screen.dart';
 import 'package:picto_frontend/screens/folder/sub_screen/invite/folder_invitation_send_screen.dart';
 import 'package:picto_frontend/screens/login/login_screen.dart';
@@ -30,6 +31,7 @@ class PageRouter{
       GetPage(name: '/tag', page: () => TagSelectionScreen()),
       // 폴더 관련 화면
       GetPage(name: '/folder', page: () => FolderFrame()),
+      GetPage(name: '/folder/select', page: () => FolderSelectionScreen()),
       GetPage(name: '/folder/info', page: () => FolderInfoScreen()),
       GetPage(name: '/folder/create', page: () => FolderCreateScreen()),
       GetPage(name: '/folder/invite', page: () => FolderInvitationScreen()),

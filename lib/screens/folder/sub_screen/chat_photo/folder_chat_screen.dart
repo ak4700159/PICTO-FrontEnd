@@ -21,16 +21,24 @@ class FolderChatScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final folderViewModel = Get.find<FolderViewModel>();
-    final folder = folderViewModel.getFolder(folderId: folderId);
     return Column(
       children: [
         Expanded(
-          child: Obx(() => ListView(
-                controller: folderViewModel.chatScrollController,
-                reverse: false,
-                padding: const EdgeInsets.all(10),
-                children: folderViewModel.currentMsgList.map((m) => ChatBubble(msg: m)).toList(),
-              )),
+          child: Obx(() {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              // offset == 0이면 초기 상태로 간주
+              if (folderViewModel.chatScrollController.hasClients &&
+                  folderViewModel.chatScrollController.offset == 0) {
+                folderViewModel.scrollToBottom();
+              }
+            });
+            return ListView(
+              controller: folderViewModel.chatScrollController,
+              reverse: false,
+              padding: const EdgeInsets.all(10),
+              children: folderViewModel.currentMsgList.map((m) => ChatBubble(msg: m)).toList(),
+            );
+          }),
         ),
         Padding(
           padding: const EdgeInsets.all(8.0),
@@ -63,7 +71,7 @@ class FolderChatScreen extends StatelessWidget {
                       accountName: profileViewModel.accountName.value,
                     );
                     if (folderViewModel.currentSocket.value!.connected) {
-                      folderViewModel.folders[folder]?.add(newMsg);
+                      // folderViewModel.folders[folderId]?.messages.add(newMsg);
                       folderViewModel.currentMsgList.add(newMsg);
                     }
                     folderViewModel.currentSocket.value?.sendChatMsg(newMsg);

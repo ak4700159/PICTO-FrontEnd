@@ -38,62 +38,79 @@ class PhotoScreen extends StatelessWidget {
               )),
             ),
           ),
-          if (photo.userId == UserManagerApi().ownerId) Positioned(
-                  top: 20,
-                  right: 20,
-                  child: PopupMenuButton<String>(
-                    color: Colors.white,
-                    icon: const Icon(Icons.more_vert, color: AppConfig.mainColor, size: 25,),
-                    onSelected: (value) {
-                      switch (value) {
-                        case "delete":
-                          break;
-                        case "move":
-                          break;
-                      }
-                    },
-                    itemBuilder: (context) => [
-                      PopupMenuItem(
-                        value: "delete",
-                        onTap: () async {
-                          final folderViewModle = Get.find<FolderViewModel>();
-                          bool isSuccess = await PhotoStoreHandler().deletePhoto(photo.photoId);
-                          if(isSuccess) {
-                            // showPositivePopup("삭제에 성공했습니다!");
-                            folderViewModle.currentFolder.value!.photos.removeWhere((p) => p.photoId == photo.photoId);
-                            folderViewModle.currentFolder.value!.markers.removeWhere((m) => m.photo.photoId == photo.photoId);
-                            folderViewModle.currentMarkers.removeWhere((m) => m.photo.photoId == photo.photoId);
-                            await folderViewModle.initFolder();
-                            Get.back();
-                            // Get.back()
-                          }
-                        },
-                        child: Row(
-                          children: [
-                            Icon(Icons.folder_delete),
-                            const Text(
-                              " 사진 삭제",
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
+          if (photo.userId == UserManagerApi().ownerId)
+            Positioned(
+                top: 20,
+                right: 20,
+                child: PopupMenuButton<String>(
+                  color: Colors.white,
+                  icon: const Icon(
+                    Icons.more_vert,
+                    color: AppConfig.mainColor,
+                    size: 25,
+                  ),
+                  onSelected: (value) {
+                    switch (value) {
+                      case "delete":
+                        break;
+                      case "move":
+                        break;
+                    }
+                  },
+                  itemBuilder: (context) => [
+                    PopupMenuItem(
+                      value: "delete",
+                      onTap: () async {
+                        final folderViewModle = Get.find<FolderViewModel>();
+                        bool isSuccess = await PhotoStoreHandler().deletePhoto(photo.photoId);
+                        if (isSuccess) {
+                          // showPositivePopup("삭제에 성공했습니다!");
+                          folderViewModle.currentFolder.value!.photos
+                              .removeWhere((p) => p.photoId == photo.photoId);
+                          folderViewModle.currentFolder.value!.markers
+                              .removeWhere((m) => m.photo.photoId == photo.photoId);
+                          folderViewModle.currentMarkers
+                              .removeWhere((m) => m.photo.photoId == photo.photoId);
+                          await folderViewModle.resetFolder();
+                          Get.back();
+                          // Get.back()
+                        }
+                      },
+                      child: Row(
+                        children: [
+                          Icon(Icons.folder_delete),
+                          const Text(
+                            " 사진 삭제",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ],
                       ),
-                      PopupMenuItem(
-                        value: "move",
-                        // onTap: () =>
-                        //     Get.toNamed('/folder/invite/send', arguments: {"folderId": folderId}),
-                        child: Row(
-                          children: [
-                            Icon(Icons.drive_file_move),
-                            Text(
-                              " 사진 이동",
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
+                    ),
+                    PopupMenuItem(
+                      value: "move",
+                      onTap: () => Get.toNamed('/folder/select', arguments: {
+                        "photoId": photo.photoId,
+                      }),
+                      child: Row(
+                        children: [
+                          Icon(Icons.drive_file_move),
+                          Text(
+                            " 사진 이동",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ],
                       ),
-                    ],
-                  )) else Icon(Icons.photo_camera_back),
+                    ),
+                  ],
+                ))
+          else
+            Positioned(
+                top: 30,
+                right: 20,
+                child: Icon(
+                  Icons.devices_other,
+                  size: 30,
+                )),
           // 하단 정보 오버레이
           Positioned(
             bottom: 0,

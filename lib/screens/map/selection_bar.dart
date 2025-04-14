@@ -19,12 +19,15 @@ class SelectionBar extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             PictoTextLogo(),
-            Padding(
-              padding: const EdgeInsets.all(3.0),
-              child: Obx(() => _getDropDownButton("sort", context)),
+            // Padding(
+            //   padding: const EdgeInsets.all(3.0),
+            //   child: Obx(() => _getDropDownButton("sort", context)),
+            // ),
+            SizedBox(
+              width: context.mediaQuery.size.width * 0.3,
             ),
             Padding(
               padding: const EdgeInsets.all(3.0),

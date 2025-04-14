@@ -5,6 +5,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:picto_frontend/screens/folder/folder_view_model.dart';
 import 'package:picto_frontend/screens/map/google_map/marker/picto_marker.dart';
+import 'package:picto_frontend/utils/popup.dart';
 import '../../../../models/folder.dart';
 import '../../../../services/photo_store_service/photo_store_api.dart';
 import '../../../photo/photo_view_model.dart';
@@ -57,46 +58,61 @@ class FolderPhotoScreen extends StatelessWidget {
         ));
   }
 
-  _getPhotoTile(PictoMarker marker) {
-    return GestureDetector(
-      onTap: () async {
-        PhotoViewModel photoViewModel = Get.find<PhotoViewModel>();
-        BoxFit fit = await photoViewModel.determineFit(marker.imageData!);
-        Get.toNamed(
-          "/photo",
-          arguments: {
-            "photo": marker.photo,
-            "data": marker.imageData,
-            "fit": fit,
-          },
-        );
-      },
-      child: Container(
-        width: 100, // 원하는 마커 크기
-        height: 100,
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: Colors.white, // 테두리 색상
-            width: 1, // 테두리 두께
-          ),
-          // Container 위젯의 테두리
-          borderRadius: BorderRadius.circular(4), // 전체 둥글게
-        ),
-        child: ClipRRect(
-          // ClipRRect 하위 위젯 테두리 지정
-          borderRadius: BorderRadius.circular(8), // 이미지도 같이 둥글게 잘림
-          child: Image.memory(
-            marker.imageData!,
-            fit: BoxFit.cover,
-            errorBuilder: (context, object, trace) {
-              return Image.asset(
-                'assets/images/picto_logo.png',
-                fit: BoxFit.cover,
+  Widget _getPhotoTile(PictoMarker marker) {
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0.0, end: 1.0),
+      duration: const Duration(milliseconds: 800),
+      curve: Curves.easeOutBack,
+      builder: (context, value, child) {
+        return Transform.scale(
+          scale: value,
+          child: GestureDetector(
+            onTap: () async {
+              PhotoViewModel photoViewModel = Get.find<PhotoViewModel>();
+              BoxFit fit = await photoViewModel.determineFit(marker.imageData!);
+              Get.toNamed(
+                "/photo",
+                arguments: {
+                  "photo": marker.photo,
+                  "data": marker.imageData,
+                  "fit": fit,
+                },
               );
             },
+            child: Container(
+              width: 100,
+              height: 100,
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: Colors.white,
+                  width: 1,
+                ),
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: marker.imageData != null
+                    ? Image.memory(
+                  marker.imageData!,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, object, trace) {
+                    return Image.asset(
+                      'assets/images/picto_logo.png',
+                      fit: BoxFit.cover,
+                    );
+                  },
+                )
+                    : Center(
+                  child: Text(
+                    'No image',
+                    style: TextStyle(color: Colors.red),
+                  ),
+                ),
+              ),
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

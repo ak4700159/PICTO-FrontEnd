@@ -154,4 +154,17 @@ class FolderManagerApi {
     }
     return false;
   }
+
+  Future<bool> copyPhotoToOtherFolder({required int photoId, required int folderId}) async {
+    try {
+      final response = await dio.post('$baseUrl/folders/$folderId/photos/upload', queryParameters: {
+        "photoId" : photoId,
+        "userId" : UserManagerApi().ownerId,
+      });
+      return true;
+    } on DioException catch(e) {
+      showErrorPopup(e.toString());
+    }
+    return false;
+  }
 }

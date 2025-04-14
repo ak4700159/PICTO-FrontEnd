@@ -259,7 +259,7 @@ class UserManagerApi {
     Get.find<UserConfig>().convertFromJson(response.data["userSetting"]);
     Get.find<GoogleMapViewModel>().initPhotos(response.data["folderPhotos"]);
     Get.find<TagSelectionViewModel>().initTags(response.data["tags"]);
-    Get.find<FolderViewModel>().initFolder();
+    Get.find<FolderViewModel>().resetFolder();
 
     final socketInterceptor = SocketFunctionController();
     socketInterceptor.callSession(connected: true);

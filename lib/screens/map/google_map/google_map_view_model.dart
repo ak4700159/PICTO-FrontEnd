@@ -430,7 +430,7 @@ class GoogleMapViewModel extends GetxController {
   Future<void> _loadFolder(String downloadType) async {
     final folderViewModel = Get.find<FolderViewModel>();
     final newMarkers = <PictoMarker>{};
-    for (Folder folder in folderViewModel.folders.keys) {
+    for (Folder folder in folderViewModel.folders.values) {
       newMarkers.addAll(folder.markers);
     }
     for (PictoMarker marker in newMarkers) {

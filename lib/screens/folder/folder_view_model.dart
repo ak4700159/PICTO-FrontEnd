@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:picto_frontend/models/chatting_msg.dart';
@@ -8,13 +7,12 @@ import 'package:picto_frontend/screens/map/google_map/marker/picto_marker.dart';
 import 'package:picto_frontend/services/chatting_scheduler_service/chatting_socket.dart';
 import 'package:picto_frontend/services/folder_manager_service/folder_api.dart';
 import 'package:picto_frontend/services/user_manager_service/user_api.dart';
-
-import '../../services/chatting_scheduler_service/chatting_api.dart';
 import '../../utils/popup.dart';
 
 class FolderViewModel extends GetxController {
   // 각 폴더 안의 메시지
-  RxMap<Folder, List<ChatMsg>> folders = <Folder, List<ChatMsg>>{}.obs;
+  // RxMap<Folder, List<ChatMsg>> folders = <Folder, List<ChatMsg>>{}.obs;
+  RxMap<int, Folder> folders = <int, Folder>{}.obs;
   Rxn<Folder> currentFolder = Rxn<Folder>();
   RxList<PictoMarker> currentMarkers = <PictoMarker>[].obs;
   Rxn<ChattingSocket> currentSocket = Rxn<ChattingSocket>();
@@ -34,88 +32,67 @@ class FolderViewModel extends GetxController {
     });
   }
 
-  //  폴더 초기화
-  Future<void> initFolder() async {
+  //  폴더 초기화 -> 새로운 폴더는 추가, 중복되는 폴더는 업데이트
+  Future<void> resetFolder() async {
     List<Folder> search = await FolderManagerApi().getFoldersByOwnerId();
     await showBlockingLoading(Duration(seconds: 1));
-    final existingKeys = folders.keys.toList();
-    final newFolderIds = search.map((f) => f.folderId).toSet();
-    for (var oldFolder in existingKeys) {
-      if (!newFolderIds.contains(oldFolder.folderId)) {
-        folders.remove(oldFolder);
+
+    // 제거
+    final existFolderKeys = folders.keys;
+    for(int oldKey in existFolderKeys) {
+      if(!search.any((f) => f.folderId == oldKey)) {
+        folders.remove(oldKey);
       }
     }
-    for (Folder newFolder in search) {
-      final exists = folders.keys.any((f) => f.folderId == newFolder.folderId);
-      final pre = getFolder(folderId: newFolder.folderId);
 
-      // 새 폴더 추가
-      if (!exists) {
-        folders[newFolder] = await ChattingApi().getMessagesByFolderId(newFolder.folderId);
-      }
-      // 기존 폴더 → 사진만 업데이트
-      else if (pre != null) {
-        // 새로 추가된 사진만 추출
-        // print("[INFO] {pre} photos: ${pre.photos.length}/ markers: ${pre.markers.length}");
-        // print("[INFO] {new} photos: ${newFolder.photos.length}/ markers: ${newFolder.markers.length}");
-        final oldPhotoIds = pre.photos.map((p) => p.photoId).toSet();
-        final newPhotos = newFolder.photos.where((p) => !oldPhotoIds.contains(p.photoId)).toList();
-
-        if (newPhotos.isNotEmpty) {
-          pre.photos.addAll(newPhotos);
-          // print("[INFO] ${newPhotos.length} new photos added to folder ${pre.folderId}");
-        }
-
-        // markers도 갱신하고 싶다면 여기에 추가 (선택)
-        final oldMarkerIds = pre.markers.map((m) => m.photo.photoId).toSet();
-        final newMarkers =
-            newFolder.markers.where((m) => !oldMarkerIds.contains(m.photo.photoId)).toList();
-        if (newMarkers.isNotEmpty) {
-          pre.markers.addAll(newMarkers);
-        }
+    // 기존에 있었던 폴더는 업데이트. 없었으면 추가
+    for(Folder newFolder in search) {
+      if(folders.keys.contains(newFolder.folderId)) {
+        folders[newFolder.folderId]?.updateFolder();
+      } else {
+        folders[newFolder.folderId] = newFolder;
       }
     }
   }
 
   // 폴더 화면 변화
-  void changeFolder({required int folderId, required int generatorId}) {
-    // print("[INFO] exchange folderId : $folderId / generatorId : $generatorId");
-    for (Folder folder in folders.keys) {
-      if (folder.folderId == folderId) {
-        // print("[INFO] exchange <-> ${folder.markers.length}");
-        currentFolder.value = folder;
+  void changeFolder({required int folderId}) {
+    folders[folderId]?.updateFolder();
+    for (int key in folders.keys) {
+      if (key == folderId) {
+        currentFolder.value = folders[folderId];
         currentMarkers.clear();
-        currentMarkers.addAll(folder.markers);
+        currentMarkers.addAll(folders[folderId]!.markers);
       }
     }
-    // print("[INFO] current markers len : ${currentMarkers.length}");
     changeSocket();
   }
 
+  // void updateFolder({})
+
   // 현재 선택된 폴더에 소켓 연결
   void changeSocket() {
-    // if (currentSocket.value == null) return;
     currentSocket.value?.disconnectWebSocket();
-    print("[INFO] chatting socket change try...");
+    // print("[INFO] chatting socket change try...");
     currentSocket.value = ChattingSocket(
       folderId: currentFolder.value!.folderId,
       receive: (frame) {
         final data = jsonDecode(frame.body ?? "");
         if (data["userId"] == UserManagerApi().ownerId) return;
-        folders[currentFolder.value]?.add(ChatMsg.fromJson(data));
+        folders[currentFolder.value?.folderId]?.messages.add(ChatMsg.fromJson(data));
         currentMsgList.add(ChatMsg.fromJson(data));
       },
     );
     currentSocket.value?.connectWebSocket();
     currentMsgList.clear();
-    currentMsgList.addAll(folders[currentFolder.value]!);
-    print("[INFO] chatting socket change completed...?");
+    currentMsgList.value = folders[currentFolder.value?.folderId]!.messages;
+    // print("[INFO] chatting socket change completed...?");
   }
 
   // 폴더 삭제
   void removeFolder({required int folderId}) async {
     if (await FolderManagerApi().removeFolder(folderId: folderId)) {
-      folders.removeWhere((key, value) => key.folderId == folderId);
+      folders.remove(folderId);
     }
   }
 
@@ -139,10 +116,7 @@ class FolderViewModel extends GetxController {
 
   //폴더 조회
   Folder? getFolder({required int folderId}) {
-    for (Folder folder in folders.keys) {
-      if (folder.folderId == folderId) return folder;
-    }
-    return null;
+    return folders[folderId];
   }
 
   // 최하단으로 스크롤 이동

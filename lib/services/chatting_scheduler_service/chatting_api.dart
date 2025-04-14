@@ -23,7 +23,7 @@ class ChattingApi{
 
 
   // 채팅 히스토리 조회
-  Future<List<ChatMsg>> getChatHistory(int folderId) async {
+  Future<List<ChatMsg>> getChatHistory({required int folderId}) async {
     final response = await dio.get('$baseUrl/history/$folderId');
     return (response.data as List)
         .map((json) => ChatMsg.fromJson(json))
@@ -31,7 +31,7 @@ class ChattingApi{
   }
 
   // 폴더 ID로 채팅 조회
-  Future<List<ChatMsg>> getMessagesByFolderId(int folderId) async {
+  Future<List<ChatMsg>> getMessagesByFolderId({required int folderId}) async {
     final response = await dio.get('$baseUrl/folder/$folderId');
     return (response.data as List)
         .map((json) => ChatMsg.fromJson(json))
@@ -39,7 +39,7 @@ class ChattingApi{
   }
 
   // 발신자 ID로 채팅 조회
-  Future<List<ChatMsg>> getMessagesBySenderId(int senderId) async {
+  Future<List<ChatMsg>> getMessagesBySenderId({required int senderId}) async {
     final response = await dio.get('$baseUrl/sender/$senderId');
     return (response.data as List)
         .map((json) => ChatMsg.fromJson(json))

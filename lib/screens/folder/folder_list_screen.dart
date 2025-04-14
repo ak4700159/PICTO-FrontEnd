@@ -15,7 +15,7 @@ class FolderListScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final profileViewModel = Get.find<ProfileViewModel>();
     final folderViewModel = Get.find<FolderViewModel>();
-    folderViewModel.initFolder();
+    folderViewModel.resetFolder();
     return Scaffold(
       appBar: AppBar(
         // shape: BeveledRectangleBorder(side: BorderSide(width: 0.5)),
@@ -51,9 +51,9 @@ class FolderListScreen extends StatelessWidget {
               crossAxisSpacing: 10,
               mainAxisSpacing: 10,
             ),
-            itemCount: folderViewModel.folders.keys.length,
+            itemCount: folderViewModel.folders.length,
             itemBuilder: (context, index) {
-              return _getFolderWidget(folderViewModel.folders.keys.toList()[index]);
+              return _getFolderWidget(folderViewModel.folders.values.toList()[index]);
             },
           )),
     );
@@ -99,13 +99,12 @@ class FolderListScreen extends StatelessWidget {
                           Get.toNamed('/folder/create');
                         },
                       1 => () {
-                        Get.back();
-                        Get.toNamed('/folder/invite');
-                      },
+                          Get.back();
+                          Get.toNamed('/folder/invite');
+                        },
                       2 => () {
-                        Get.back();
-
-                      },
+                          Get.back();
+                        },
                       _ => () {}
                     },
                     child: Container(
@@ -180,7 +179,7 @@ class FolderListScreen extends StatelessWidget {
             onPressed: () async {
               // 폴더 사진 화면 이동
               final folderViewModel = Get.find<FolderViewModel>();
-              folderViewModel.changeFolder(folderId: folder.folderId, generatorId: folder.generatorId);
+              folderViewModel.changeFolder(folderId: folder.folderId);
               // showBlockingLoading(Duration(seconds: 1));
               print("[INFO] target folder Id : ${folder.folderId}");
               Get.toNamed('/folder', arguments: {
@@ -188,10 +187,8 @@ class FolderListScreen extends StatelessWidget {
               });
             },
             icon: Icon(
-              Icons.folder,
-              color: folder.generatorId == UserManagerApi().ownerId
-                  ? AppConfig.mainColor
-                  : Colors.blue ,
+              folder.name == "default" ? Icons.person : Icons.folder,
+              color: _getFolderColor(folder.generatorId, folder.name),
               weight: 1,
               size: 60,
             ),
@@ -203,5 +200,14 @@ class FolderListScreen extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Color _getFolderColor(int generatorId, String folderName) {
+    if (folderName == "default") {
+      return Colors.black;
+    } else if (generatorId == UserManagerApi().ownerId) {
+      return AppConfig.mainColor;
+    }
+    return Colors.blue;
   }
 }

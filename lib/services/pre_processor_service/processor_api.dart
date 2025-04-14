@@ -43,7 +43,7 @@ class PreProcessorApi {
       final response = await dio.post('$baseUrl/validate', data: formData);
       final Map<String, dynamic> data = response.data;
       final folderViewModel = Get.find<FolderViewModel>();
-      for (var folder in folderViewModel.folders.keys) {
+      for (var folder in folderViewModel.folders.values) {
         if (folder.name == 'default') {
           folder.photos.add(Photo(
             userId: UserManagerApi().ownerId as int,

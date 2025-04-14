@@ -60,10 +60,15 @@ class PictoClusterManager {
   }
 
   // 마커 전체 업데이트
-  void _updateMarkers(Set<Marker> markers) {
+  void _updateMarkers(Set<Marker> markers) async {
     print('[INFO] cluster marker update markers length : ${markers.length}');
     final googleViewModel = Get.find<GoogleMapViewModel>();
-    googleViewModel.currentMarkers.addAll(markers);
+    for (final marker in markers) {
+      await Future.delayed(Duration(milliseconds: 70)); // 애니메이션 간격
+      googleViewModel.currentMarkers.add(marker);
+      // googleViewModel.update(); // GetX 뷰모델이 Obx 방식이면 필요
+    }
+    // googleViewModel.currentMarkers.addAll(markers);
   }
 
   void _openClusterBottomSheet(List<PictoMarker> markers) {
@@ -92,7 +97,7 @@ class PictoClusterManager {
                       ? FutureBuilder(
                           builder: (BuildContext context, AsyncSnapshot snapshot) {
                             if (snapshot.data == null || snapshot.data == false) {
-                              return CircularProgressIndicator(color: AppConfig.mainColor,);
+                              return Center(child: CircularProgressIndicator(color: AppConfig.mainColor,));
                             } else if (snapshot.hasError) {
                               return Image.asset(
                                 'assets/images/picto_logo.png',

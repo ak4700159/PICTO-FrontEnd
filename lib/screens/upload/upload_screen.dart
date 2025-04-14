@@ -267,6 +267,10 @@ class UploadScreen extends StatelessWidget {
                 child: Obx(
                   () => Text(
                     uploadViewModel.result.value,
+                    style: TextStyle(
+                      fontFamily: "Roboto",
+                      fontWeight: FontWeight.bold,
+                    ),
                     maxLines: 10,
                     overflow: TextOverflow.visible,
                   ),

@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:picto_frontend/config/app_config.dart';
 import 'package:picto_frontend/models/location_msg.dart';
 import 'package:picto_frontend/services/user_manager_service/user_api.dart';
+import 'package:picto_frontend/utils/popup.dart';
 import 'package:stomp_dart_client/stomp_dart_client.dart';
 
 // _stompClient.connected 의 네트워크 지연 때문에 값이 늦게 들어올 수 있다
@@ -111,9 +112,10 @@ class SessionSocket extends GetxController {
         destination: destination,
         body: body,
       );
-      print('[INFO] send location to session');
+      // print('[INFO] send location to session');
     } catch (e) {
-      print('[ERROR] ${e.toString()}');
+      showErrorPopup(e.toString());
+      // print('[ERROR] ${e.toString()}');
     }
   }
 }

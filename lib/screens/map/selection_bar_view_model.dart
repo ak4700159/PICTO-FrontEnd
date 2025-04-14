@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:debounce_throttle/debounce_throttle.dart';
+import 'package:picto_frontend/screens/map/google_map/google_map_view_model.dart';
 import 'package:picto_frontend/services/user_manager_service/user_api.dart';
 import 'package:picto_frontend/utils/popup.dart';
 
@@ -40,6 +41,7 @@ class SelectionBarViewModel extends GetxController {
     currentSelectedPeriod?.value = period ?? "하루";
     try{
       UserManagerApi().modifiedFilter(currentSelectedSort!.value, currentSelectedPeriod!.value);
+      Get.find<GoogleMapViewModel>().updateAllMarkersByPeriod(period);
     } catch(e) {
       showErrorPopup(e.toString());
     }

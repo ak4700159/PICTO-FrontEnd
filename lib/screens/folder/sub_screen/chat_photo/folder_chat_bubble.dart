@@ -30,7 +30,7 @@ class ChatBubble extends StatelessWidget {
                   children: [
                     Text(
                       msg.content,
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(color: Colors.white, fontFamily: "Roboto", fontWeight: FontWeight.bold),
                     ),
                   ],
                 )
@@ -44,14 +44,14 @@ class ChatBubble extends StatelessWidget {
                     ),
                     Text(
                       "  ${msg.content}",
-                      style: TextStyle(color: Colors.black),
+                      style: TextStyle(color: Colors.black, fontFamily: "Roboto", fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
         ),
         Text(
           formatDate(msg.sendDatetime).substring("0000-".length),
-          style: TextStyle(fontSize: 10, color: Colors.grey),
+          style: TextStyle(fontSize: 10, color: Colors.grey, fontFamily: "Roboto"),
         )
       ],
     );
