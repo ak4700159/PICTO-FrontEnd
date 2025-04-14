@@ -21,8 +21,9 @@ class FolderSelectionViewModel extends GetxController {
     selectedList.forEach((int folderId, bool selected) async {
       if (selected) {
         if (await FolderManagerApi().copyPhotoToOtherFolder(photoId: photoId, folderId: folderId)) {
-          folderViewModel.folders[folderId]?.updateFolder();
-          showPositivePopup("폴더에 정상적으로 복사되었습니다람쥐!");
+          await folderViewModel.folders[folderId]?.updateFolder();
+          // showPositivePopup("폴더에 정상적으로 복사되었습니다람쥐!");
+          Get.back();
         }
       }
     });

@@ -11,7 +11,8 @@ import '../../../config/app_config.dart';
 import '../../../models/folder.dart';
 
 class FolderSelectionScreen extends StatelessWidget {
-  const FolderSelectionScreen({super.key});
+  FolderSelectionScreen({super.key});
+  var selectedPhotoId = Get.arguments["photoId"];
 
   @override
   Widget build(BuildContext context) {
@@ -90,10 +91,9 @@ class FolderSelectionScreen extends StatelessWidget {
   }
 
   Widget _getFolderTile(Folder folder, BuildContext context) {
-    var selectedPhotoId = Get.arguments["photoId"];
-    folder.users.forEach((u) {
-      print("[INFO[ ${u.userId} // ${folder.generatorId}");
-    });
+    // folder.users.forEach((u) {
+    //   // print("[INFO[ ${u.userId} // ${folder.generatorId}");
+    // });
     final folderSelectionViewModel = Get.find<FolderSelectionViewModel>();
     final folderViewModel = Get.find<FolderViewModel>();
     return Container(
@@ -109,7 +109,7 @@ class FolderSelectionScreen extends StatelessWidget {
         ],
         color: Colors.white,
       ),
-      child: folder.photos.any((p) => p.photoId == selectedPhotoId)
+      child: Obx(()=> !folderViewModel.isPhotoInFolder(folderId: folder.folderId, photoId: selectedPhotoId)
           ? Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -136,12 +136,12 @@ class FolderSelectionScreen extends StatelessWidget {
                 style: TextStyle(fontWeight: FontWeight.bold, fontFamily: "Roboto"),
               ),
               Text(
-                "[생성자 이메일] ${folder.users.firstWhere((u) => u.userId == folder.generatorId).email}",
+                "[생성자 이메일] ${folder.getUser(folder.generatorId)?.email}",
                 style: TextStyle(fontWeight: FontWeight.bold, fontFamily: "Roboto"),
                 overflow: TextOverflow.ellipsis,
               ),
               Text(
-                "[계정명] ${folder.users.firstWhere((u) => u.userId == folder.generatorId).accountName}",
+                "[생성자 계정명] ${folder.getUser(folder.generatorId)?.accountName}",
                 style: TextStyle(fontWeight: FontWeight.bold, fontFamily: "Roboto"),
                 overflow: TextOverflow.ellipsis,
               ),
@@ -167,7 +167,7 @@ class FolderSelectionScreen extends StatelessWidget {
             style: TextStyle(fontWeight: FontWeight.bold, fontFamily: "Roboto"),
           ),
         ],
-      ),
+      )),
     );
   }
 }

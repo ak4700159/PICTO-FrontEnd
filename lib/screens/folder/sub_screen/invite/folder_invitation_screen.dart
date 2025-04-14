@@ -98,19 +98,24 @@ class FolderInvitationScreen extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Icon(
-            Icons.person_pin_rounded,
-            size: 30,
-            color: getColorFromUserId(notice.noticeId!),
+          Padding(
+            padding: EdgeInsets.all(2),
+            child: Icon(
+              Icons.person_pin_rounded,
+              size: 30,
+              color: getColorFromUserId(notice.noticeId),
+            ),
           ),
           SizedBox(
-            width: context.mediaQuery.size.width * 0.6,
+            width: context.mediaQuery.size.width * 0.55,
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   "${sender.accountName}님 ${notice.folderName}로 초대하였습니다.",
                   overflow: TextOverflow.visible,
                   maxLines: 2,
+                  style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 Text("전송 시간 : ${formatDate(notice.createDatetime)}")
               ],
@@ -123,7 +128,7 @@ class FolderInvitationScreen extends StatelessWidget {
             },
             icon: Icon(
               Icons.check,
-              size: 30,
+              size: 25,
               color: Colors.green,
             ),
           ),
@@ -131,7 +136,7 @@ class FolderInvitationScreen extends StatelessWidget {
             onPressed: () {},
             icon: Icon(
               Icons.delete,
-              size: 30,
+              size: 25,
               color: Colors.red,
             ),
           ),

@@ -7,6 +7,7 @@ import 'package:picto_frontend/services/folder_manager_service/folder_api.dart';
 import 'package:picto_frontend/services/user_manager_service/user_api.dart';
 
 import '../services/chatting_scheduler_service/chatting_api.dart';
+import '../services/photo_store_service/photo_store_api.dart';
 
 class Folder {
   int generatorId;
@@ -30,6 +31,7 @@ class Folder {
     required this.name,
     required this.generatorId,
     required this.sharedDatetime,
+    this.content,
   }) {
     if (folderId == -1) return;
     initFolder();
@@ -40,8 +42,9 @@ class Folder {
       folderId: json["folderId"],
       name: json["folderName"],
       // generatorId: json["userId"],
-      generatorId: json["generatorId"],
+      generatorId: json["generatorId"] ?? json["userId"],
       sharedDatetime: json["sharedDatetime"],
+      content: json["content"],
     );
   }
 
@@ -64,24 +67,30 @@ class Folder {
 
   // 폴더 업데이트
   // !! 기존 데이터에서 새로운 데이터와 비교하여 추가하고 삭제할 부분을 반영 !!
-  void updateFolder() async {
+  Future<void> updateFolder() async {
     updateUser();
     updatePhoto();
     updateMarker();
     updateMessage();
   }
 
+  void downloadPhotos() async {
+    for (var m in markers) {
+      m.imageData ??= await PhotoStoreHandler().downloadPhoto(m.photo.photoId);
+    }
+  }
+
   void updateUser() async {
     var newUsers = await FolderManagerApi().getUsersInFolder(folderId: folderId);
     var removeUsers = [];
-    for(User oldUser in users) {
+    for (User oldUser in users) {
       // 새로운 데이터 안에 있는지 확인
       bool exist = newUsers.any((u) => u.userId == oldUser.userId);
-      if(!exist) removeUsers.add(oldUser);
+      if (!exist) removeUsers.add(oldUser);
     }
-    for(User newUser in newUsers) {
+    for (User newUser in newUsers) {
       bool exist = users.any((u) => u.userId == newUser.userId);
-      if(!exist) users.add(newUser);
+      if (!exist) users.add(newUser);
     }
     for (User removeUser in removeUsers) {
       users.removeWhere((u) => u.userId == removeUser.userId);
@@ -137,7 +146,7 @@ class Folder {
     for (Photo newPhoto in photos) {
       // 기존에 같은 photoId를 가진 마커가 있으면 재사용
       PictoMarker? existing = markers.firstWhereOrNull(
-            (m) => m.photo.photoId == newPhoto.photoId,
+        (m) => m.photo.photoId == newPhoto.photoId,
       );
 
       if (existing != null) {
@@ -156,6 +165,14 @@ class Folder {
     markers = newMarkers;
   }
 
+  User? getUser(int userId) {
+    for (var value in users) {
+      if (value.userId == userId) {
+        return value;
+      }
+    }
+    return null;
+  }
 
   @override
   bool operator ==(Object other) =>

@@ -61,17 +61,17 @@ class PhotoScreen extends StatelessWidget {
                     PopupMenuItem(
                       value: "delete",
                       onTap: () async {
-                        final folderViewModle = Get.find<FolderViewModel>();
+                        final folderViewModel = Get.find<FolderViewModel>();
                         bool isSuccess = await PhotoStoreHandler().deletePhoto(photo.photoId);
                         if (isSuccess) {
                           // showPositivePopup("삭제에 성공했습니다!");
-                          folderViewModle.currentFolder.value!.photos
+                          folderViewModel.currentFolder.value!.photos
                               .removeWhere((p) => p.photoId == photo.photoId);
-                          folderViewModle.currentFolder.value!.markers
+                          folderViewModel.currentFolder.value!.markers
                               .removeWhere((m) => m.photo.photoId == photo.photoId);
-                          folderViewModle.currentMarkers
+                          folderViewModel.currentMarkers
                               .removeWhere((m) => m.photo.photoId == photo.photoId);
-                          await folderViewModle.resetFolder();
+                          await folderViewModel.resetFolder();
                           Get.back();
                           // Get.back()
                         }

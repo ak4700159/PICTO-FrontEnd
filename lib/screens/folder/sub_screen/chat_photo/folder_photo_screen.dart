@@ -18,7 +18,7 @@ class FolderPhotoScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final folderViewModel = Get.find<FolderViewModel>();
-    Folder? folder = folderViewModel.getFolder(folderId: folderId);
+    // Folder? folder = folderViewModel.getFolder(folderId: folderId);
     return Obx(() => GridView.builder(
           padding: const EdgeInsets.all(10),
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -28,32 +28,16 @@ class FolderPhotoScreen extends StatelessWidget {
           ),
           itemCount: folderViewModel.currentMarkers.length,
           itemBuilder: (context, index) {
-            return folderViewModel.currentMarkers[index].imageData == null
-                ? FutureBuilder(
-                    builder: (BuildContext context, AsyncSnapshot snapshot) {
-                      if (snapshot.data == null || snapshot.data == false) {
-                        return SpinKitSpinningCircle(
-                          itemBuilder: (context, index) {
-                            return Center(
-                              child: Image.asset('assets/images/pictory_color.png'),
-                            );
-                          },
-                        );
-                      } else if (snapshot.hasError) {
-                        return Image.asset(
-                          'assets/images/picto_logo.png',
-                          fit: BoxFit.cover,
-                        );
-                      } else {
-                        Uint8List? data = snapshot.data;
-                        folderViewModel.currentMarkers[index].imageData = data;
-                        return _getPhotoTile(folderViewModel.currentMarkers[index]);
-                      }
-                    },
-                    future: PhotoStoreHandler()
-                        .downloadPhoto(folderViewModel.currentMarkers[index].photo.photoId),
-                  )
-                : _getPhotoTile(folderViewModel.currentMarkers[index]);
+            return Obx(() => folderViewModel.currentMarkers[index].imageData == null
+                ? SpinKitSpinningCircle(
+              duration: Duration(seconds: 8),
+              itemBuilder: (context, index) {
+                return Center(
+                  child: Image.asset('assets/images/pictory_color.png'),
+                );
+              },
+            )
+                : _getPhotoTile(folderViewModel.currentMarkers[index]));
           },
         ));
   }
@@ -93,21 +77,22 @@ class FolderPhotoScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8),
                 child: marker.imageData != null
                     ? Image.memory(
-                  marker.imageData!,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, object, trace) {
-                    return Image.asset(
-                      'assets/images/picto_logo.png',
-                      fit: BoxFit.cover,
-                    );
-                  },
-                )
+                        marker.imageData!,
+                        fit: BoxFit.cover,
+                        cacheWidth: 300,
+                        errorBuilder: (context, object, trace) {
+                          return Image.asset(
+                            'assets/images/picto_logo.png',
+                            fit: BoxFit.cover,
+                          );
+                        },
+                      )
                     : Center(
-                  child: Text(
-                    'No image',
-                    style: TextStyle(color: Colors.red),
-                  ),
-                ),
+                        child: Text(
+                          'No image',
+                          style: TextStyle(color: Colors.red),
+                        ),
+                      ),
               ),
             ),
           ),

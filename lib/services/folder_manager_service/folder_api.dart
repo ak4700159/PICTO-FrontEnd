@@ -29,7 +29,7 @@ class FolderManagerApi {
   // 폴더 생성
   Future<Folder?> createFolder({required String folderName, required String content}) async {
     try {
-      print("[INFO] create folder : generatorId/${UserManagerApi().ownerId}");
+      // print("[INFO] create folder : generatorId/${UserManagerApi().ownerId}");
       final response = await dio.post(
         '$baseUrl/folders',
         data: {

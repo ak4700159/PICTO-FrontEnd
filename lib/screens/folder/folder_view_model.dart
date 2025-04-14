@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:picto_frontend/models/chatting_msg.dart';
@@ -7,6 +8,7 @@ import 'package:picto_frontend/screens/map/google_map/marker/picto_marker.dart';
 import 'package:picto_frontend/services/chatting_scheduler_service/chatting_socket.dart';
 import 'package:picto_frontend/services/folder_manager_service/folder_api.dart';
 import 'package:picto_frontend/services/user_manager_service/user_api.dart';
+import '../../services/photo_store_service/photo_store_api.dart';
 import '../../utils/popup.dart';
 
 class FolderViewModel extends GetxController {
@@ -55,6 +57,16 @@ class FolderViewModel extends GetxController {
     }
   }
 
+  void downloadFolder() async {
+    for (int i = 0; i < currentMarkers.length; i++) {
+      if (currentMarkers[i].imageData == null) {
+        Uint8List? data = await PhotoStoreHandler().downloadPhoto(currentMarkers[i].photo.photoId);
+        currentMarkers[i].imageData = data;
+        currentMarkers[i] = currentMarkers[i]; // 중요! 다시 assign
+      }
+    }
+  }
+
   // 폴더 화면 변화
   void changeFolder({required int folderId}) {
     folders[folderId]?.updateFolder();
@@ -65,6 +77,7 @@ class FolderViewModel extends GetxController {
         currentMarkers.addAll(folders[folderId]!.markers);
       }
     }
+    downloadFolder();
     changeSocket();
   }
 
@@ -79,7 +92,7 @@ class FolderViewModel extends GetxController {
       receive: (frame) {
         final data = jsonDecode(frame.body ?? "");
         if (data["userId"] == UserManagerApi().ownerId) return;
-        folders[currentFolder.value?.folderId]?.messages.add(ChatMsg.fromJson(data));
+        // folders[currentFolder.value?.folderId]?.messages.add(ChatMsg.fromJson(data));
         currentMsgList.add(ChatMsg.fromJson(data));
       },
     );
@@ -117,6 +130,15 @@ class FolderViewModel extends GetxController {
   //폴더 조회
   Folder? getFolder({required int folderId}) {
     return folders[folderId];
+  }
+
+  // 폴더 안에 사진 있는지
+  bool isPhotoInFolder({required int folderId, required int photoId}) {
+    final photoKeys = folders[folderId]?.photos.map((p) => p.photoId).toList();
+    if(photoKeys!.contains(photoId)) {
+      return true;
+    }
+    return false;
   }
 
   // 최하단으로 스크롤 이동
