@@ -45,8 +45,10 @@ class UploadViewModel extends GetxController {
       );
       final data = await PreProcessorApi().validatePhoto(request: request);
       result.value = "사진 저장에 성공했습니다! \n $data";
+
     } on DioException catch(e) {
-      result.value = e.response?.data["error"];
+      isLoading.value = false;
+      result.value = e.response?.data["error"] ?? "서버 오류 발생";
     }
     isLoading.value = false;
     Get.back();

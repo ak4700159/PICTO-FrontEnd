@@ -6,6 +6,7 @@ import 'package:http_parser/http_parser.dart';
 import 'package:mime/mime.dart';
 import 'package:picto_frontend/screens/folder/folder_view_model.dart';
 import 'package:picto_frontend/screens/upload/upload_request.dart';
+import 'package:picto_frontend/services/session_scheduler_service/session_api.dart';
 import 'package:picto_frontend/services/user_manager_service/user_api.dart';
 
 import '../../models/photo.dart';
@@ -35,19 +36,26 @@ class PreProcessorApi {
       final fileName = request.file.path.split('/').last;
       final mimeType = lookupMimeType(request.file.path) ?? 'application/octet-stream';
       final formData = FormData.fromMap({
-        'file': await MultipartFile.fromFile(request.file.path,
-            filename: fileName, contentType: MediaType.parse(mimeType)),
-        'request': MultipartFile.fromString(request.toJson(),
-            contentType: MediaType('application', 'json')),
+        'file':
+            await MultipartFile.fromFile(request.file.path, filename: fileName, contentType: MediaType.parse(mimeType)),
+        'request': MultipartFile.fromString(request.toJson(), contentType: MediaType('application', 'json')),
       });
       final response = await dio.post('$baseUrl/validate', data: formData);
+
+      // 공유 사진인 경우 다른 사용자들에게 공유 시도
+      if (request.sharedActive) {
+        int photoId = response.data["photoId"];
+        SessionApi().sendSharedPhoto(lat: request.lat, lng: request.lng, photoId: photoId);
+      }
+
+      // 저장한 사진 folder에 바로 적용
       final Map<String, dynamic> data = response.data;
       final folderViewModel = Get.find<FolderViewModel>();
       for (var folder in folderViewModel.folders.values) {
         if (folder.name == 'default') {
           folder.photos.add(Photo(
             userId: UserManagerApi().ownerId as int,
-            photoId: data["photoId"] ,
+            photoId: data["photoId"],
             photoPath: data['photoPath'],
             lat: data['lat'],
             lng: data['lng'],

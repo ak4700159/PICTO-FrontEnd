@@ -1,7 +1,7 @@
 import 'dart:async';
-import 'dart:collection';
 import 'dart:convert';
 
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:picto_frontend/config/app_config.dart';
@@ -10,9 +10,13 @@ import 'package:picto_frontend/services/user_manager_service/user_api.dart';
 import 'package:picto_frontend/utils/popup.dart';
 import 'package:stomp_dart_client/stomp_dart_client.dart';
 
+import '../../models/photo.dart';
+import '../../screens/map/google_map/marker/marker_converter.dart';
+
 // _stompClient.connected 의 네트워크 지연 때문에 값이 늦게 들어올 수 있다
 class SessionSocket extends GetxController {
-  String baseUrl = "${AppConfig.httpUrl}:8084/session-scheduler";
+  final String baseUrl = "${AppConfig.httpUrl}:8084/session-scheduler";
+  // final String baseUrl = "http://${dotenv.env['PROCESSOR_IP']}:8084/session-scheduler";
   late StompClient _stompClient;
   late Timer _timer;
   RxBool connected = false.obs;
@@ -80,10 +84,12 @@ class SessionSocket extends GetxController {
     unsubscribeFunction = _stompClient.subscribe(
       headers: {"User-Id": UserManagerApi().ownerId.toString()},
       destination: '/session',
-      callback: (StompFrame frame) => {
+      callback: (StompFrame frame) {
         // 구독한 세션으로부터 전달 받은 메시지 처리
         // -> 화면에 반영 -> photo view model 생성 -> 리스트 추가 -> 화면 반영
-        print("[INFO] ${frame.body}\n")
+        Photo sharedPhoto = Photo.fromJson(jsonDecode(frame.body!));
+        MarkerConverter().addAroundPhoto(sharedPhoto);
+        print("[INFO] ${frame.body}\n");
       },
     );
     print("[INFO] subscribe success\n");

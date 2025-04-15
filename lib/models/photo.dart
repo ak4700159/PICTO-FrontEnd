@@ -20,6 +20,7 @@ class Photo {
   final int views;
   final String tag;
 
+  // 꼭 필요한 정보 photoId, userId,
   factory Photo.fromJson(Map<String, dynamic> json) {
     return Photo(
       photoId: json['photoId'] as int,

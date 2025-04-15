@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:picto_frontend/screens/bot/chatbot_screen.dart';
 import 'package:picto_frontend/screens/folder/folder_frame.dart';
 import 'package:picto_frontend/screens/folder/sub_screen/folder_create_screen.dart';
 import 'package:picto_frontend/screens/folder/sub_screen/folder_info_screen.dart';
@@ -36,6 +37,8 @@ class PageRouter{
       GetPage(name: '/folder/create', page: () => FolderCreateScreen()),
       GetPage(name: '/folder/invite', page: () => FolderInvitationScreen()),
       GetPage(name: '/folder/invite/send', page: () => FolderInvitationSendScreen()),
+
+      GetPage(name: '/chatbot', page: () => ChatBotScreen())
     ];
     return pages;
   }

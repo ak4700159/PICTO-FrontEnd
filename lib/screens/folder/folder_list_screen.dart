@@ -15,11 +15,10 @@ class FolderListScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final profileViewModel = Get.find<ProfileViewModel>();
     final folderViewModel = Get.find<FolderViewModel>();
-    folderViewModel.resetFolder();
     return Scaffold(
       appBar: AppBar(
-        // shape: BeveledRectangleBorder(side: BorderSide(width: 0.5)),
         backgroundColor: Colors.white,
+        // 제목
         title: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Text(
@@ -31,6 +30,7 @@ class FolderListScreen extends StatelessWidget {
           ),
         ),
         automaticallyImplyLeading: false,
+        // 메뉴 버튼
         actions: [
           IconButton(
               onPressed: () {

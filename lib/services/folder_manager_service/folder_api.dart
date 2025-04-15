@@ -21,9 +21,9 @@ class FolderManagerApi {
   final String baseUrl = "${AppConfig.httpUrl}:8082/folder-manager";
   Dio dio = Dio(
     BaseOptions(
-        connectTimeout: const Duration(milliseconds: 1000),
+        connectTimeout: const Duration(seconds: 1),
         contentType: Headers.jsonContentType,
-        receiveTimeout: const Duration(milliseconds: 3000)),
+        receiveTimeout: const Duration(seconds: 1)),
   )..interceptors.add(CustomInterceptor());
 
   // 폴더 생성

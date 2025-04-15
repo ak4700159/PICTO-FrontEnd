@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:picto_frontend/config/app_config.dart';
 import 'package:picto_frontend/screens/folder/folder_list_screen.dart';
+import 'package:picto_frontend/screens/folder/folder_view_model.dart';
 import 'package:picto_frontend/screens/main_frame_view_model.dart';
 import 'package:picto_frontend/screens/bot/chatbot_screen.dart';
 
@@ -17,49 +18,47 @@ class MapScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _mapViewModel = Get.find<MapViewModel>();
-    return Obx(() =>
-        Scaffold(
-          resizeToAvoidBottomInset: false,
-          floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-          floatingActionButton: Obx(() =>
-              FloatingActionButton(
-                heroTag: "map",
-                backgroundColor: 2 == _mapViewModel.navigationBarCurrentIndex.value
-                    ? AppConfig.mainColor
-                    : Colors.grey,
-                shape: CircleBorder(side: BorderSide(width: 1)),
-                onPressed: () {
-                  _mapViewModel.changeNavigationBarIndex(2);
-                },
-                child: Icon(
-                  Icons.location_on,
-                  color: Colors.white,
-                ),
-              )),
-          bottomNavigationBar: _getBottomNavigationBar(context),
-          body: _getMainFrame(context),
-        ));
+    final mapViewModel = Get.find<MapViewModel>();
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: Obx(() => FloatingActionButton(
+        heroTag: "map",
+        backgroundColor: 2 == mapViewModel.navigationBarCurrentIndex.value ? AppConfig.mainColor : Colors.grey,
+        shape: CircleBorder(side: BorderSide(width: 1)),
+        onPressed: () {
+          mapViewModel.changeNavigationBarIndex(2);
+        },
+        child: Icon(
+          Icons.location_on,
+          color: Colors.white,
+        ),
+      )),
+      bottomNavigationBar: _getBottomNavigationBar(context),
+      body: Obx(()=>_getMainFrame(context)),
+    );
   }
 
   // 하단 네비게이션바 호출마다 실행되는 함수
   Widget _getMainFrame(BuildContext context) {
     final mapViewModel = Get.find<MapViewModel>();
+    final folderViewModel = Get.find<FolderViewModel>();
+    if(mapViewModel.navigationBarCurrentIndex.value == 3 &&  mapViewModel.navigationBarCurrentIndex.value != mapViewModel.previousIndex.value) {
+      folderViewModel.resetFolder();
+    }
     return switch (mapViewModel.navigationBarCurrentIndex.value) {
-    // 0 -> 환경설정, 1 -> 포토북, 2-> 지도, 3 -> 공유폴더, 4 -> 프로필설정
-    // 수정필요 : 0 -> chat_photo bot / 1 -> comfy ui / 2 -> google map / 3 -> folder / 4 -> profile /
+      // 수정필요 : 0 -> chat_photo bot / 1 -> comfy ui / 2 -> google map / 3 -> folder / 4 -> profile /
       0 => ChatbotListScreen(),
       1 => ComfyuiScreen(),
       2 => CustomGoogleMap(),
       3 => FolderListScreen(),
       4 => AppBarMenuExample(),
-      _ =>
-          Center(
-            child: Text(
-              'error',
-              style: TextStyle(color: Colors.red, fontSize: 24),
-            ),
+      _ => Center(
+          child: Text(
+            'error',
+            style: TextStyle(color: Colors.red, fontSize: 24),
           ),
+        ),
     };
   }
 
@@ -72,9 +71,9 @@ class MapScreen extends StatelessWidget {
           ),
           activeIcon: SizedBox(
               child: Image.asset(
-                'assets/images/pictory_color.png',
-                scale: 5,
-              )),
+            'assets/images/pictory_color.png',
+            scale: 5,
+          )),
           label: "챗봇 "),
       BottomNavigationBarItem(
           icon: Icon(
@@ -120,7 +119,8 @@ class MapScreen extends StatelessWidget {
     ];
     final mapViewModel = Get.find<MapViewModel>();
 
-    return BottomAppBar(height: context.mediaQuery.size.height * 0.09,
+    return BottomAppBar(
+      height: context.mediaQuery.size.height * 0.09,
       color: Colors.white,
       elevation: 0,
       notchMargin: 0,
@@ -134,8 +134,7 @@ class MapScreen extends StatelessWidget {
             ),
           ),
           StadiumBorder(side: BorderSide(width: 2, color: Colors.black))),
-      child: Obx(() =>
-          MediaQuery(
+      child: Obx(() => MediaQuery(
             data: MediaQuery.of(context).removePadding(removeBottom: true, removeTop: true),
             child: BottomNavigationBar(
               // 그림자 없애기

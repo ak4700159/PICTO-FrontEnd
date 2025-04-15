@@ -26,7 +26,7 @@ class TagSelectionScreen extends StatelessWidget {
           ],
         ),
         actions: [
-          Column(
+          Obx(() => Column(
             children: [
               SizedBox(
                 height: 40,
@@ -37,77 +37,78 @@ class TagSelectionScreen extends StatelessWidget {
                   },
                   icon: !tagSelectionViewModel.isChanged.value
                       ? Icon(
-                          Icons.not_interested,
-                          color: Colors.grey,
-                          size: 35,
-                        )
+                    Icons.not_interested,
+                    color: Colors.grey,
+                    size: 35,
+                  )
                       : Icon(
-                          Icons.add_box_outlined,
-                          color: Colors.green,
-                          size: 35,
-                        ),
+                    Icons.add_box_outlined,
+                    color: Colors.green,
+                    size: 35,
+                  ),
                   color: Colors.white,
                 ),
               ),
               !tagSelectionViewModel.isChanged.value
                   ? Text(
-                      "변경사항 없음",
-                      style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
-                    )
+                "변경사항 없음",
+                style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
+              )
                   : Text(
-                      "변경사항 저장",
-                      style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
-                    ),
+                "변경사항 저장",
+                style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
+              ),
             ],
-          ),
+          )),
           SizedBox(
             width: context.mediaQuery.size.width * 0.05,
           ),
         ],
         backgroundColor: Colors.white,
       ),
-      body: Stack(
-        children: [
-          // 로고
-          Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+      body: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            TopBox(size: 0.1),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                SizedBox(
+                  width: context.mediaQuery.size.width * 0.9,
+                  child: _getTagTextFromField(context),
+                ),
+              ],
+            ),
+            TopBox(size: 0.01),
+            Text(
+              "선택한 태그 목록",
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+            ),
+            Container(
+              padding: EdgeInsets.all(8),
+              width: context.mediaQuery.size.width,
+              height: context.mediaQuery.size.height * 0.5,
+              child: Stack(
                 children: [
-                  Image.asset(
-                    "assets/images/picto_logo.png",
-                    colorBlendMode: BlendMode.modulate,
-                    opacity: const AlwaysStoppedAnimation(0.5),
-                  )
-                ],
-              ),
-              TopBox(size: 0.2),
-            ],
-          ),
-          // 텍스트폼 필드 + 선택된 태그 목록
-          Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              TopBox(size: 0.1),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  SizedBox(
-                    width: context.mediaQuery.size.width * 0.9,
-                    child: _getTagTextFromField(context),
+                  Center(
+                    child: Column(
+                      children: [
+                        TopBox(size: 0.2),
+                        Image.asset(
+                          "assets/images/picto_logo.png",
+                          colorBlendMode: BlendMode.modulate,
+                          opacity: const AlwaysStoppedAnimation(0.5),
+                        ),
+                      ],
+                    ),
                   ),
+                  Obx(() => _getTagList(context))
                 ],
               ),
-              TopBox(size: 0.01),
-              Text(
-                "선택한 태그 목록",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-              ),
-              SingleChildScrollView(child: Obx(() => _getTagList(context))),
-            ],
-          )
-        ],
+            ),
+          ],
+        ),
       ),
     );
   }
