@@ -174,7 +174,7 @@ class GoogleMapViewModel extends GetxController {
           .setItems(currentPictoMarkers.map((p) => PictoItem(pictoMarker: p)).toList());
       Get.find<SessionSocket>().connectWebSocket();
     } catch (e) {
-      print("[ERROR] : controller setting error");
+      print("[ERROR] : controller comfyui error");
     }
   }
 
@@ -265,8 +265,8 @@ class GoogleMapViewModel extends GetxController {
       circleId: CircleId("user_area"),
       center: LatLng(currentLat.value, currentLng.value),
       // 사용자 현재 위치
-      radius: 3000,
-      // 3km == 3000m
+      radius: 5000,
+      // 5km == 5000m
       fillColor: Colors.transparent,
       strokeColor: AppConfig.mainColor,
       strokeWidth: 1,
@@ -285,7 +285,7 @@ class GoogleMapViewModel extends GetxController {
     circles.add(Circle(
       circleId: CircleId("user_area"),
       center: LatLng(currentLat.value, currentLng.value),
-      radius: 3000,
+      radius: 5000,
       fillColor: Colors.transparent,
       strokeColor: AppConfig.mainColor,
       strokeWidth: 2,

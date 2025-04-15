@@ -1,6 +1,4 @@
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:picto_frontend/services/chatting_scheduler_service/chatting_api.dart';
 
 class TestScreen extends StatelessWidget {

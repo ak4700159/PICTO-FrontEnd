@@ -36,9 +36,6 @@ class PageRouter{
       GetPage(name: '/folder/create', page: () => FolderCreateScreen()),
       GetPage(name: '/folder/invite', page: () => FolderInvitationScreen()),
       GetPage(name: '/folder/invite/send', page: () => FolderInvitationSendScreen()),
-
-      // AI 챗봇 화면
-      // ComfyUI 상호 작용 화면
     ];
     return pages;
   }

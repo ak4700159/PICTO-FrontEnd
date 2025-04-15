@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:picto_frontend/config/user_config.dart';
+import 'package:picto_frontend/screens/bot/chatbot_view_model.dart';
+import 'package:picto_frontend/screens/comfyui/comfyui_view_model.dart';
 import 'package:picto_frontend/screens/folder/folder_view_model.dart';
 import 'package:picto_frontend/screens/folder/sub_screen/folder_selection_view_model.dart';
 import 'package:picto_frontend/screens/main_frame_view_model.dart';
@@ -71,8 +73,9 @@ class AppConfig {
     final profileViewModel = Get.put<ProfileViewModel>(ProfileViewModel());
     final userConfig = Get.put<UserConfig>(UserConfig());
 
-    // NEW VIEWMODEL ----------------------
-    // 챗봇 스트리밍
+    // 챗봇
+    final chatbotViewModel = Get.put<ChatbotViewModel>(ChatbotViewModel());
     // ComfyUI
+    final comfyuiViewModel = Get.put<ComfyuiViewModel>(ComfyuiViewModel());
   }
 }

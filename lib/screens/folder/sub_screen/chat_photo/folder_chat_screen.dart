@@ -17,10 +17,10 @@ class FolderChatScreen extends StatelessWidget {
   final int folderId;
   final TextEditingController _controller = TextEditingController();
   final profileViewModel = Get.find<ProfileViewModel>();
+  final folderViewModel = Get.find<FolderViewModel>();
 
   @override
   Widget build(BuildContext context) {
-    final folderViewModel = Get.find<FolderViewModel>();
     return Column(
       children: [
         Expanded(

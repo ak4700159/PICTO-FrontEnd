@@ -5,10 +5,10 @@ import 'package:picto_frontend/models/chatting_msg.dart';
 import 'package:picto_frontend/services/user_manager_service/user_api.dart';
 import 'package:picto_frontend/utils/util.dart';
 
-class ChatBubble extends StatelessWidget {
+class ChatbotChatBubble extends StatelessWidget {
   final ChatMsg msg;
 
-  const ChatBubble({super.key, required this.msg});
+  const ChatbotChatBubble({super.key, required this.msg});
 
   @override
   Widget build(BuildContext context) {
