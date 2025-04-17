@@ -23,42 +23,42 @@ class MapScreen extends StatelessWidget {
       resizeToAvoidBottomInset: false,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: Obx(() => FloatingActionButton(
-        heroTag: "map",
-        backgroundColor: 2 == mapViewModel.navigationBarCurrentIndex.value ? AppConfig.mainColor : Colors.grey,
-        shape: CircleBorder(side: BorderSide(width: 1)),
-        onPressed: () {
-          mapViewModel.changeNavigationBarIndex(2);
-        },
-        child: Icon(
-          Icons.location_on,
-          color: Colors.white,
-        ),
-      )),
+            heroTag: "map",
+            backgroundColor: 2 == mapViewModel.navigationBarCurrentIndex.value ? AppConfig.mainColor : Colors.grey,
+            shape: CircleBorder(side: BorderSide(width: 1)),
+            onPressed: () {
+              mapViewModel.changeNavigationBarIndex(2);
+            },
+            child: Icon(
+              Icons.location_on,
+              color: Colors.white,
+            ),
+          )),
       bottomNavigationBar: _getBottomNavigationBar(context),
-      body: Obx(()=>_getMainFrame(context)),
+      body: Obx(() => _getMainFrame(context)),
     );
   }
 
   // 하단 네비게이션바 호출마다 실행되는 함수
   Widget _getMainFrame(BuildContext context) {
     final mapViewModel = Get.find<MapViewModel>();
-    final folderViewModel = Get.find<FolderViewModel>();
-    if(mapViewModel.navigationBarCurrentIndex.value == 3 &&  mapViewModel.navigationBarCurrentIndex.value != mapViewModel.previousIndex.value) {
-      folderViewModel.resetFolder();
-    }
+    // final folderViewModel = Get.find<FolderViewModel>();
+    // if (mapViewModel.navigationBarCurrentIndex.value == 3) {
+    //   folderViewModel.isUpdate.value = false;
+    // }
     return switch (mapViewModel.navigationBarCurrentIndex.value) {
-      // 수정필요 : 0 -> chat_photo bot / 1 -> comfy ui / 2 -> google map / 3 -> folder / 4 -> profile /
+    // 수정필요 : 0 -> chat_photo bot / 1 -> comfy ui / 2 -> google map / 3 -> folder / 4 -> profile /
       0 => ChatbotListScreen(),
       1 => ComfyuiScreen(),
       2 => CustomGoogleMap(),
       3 => FolderListScreen(),
       4 => AppBarMenuExample(),
       _ => Center(
-          child: Text(
-            'error',
-            style: TextStyle(color: Colors.red, fontSize: 24),
-          ),
+        child: Text(
+          'error',
+          style: TextStyle(color: Colors.red, fontSize: 24),
         ),
+      ),
     };
   }
 

@@ -6,6 +6,7 @@ import 'package:picto_frontend/utils/popup.dart';
 import '../../config/app_config.dart';
 import '../../models/folder.dart';
 import '../../services/user_manager_service/user_api.dart';
+import '../main_frame_view_model.dart';
 import '../profile/profile_view_model.dart';
 
 class FolderListScreen extends StatelessWidget {
@@ -15,6 +16,10 @@ class FolderListScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final profileViewModel = Get.find<ProfileViewModel>();
     final folderViewModel = Get.find<FolderViewModel>();
+    if (!folderViewModel.isUpdate.value) {
+      folderViewModel.resetFolder();
+      folderViewModel.isUpdate.value = true;
+    }
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,

@@ -38,7 +38,7 @@ class PageRouter{
       GetPage(name: '/folder/invite', page: () => FolderInvitationScreen()),
       GetPage(name: '/folder/invite/send', page: () => FolderInvitationSendScreen()),
 
-      GetPage(name: '/chatbot', page: () => ChatBotScreen())
+      GetPage(name: '/chatbot', page: () => ChatbotScreen())
     ];
     return pages;
   }

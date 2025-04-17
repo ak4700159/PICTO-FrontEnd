@@ -31,13 +31,16 @@ class Folder {
     required this.name,
     required this.generatorId,
     required this.sharedDatetime,
+    required bool allInit,
     this.content,
   }) {
     if (folderId == -1) return;
-    initFolder();
+    if(allInit) {
+      initFolder();
+    }
   }
 
-  factory Folder.fromJson(Map<String, dynamic> json) {
+  factory Folder.fromJson(Map<String, dynamic> json, bool allInit) {
     return Folder(
       folderId: json["folderId"],
       name: json["folderName"],
@@ -45,6 +48,7 @@ class Folder {
       generatorId: json["generatorId"] ?? json["userId"],
       sharedDatetime: json["sharedDatetime"],
       content: json["content"],
+      allInit: allInit,
     );
   }
 

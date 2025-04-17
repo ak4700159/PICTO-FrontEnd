@@ -12,7 +12,7 @@ import 'package:picto_frontend/screens/map/google_map/google_map_view_model.dart
 import 'package:picto_frontend/services/photo_store_service/photo_store_api.dart';
 import '../../../../config/app_config.dart';
 import '../../../photo/photo_view_model.dart';
-import '../marker/marker_widget.dart';
+import '../marker/animated_marker_widget.dart';
 import '../marker/picto_marker.dart';
 
 class PictoClusterManager {
@@ -66,9 +66,7 @@ class PictoClusterManager {
     for (final marker in markers) {
       await Future.delayed(Duration(milliseconds: 70)); // 애니메이션 간격
       googleViewModel.currentMarkers.add(marker);
-      // googleViewModel.update(); // GetX 뷰모델이 Obx 방식이면 필요
     }
-    // googleViewModel.currentMarkers.addAll(markers);
   }
 
   void _openClusterBottomSheet(List<PictoMarker> markers) {
@@ -106,7 +104,7 @@ class PictoClusterManager {
                             } else {
                               Uint8List data = snapshot.data;
                               markers[index].imageData = data;
-                              return MarkerWidget(
+                              return AnimatedMarkerWidget(
                                 type: markers[index].type,
                                 imageData: markers[index].imageData,
                               );
@@ -114,7 +112,7 @@ class PictoClusterManager {
                           },
                           future: PhotoStoreHandler().downloadPhoto(markers[index].photo.photoId),
                         )
-                      : MarkerWidget(
+                      : AnimatedMarkerWidget(
                           type: markers[index].type,
                           imageData: markers[index].imageData,
                         ),

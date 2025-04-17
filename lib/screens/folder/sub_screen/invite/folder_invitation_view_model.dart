@@ -25,6 +25,10 @@ class FolderInvitationViewModel extends GetxController {
         selectedUsers.add(newUser);
         selectedEmail.add(input);
         formKey.currentState?.save();
+      } else if(newUser == null) {
+        showErrorPopup("존재하지 않는 사용자입니다.");
+      } else {
+        showErrorPopup("사용자 본인은 초대할 수 없습니다.");
       }
       textController.text = "";
     }
@@ -47,7 +51,7 @@ class FolderInvitationViewModel extends GetxController {
       noticeId: target.noticeId,
     );
     if (isSuccess) {
-      Get.find<FolderViewModel>().resetFolder();
+      // Get.find<FolderViewModel>().resetFolder();
       showPositivePopup("공유 폴더를 추가하였습니다.");
     }
     notices.removeWhere((n) => n.noticeId == target.noticeId);

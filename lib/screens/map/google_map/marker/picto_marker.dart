@@ -6,12 +6,13 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:picto_frontend/config/app_config.dart';
+import 'package:picto_frontend/screens/map/google_map/marker/markder_widget.dart';
 import 'package:picto_frontend/screens/photo/photo_view_model.dart';
 import 'package:widget_to_marker/widget_to_marker.dart';
 
 import '../../../../../models/photo.dart';
 import '../google_map_view_model.dart';
-import 'marker_widget.dart';
+import 'animated_marker_widget.dart';
 
 enum PictoMarkerType { userPhoto, folderPhoto, aroundPhoto, representativePhoto, userPos }
 
@@ -28,7 +29,6 @@ class PictoMarker {
   Uint8List? imageData;
   Photo photo;
   VoidCallback? onTap;
-  VoidCallback? _onTap;
 
   PictoMarker({required this.photo, required this.type, this.onTap});
 
@@ -40,7 +40,25 @@ class PictoMarker {
     );
   }
 
-  // 실제 이미지
+  // 애니메이션 입혀진 구글 마커 반환
+  Future<Marker> toAnimatedGoogleMarker({required bool most}) async {
+    return Marker(
+      position: LatLng(photo.lat, photo.lng),
+      markerId: MarkerId(photo.photoId.toString()),
+      icon: await AnimatedMarkerWidget(
+        imageData: imageData,
+        type: type,
+      ).toBitmapDescriptor(
+        // 실제 마커에 띄워질 이미지는 imageSize 파라미터에 좌지우지 된다.
+        logicalSize: const Size(300, 300),
+        imageSize: const Size(500, 500),
+      ),
+      consumeTapEvents: true,
+      onTap: most ? onTap : null,
+    );
+  }
+
+  // 그냥 마커 반환
   Future<Marker> toGoogleMarker({required bool most}) async {
     return Marker(
       position: LatLng(photo.lat, photo.lng),
@@ -54,7 +72,7 @@ class PictoMarker {
         imageSize: const Size(500, 500),
       ),
       consumeTapEvents: true,
-      onTap: most ? onTap : _onTap,
+      onTap: most ? onTap : null,
     );
   }
 

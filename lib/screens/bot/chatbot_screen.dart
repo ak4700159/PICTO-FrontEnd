@@ -2,7 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
-import 'package:picto_frontend/screens/bot/chatbot_chat_bubble.dart';
+import 'package:picto_frontend/models/chatbot_room.dart';
+import 'package:picto_frontend/screens/bot/chatbot_bubble.dart';
 import 'package:picto_frontend/screens/bot/chatbot_view_model.dart';
 import 'package:picto_frontend/screens/main_frame_view_model.dart';
 
@@ -10,10 +11,11 @@ import '../../config/app_config.dart';
 import '../../services/user_manager_service/user_api.dart';
 import '../profile/profile_view_model.dart';
 
-class ChatBotScreen extends StatelessWidget {
-  ChatBotScreen({super.key});
+class ChatbotScreen extends StatelessWidget {
+  ChatbotScreen({super.key});
   final profileViewModel = Get.find<ProfileViewModel>();
   final chatbotViewModel = Get.find<ChatbotViewModel>();
+  // ChatbotRoom chatbotRoom = Get.arguments["list"];
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +50,7 @@ class ChatBotScreen extends StatelessWidget {
                 reverse: false,
                 padding: const EdgeInsets.all(10),
                 children:
-                    chatbotViewModel.currentMsgList.map((m) => ChatbotChatBubble(msg: m)).toList(),
+                    chatbotViewModel.currentMessages.map((m) => ChatbotBubble(msg: m)).toList(),
               );
             }),
           ),

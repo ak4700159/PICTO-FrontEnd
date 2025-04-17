@@ -20,7 +20,7 @@ import '../../../utils/distance.dart';
 import '../../../utils/util.dart';
 import 'cluster/picto_cluster_manager.dart';
 import 'marker/marker_converter.dart';
-import 'marker/marker_widget.dart';
+import 'marker/animated_marker_widget.dart';
 import 'marker/picto_marker.dart';
 
 class GoogleMapViewModel extends GetxController {
@@ -368,7 +368,7 @@ class GoogleMapViewModel extends GetxController {
     return Marker(
         markerId: const MarkerId("user"),
         position: LatLng(currentLat.value, currentLng.value),
-        icon: await MarkerWidget(type: PictoMarkerType.userPos).toBitmapDescriptor(
+        icon: await AnimatedMarkerWidget(type: PictoMarkerType.userPos).toBitmapDescriptor(
           logicalSize: const Size(150, 150),
           imageSize: const Size(150, 150),
         ),

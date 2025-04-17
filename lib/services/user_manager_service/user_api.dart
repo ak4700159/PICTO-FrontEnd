@@ -235,7 +235,8 @@ class UserManagerApi {
       );
       return User.fromJson(response.data);
     } on DioException catch (e) {
-      showErrorPopup(e.toString());
+      print("[ERROR] ${e.toString()}");
+      // showErrorPopup(e.toString());
     }
     return null;
   }

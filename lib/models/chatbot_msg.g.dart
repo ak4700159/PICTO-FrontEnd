@@ -18,7 +18,7 @@ class ChatbotMsgAdapter extends TypeAdapter<ChatbotMsg> {
     };
     return ChatbotMsg(
       sendDatetime: fields[0] as int,
-      content: fields[1] as int,
+      content: fields[1] as String,
       isMe: fields[2] as bool,
       imagePath: (fields[3] as List).cast<String>(),
     );

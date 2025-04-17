@@ -8,7 +8,7 @@ class ChatbotMsg {
   @HiveField(0)
   int sendDatetime;
   @HiveField(1)
-  int content;
+  String content;
   @HiveField(2)
   bool isMe;
   @HiveField(3)

@@ -6,11 +6,11 @@ import 'package:picto_frontend/config/app_config.dart';
 import 'package:picto_frontend/screens/map/google_map/marker/picto_marker.dart';
 
 // 실제 화면에 보여질 위젯
-class MarkerWidget extends StatelessWidget {
+class AnimatedMarkerWidget extends StatelessWidget {
   final Uint8List? imageData;
   final PictoMarkerType type;
 
-  const MarkerWidget({super.key, this.imageData, required this.type});
+  const AnimatedMarkerWidget({super.key, this.imageData, required this.type});
 
   @override
   Widget build(BuildContext context) {

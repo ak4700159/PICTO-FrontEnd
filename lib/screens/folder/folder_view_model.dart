@@ -19,6 +19,7 @@ class FolderViewModel extends GetxController {
   RxList<PictoMarker> currentMarkers = <PictoMarker>[].obs;
   Rxn<ChattingSocket> currentSocket = Rxn<ChattingSocket>();
   RxList<ChatMsg> currentMsgList = <ChatMsg>[].obs;
+  RxBool isUpdate = false.obs;
   ScrollController chatScrollController = ScrollController();
 
   @override

@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+import 'package:debounce_throttle/debounce_throttle.dart';
 import 'package:dio/dio.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:mime/mime.dart';
@@ -28,6 +29,7 @@ class PhotoStoreHandler {
 
   // 사진 조회
   Future<Uint8List> downloadPhoto(int photoId) async {
+
     final hostUrl = "$baseUrl/photos/download/$photoId";
     try {
       final response = await dio.get(

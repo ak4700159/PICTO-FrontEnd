@@ -9,19 +9,21 @@ import 'package:hive/hive.dart';
 import 'package:picto_frontend/models/chatbot_msg.dart';
 import 'package:picto_frontend/page_router.dart';
 import 'package:picto_frontend/theme.dart';
+import 'package:path_provider/path_provider.dart' show getApplicationDocumentsDirectory;
 
 import 'config/app_config.dart';
-import 'models/chatbot_list.dart';
+import 'models/chatbot_room.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  // 앱의 문서 디렉토리 경로 가져오기
+  Directory dir = await getApplicationDocumentsDirectory();
   // hive 내장 데이터베이스 연동
-  var path = Directory.current.path;
+  var path = dir.path;
   Hive
     ..init(path)
-    ..registerAdapter((ChatbotListAdapter()))
+    ..registerAdapter((ChatbotRoomAdapter()))
     ..registerAdapter(ChatbotMsgAdapter());
-  // 데이터를 사용할 때 박스(DB) 오픈 -> 메모리 로딩
-  var box = await Hive.openLazyBox('chatbot');
 
   // 환경 설정 파일 로드
   WidgetsFlutterBinding.ensureInitialized();

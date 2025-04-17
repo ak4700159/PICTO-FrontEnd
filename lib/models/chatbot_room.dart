@@ -1,15 +1,15 @@
 import 'package:hive/hive.dart';
 import 'package:picto_frontend/models/chatbot_msg.dart';
 
-part "chatbot_list.g.dart";
+part "chatbot_room.g.dart";
 
 @HiveType(typeId: 0)
-class ChatbotList {
+class ChatbotRoom {
   @HiveField(0)
   List<ChatbotMsg> messages = [];
   @HiveField(1)
   int createdDatetime;
   @HiveField(2)
   String? listName;
-  ChatbotList({required this.createdDatetime});
+  ChatbotRoom({required this.createdDatetime});
 }

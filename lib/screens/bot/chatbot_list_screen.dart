@@ -1,10 +1,105 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:picto_frontend/screens/bot/chatbot_room_tile.dart';
+import 'package:picto_frontend/screens/bot/chatbot_view_model.dart';
+
+import '../../config/app_config.dart';
 
 class ChatbotListScreen extends StatelessWidget {
   const ChatbotListScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    final chatbotViewModel = Get.find<ChatbotViewModel>();
+    return Stack(children: [
+      Scaffold(
+        appBar: AppBar(
+          title: Text(
+            "PICTORY",
+            style: TextStyle(
+              fontFamily: "NotoSansKR",
+              fontWeight: FontWeight.w800,
+              fontSize: 25,
+              color: AppConfig.mainColor,
+            ),
+          ),
+          centerTitle: true,
+          automaticallyImplyLeading: false,
+          backgroundColor: Colors.white,
+        ),
+        body: Obx(() => chatbotViewModel.chatbotRooms.isEmpty
+            ? _getFirstScreen(context)
+            : SizedBox(
+                width: context.mediaQuery.size.width,
+                height: context.mediaQuery.size.height * 0.6,
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: _getChatRoomTileList(),
+                  ),
+                ),
+              )),
+      ),
+      Positioned(
+        bottom: context.mediaQuery.size.height * 0.02,
+        left: context.mediaQuery.size.width * 0.85,
+        child: SizedBox(
+          width: context.mediaQuery.size.width * 0.15,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: _getBottomRightFloatingButtons(context),
+          ),
+        ),
+      ),
+    ]);
+  }
+
+  Widget _getFirstScreen(BuildContext context) {
+    final chatbotViewModel = Get.find<ChatbotViewModel>();
+    return Center(
+      child: SizedBox(
+        width: context.mediaQuery.size.width * 0.7,
+        child: FloatingActionButton(
+          backgroundColor: AppConfig.mainColor,
+          onPressed: () {
+            chatbotViewModel.addChatbotRoom();
+          },
+          child: Text(
+            "새로운 채팅방 생성",
+            style: TextStyle(fontFamily: "NotoSansKR", fontWeight: FontWeight.w600, fontSize: 20, color: Colors.white),
+          ),
+        ),
+      ),
+    );
+  }
+
+  List<Widget> _getChatRoomTileList() {
+    final chatbotViewModel = Get.find<ChatbotViewModel>();
+    return chatbotViewModel.chatbotRooms.map((room) => ChatbotRoomTile(chatbotList: room)).toList();
+  }
+
+  List<Widget> _getBottomRightFloatingButtons(BuildContext context) {
+    return [
+      Padding(
+        padding: const EdgeInsets.all(4.0),
+        child: SizedBox(
+          height: context.mediaQuery.size.height * 0.06,
+          child: FloatingActionButton(
+            onPressed: () {
+              // 사진 공유 화면으로 이동
+              // Get.toNamed('/ro');
+            },
+            backgroundColor: Colors.blueAccent,
+            heroTag: "room-create",
+            child: Icon(
+              Icons.add,
+              color: AppConfig.backgroundColor,
+              size: 30,
+            ),
+          ),
+        ),
+      ),
+    ];
   }
 }

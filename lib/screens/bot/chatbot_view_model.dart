@@ -1,17 +1,21 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:hive/hive.dart';
+import 'package:picto_frontend/models/chatbot_room.dart';
 
 class ChatbotViewModel extends GetxController {
   final TextEditingController controller = TextEditingController();
   final FocusNode inputFocusNode = FocusNode();
   final ScrollController chatScrollController = ScrollController();
-
-  RxList currentMsgList = [].obs;
+  RxList currentMessages = [].obs;
+  Rxn<ChatbotRoom> currentRoom = Rxn();
+  RxList<ChatbotRoom> chatbotRooms = <ChatbotRoom>[].obs;
+  late Box box;
 
   @override
-  void onInit() {
+  void onInit() async {
     super.onInit();
-    ever(currentMsgList, (_) {
+    ever(currentMessages, (_) {
       // 현재 메시지가 하단에 있을 때만 스크롤
       if (isAtBottom) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -19,6 +23,11 @@ class ChatbotViewModel extends GetxController {
         });
       }
     });
+    box = await Hive.openBox('chatbot');
+    List<ChatbotRoom> data = box.values
+        .whereType<ChatbotRoom>() // ChatbotList 타입만 필터링
+        .toList();
+    chatbotRooms.value = data;
   }
 
   @override
@@ -27,9 +36,8 @@ class ChatbotViewModel extends GetxController {
     controller.dispose();
     chatScrollController.dispose();
     super.onClose();
+    box.close();
   }
-
-  // 이전 채팅 전부 로딩 -> 로컬 저장
 
   // 채팅 전달 + 응답 처리
 
@@ -37,6 +45,27 @@ class ChatbotViewModel extends GetxController {
 
   // 선택한 사진 삭제
 
+  // 채팅방 선택
+  void selectChatRoom(int createdDatetime) {
+    for(var room in chatbotRooms) {
+      if(room.createdDatetime == createdDatetime){
+        currentMessages.clear();
+        currentMessages.addAll(room.messages);
+        currentRoom.value = room;
+        return;
+      }
+    }
+  }
+
+  // 채팅방 추가
+  void addChatbotRoom() {
+    final newRoom = ChatbotRoom(createdDatetime: DateTime.now().millisecondsSinceEpoch);
+    box.put(newRoom.createdDatetime.toString(), newRoom);
+    chatbotRooms.add(newRoom);
+  }
+
+  // 채팅방 삭제
+  void removeChatbotRoom(int createdDatetime) {}
 
   // 최하단으로 스크롤 이동
   void scrollToBottom() {
@@ -56,5 +85,4 @@ class ChatbotViewModel extends GetxController {
     final current = chatScrollController.offset;
     return (max - current).abs() < 50; // 여유값 50px
   }
-
 }
