@@ -27,6 +27,7 @@ class ChatbotViewModel extends GetxController {
   RxList<ChatbotRoom> chatbotRooms = <ChatbotRoom>[].obs;
   RxBool isSending = false.obs;
   RxBool isUp = false.obs;
+  RxBool isDelete = false.obs;
   late Box box;
 
   @override
@@ -82,16 +83,15 @@ class ChatbotViewModel extends GetxController {
     imagePickerController.pickImages();
     currentSelectedImages.clear();
     currentSelectedImages.addAll(imagePickerController.images);
+    print("[INFO] selected photo length : ${currentSelectedImages.length}");
   }
-
-  // 선택한 사진 삭제
-
 
   // 채팅방 선택
   void selectChatRoom(int createdDatetime) {
     for (var room in chatbotRooms) {
       if (room.createdDatetime == createdDatetime) {
         currentMessages.clear();
+        currentSelectedImages.clear();
         currentMessages.addAll(room.messages);
         currentRoom.value = room;
         return;
@@ -133,5 +133,20 @@ class ChatbotViewModel extends GetxController {
     final max = chatScrollController.position.maxScrollExtent;
     final current = chatScrollController.offset;
     return (max - current).abs() < 50; // 여유값 50px
+  }
+
+  // 그룹핑 월별로
+  Map<String, List<ChatbotRoom>> groupChatbotRoomsByMonth() {
+    Map<String, List<ChatbotRoom>> grouped = {};
+
+    for (var room in chatbotRooms) {
+      DateTime created = DateTime.fromMillisecondsSinceEpoch(room.createdDatetime);
+      String monthKey = '${created.year}-${created.month.toString().padLeft(2, '0')}';
+
+      grouped.putIfAbsent(monthKey, () => []);
+      grouped[monthKey]!.add(room);
+    }
+
+    return grouped;
   }
 }
