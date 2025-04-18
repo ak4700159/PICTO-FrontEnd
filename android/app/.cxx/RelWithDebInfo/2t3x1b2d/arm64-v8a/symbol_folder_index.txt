@@ -1,0 +1,1 @@
+C:\capstone_workspace\PICTO-FrontEnd\build\app\intermediates\cxx\RelWithDebInfo\2t3x1b2d\obj\arm64-v8a
