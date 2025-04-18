@@ -33,13 +33,15 @@ class ChatbotRoomTile extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Icon(Icons.contact_page, color: getColorFromUserId(chatbotList.createdDatetime),),
+            Icon(
+              Icons.contact_page,
+              color: getColorFromUserId(chatbotList.createdDatetime),
+            ),
             Expanded(
               flex: 3,
               child: Text(
                 chatbotList.listName ?? "${formatDate(chatbotList.createdDatetime)} 대화 내용   ",
-                style: TextStyle(fontFamily: "NotoSansKR", fontWeight: FontWeight.w600, fontSize: 15
-                ),
+                style: TextStyle(fontFamily: "NotoSansKR", fontWeight: FontWeight.w600, fontSize: 15),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -54,22 +56,75 @@ class ChatbotRoomTile extends StatelessWidget {
             ),
             Expanded(
               flex: 1,
-              child: IconButton(
-                onPressed: () {
-                  final chatbotViewModel = Get.find<ChatbotViewModel>();
-                  chatbotViewModel.selectChatRoom(chatbotList.createdDatetime);
-                  Get.toNamed('/chatbot');
+              child: PopupMenuButton<String>(
+                color: Colors.white,
+                icon: const Icon(Icons.more_vert, color: AppConfig.mainColor),
+                onSelected: (value) {
+                  switch (value) {
+                    case "delete":
+                      break;
+                    case "modify":
+                      break;
+                    case "enter":
+                      break;
+                  }
                 },
-                icon: Icon(
-                  size: 30,
-                  Icons.arrow_forward,
-                  color: AppConfig.mainColor,
-                ),
+                itemBuilder: (context) => [
+                  PopupMenuItem(
+                    value: "delete",
+                    onTap: () {},
+                    child: Row(
+                      children: [
+                        Icon(Icons.folder_delete, color: AppConfig.mainColor),
+                        const Text(
+                          " 채팅방 삭제",
+                          style: TextStyle(fontFamily: "NotoSansKR", fontWeight: FontWeight.w600, fontSize: 13),
+                        ),
+                      ],
+                    ),
+                  ),
+                  PopupMenuItem(
+                    value: "modify",
+                    onTap: () {
+                      // 화면 수정 팝업 보여주기
+                    },
+                    child: Row(
+                      children: [
+                        Icon(Icons.folder_shared_rounded, color: AppConfig.mainColor,),
+                        Text(
+                          " 채팅방 제목 수정",
+                          style: TextStyle(fontFamily: "NotoSansKR", fontWeight: FontWeight.w600, fontSize: 13),
+                        ),
+                      ],
+                    ),
+                  ),
+                  PopupMenuItem(
+                    value: "enter",
+                    onTap: () {
+                      final chatbotViewModel = Get.find<ChatbotViewModel>();
+                      chatbotViewModel.selectChatRoom(chatbotList.createdDatetime);
+                      Get.toNamed('/chatbot');
+                    },
+                    child: Row(
+                      children: [
+                        Icon(Icons.arrow_forward, color: AppConfig.mainColor),
+                        Text(
+                          " 채팅방 입장",
+                          style: TextStyle(fontFamily: "NotoSansKR", fontWeight: FontWeight.w600, fontSize: 13),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
         ),
       ),
     );
+  }
+
+  void _showTitleModifyPopup() {
+
   }
 }

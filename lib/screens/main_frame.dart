@@ -3,13 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:picto_frontend/config/app_config.dart';
 import 'package:picto_frontend/screens/folder/folder_list_screen.dart';
-import 'package:picto_frontend/screens/folder/folder_view_model.dart';
 import 'package:picto_frontend/screens/main_frame_view_model.dart';
-import 'package:picto_frontend/screens/bot/chatbot_screen.dart';
 
 import '../icon/picto_icons.dart';
 import '../test_screens/ksm_test_screen.dart';
-import 'bot/chatbot_list_screen.dart';
+import 'bot/chatbot_rooms_screen.dart';
 import 'comfyui/comfyui_screen.dart';
 import 'map/google_map/google_map.dart';
 
@@ -20,12 +18,13 @@ class MapScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final mapViewModel = Get.find<MapViewModel>();
     return Scaffold(
+      extendBody: true,
       resizeToAvoidBottomInset: false,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: Obx(() => FloatingActionButton(
             heroTag: "map",
             backgroundColor: 2 == mapViewModel.navigationBarCurrentIndex.value ? AppConfig.mainColor : Colors.grey,
-            shape: CircleBorder(side: BorderSide(width: 1)),
+            shape: CircleBorder(),
             onPressed: () {
               mapViewModel.changeNavigationBarIndex(2);
             },
@@ -35,7 +34,12 @@ class MapScreen extends StatelessWidget {
             ),
           )),
       bottomNavigationBar: _getBottomNavigationBar(context),
-      body: Obx(() => _getMainFrame(context)),
+      backgroundColor: Colors.transparent,
+      body: SafeArea(
+        top: false,
+        bottom: false,
+        child: Obx(() => _getMainFrame(context)),
+      ),
     );
   }
 
@@ -47,18 +51,18 @@ class MapScreen extends StatelessWidget {
     //   folderViewModel.isUpdate.value = false;
     // }
     return switch (mapViewModel.navigationBarCurrentIndex.value) {
-    // 수정필요 : 0 -> chat_photo bot / 1 -> comfy ui / 2 -> google map / 3 -> folder / 4 -> profile /
+      // 수정필요 : 0 -> chat_photo bot / 1 -> comfy ui / 2 -> google map / 3 -> folder / 4 -> profile /
       0 => ChatbotListScreen(),
       1 => ComfyuiScreen(),
       2 => CustomGoogleMap(),
       3 => FolderListScreen(),
       4 => AppBarMenuExample(),
       _ => Center(
-        child: Text(
-          'error',
-          style: TextStyle(color: Colors.red, fontSize: 24),
+          child: Text(
+            'error',
+            style: TextStyle(color: Colors.red, fontSize: 24),
+          ),
         ),
-      ),
     };
   }
 
@@ -119,37 +123,50 @@ class MapScreen extends StatelessWidget {
     ];
     final mapViewModel = Get.find<MapViewModel>();
 
-    return BottomAppBar(
-      height: context.mediaQuery.size.height * 0.09,
-      color: Colors.white,
-      elevation: 0,
-      notchMargin: 0,
-      // 중요한 속성, 자식의 부모 위젯의 크기를 벗어날 경우 자동으로 잘라줌
-      clipBehavior: Clip.antiAlias,
-      shape: AutomaticNotchedShape(
+    return Container(
+      decoration: BoxDecoration(
+        boxShadow: [
+          BoxShadow(color: Colors.grey, blurRadius: 10, offset: Offset(-220, 0)),
+          BoxShadow(color: Colors.grey, blurRadius: 10, offset: Offset(220, 0)),
+          // BoxShadow(color: Colors.grey, blurRadius: 40, offset: Offset(0, 30)),
+        ]
+      ),
+      child: BottomAppBar(
+        padding: EdgeInsets.all(0),
+        shadowColor: Colors.grey,
+        height: context.mediaQuery.size.height * 0.08,
+        color: Colors.white,
+        elevation: 0,
+        notchMargin: 8,
+        // 중요한 속성, 자식의 부모 위젯의 크기를 벗어날 경우 자동으로 잘라줌
+        clipBehavior: Clip.antiAlias,
+        shape: AutomaticNotchedShape(
           RoundedRectangleBorder(
+            side: BorderSide(color: Colors.black, width: 10),
             borderRadius: BorderRadius.only(
               topLeft: Radius.circular(20),
               topRight: Radius.circular(20),
             ),
           ),
-          StadiumBorder(side: BorderSide(width: 2, color: Colors.black))),
-      child: Obx(() => MediaQuery(
-            data: MediaQuery.of(context).removePadding(removeBottom: true, removeTop: true),
-            child: BottomNavigationBar(
-              // 그림자 없애기
-              elevation: 0,
-              onTap: mapViewModel.changeNavigationBarIndex,
-              showSelectedLabels: false,
-              showUnselectedLabels: false,
-              currentIndex: mapViewModel.navigationBarCurrentIndex.value,
-              iconSize: 30,
-              selectedFontSize: 0,
-              items: bottomNavigationBarItems,
-              backgroundColor: Colors.transparent,
-              type: BottomNavigationBarType.fixed,
-            ),
-          )),
+          StadiumBorder(side: BorderSide(width: 10, color: Colors.blue)),
+        ),
+        child: Obx(() => MediaQuery(
+              data: MediaQuery.of(context).removePadding(removeBottom: true, removeTop: true),
+              child: BottomNavigationBar(
+                // 그림자 없애기
+                elevation: 0,
+                onTap: mapViewModel.changeNavigationBarIndex,
+                showSelectedLabels: false,
+                showUnselectedLabels: false,
+                currentIndex: mapViewModel.navigationBarCurrentIndex.value,
+                iconSize: 30,
+                selectedFontSize: 0,
+                items: bottomNavigationBarItems,
+                backgroundColor: Colors.white,
+                type: BottomNavigationBarType.fixed,
+              ),
+            )),
+      ),
     );
   }
 }

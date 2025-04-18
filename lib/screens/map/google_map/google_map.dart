@@ -63,7 +63,7 @@ class CustomGoogleMap extends StatelessWidget {
         ),
         // 하단 Floating buttons
         Positioned(
-          bottom: context.mediaQuery.size.height * 0.02,
+          bottom: context.mediaQuery.size.height * 0.1,
           left: context.mediaQuery.size.width * 0.85,
           child: SizedBox(
             width: context.mediaQuery.size.width * 0.15,

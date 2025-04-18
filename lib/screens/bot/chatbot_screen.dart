@@ -52,48 +52,67 @@ class ChatbotScreen extends StatelessWidget {
                 controller: chatbotViewModel.chatScrollController,
                 reverse: false,
                 padding: const EdgeInsets.all(10),
-                children:
-                    chatbotViewModel.currentMessages.map((m) => ChatbotBubble(msg: m)).toList(),
+                children: chatbotViewModel.currentMessages.map((m) => ChatbotBubble(msg: m)).toList(),
               );
             }),
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    onTap: () {
-                      Future.delayed(Duration(milliseconds: 500), () {
-                        chatbotViewModel.scrollToBottom();
-                      });
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.only(topRight: Radius.circular(20), topLeft: Radius.circular(20)),
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.7),
+                  spreadRadius: 0,
+                  blurRadius: 5.0,
+                  offset: Offset(0, 0), // changes position of shadow
+                ),
+              ],
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.add_circle_outline, color: Colors.black, size: 30,),
+                    onPressed: () {
+                      // 사진 추가 최대 2장
                     },
-                    controller: chatbotViewModel.controller,
-                    decoration: InputDecoration(
-                      hintText: "메시지를 입력하세요...",
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20),
+                  ),
+                  Expanded(
+                    child: TextField(
+                      onTap: () {
+                        Future.delayed(Duration(milliseconds: 500), () {
+                          chatbotViewModel.scrollToBottom();
+                        });
+                      },
+                      controller: chatbotViewModel.controller,
+                      decoration: InputDecoration(
+                        hintText: "메시지를 입력하세요...",
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
                       ),
                     ),
                   ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.send, color: AppConfig.mainColor),
-                  onPressed: () {
-                    // 챗봇 형식 정해야됨
-                    if (chatbotViewModel.controller.text.isNotEmpty) {
-                      // 채팅 추가
-                      final newMsg = ChatbotMsg(
-                          sendDatetime: DateTime.now().millisecondsSinceEpoch,
-                          content: chatbotViewModel.controller.text,
-                          isMe: true,
-                          imagePath: []);
-                      chatbotViewModel.sendMsg(newMsg);
-                      chatbotViewModel.controller.clear();
-                    }
-                  },
-                ),
-              ],
+                  // IconButton(
+                  //   icon: const Icon(Icons.send, color: Colors.black, size: 30),
+                  //   onPressed: () {
+                  //     // 챗봇 형식 정해야됨
+                  //     if (chatbotViewModel.controller.text.isNotEmpty) {
+                  //       // 채팅 추가
+                  //       final newMsg = ChatbotMsg(
+                  //           sendDatetime: DateTime.now().millisecondsSinceEpoch,
+                  //           content: chatbotViewModel.controller.text,
+                  //           isMe: true,
+                  //           imagePath: []);
+                  //       chatbotViewModel.sendMsg(newMsg);
+                  //       chatbotViewModel.controller.clear();
+                  //     }
+                  //   },
+                  // ),
+                ],
+              ),
             ),
           ),
         ],
