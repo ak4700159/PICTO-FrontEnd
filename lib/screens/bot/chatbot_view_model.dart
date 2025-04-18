@@ -3,15 +3,26 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
+import 'package:multi_image_picker_view/multi_image_picker_view.dart';
 import 'package:picto_frontend/models/chatbot_msg.dart';
 import 'package:picto_frontend/models/chatbot_room.dart';
 import 'package:picto_frontend/services/chatbot_manager_api/chatbot_api.dart';
 
+import '../../utils/picker.dart';
+
 class ChatbotViewModel extends GetxController {
-  final TextEditingController controller = TextEditingController();
-  final FocusNode inputFocusNode = FocusNode();
-  final ScrollController chatScrollController = ScrollController();
-  RxList currentMessages = [].obs;
+  final textEditorController = TextEditingController();
+  final inputFocusNode = FocusNode();
+  final chatScrollController = ScrollController();
+  final imagePickerController =  MultiImagePickerController(
+      maxImages: 2,
+      // pickImages 함수 실행 시 해당 콜백 함수 작동
+      picker: (int pickCount, Object? params) async {
+        return await pickImagesUsingImagePicker(pickCount);
+      });
+
+  RxList<ImageFile> currentSelectedImages = <ImageFile>[].obs;
+  RxList<ChatbotMsg> currentMessages = <ChatbotMsg>[].obs;
   Rxn<ChatbotRoom> currentRoom = Rxn();
   RxList<ChatbotRoom> chatbotRooms = <ChatbotRoom>[].obs;
   RxBool isSending = false.obs;
@@ -38,7 +49,7 @@ class ChatbotViewModel extends GetxController {
   @override
   void onClose() {
     inputFocusNode.dispose();
-    controller.dispose();
+    textEditorController.dispose();
     chatScrollController.dispose();
     super.onClose();
     box.close();
@@ -65,8 +76,13 @@ class ChatbotViewModel extends GetxController {
   }
 
   // 갤러리에서 사진 선택
+  Future<void> pickPhotos() async {
+    imagePickerController.pickImages();
+    imagePickerController.images;
+  }
 
   // 선택한 사진 삭제
+
 
   // 채팅방 선택
   void selectChatRoom(int createdDatetime) {

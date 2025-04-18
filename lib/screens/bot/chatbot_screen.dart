@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:multi_image_picker_view/multi_image_picker_view.dart';
 import 'package:picto_frontend/models/chatbot_msg.dart';
 import 'package:picto_frontend/models/chatbot_room.dart';
 import 'package:picto_frontend/screens/bot/chatbot_bubble.dart';
@@ -14,11 +15,8 @@ import '../profile/profile_view_model.dart';
 
 class ChatbotScreen extends StatelessWidget {
   ChatbotScreen({super.key});
-
   final profileViewModel = Get.find<ProfileViewModel>();
   final chatbotViewModel = Get.find<ChatbotViewModel>();
-
-  // ChatbotRoom chatbotRoom = Get.arguments["list"];
 
   @override
   Widget build(BuildContext context) {
@@ -71,46 +69,54 @@ class ChatbotScreen extends StatelessWidget {
             ),
             child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Row(
+              child: Column(
                 children: [
-                  IconButton(
-                    icon: const Icon(Icons.add_circle_outline, color: Colors.black, size: 30,),
-                    onPressed: () {
-                      // 사진 추가 최대 2장
-                    },
-                  ),
-                  Expanded(
-                    child: TextField(
-                      onTap: () {
-                        Future.delayed(Duration(milliseconds: 500), () {
-                          chatbotViewModel.scrollToBottom();
-                        });
-                      },
-                      controller: chatbotViewModel.controller,
-                      decoration: InputDecoration(
-                        hintText: "메시지를 입력하세요...",
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20),
+                  // 사진이 있는 경우
+                  MultiImagePickerView(controller: chatbotViewModel.imagePickerController,),
+                  // 택스트폼 + 추가
+                  Row(
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.add_circle_outline, color: Colors.black, size: 30,),
+                        onPressed: () {
+                          // 사진 추가 최대 2장
+                        },
+                      ),
+                      Expanded(
+                        child: TextField(
+                          onTap: () {
+                            Future.delayed(Duration(milliseconds: 500), () {
+                              chatbotViewModel.scrollToBottom();
+                            });
+                          },
+                          controller: chatbotViewModel.textEditorController,
+                          decoration: InputDecoration(
+                            hintText: "메시지를 입력하세요...",
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                          ),
                         ),
                       ),
-                    ),
+                      // 추가 버튼은 안넣어도 될듯? submit 콜백 함수 활용
+                      // IconButton(
+                      //   icon: const Icon(Icons.send, color: Colors.black, size: 30),
+                      //   onPressed: () {
+                      //     // 챗봇 형식 정해야됨
+                      //     if (chatbotViewModel.controller.text.isNotEmpty) {
+                      //       // 채팅 추가
+                      //       final newMsg = ChatbotMsg(
+                      //           sendDatetime: DateTime.now().millisecondsSinceEpoch,
+                      //           content: chatbotViewModel.controller.text,
+                      //           isMe: true,
+                      //           imagePath: []);
+                      //       chatbotViewModel.sendMsg(newMsg);
+                      //       chatbotViewModel.controller.clear();
+                      //     }
+                      //   },
+                      // ),
+                    ],
                   ),
-                  // IconButton(
-                  //   icon: const Icon(Icons.send, color: Colors.black, size: 30),
-                  //   onPressed: () {
-                  //     // 챗봇 형식 정해야됨
-                  //     if (chatbotViewModel.controller.text.isNotEmpty) {
-                  //       // 채팅 추가
-                  //       final newMsg = ChatbotMsg(
-                  //           sendDatetime: DateTime.now().millisecondsSinceEpoch,
-                  //           content: chatbotViewModel.controller.text,
-                  //           isMe: true,
-                  //           imagePath: []);
-                  //       chatbotViewModel.sendMsg(newMsg);
-                  //       chatbotViewModel.controller.clear();
-                  //     }
-                  //   },
-                  // ),
                 ],
               ),
             ),
