@@ -26,6 +26,7 @@ class ChatbotViewModel extends GetxController {
   Rxn<ChatbotRoom> currentRoom = Rxn();
   RxList<ChatbotRoom> chatbotRooms = <ChatbotRoom>[].obs;
   RxBool isSending = false.obs;
+  RxBool isUp = false.obs;
   late Box box;
 
   @override
@@ -62,7 +63,7 @@ class ChatbotViewModel extends GetxController {
     box.put(newMsg.sendDatetime.toString(), newMsg);
 
     isSending.value = true;
-    // 이것만 구현!!
+    // 이것만 구현 -> 선택된 이미지가 있는지 확인!!
     // newMsg.imagePath;
     String response = await ChatbotAPI().sendPrompt(newMsg.content, []);
     final chatbotMsg = ChatbotMsg(
@@ -75,10 +76,12 @@ class ChatbotViewModel extends GetxController {
     box.put(chatbotMsg.sendDatetime.toString(), chatbotMsg);
   }
 
+
   // 갤러리에서 사진 선택
   Future<void> pickPhotos() async {
     imagePickerController.pickImages();
-    imagePickerController.images;
+    currentSelectedImages.clear();
+    currentSelectedImages.addAll(imagePickerController.images);
   }
 
   // 선택한 사진 삭제
@@ -104,7 +107,14 @@ class ChatbotViewModel extends GetxController {
   }
 
   // 채팅방 삭제
-  void removeChatbotRoom(int createdDatetime) {}
+  void removeChatbotRoom(int createdDatetime) {
+    chatbotRooms.removeWhere((room) => room.createdDatetime == createdDatetime);
+    box.delete(createdDatetime.toString());
+  }
+
+  void toggleIsUp() {
+    isUp.value = !isUp.value;
+  }
 
   // 최하단으로 스크롤 이동
   void scrollToBottom() {

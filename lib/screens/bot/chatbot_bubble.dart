@@ -20,9 +20,23 @@ class ChatbotBubble extends StatelessWidget {
                 mainAxisAlignment: msg.isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                    msg.content,
-                    style: TextStyle(color: Colors.white, fontFamily: "Roboto", fontWeight: FontWeight.bold),
+                  // 사진 있으면 사진 처리
+                  Container(
+                    margin: EdgeInsets.all(4),
+                    padding: const EdgeInsets.all(4.0),
+                    decoration: BoxDecoration(
+                      color:Colors.grey.shade200,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(30),
+                        topRight: Radius.circular(5),
+                        bottomLeft: Radius.circular(30),
+                        bottomRight: Radius.circular(30),
+                      ),
+                    ),
+                    child: Text(
+                      msg.content,
+                      style: TextStyle(color: AppConfig.mainColor, fontFamily: "NotoSansKR", fontWeight: FontWeight.w600),
+                    ),
                   ),
                 ],
               )
@@ -31,44 +45,65 @@ class ChatbotBubble extends StatelessWidget {
                 mainAxisAlignment: msg.isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  // 사진 있으면 사진 처리
                   Expanded(
-                    flex: 1,
+                    flex: 2,
                     child: Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: Image.asset(
-                        'assets/images/pictory_color.png',
-                        scale: 5,
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(4.0),
+                            decoration:
+                                BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(100)),
+                            child: Image.asset(
+                              'assets/images/pictory_color.png',
+                              scale: 5,
+                            ),
+                          ),
+                          Text(
+                            "PICTORY",
+                            style: TextStyle(
+                                color: Colors.black, fontFamily: "NotoSansKR", fontWeight: FontWeight.w600, fontSize: 11),
+                          )
+                        ],
                       ),
                     ),
                   ),
                   Expanded(
-                    flex: 6,
-                    child: Container(
-                      margin: const EdgeInsets.symmetric(vertical: 2),
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: msg.isMe ? AppConfig.mainColor : Colors.grey[300],
-                        borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(5),
-                            topRight: Radius.circular(30),
-                            bottomLeft: Radius.circular(30),
-                            bottomRight: Radius.circular(30)),
-                      ),
-                      child: Text(
-                        "  ${msg.content}",
-                        style: TextStyle(color: Colors.black, fontFamily: "Roboto", fontWeight: FontWeight.bold),
-                        overflow: TextOverflow.visible,
-                        maxLines: 10,
-                      ),
+                    flex: 8,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          margin: const EdgeInsets.symmetric(vertical: 2),
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: msg.isMe ? Colors.grey : AppConfig.mainColor,
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(5),
+                              topRight: Radius.circular(30),
+                              bottomLeft: Radius.circular(30),
+                              bottomRight: Radius.circular(30),
+                            ),
+                          ),
+                          child: Text(
+                            msg.content,
+                            style: TextStyle(color: Colors.white, fontFamily: "NotoSansKR", fontWeight: FontWeight.w500),
+                            overflow: TextOverflow.visible,
+                            maxLines: 10,
+                          ),
+                        ),
+                        // 채팅 날짜
+                        Text(
+                          formatDate(msg.sendDatetime).substring("0000-".length),
+                          style: TextStyle(fontSize: 10, color: Colors.grey, fontFamily: "NotoSansKR"),
+                        )
+                      ],
                     ),
                   ),
                 ],
               ),
-        // 채팅 날짜
-        Text(
-          formatDate(msg.sendDatetime).substring("0000-".length),
-          style: TextStyle(fontSize: 10, color: Colors.grey, fontFamily: "Roboto"),
-        )
       ],
     );
   }

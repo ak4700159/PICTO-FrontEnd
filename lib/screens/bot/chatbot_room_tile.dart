@@ -15,15 +15,15 @@ class ChatbotRoomTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(5.0),
       child: Container(
         padding: EdgeInsets.all(4),
         decoration: BoxDecoration(
-          border: Border.all(width: 1, color: Colors.grey),
+          borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
               color: Colors.grey,
-              blurRadius: 8, // 흐림 정도
+              blurRadius: 4, // 흐림 정도
               spreadRadius: 1, // 그림자 확산 정도
               offset: Offset(2, 5), // 그림자 위치 조정
             )
@@ -33,21 +33,24 @@ class ChatbotRoomTile extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Icon(
-              Icons.contact_page,
-              color: getColorFromUserId(chatbotList.createdDatetime),
-            ),
+            // Icon(
+            //   Icons.contact_page,
+            //   color: getColorFromUserId(chatbotList.createdDatetime),
+            // ),
             Expanded(
-              flex: 3,
-              child: Text(
-                chatbotList.listName ?? "${formatDate(chatbotList.createdDatetime)} 대화 내용   ",
-                style: TextStyle(fontFamily: "NotoSansKR", fontWeight: FontWeight.w600, fontSize: 15),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+              flex: 2,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  chatbotList.listName ?? "${formatDate(chatbotList.messages.first.sendDatetime).substring("0000-".length, "0000-00-00".length)}",
+                  style: TextStyle(fontFamily: "NotoSansKR", fontWeight: FontWeight.w600, fontSize: 15),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
             ),
             Expanded(
-              flex: 4,
+              flex: 7,
               child: Text(
                 chatbotList.messages.isEmpty ? "  아직 채팅 내용이 없습니다" : chatbotList.messages.last.content,
                 style: TextStyle(fontFamily: "NotoSansKR", fontWeight: FontWeight.w200, fontSize: 12),
@@ -55,76 +58,25 @@ class ChatbotRoomTile extends StatelessWidget {
               ),
             ),
             Expanded(
-              flex: 1,
-              child: PopupMenuButton<String>(
-                color: Colors.white,
-                icon: const Icon(Icons.more_vert, color: AppConfig.mainColor),
-                onSelected: (value) {
-                  switch (value) {
-                    case "delete":
-                      break;
-                    case "modify":
-                      break;
-                    case "enter":
-                      break;
-                  }
-                },
-                itemBuilder: (context) => [
-                  PopupMenuItem(
-                    value: "delete",
-                    onTap: () {},
-                    child: Row(
-                      children: [
-                        Icon(Icons.folder_delete, color: AppConfig.mainColor),
-                        const Text(
-                          " 채팅방 삭제",
-                          style: TextStyle(fontFamily: "NotoSansKR", fontWeight: FontWeight.w600, fontSize: 13),
-                        ),
-                      ],
-                    ),
-                  ),
-                  PopupMenuItem(
-                    value: "modify",
-                    onTap: () {
-                      // 화면 수정 팝업 보여주기
-                    },
-                    child: Row(
-                      children: [
-                        Icon(Icons.folder_shared_rounded, color: AppConfig.mainColor,),
-                        Text(
-                          " 채팅방 제목 수정",
-                          style: TextStyle(fontFamily: "NotoSansKR", fontWeight: FontWeight.w600, fontSize: 13),
-                        ),
-                      ],
-                    ),
-                  ),
-                  PopupMenuItem(
-                    value: "enter",
-                    onTap: () {
+              flex: 2,
+              child: Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: IconButton(
+                    onPressed: () {
                       final chatbotViewModel = Get.find<ChatbotViewModel>();
                       chatbotViewModel.selectChatRoom(chatbotList.createdDatetime);
                       Get.toNamed('/chatbot');
                     },
-                    child: Row(
-                      children: [
-                        Icon(Icons.arrow_forward, color: AppConfig.mainColor),
-                        Text(
-                          " 채팅방 입장",
-                          style: TextStyle(fontFamily: "NotoSansKR", fontWeight: FontWeight.w600, fontSize: 13),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+                    icon: Icon(
+                      Icons.meeting_room_outlined,
+                      color: AppConfig.mainColor,
+                      size: 30,
+                    )),
               ),
             ),
           ],
         ),
       ),
     );
-  }
-
-  void _showTitleModifyPopup() {
-
   }
 }
