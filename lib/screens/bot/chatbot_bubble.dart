@@ -1,51 +1,67 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:picto_frontend/config/app_config.dart';
+import 'package:picto_frontend/models/chatbot_msg.dart';
 import 'package:picto_frontend/models/chatting_msg.dart';
 import 'package:picto_frontend/services/user_manager_service/user_api.dart';
 import 'package:picto_frontend/utils/util.dart';
 
 class ChatbotBubble extends StatelessWidget {
-  final ChatMsg msg;
+  final ChatbotMsg msg;
 
   const ChatbotBubble({super.key, required this.msg});
 
   @override
   Widget build(BuildContext context) {
-    bool isMe = UserManagerApi().ownerId == msg.userId ? true : false;
     return Column(
-      crossAxisAlignment: isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start  ,
+      crossAxisAlignment: msg.isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
       children: [
         // 채팅 내역
         Container(
+          // width: context.mediaQuery.size.width * 0.7,
           margin: const EdgeInsets.symmetric(vertical: 2),
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: isMe ? AppConfig.mainColor : Colors.grey[300],
+            color: msg.isMe ? AppConfig.mainColor : Colors.grey[300],
             borderRadius: BorderRadius.circular(15),
           ),
-          child: isMe
+          child: msg.isMe
               ? Row(
-                  mainAxisAlignment: isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+                  mainAxisAlignment: msg.isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
                       msg.content,
-                      style: TextStyle(color: Colors.white, fontFamily: "Roboto", fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          color: Colors.white, fontFamily: "Roboto", fontWeight: FontWeight.bold),
                     ),
                   ],
                 )
               : Row(
-                  mainAxisAlignment: isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: msg.isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(
-                      Icons.person_pin,
-                      color: getColorFromUserId(msg.userId),
+                    Expanded(
+                      flex: 1,
+                      child: Padding(
+                        padding: const EdgeInsets.all(4.0),
+                        child: Image.asset(
+                          'assets/images/pictory_color.png',
+                          scale: 5,
+                        ),
+                      ),
                     ),
-                    Text(
-                      "  ${msg.content}",
-                      style: TextStyle(color: Colors.black, fontFamily: "Roboto", fontWeight: FontWeight.bold),
+                    Expanded(
+                      flex: 6,
+                      child: Text(
+                        "  ${msg.content}",
+                        style: TextStyle(
+                            color: Colors.black, fontFamily: "Roboto", fontWeight: FontWeight.bold),
+                        overflow: TextOverflow.visible,
+                        maxLines: 10,
+                      ),
                     ),
                   ],
                 ),

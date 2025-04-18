@@ -26,23 +26,20 @@ class ChatbotAPI {
   )..interceptors.add(CustomInterceptor());
 
   // 프롬프트 전달
-  Future<String> sendPrompt(String query, File? file1, File? file2 ) async {
-    MultipartFile? sendFile1; MultipartFile? sendFile2;
+  Future<String> sendPrompt(String query, List<File>? files ) async {
+    List<MultipartFile> sendFiles = [];
     try {
-      if(file1 != null) {
-        final fileName = file1.path.split('/').last;
-        final mimeType = lookupMimeType(file1.path) ?? 'application/octet-stream';
-        sendFile1 = await MultipartFile.fromFile(file1.path, filename: fileName, contentType: MediaType.parse(mimeType));
-      }
-      if(file2 != null) {
-        final fileName = file2.path.split('/').last;
-        final mimeType = lookupMimeType(file2.path) ?? 'application/octet-stream';
-        sendFile2= await MultipartFile.fromFile(file2.path, filename: fileName, contentType: MediaType.parse(mimeType));
+      if(files != null) {
+        for(File file in files) {
+          final fileName = file.path.split('/').last;
+          final mimeType = lookupMimeType(file.path) ?? 'application/octet-stream';
+          sendFiles.add(await MultipartFile.fromFile(file.path, filename: fileName, contentType: MediaType.parse(mimeType)));
+        }
       }
       final formData = FormData.fromMap({
         "text" : query,
-        if(sendFile1 != null) "image1" : sendFile1,
-        if(sendFile2 != null) "image2" : sendFile2,
+        if (sendFiles.isNotEmpty && files != null) "image1": sendFiles[0],
+        if (sendFiles.length > 1 && files != null) "image2": sendFiles[1],
       });
       final response = await dio.post("$baseUrl/process",  data: formData);
       String data = response.data["response"];

@@ -87,8 +87,8 @@ class ChatbotListScreen extends StatelessWidget {
           height: context.mediaQuery.size.height * 0.06,
           child: FloatingActionButton(
             onPressed: () {
-              // 사진 공유 화면으로 이동
-              // Get.toNamed('/ro');
+              final chatbotViewModel = Get.find<ChatbotViewModel>();
+              chatbotViewModel.addChatbotRoom();
             },
             backgroundColor: Colors.blueAccent,
             heroTag: "room-create",

@@ -1,7 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
+import 'package:picto_frontend/models/chatbot_msg.dart';
 import 'package:picto_frontend/models/chatbot_room.dart';
+import 'package:picto_frontend/services/chatbot_manager_api/chatbot_api.dart';
 
 class ChatbotViewModel extends GetxController {
   final TextEditingController controller = TextEditingController();
@@ -10,6 +14,7 @@ class ChatbotViewModel extends GetxController {
   RxList currentMessages = [].obs;
   Rxn<ChatbotRoom> currentRoom = Rxn();
   RxList<ChatbotRoom> chatbotRooms = <ChatbotRoom>[].obs;
+  RxBool isSending = false.obs;
   late Box box;
 
   @override
@@ -40,15 +45,33 @@ class ChatbotViewModel extends GetxController {
   }
 
   // 채팅 전달 + 응답 처리
+  void sendMsg(ChatbotMsg newMsg) async {
+    currentMessages.add(newMsg);
+    currentRoom.value?.messages.add(newMsg);
+    box.put(newMsg.sendDatetime.toString(), newMsg);
 
-  // 사진 선택
+    isSending.value = true;
+    // 이것만 구현!!
+    // newMsg.imagePath;
+    String response = await ChatbotAPI().sendPrompt(newMsg.content, []);
+    final chatbotMsg = ChatbotMsg(
+        sendDatetime: DateTime.now().millisecondsSinceEpoch,
+        content: response,
+        isMe: false,
+        imagePath: []);
+    currentMessages.add(chatbotMsg);
+    currentRoom.value?.messages.add(chatbotMsg);
+    box.put(chatbotMsg.sendDatetime.toString(), chatbotMsg);
+  }
+
+  // 갤러리에서 사진 선택
 
   // 선택한 사진 삭제
 
   // 채팅방 선택
   void selectChatRoom(int createdDatetime) {
-    for(var room in chatbotRooms) {
-      if(room.createdDatetime == createdDatetime){
+    for (var room in chatbotRooms) {
+      if (room.createdDatetime == createdDatetime) {
         currentMessages.clear();
         currentMessages.addAll(room.messages);
         currentRoom.value = room;

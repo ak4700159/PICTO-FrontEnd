@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:picto_frontend/models/chatbot_msg.dart';
 import 'package:picto_frontend/models/chatbot_room.dart';
 import 'package:picto_frontend/screens/bot/chatbot_bubble.dart';
 import 'package:picto_frontend/screens/bot/chatbot_view_model.dart';
@@ -13,8 +14,10 @@ import '../profile/profile_view_model.dart';
 
 class ChatbotScreen extends StatelessWidget {
   ChatbotScreen({super.key});
+
   final profileViewModel = Get.find<ProfileViewModel>();
   final chatbotViewModel = Get.find<ChatbotViewModel>();
+
   // ChatbotRoom chatbotRoom = Get.arguments["list"];
 
   @override
@@ -79,13 +82,13 @@ class ChatbotScreen extends StatelessWidget {
                   onPressed: () {
                     // 챗봇 형식 정해야됨
                     if (chatbotViewModel.controller.text.isNotEmpty) {
-                      // final newMsg = (
-                      //   content: chatbotViewModel.controller.text,
-                      //   sendDatetime: DateTime.now().millisecondsSinceEpoch,
-                      //   userId: UserManagerApi().ownerId!,
-                      //   accountName: profileViewModel.accountName.value,
-                      // );
-                      // folderViewModel.currentMsgList.add(newMsg);
+                      // 채팅 추가
+                      final newMsg = ChatbotMsg(
+                          sendDatetime: DateTime.now().millisecondsSinceEpoch,
+                          content: chatbotViewModel.controller.text,
+                          isMe: true,
+                          imagePath: []);
+                      chatbotViewModel.sendMsg(newMsg);
                       chatbotViewModel.controller.clear();
                     }
                   },
