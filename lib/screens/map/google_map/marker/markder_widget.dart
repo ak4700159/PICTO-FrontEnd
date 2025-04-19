@@ -17,7 +17,7 @@ class MarkerWidget extends StatelessWidget {
     Color _borderColor = switch (type) {
       PictoMarkerType.userPhoto => Colors.white,
       PictoMarkerType.folderPhoto => Colors.grey,
-      PictoMarkerType.representativePhoto => AppConfig.mainColor,
+      PictoMarkerType.representativePhoto => Colors.white,
       PictoMarkerType.aroundPhoto => Colors.blueAccent,
       PictoMarkerType.userPos => Colors.blue,
     };
@@ -38,8 +38,8 @@ class MarkerWidget extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(
-        width: type == PictoMarkerType.userPos ? 30 : 100,
-        height: type == PictoMarkerType.userPos ? 30 : 100,
+        width: type == PictoMarkerType.userPos ? 30 : 85,
+        height: type == PictoMarkerType.userPos ? 30 : 85,
         decoration: decoration,
         child: ClipRRect(
           borderRadius: BorderRadius.circular(16),

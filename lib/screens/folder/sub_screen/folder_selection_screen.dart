@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:picto_frontend/screens/folder/folder_view_model.dart';
 import 'package:picto_frontend/screens/folder/sub_screen/folder_selection_view_model.dart';
 import 'package:picto_frontend/screens/map/top_box.dart';
-import 'package:picto_frontend/utils/util.dart';
+import 'package:picto_frontend/utils/functions.dart';
 
 import '../../../config/app_config.dart';
 import '../../../models/folder.dart';

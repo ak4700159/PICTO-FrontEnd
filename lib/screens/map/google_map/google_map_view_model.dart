@@ -17,7 +17,7 @@ import 'package:widget_to_marker/widget_to_marker.dart';
 
 import '../../../models/folder.dart';
 import '../../../utils/distance.dart';
-import '../../../utils/util.dart';
+import '../../../utils/functions.dart';
 import 'cluster/picto_cluster_manager.dart';
 import 'marker/marker_converter.dart';
 import 'marker/animated_marker_widget.dart';
@@ -399,7 +399,7 @@ class GoogleMapViewModel extends GetxController {
   }
 
   Future<void> _loadRepresentative(String downloadType) async {
-    Set<PictoMarker> newMarkers = await _converter.getRepresentativePhotos(3, downloadType);
+    Set<PictoMarker> newMarkers = await _converter.getRepresentativePhotos(1, downloadType);
     representativePhotos[downloadType]?.addAll(newMarkers);
     Set<PictoMarker> toAdd = {};
     for (PictoMarker pictoMarker in representativePhotos[downloadType]!) {

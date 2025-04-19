@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
@@ -7,14 +8,19 @@ import 'package:multi_image_picker_view/multi_image_picker_view.dart';
 import 'package:picto_frontend/models/chatbot_msg.dart';
 import 'package:picto_frontend/models/chatbot_room.dart';
 import 'package:picto_frontend/services/chatbot_manager_api/chatbot_api.dart';
+import 'package:picto_frontend/services/chatbot_manager_api/prompt_response.dart';
+import 'package:picto_frontend/services/photo_manager_service/photo_manager_api.dart';
 
+import '../../models/photo.dart';
+import '../../models/photo_data.dart';
+import '../../utils/functions.dart';
 import '../../utils/picker.dart';
 
 class ChatbotViewModel extends GetxController {
   final textEditorController = TextEditingController();
   final inputFocusNode = FocusNode();
   final chatScrollController = ScrollController();
-  final imagePickerController =  MultiImagePickerController(
+  final imagePickerController = MultiImagePickerController(
       maxImages: 2,
       // pickImages 함수 실행 시 해당 콜백 함수 작동
       picker: (int pickCount, Object? params) async {
@@ -25,9 +31,11 @@ class ChatbotViewModel extends GetxController {
   RxList<ChatbotMsg> currentMessages = <ChatbotMsg>[].obs;
   Rxn<ChatbotRoom> currentRoom = Rxn();
   RxList<ChatbotRoom> chatbotRooms = <ChatbotRoom>[].obs;
+  RxList<bool> currentCheckbox = <bool>[].obs;
   RxBool isSending = false.obs;
   RxBool isUp = false.obs;
   RxBool isDelete = false.obs;
+  RxDouble opacity = 1.0.obs;
   late Box box;
 
   @override
@@ -59,31 +67,29 @@ class ChatbotViewModel extends GetxController {
 
   // 채팅 전달 + 응답 처리
   void sendMsg(ChatbotMsg newMsg) async {
+    List<PhotoData> images = [];
+    isSending.value = true;
+    if (currentSelectedImages.isNotEmpty) {
+      for (ImageFile file in currentSelectedImages) {
+        images.add(PhotoData(data: await File(file.path!).readAsBytes()));
+      }
+    }
+    imagePickerController.images = [];
+    newMsg.images = images;
     currentMessages.add(newMsg);
     currentRoom.value?.messages.add(newMsg);
-    box.put(newMsg.sendDatetime.toString(), newMsg);
-
-    isSending.value = true;
-    // 이것만 구현 -> 선택된 이미지가 있는지 확인!!
-    // newMsg.imagePath;
-    String response = await ChatbotAPI().sendPrompt(newMsg.content, []);
+    PromptResponse? response = await ChatbotAPI().sendPrompt(newMsg.content, images.map((data) => data.data).toList());
+    if (response == null) return;
     final chatbotMsg = ChatbotMsg(
         sendDatetime: DateTime.now().millisecondsSinceEpoch,
-        content: response,
+        content: response.response,
         isMe: false,
-        imagePath: []);
+        images: response.photos);
     currentMessages.add(chatbotMsg);
     currentRoom.value?.messages.add(chatbotMsg);
-    box.put(chatbotMsg.sendDatetime.toString(), chatbotMsg);
-  }
-
-
-  // 갤러리에서 사진 선택
-  Future<void> pickPhotos() async {
-    imagePickerController.pickImages();
+    box.put(currentRoom.value?.createdDatetime.toString(), currentRoom.value);
+    isSending.value = false;
     currentSelectedImages.clear();
-    currentSelectedImages.addAll(imagePickerController.images);
-    print("[INFO] selected photo length : ${currentSelectedImages.length}");
   }
 
   // 채팅방 선택
@@ -116,6 +122,10 @@ class ChatbotViewModel extends GetxController {
     isUp.value = !isUp.value;
   }
 
+  void toggleIsDelete() {
+    isDelete.value = !isDelete.value;
+  }
+
   // 최하단으로 스크롤 이동
   void scrollToBottom() {
     if (chatScrollController.hasClients) {
@@ -135,18 +145,28 @@ class ChatbotViewModel extends GetxController {
     return (max - current).abs() < 50; // 여유값 50px
   }
 
-  // 그룹핑 월별로
+  // 월별로 그룹핑
   Map<String, List<ChatbotRoom>> groupChatbotRoomsByMonth() {
     Map<String, List<ChatbotRoom>> grouped = {};
-
     for (var room in chatbotRooms) {
       DateTime created = DateTime.fromMillisecondsSinceEpoch(room.createdDatetime);
       String monthKey = '${created.year}-${created.month.toString().padLeft(2, '0')}';
-
       grouped.putIfAbsent(monthKey, () => []);
       grouped[monthKey]!.add(room);
     }
-
     return grouped;
+  }
+
+  // 검색한 사진 선택
+  Future<void> selectPhoto(int photoId, Uint8List data) async {
+    Photo? photo = await PhotoManagerApi().getPhoto(photoId: photoId);
+    // 사진 검색 실패 시
+    if (photo == null) return;
+    final fit = await determineFit(data);
+    Get.toNamed('/chatbot/photo', arguments: {
+      "photo": photo,
+      "data": data,
+      "fit": fit,
+    });
   }
 }

@@ -1,4 +1,7 @@
-import 'dart:ui';
+import 'dart:typed_data';
+import 'dart:ui' as ui;
+
+import 'package:flutter/cupertino.dart';
 
 import '../screens/map/google_map/marker/picto_marker.dart';
 
@@ -28,4 +31,19 @@ String formatDate(int timestamp) {
   // print("[INFO] time : $timestamp");
   final date = DateTime.fromMillisecondsSinceEpoch(timestamp);
   return date.toLocal().toString().substring(0, "0000-00-00 00:00".length);
+}
+
+Future<BoxFit> determineFit(Uint8List data) async {
+  final codec = await ui.instantiateImageCodec(data);
+  final frame = await codec.getNextFrame();
+  final image = frame.image;
+
+  final width = image.width;
+  final height = image.height;
+
+  if (width > height) {
+    return BoxFit.fitWidth;
+  } else {
+    return BoxFit.cover;
+  }
 }

@@ -12,7 +12,7 @@ import 'package:picto_frontend/widgets/picto_logo.dart';
 
 import '../../../../models/notice.dart';
 import '../../../../models/user.dart';
-import '../../../../utils/util.dart';
+import '../../../../utils/functions.dart';
 
 class FolderInvitationScreen extends StatelessWidget {
   @override

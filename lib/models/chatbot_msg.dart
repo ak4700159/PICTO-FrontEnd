@@ -1,5 +1,6 @@
-
 import 'package:hive/hive.dart';
+import 'package:picto_frontend/models/photo_data.dart';
+
 
 part "chatbot_msg.g.dart";
 
@@ -12,6 +13,6 @@ class ChatbotMsg {
   @HiveField(2)
   bool isMe;
   @HiveField(3)
-  List<String> imagePath = [];
-  ChatbotMsg({required this.sendDatetime, required this.content, required this.isMe, required this.imagePath});
+  List<PhotoData> images = [];
+  ChatbotMsg({required this.sendDatetime, required this.content, required this.isMe, required this.images});
 }

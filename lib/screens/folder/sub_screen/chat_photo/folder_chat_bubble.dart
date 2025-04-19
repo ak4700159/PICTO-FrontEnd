@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:picto_frontend/config/app_config.dart';
 import 'package:picto_frontend/models/chatting_msg.dart';
 import 'package:picto_frontend/services/user_manager_service/user_api.dart';
-import 'package:picto_frontend/utils/util.dart';
+import 'package:picto_frontend/utils/functions.dart';
 
 class ChatBubble extends StatelessWidget {
   final ChatMsg msg;

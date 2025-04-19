@@ -47,9 +47,10 @@ class CustomGoogleMap extends StatelessWidget {
             circles: googleMapViewModel.circles,
           ),
         ),
+        // 위젯 정보 표시
         CustomInfoWindow(
           controller: googleMapViewModel.customInfoWindowController,
-          height: 70,
+          height: 55,
           width: 75,
           offset: 20,
         ),

@@ -11,7 +11,8 @@ import 'package:picto_frontend/screens/login/sub_screen/passwd_setting_screen.da
 import 'package:picto_frontend/screens/main_frame.dart';
 import 'package:picto_frontend/screens/login/sub_screen/register_screen.dart';
 import 'package:picto_frontend/screens/map/tag/tag_selection_screen.dart';
-import 'package:picto_frontend/screens/photo/photo_screen.dart';
+import 'package:picto_frontend/screens/photo/photo_chatbot_screen.dart';
+import 'package:picto_frontend/screens/photo/photo_marker_screen.dart';
 import 'package:picto_frontend/screens/splash/splash_screen.dart';
 import 'package:picto_frontend/screens/upload/upload_screen.dart';
 import 'package:picto_frontend/test_screens/ksm_test_screen.dart';
@@ -27,7 +28,7 @@ class PageRouter{
       GetPage(name: '/register', page: () => RegisterScreen()),
       GetPage(name: '/map', page: () => MapScreen()),
       GetPage(name: '/passwd_setting', page: () => PasswdSettingScreen()),
-      GetPage(name: '/photo', page: () => PhotoScreen()),
+      GetPage(name: '/photo', page: () => PhotoMarkerScreen()),
       GetPage(name: '/upload', page: () => UploadScreen()),
       GetPage(name: '/tag', page: () => TagSelectionScreen()),
       // 폴더 관련 화면
@@ -37,8 +38,10 @@ class PageRouter{
       GetPage(name: '/folder/create', page: () => FolderCreateScreen()),
       GetPage(name: '/folder/invite', page: () => FolderInvitationScreen()),
       GetPage(name: '/folder/invite/send', page: () => FolderInvitationSendScreen()),
-
-      GetPage(name: '/chatbot', page: () => ChatbotScreen())
+      // 챗봇
+      GetPage(name: '/chatbot', page: () => ChatbotScreen()),
+      GetPage(name: '/chatbot/photo', page: () => PhotoChatbotScreen()),
+      // comfyUI ? 필요없을지도
     ];
     return pages;
   }

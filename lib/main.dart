@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:hive/hive.dart';
 import 'package:picto_frontend/models/chatbot_msg.dart';
+import 'package:picto_frontend/models/photo_data.dart';
 import 'package:picto_frontend/page_router.dart';
 import 'package:picto_frontend/theme.dart';
 import 'package:path_provider/path_provider.dart' show getApplicationDocumentsDirectory;
@@ -23,6 +24,7 @@ void main() async {
   Hive
     ..init(path)
     ..registerAdapter((ChatbotRoomAdapter()))
+    ..registerAdapter((PhotoDataAdapter()))
     ..registerAdapter(ChatbotMsgAdapter());
 
   // 환경 설정 파일 로드

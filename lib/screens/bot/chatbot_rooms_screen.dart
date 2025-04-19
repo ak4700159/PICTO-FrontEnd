@@ -33,11 +33,11 @@ class ChatbotListScreen extends StatelessWidget {
             ? _getFirstScreen(context)
             : SizedBox(
                 width: context.mediaQuery.size.width,
-                height: context.mediaQuery.size.height * 0.6,
+                // height: context.mediaQuery.size.height * 0.6,
                 child: SingleChildScrollView(
-                  child: Column(
-                    children: _getChatRoomTileList(),
-                  ),
+                  child: Obx(() => Column(
+                        children: _getChatRoomTileList(),
+                      )),
                 ),
               )),
       ),
@@ -67,7 +67,11 @@ class ChatbotListScreen extends StatelessWidget {
           },
           child: Text(
             "새로운 채팅방 생성",
-            style: TextStyle(fontFamily: "NotoSansKR", fontWeight: FontWeight.w600, fontSize: 20, color: Colors.white),
+            style: TextStyle(
+                fontFamily: "NotoSansKR",
+                fontWeight: FontWeight.w600,
+                fontSize: 20,
+                color: Colors.white),
           ),
         ),
       ),
@@ -75,8 +79,16 @@ class ChatbotListScreen extends StatelessWidget {
   }
 
   List<Widget> _getChatRoomTileList() {
+    List<Widget> result = [];
     final chatbotViewModel = Get.find<ChatbotViewModel>();
-    return chatbotViewModel.chatbotRooms.map((room) => ChatbotRoomTile(chatbotList: room)).toList();
+    final grouped = chatbotViewModel.groupChatbotRoomsByMonth();
+    grouped.forEach((month, roomList) {
+      result.add(ChatbotRoomTile(chatbotList: roomList.first, isTitle: true, date: month));
+      for (final room in roomList) {
+        result.add(ChatbotRoomTile(chatbotList: room, isTitle: false));
+      }
+    });
+    return result;
   }
 
   List<Widget> _getBottomRightFloatingButtons(BuildContext context) {

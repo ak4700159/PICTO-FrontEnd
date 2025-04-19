@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:picto_frontend/screens/map/top_box.dart';
-import 'package:picto_frontend/utils/util.dart';
+import 'package:picto_frontend/utils/functions.dart';
 import '../../../config/app_config.dart';
 import '../../../models/folder.dart';
 

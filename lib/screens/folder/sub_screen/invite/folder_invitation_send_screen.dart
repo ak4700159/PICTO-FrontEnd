@@ -8,7 +8,7 @@ import 'package:picto_frontend/screens/map/top_box.dart';
 import 'package:picto_frontend/utils/validator.dart';
 
 import '../../../../models/user.dart';
-import '../../../../utils/util.dart';
+import '../../../../utils/functions.dart';
 
 class FolderInvitationSendScreen extends StatelessWidget {
   const FolderInvitationSendScreen({super.key});

@@ -11,7 +11,7 @@ import 'package:picto_frontend/screens/map/google_map/cluster/picto_cluster_item
 import 'package:picto_frontend/screens/map/google_map/google_map_view_model.dart';
 import 'package:picto_frontend/services/photo_store_service/photo_store_api.dart';
 import '../../../../config/app_config.dart';
-import '../../../photo/photo_view_model.dart';
+import '../../../../utils/functions.dart';
 import '../marker/animated_marker_widget.dart';
 import '../marker/picto_marker.dart';
 
@@ -83,8 +83,7 @@ class PictoClusterManager {
                 height: MediaQuery.of(context).size.height * 0.3,
                 child: GestureDetector(
                   onTap: () async {
-                    PhotoViewModel photoViewModel = Get.find<PhotoViewModel>();
-                    BoxFit fit = await photoViewModel.determineFit(markers[index].imageData!);
+                    BoxFit fit = await determineFit(markers[index].imageData!);
                     Get.toNamed("/photo", arguments: {
                       "photo": markers[index].photo,
                       "data": markers[index].imageData,
@@ -126,7 +125,6 @@ class PictoClusterManager {
 
   void _setSinglePhoto(PictoMarker marker) {
     var googleMapViewModel = Get.find<GoogleMapViewModel>();
-    PhotoViewModel photoViewModel = Get.find<PhotoViewModel>();
     googleMapViewModel.customInfoWindowController.addInfoWindow!(
         Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -136,7 +134,7 @@ class PictoClusterManager {
               child: FloatingActionButton(
                 backgroundColor: AppConfig.mainColor,
                 onPressed: () async {
-                  BoxFit fit = await photoViewModel.determineFit(marker.imageData!);
+                  BoxFit fit = await determineFit(marker.imageData!);
                   Get.toNamed("/photo", arguments: {
                     "photo": marker.photo,
                     "data": marker.imageData,

@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:picto_frontend/config/app_config.dart';
 import 'package:picto_frontend/screens/folder/folder_list_screen.dart';
 import 'package:picto_frontend/screens/main_frame_view_model.dart';
+import 'package:picto_frontend/utils/popup.dart';
 
 import '../icon/picto_icons.dart';
 import '../test_screens/ksm_test_screen.dart';
@@ -46,10 +47,6 @@ class MapScreen extends StatelessWidget {
   // 하단 네비게이션바 호출마다 실행되는 함수
   Widget _getMainFrame(BuildContext context) {
     final mapViewModel = Get.find<MapViewModel>();
-    // final folderViewModel = Get.find<FolderViewModel>();
-    // if (mapViewModel.navigationBarCurrentIndex.value == 3) {
-    //   folderViewModel.isUpdate.value = false;
-    // }
     return switch (mapViewModel.navigationBarCurrentIndex.value) {
       // 수정필요 : 0 -> chat_photo bot / 1 -> comfy ui / 2 -> google map / 3 -> folder / 4 -> profile /
       0 => ChatbotListScreen(),

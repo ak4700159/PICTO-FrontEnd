@@ -11,10 +11,10 @@ import 'package:picto_frontend/services/user_manager_service/user_api.dart';
 import 'package:picto_frontend/utils/popup.dart';
 
 import '../../models/photo.dart';
-import '../../utils/util.dart';
+import '../../utils/functions.dart';
 
-class PhotoScreen extends StatelessWidget {
-  const PhotoScreen({super.key});
+class PhotoMarkerScreen extends StatelessWidget {
+  const PhotoMarkerScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

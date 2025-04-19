@@ -7,7 +7,6 @@ import 'package:picto_frontend/screens/folder/folder_view_model.dart';
 import 'package:picto_frontend/screens/folder/sub_screen/folder_selection_view_model.dart';
 import 'package:picto_frontend/screens/main_frame_view_model.dart';
 import 'package:picto_frontend/screens/map/tag/tag_selection_view_model.dart';
-import 'package:picto_frontend/screens/photo/photo_view_model.dart';
 import 'package:picto_frontend/screens/profile/profile_view_model.dart';
 import 'package:picto_frontend/screens/upload/upload_view_model.dart';
 
@@ -63,7 +62,6 @@ class AppConfig {
     final tagSelectionViewModel = Get.put<TagSelectionViewModel>(TagSelectionViewModel());
     final googleViewModel = Get.put<GoogleMapViewModel>(GoogleMapViewModel());
     final mapViewModel = Get.put<MapViewModel>(MapViewModel());
-    final photoViewModel = Get.put<PhotoViewModel>(PhotoViewModel());
     final uploadViewModel = Get.put<UploadViewModel>(UploadViewModel());
     final folderViewModel = Get.put<FolderViewModel>(FolderViewModel());
     final folderSelectionViewModel = Get.put<FolderSelectionViewModel>(FolderSelectionViewModel());

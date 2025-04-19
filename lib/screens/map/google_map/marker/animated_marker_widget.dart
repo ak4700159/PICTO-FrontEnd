@@ -14,24 +14,24 @@ class AnimatedMarkerWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Color _borderColor = switch (type) {
+    Color borderColor = switch (type) {
       PictoMarkerType.userPhoto => Colors.white,
       PictoMarkerType.folderPhoto => Colors.grey,
-      PictoMarkerType.representativePhoto => AppConfig.mainColor,
+      PictoMarkerType.representativePhoto => Colors.white,
       PictoMarkerType.aroundPhoto => Colors.blueAccent,
       PictoMarkerType.userPos => Colors.blue,
     };
 
     BoxDecoration decoration = type == PictoMarkerType.userPos
         ? BoxDecoration(
-      color: _borderColor,
+      color: borderColor,
       borderRadius: BorderRadius.circular(100),
       boxShadow: [
         BoxShadow(color: Color.fromRGBO(0, 0, 0, 0.57), blurRadius: 5)
       ],
     )
         : BoxDecoration(
-      border: Border.all(color: _borderColor, width: 4),
+      border: Border.all(color: borderColor, width: 4),
       borderRadius: BorderRadius.circular(20),
     );
 

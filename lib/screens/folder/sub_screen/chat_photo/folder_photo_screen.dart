@@ -3,7 +3,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:picto_frontend/screens/folder/folder_view_model.dart';
 import 'package:picto_frontend/screens/map/google_map/marker/picto_marker.dart';
-import '../../../photo/photo_view_model.dart';
+import '../../../../utils/functions.dart';
 
 class FolderPhotoScreen extends StatelessWidget {
   const FolderPhotoScreen({super.key, required this.folderId});
@@ -47,8 +47,7 @@ class FolderPhotoScreen extends StatelessWidget {
           scale: value,
           child: GestureDetector(
             onTap: () async {
-              PhotoViewModel photoViewModel = Get.find<PhotoViewModel>();
-              BoxFit fit = await photoViewModel.determineFit(marker.imageData!);
+              BoxFit fit = await determineFit(marker.imageData!);
               Get.toNamed(
                 "/photo",
                 arguments: {
