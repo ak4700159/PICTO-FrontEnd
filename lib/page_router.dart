@@ -12,6 +12,7 @@ import 'package:picto_frontend/screens/main_frame.dart';
 import 'package:picto_frontend/screens/login/sub_screen/register_screen.dart';
 import 'package:picto_frontend/screens/map/tag/tag_selection_screen.dart';
 import 'package:picto_frontend/screens/photo/photo_chatbot_screen.dart';
+import 'package:picto_frontend/screens/photo/photo_comfyui_screen.dart';
 import 'package:picto_frontend/screens/photo/photo_marker_screen.dart';
 import 'package:picto_frontend/screens/splash/splash_screen.dart';
 import 'package:picto_frontend/screens/upload/upload_screen.dart';
@@ -42,6 +43,7 @@ class PageRouter{
       GetPage(name: '/chatbot', page: () => ChatbotScreen()),
       GetPage(name: '/chatbot/photo', page: () => PhotoChatbotScreen()),
       // comfyUI ? 필요없을지도
+      GetPage(name: '/comfyui/photo', page: () => PhotoComfyuiScreen()),
     ];
     return pages;
   }

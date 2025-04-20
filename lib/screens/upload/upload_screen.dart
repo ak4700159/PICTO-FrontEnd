@@ -1,9 +1,7 @@
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:picto_frontend/config/app_config.dart';
 import 'package:picto_frontend/screens/map/google_map/google_map_view_model.dart';
 import 'package:picto_frontend/screens/map/top_box.dart';
@@ -20,7 +18,6 @@ class UploadScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final uploadViewModel = Get.find<UploadViewModel>();
     final googleViewModel = Get.find<GoogleMapViewModel>();
     return Scaffold(
       appBar: AppBar(

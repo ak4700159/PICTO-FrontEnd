@@ -1,12 +1,155 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:picto_frontend/config/app_config.dart';
+
+import '../../services/comfyui_manager_service/comfyui_api.dart';
+import '../../services/photo_store_service/photo_store_api.dart';
+import '../map/top_box.dart';
+import 'comfyui_result.dart';
+import 'comfyui_view_model.dart';
 
 class RemoveScreen extends StatelessWidget {
-  const RemoveScreen({super.key});
+  RemoveScreen({super.key});
+
+  final comfyuiViewModel = Get.find<ComfyuiViewModel>();
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Text("불필요한 영역 제거"),
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus(); // 외부 터치 시 키보드 내림
+      },
+      child: Obx(
+        () => Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  // 여백
+                  TopBox(size: 0.05),
+                  // 사진이 없으면 선택 화면
+                  if (comfyuiViewModel.currentRemoveSelectedPhoto.value != null)
+                    _getAnimationPhoto(context)
+                  else
+                    _getSelection(context),
+                  // 아이콘 버튼 리스트
+                  SizedBox(
+                    width: context.mediaQuery.size.width,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        // 사진 바꾸기
+                        if (comfyuiViewModel.currentRemoveSelectedPhoto.value != null)
+                          IconButton(
+                            onPressed: () {
+                              comfyuiViewModel.reset(isFirstScreen: true);
+                            },
+                            icon: Icon(
+                              Icons.delete,
+                              color: Colors.red,
+                            ),
+                          ),
+                        // 사진 속 불필요한 영역 지우기
+                        IconButton(
+                          onPressed: () {
+                            comfyuiViewModel.removePhoto();
+                          },
+                          icon: Icon(
+                            Icons.send,
+                            color: AppConfig.mainColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  // 텍스트 필드
+                  Container(
+                    padding: EdgeInsets.all(8),
+                    height: context.mediaQuery.size.height * 0.5,
+                    width: context.mediaQuery.size.width,
+                    child: TextFormField(
+                      minLines: 3,
+                      maxLines: 5,
+                      controller: comfyuiViewModel.textController,
+                      decoration: InputDecoration(
+                        contentPadding: EdgeInsets.all(9),
+                        isDense: true,
+                        filled: true,
+                        fillColor: Colors.grey.shade300,
+                        hintStyle: TextStyle(
+                          fontFamily: "NotoSansKR",
+                          fontWeight: FontWeight.w800,
+                          fontSize: 12,
+                          color: Colors.black,
+                        ),
+                        hintText: "지우고 싶은 영역의 카테고리를 입력해주세요!",
+                        border: OutlineInputBorder(
+                          gapPadding: 0,
+                          borderSide: BorderSide.none,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // 갤러리에서 사진 선택 화면
+  Widget _getSelection(BuildContext context) {
+    return Container(
+      width: context.mediaQuery.size.width * 0.8,
+      height: context.mediaQuery.size.width * 0.8,
+      decoration:
+          BoxDecoration(borderRadius: BorderRadius.circular(15), color: Colors.grey.shade300),
+      child: IconButton(
+        onPressed: () {
+          comfyuiViewModel.selectPhoto(isFirstScreen: false);
+        },
+        icon: Icon(
+          Icons.add_photo_alternate_outlined,
+          color: Colors.grey.shade400,
+          size: 50,
+        ),
+      ),
+    );
+  }
+
+  // 사진 선택시 -> 로딩 -> 애니메이션 -> 결과 확인
+  Widget _getAnimationPhoto(BuildContext context) {
+    return Container(
+      width: context.mediaQuery.size.width * 0.8,
+      height: context.mediaQuery.size.width * 0.8,
+      decoration:
+          BoxDecoration(borderRadius: BorderRadius.circular(15), color: Colors.grey.shade300),
+      child: FutureBuilder(
+          // 일단 사진 다운로드 api (나중에 업스케일링 api로 대체 예정
+          // future: PhotoStoreHandler().downloadPhoto(4488),
+          future: ComfyuiAPI().removePhoto(
+            original: comfyuiViewModel.currentRemoveSelectedPhoto.value!,
+            prompt: comfyuiViewModel.currentPrompt ?? "",
+          ),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            }
+            if (snapshot.hasError) {
+              return Text("업스케일링 실패: ${snapshot.error}");
+            }
+            return ComfyuiResult(
+              originalImage: snapshot.data!.original,
+              upscaledImage: snapshot.data!.result,
+            );
+          }),
     );
   }
 }

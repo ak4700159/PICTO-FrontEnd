@@ -40,28 +40,10 @@ class PhotoChatbotScreen extends StatelessWidget {
             ),
           ),
           Positioned(
-              top: 20,
-              right: 20,
-              child: Row(
-                children: [
-                  IconButton(
-                      onPressed: () {
-                        // share_plus 패키지 활용해 소설 미디어에 공유
-                      },
-                      icon: Icon(
-                        Icons.share,
-                        size: 25,
-                      )),
-                  IconButton(
-                      onPressed: () {
-                        // 갤러리에 다운로드
-                      },
-                      icon: Icon(
-                        Icons.download,
-                        size: 25,
-                      )),
-                ],
-              )),
+            top: 0,
+            right: 0,
+            child: _getButton(),
+          ),
           // 하단 정보 오버레이
           Positioned(
             bottom: 0,
@@ -69,6 +51,45 @@ class PhotoChatbotScreen extends StatelessWidget {
             right: 0,
             child: _getInfoWidget(photo),
           ),
+        ],
+      ),
+    );
+  }
+
+  // 버튼
+  Widget _getButton() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.bottomCenter,
+          end: Alignment.topCenter,
+          colors: [
+            Colors.transparent,
+            Colors.black.withOpacity(0.7),
+          ],
+        ),
+      ),
+      child: Row(
+        children: [
+          IconButton(
+              onPressed: () {
+                // share_plus 패키지 활용해 소설 미디어에 공유
+              },
+              icon: Icon(
+                Icons.share,
+                size: 25,
+                color: Colors.white,
+              )),
+          IconButton(
+              onPressed: () {
+                // 갤러리에 다운로드
+              },
+              icon: Icon(
+                Icons.download,
+                size: 25,
+                color: Colors.white,
+              )),
         ],
       ),
     );

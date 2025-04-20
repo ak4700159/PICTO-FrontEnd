@@ -21,68 +21,89 @@ class FolderChatScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Expanded(
-          child: Obx(() {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              // offset == 0이면 초기 상태로 간주
-              if (folderViewModel.chatScrollController.hasClients &&
-                  folderViewModel.chatScrollController.offset == 0) {
-                folderViewModel.scrollToBottom();
-              }
-            });
-            return ListView(
-              controller: folderViewModel.chatScrollController,
-              reverse: false,
-              padding: const EdgeInsets.all(10),
-              children: folderViewModel.currentMsgList.map((m) => ChatBubble(msg: m)).toList(),
-            );
-          }),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  onTap: () {
-                    Future.delayed(Duration(milliseconds: 500), () {
-                      folderViewModel.scrollToBottom();
-                    });
-                  },
-                  controller: _controller,
-                  decoration: InputDecoration(
-                    hintText: "메시지를 입력하세요...",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20),
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus(); // 외부 터치 시 키보드 내림
+      },
+      child: Column(
+        children: [
+          Expanded(
+            child: Obx(() {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                // offset == 0이면 초기 상태로 간주
+                if (folderViewModel.chatScrollController.hasClients &&
+                    folderViewModel.chatScrollController.offset == 0) {
+                  folderViewModel.scrollToBottom();
+                }
+              });
+              return ListView(
+                controller: folderViewModel.chatScrollController,
+                reverse: false,
+                padding: const EdgeInsets.all(10),
+                // 이거 일자별로 그룹핑하는 함수 필요
+                children: folderViewModel.currentMsgList.map((m) => ChatBubble(msg: m)).toList(),
+              );
+            }),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Expanded(
+                  child: TextField(
+                    keyboardType: TextInputType.multiline,
+                    onTap: () {
+                      Future.delayed(Duration(milliseconds: 500), () {
+                        folderViewModel.scrollToBottom();
+                      });
+                    },
+                    controller: _controller,
+                    minLines: 1,
+                    maxLines: 10,
+                    decoration: InputDecoration(
+                      contentPadding: EdgeInsets.all(9),
+                      isDense: true,
+                      fillColor: Colors.grey.shade300,
+                      filled: true,
+                      hintStyle: TextStyle(
+                        fontSize: 13,
+                        color: Colors.grey,
+                        fontFamily: "NotoSansKR",
+                        fontWeight: FontWeight.w600,
+                      ),
+                      hintText: "메시지 입력",
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide.none,
+                        gapPadding: 0,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
                     ),
                   ),
                 ),
-              ),
-              IconButton(
-                icon: const Icon(Icons.send, color: AppConfig.mainColor),
-                onPressed: () {
-                  if (_controller.text.isNotEmpty) {
-                    final newMsg = ChatMsg(
-                      content: _controller.text,
-                      sendDatetime: DateTime.now().millisecondsSinceEpoch,
-                      userId: UserManagerApi().ownerId!,
-                      accountName: profileViewModel.accountName.value,
-                    );
-                    if (folderViewModel.currentSocket.value!.connected) {
-                      // folderViewModel.folders[folderId]?.messages.add(newMsg);
-                      folderViewModel.currentMsgList.add(newMsg);
+                IconButton(
+                  icon: const Icon(Icons.send, color: AppConfig.mainColor),
+                  onPressed: () {
+                    if (_controller.text.isNotEmpty) {
+                      final newMsg = ChatMsg(
+                        content: _controller.text,
+                        sendDatetime: DateTime.now().millisecondsSinceEpoch,
+                        userId: UserManagerApi().ownerId!,
+                        accountName: profileViewModel.accountName.value,
+                      );
+                      if (folderViewModel.currentSocket.value!.connected) {
+                        folderViewModel.currentMsgList.add(newMsg);
+                      }
+                      folderViewModel.currentSocket.value?.sendChatMsg(newMsg);
+                      _controller.clear();
                     }
-                    folderViewModel.currentSocket.value?.sendChatMsg(newMsg);
-                    _controller.clear();
-                  }
-                },
-              ),
-            ],
+                  },
+                ),
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

@@ -42,9 +42,11 @@ class ChatbotBubble extends StatelessWidget {
                       overflow: TextOverflow.visible,
                       msg.content,
                       style: TextStyle(
-                          color: AppConfig.mainColor,
-                          fontFamily: "NotoSansKR",
-                          fontWeight: FontWeight.w600),
+                        fontSize: 12,
+                        color: AppConfig.mainColor,
+                        fontFamily: "NotoSansKR",
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                 ],
@@ -105,6 +107,7 @@ class ChatbotBubble extends StatelessWidget {
                           child: Text(
                             msg.content,
                             style: TextStyle(
+                                fontSize: 12,
                                 color: Colors.white,
                                 fontFamily: "NotoSansKR",
                                 fontWeight: FontWeight.w500),
