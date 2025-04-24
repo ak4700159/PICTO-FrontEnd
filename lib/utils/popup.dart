@@ -20,6 +20,7 @@ void showErrorPopup(String errorMsg) {
       content: SingleChildScrollView(
           child: Text(
         errorMsg,
+        style: TextStyle(fontSize: 11, color: Colors.red,  fontFamily: "NotoSansKR", fontWeight: FontWeight.w700),
       )),
       actions: [
         // TextButton(
@@ -47,9 +48,7 @@ void showPositivePopup(String errorMsg) {
       content: SingleChildScrollView(
           child: Text(
         errorMsg,
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
-        ),
+        style: TextStyle(fontSize: 11, color: Colors.black, fontFamily: "NotoSansKR", fontWeight: FontWeight.w700),
       )),
       actions: [
         // TextButton(

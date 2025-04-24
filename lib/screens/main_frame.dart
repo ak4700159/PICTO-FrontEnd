@@ -24,7 +24,9 @@ class MapScreen extends StatelessWidget {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: Obx(() => FloatingActionButton(
             heroTag: "map",
-            backgroundColor: 2 == mapViewModel.navigationBarCurrentIndex.value ? AppConfig.mainColor : Colors.grey,
+            backgroundColor: 2 == mapViewModel.navigationBarCurrentIndex.value
+                ? AppConfig.mainColor
+                : Colors.grey,
             shape: CircleBorder(),
             onPressed: () {
               mapViewModel.changeNavigationBarIndex(2);
@@ -122,11 +124,12 @@ class MapScreen extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        boxShadow: [
-          BoxShadow(color: Colors.grey, blurRadius: 10, offset: Offset(-220, 0)),
-          BoxShadow(color: Colors.grey, blurRadius: 10, offset: Offset(220, 0)),
-          // BoxShadow(color: Colors.grey, blurRadius: 40, offset: Offset(0, 30)),
-        ]
+        border: Border.all(color: Colors.grey, width: 1),
+        borderRadius: BorderRadius.circular(20),
+        // boxShadow: [
+        //   BoxShadow(color: Colors.grey, blurRadius: 10, offset: Offset(-220, 0)),
+        //   BoxShadow(color: Colors.grey, blurRadius: 10, offset: Offset(220, 0)),
+        // ]
       ),
       child: BottomAppBar(
         padding: EdgeInsets.all(0),
@@ -147,22 +150,24 @@ class MapScreen extends StatelessWidget {
           ),
           StadiumBorder(side: BorderSide(width: 10, color: Colors.blue)),
         ),
-        child: Obx(() => MediaQuery(
-              data: MediaQuery.of(context).removePadding(removeBottom: true, removeTop: true),
-              child: BottomNavigationBar(
-                // 그림자 없애기
-                elevation: 0,
-                onTap: mapViewModel.changeNavigationBarIndex,
-                showSelectedLabels: false,
-                showUnselectedLabels: false,
-                currentIndex: mapViewModel.navigationBarCurrentIndex.value,
-                iconSize: 30,
-                selectedFontSize: 0,
-                items: bottomNavigationBarItems,
-                backgroundColor: Colors.white,
-                type: BottomNavigationBarType.fixed,
-              ),
-            )),
+        child: Obx(
+          () => MediaQuery(
+            data: MediaQuery.of(context).removePadding(removeBottom: true, removeTop: true),
+            child: BottomNavigationBar(
+              // 그림자 없애기
+              elevation: 0,
+              onTap: mapViewModel.changeNavigationBarIndex,
+              showSelectedLabels: false,
+              showUnselectedLabels: false,
+              currentIndex: mapViewModel.navigationBarCurrentIndex.value,
+              iconSize: 30,
+              selectedFontSize: 0,
+              items: bottomNavigationBarItems,
+              backgroundColor: Colors.white,
+              type: BottomNavigationBarType.fixed,
+            ),
+          ),
+        ),
       ),
     );
   }

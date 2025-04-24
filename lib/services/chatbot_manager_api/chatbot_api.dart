@@ -50,9 +50,8 @@ class ChatbotAPI {
       Map<String, dynamic> data = response.data;
       return PromptResponse.fromJson(data);
     } catch (e) {
+      showErrorPopup(e.toString());
       rethrow;
-      // showErrorPopup(e.toString());
     }
-    return null;
   }
 }

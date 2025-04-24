@@ -21,35 +21,39 @@ class PhotoComfyuiScreen extends StatelessWidget {
               data,
               fit: fit,
               errorBuilder: (context, object, trace) => const Center(
-                  child: Text(
-                "[ERROR]",
-                style: TextStyle(color: Colors.red, fontSize: 30),
-              )),
+                child: Text(
+                  "[ERROR]",
+                  style: TextStyle(color: Colors.red, fontSize: 30),
+                ),
+              ),
             ),
           ),
           Positioned(
-              top: 20,
-              right: 20,
-              child: Row(
-                children: [
-                  IconButton(
-                      onPressed: () {
-                        // share_plus 패키지 활용해 소설 미디어에 공유
-                      },
-                      icon: Icon(
-                        Icons.share,
-                        size: 25,
-                      )),
-                  IconButton(
-                      onPressed: () {
-                        // 갤러리에 다운로드
-                      },
-                      icon: Icon(
-                        Icons.download,
-                        size: 25,
-                      )),
-                ],
-              )),
+            top: 20,
+            right: 20,
+            child: Row(
+              children: [
+                IconButton(
+                  onPressed: () {
+                    // share_plus 패키지 활용해 소설 미디어에 공유
+                  },
+                  icon: Icon(
+                    Icons.share,
+                    size: 25,
+                  ),
+                ),
+                IconButton(
+                  onPressed: () {
+                    // 갤러리에 다운로드
+                  },
+                  icon: Icon(
+                    Icons.download,
+                    size: 25,
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );

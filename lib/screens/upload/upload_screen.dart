@@ -77,7 +77,6 @@ class UploadScreen extends StatelessWidget {
             // 높이는 이미지 너비에 따라 변동
             decoration: BoxDecoration(
               color: Colors.white,
-              border: Border.all(width: 2, color: Colors.black),
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(12),
                 topRight: Radius.circular(12),
@@ -91,13 +90,12 @@ class UploadScreen extends StatelessWidget {
                         TopBox(size: 0.01),
                         // 사진
                         ClipRRect(
-                          borderRadius: const BorderRadius.only(
-                            topRight: Radius.circular(12),
-                            topLeft: Radius.circular(12),
-                          ),
+                          borderRadius: BorderRadius.circular(20),
                           child: Image.file(
                             File(uploadViewModel.selectedImage.value!.path),
-                            height: height * 0.6,
+                            height: width * 0.8,
+                            width: width * 0.8,
+                            fit: BoxFit.cover,
                           ),
                         ),
                         // 사진 관련 버튼
@@ -147,9 +145,10 @@ class UploadScreen extends StatelessWidget {
                                             Obx(
                                               () => uploadViewModel.isLoading.value
                                                   ? Center(
-                                                    child: CircularProgressIndicator(
-                                                        color: AppConfig.mainColor, strokeWidth: 6),
-                                                  )
+                                                      child: CircularProgressIndicator(
+                                                          color: AppConfig.mainColor,
+                                                          strokeWidth: 6),
+                                                    )
                                                   : Row(
                                                       children: [
                                                         TextButton(
@@ -228,8 +227,9 @@ class UploadScreen extends StatelessWidget {
                                   child: Text(
                                     '갤러리에서 사진 선택',
                                     style: TextStyle(
+                                      fontFamily: "NotoSansKR",
                                       fontSize: 14,
-                                      fontWeight: FontWeight.bold,
+                                      fontWeight: FontWeight.w700,
                                       color: Colors.white,
                                     ),
                                   ),
@@ -242,21 +242,36 @@ class UploadScreen extends StatelessWidget {
                     ),
             ),
           ),
-          // 저장 결과 화면
+          // 지도핀 + 등록된 위치
+          Row(
+            children: [
+              Icon(
+                Icons.pin_drop,
+                size: 30,
+                color: AppConfig.mainColor,
+              ),
+              Text(
+                "등록된 위치",
+                style: TextStyle(
+                  fontFamily: "NotoSansKR",
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.black,
+                ),
+              ),
+            ],
+          ),
+          TopBox(size: 0.02),
           Container(
             width: width,
             height: height * 0.15,
             decoration: BoxDecoration(
               color: Colors.white,
-              border: const Border(
-                left: BorderSide(width: 2, color: Colors.black),
-                right: BorderSide(width: 2, color: Colors.black),
-                bottom: BorderSide(width: 2, color: Colors.black),
+              border:  Border.all(
+                width: 1,
+                color: Colors.grey
               ),
-              borderRadius: const BorderRadius.only(
-                bottomLeft: Radius.circular(12),
-                bottomRight: Radius.circular(12),
-              ),
+              borderRadius: BorderRadius.circular(20),
             ),
             child: SingleChildScrollView(
               child: Padding(

@@ -8,7 +8,6 @@ import 'package:mime/mime.dart';
 import 'package:picto_frontend/services/comfyui_manager_service/comfyui_response.dart';
 import 'package:picto_frontend/utils/popup.dart';
 
-import '../../config/app_config.dart';
 import '../http_interceptor.dart';
 
 class ComfyuiAPI {
@@ -24,9 +23,9 @@ class ComfyuiAPI {
   final String baseUrl = "http://${dotenv.env['PROCESSOR_IP']}:8086";
   Dio dio = Dio(
     BaseOptions(
-        connectTimeout: const Duration(seconds: 10),
+        connectTimeout: const Duration(seconds: 120),
         contentType: Headers.jsonContentType,
-        receiveTimeout: const Duration(seconds: 10)),
+        receiveTimeout: const Duration(seconds: 120)),
   )..interceptors.add(CustomInterceptor());
 
   Future<ComfyuiResponse> removePhoto({required String prompt, required XFile original}) async {
@@ -41,11 +40,14 @@ class ComfyuiAPI {
           filename: fileName,
           contentType: MediaType.parse(mimeType),
         ),
-        'categories': MultipartFile.fromString(prompt, contentType: MediaType('application', 'json')),
+        'categories':
+            MultipartFile.fromString(prompt, contentType: MediaType('application', 'json')),
       });
-      final response = await dio.post(original.path, data: formData);
-      // 데이터 담기
-      // await Future.delayed(Duration(seconds: 2));
+      final response = await dio.post("$baseUrl/upload/upscale", data: formData);
+      if (response.data["success"] == true) {
+        result = await downloadImageBytes("$baseUrl/static/results/${response.data["result"]}");
+        print("[INFO] result image bytes : ${result.lengthInBytes}");
+      }
     } catch (e) {
       showErrorPopup(e.toString());
       rethrow;
@@ -63,13 +65,81 @@ class ComfyuiAPI {
         'file': await MultipartFile.fromFile(original.path,
             filename: fileName, contentType: MediaType.parse(mimeType)),
       });
-      final response = await dio.post(original.path, data: formData);
-      // 데이터 담기
-      // await Future.delayed(Duration(seconds: 2));
+      print("[INFO] original image bytes : ${originalData.lengthInBytes}");
+      final response = await dio.post("$baseUrl/upload/upscale", data: formData);
+      if (response.data["success"] == true) {
+        result = await downloadImageBytes("$baseUrl/static/results/${response.data["result"]}");
+        print("[INFO] result image bytes : ${result.lengthInBytes}");
+      }
     } catch (e) {
       showErrorPopup(e.toString());
       rethrow;
     }
     return ComfyuiResponse(result: result, original: originalData);
   }
+
+  // 이미지 url에서 사진 데이터만 받아오기
+  Future<Uint8List> downloadImageBytes(String imageUrl) async {
+    try {
+      Dio dio = Dio();
+
+      // `ResponseType.bytes` 로 설정해야 바이너리 응답을 받을 수 있음
+      final response = await dio.get<List<int>>(
+        imageUrl,
+        options: Options(responseType: ResponseType.bytes),
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        return Uint8List.fromList(response.data!);
+      } else {
+        showErrorPopup("Image download failed: ${response.statusCode}");
+      }
+    } catch (e) {
+      showErrorPopup(e.toString());
+      rethrow;
+    }
+    return Uint8List(0);
+  }
 }
+
+// 2. 이미지 인페인팅 업로드("/upload/inpaint"): POST
+//
+// file: 업로드할 이미지 파일
+// categories: 객체 탐지를 위한 카테고리
+// (ex: 개, 고양이 등등 이걸로 객체 인식)
+//
+// 3. 이미지 업스케일 업로드("/upload/upscale"): POST
+//
+// file: 업로드할 이미지 파일
+//
+// 4. 업로드된 원본 이미지 접근("/static/uploads/<filename>"): GET
+//
+// 5. 처리된 결과 이미지 반환
+// ("/static/results/<filename>"):  GET
+//
+// <인페인팅>
+// const formData = new FormData();
+// formData.append("file", fileInput.files[0]);
+// formData.append("categories", "고양이, 사람");
+//
+// <인페인팅 response 값>
+// {
+// "success": true,
+// "original": "abc123.png", //원래 이미지파일
+// "result": "result_456xyz.png", //결과 이미지파일
+// "translated_categories": "cat,person" // 카테고리
+// }
+//
+// <업스케일링>
+// formData.append("file", fileInput.files[0]);
+//
+// <response 값>
+// {
+// "success": true,
+// "original": "up_abc.png", //원래 이미지
+// "result": "upscaled_xyz.png" //결과 값
+// }
+//
+// * 응답에서 받은 result 값을 기반으로 이미지 URL 생성:
+//
+// const imageUrl = `http://localhost:5001/static/results/${data.result}`;

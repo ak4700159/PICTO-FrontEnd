@@ -33,6 +33,18 @@ String formatDate(int timestamp) {
   return date.toLocal().toString().substring(0, "0000-00-00 00:00".length);
 }
 
+String formatDateKorean(int timestamp) {
+  final date = DateTime.fromMillisecondsSinceEpoch(timestamp).toLocal();
+
+  final year = date.year.toString();
+  final month = date.month.toString().padLeft(2, '0');
+  final day = date.day.toString().padLeft(2, '0');
+  final hour = date.hour.toString().padLeft(2, '0');
+  final minute = date.minute.toString().padLeft(2, '0');
+
+  return "$month월 $day일 $hour:$minute";
+}
+
 Future<BoxFit> determineFit(Uint8List data) async {
   final codec = await ui.instantiateImageCodec(data);
   final frame = await codec.getNextFrame();
@@ -46,4 +58,22 @@ Future<BoxFit> determineFit(Uint8List data) async {
   } else {
     return BoxFit.cover;
   }
+}
+
+String? detectMimeType(Uint8List bytes) {
+  if (bytes.length < 12) return null;
+
+  if (bytes[0] == 0xFF && bytes[1] == 0xD8) return 'image/jpeg';
+  if (bytes[0] == 0x89 && bytes[1] == 0x50 && bytes[2] == 0x4E && bytes[3] == 0x47) return 'image/png';
+  if (bytes[0] == 0x47 && bytes[1] == 0x49 && bytes[2] == 0x46) return 'image/gif';
+  if (bytes[0] == 0x42 && bytes[1] == 0x4D) return 'image/bmp';
+  if (bytes[0] == 0x00 && bytes[1] == 0x00 && bytes[2] == 0x01 && bytes[3] == 0x00) return 'image/x-icon';
+
+  // WEBP: starts with 'RIFF....WEBP'
+  if (bytes.sublist(0, 4).toString() == [82, 73, 70, 70].toString() &&
+      bytes.sublist(8, 12).toString() == [87, 69, 66, 80].toString()) {
+    return 'image/webp';
+  }
+
+  return null;
 }

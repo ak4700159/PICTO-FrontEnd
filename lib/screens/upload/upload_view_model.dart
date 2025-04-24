@@ -8,6 +8,8 @@ import 'package:picto_frontend/screens/upload/upload_request.dart';
 import 'package:picto_frontend/services/pre_processor_service/processor_api.dart';
 import 'package:picto_frontend/services/user_manager_service/user_api.dart';
 
+import '../../models/photo.dart';
+
 class UploadViewModel extends GetxController {
   final ImagePicker _picker = ImagePicker();
 
@@ -19,6 +21,8 @@ class UploadViewModel extends GetxController {
   RxBool isLoading = false.obs;
 
   RxString result = "사진을 저장하고 결과를 확인하세요 !".obs;
+
+  RxList<Photo> frames = <Photo>[].obs;
 
   Future<void> pickSingleImage() async {
     final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
@@ -56,5 +60,13 @@ class UploadViewModel extends GetxController {
 
   void removeSelectedPhoto() {
     selectedImage.value = null;
+  }
+
+  void getFrames() async {
+
+  }
+
+  void rollFrame({required int photoId}) {
+
   }
 }

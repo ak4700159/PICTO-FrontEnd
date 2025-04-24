@@ -1,6 +1,4 @@
 
-import 'dart:typed_data';
-
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -24,7 +22,9 @@ class ComfyuiViewModel extends GetxController {
   }
 
   // 사진만 있으면 됨.
-  void upscalingPhoto() {}
+  void upscalingPhoto() {
+
+  }
 
   // 사진 + 프롬프트
   void removePhoto() async {

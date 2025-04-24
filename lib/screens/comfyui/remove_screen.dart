@@ -140,10 +140,42 @@ class RemoveScreen extends StatelessWidget {
           ),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator());
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CircularProgressIndicator(
+                      color: AppConfig.mainColor,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Text(
+                        "1~2분 정도 소요됩니다. 잠시만 기다려주세요!",
+                        style: TextStyle(
+                            fontSize: 13,
+                            color: Colors.black,
+                            fontFamily: "NotoSansKR",
+                            fontWeight: FontWeight.w700),
+                      ),
+                    )
+                  ],
+                ),
+              );
             }
             if (snapshot.hasError) {
-              return Text("업스케일링 실패: ${snapshot.error}");
+              return Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    "영역 제거에 실패했습니다.",
+                    style: TextStyle(
+                        fontSize: 13,
+                        color: Colors.black,
+                        fontFamily: "NotoSansKR",
+                        fontWeight: FontWeight.w700),
+                  ),
+                ),
+              );
             }
             return ComfyuiResult(
               originalImage: snapshot.data!.original,

@@ -1,10 +1,10 @@
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:picto_frontend/screens/comfyui/comfyui_result.dart';
 import 'package:picto_frontend/screens/map/top_box.dart';
 import 'package:picto_frontend/services/comfyui_manager_service/comfyui_api.dart';
 
+import '../../config/app_config.dart';
 import 'comfyui_view_model.dart';
 
 class UpscalingScreen extends StatelessWidget {
@@ -67,17 +67,36 @@ class UpscalingScreen extends StatelessWidget {
       decoration:
           BoxDecoration(borderRadius: BorderRadius.circular(15), color: Colors.grey.shade300),
       child: FutureBuilder(
-          // 일단 사진 다운로드 api (나중에 업스케일링 api로 대체 예정
-          //   future: PhotoStoreHandler().downloadPhoto(4488),
           future: ComfyuiAPI()
               .upscalingPhoto(original: comfyuiViewModel.currentUpscalingSelectedPhoto.value!),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator());
+              return Center(
+                  child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(color: AppConfig.mainColor,),
+                  Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Text(
+                      "1~2분 정도 소요됩니다. 잠시만 기다려주세요!",
+                      style: TextStyle(fontSize: 13, color: Colors.black, fontFamily: "NotoSansKR", fontWeight: FontWeight.w700),
+                    ),
+                  )
+                ],
+              ));
             }
 
             if (snapshot.hasError) {
-              return Text("업스케일링 실패: ${snapshot.error}");
+              return Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    "업스케일링에 실패했습니다.",
+                    style: TextStyle(fontSize: 13, color: Colors.black, fontFamily: "NotoSansKR", fontWeight: FontWeight.w700),
+                  ),
+                ),
+              );
             }
 
             return ComfyuiResult(

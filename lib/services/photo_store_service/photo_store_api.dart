@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 import 'package:debounce_throttle/debounce_throttle.dart';
 import 'package:dio/dio.dart';
@@ -8,6 +9,8 @@ import 'package:picto_frontend/services/user_manager_service/user_api.dart';
 import 'package:picto_frontend/utils/popup.dart';
 
 import '../../config/app_config.dart';
+import '../../models/photo.dart';
+import '../../utils/functions.dart';
 import '../http_interceptor.dart';
 
 class PhotoStoreHandler {
@@ -29,7 +32,6 @@ class PhotoStoreHandler {
 
   // 사진 조회
   Future<Uint8List> downloadPhoto(int photoId) async {
-
     final hostUrl = "$baseUrl/photos/download/$photoId";
     try {
       final response = await dio.get(
@@ -67,8 +69,41 @@ class PhotoStoreHandler {
 
   Future<bool> deletePhoto(int photoId) async {
     try {
-      final response =
-          dio.delete('$baseUrl/photos/$photoId', queryParameters: {"userId": UserManagerApi().ownerId});
+      final response = dio.delete('$baseUrl/photos/$photoId',
+          queryParameters: {"userId": UserManagerApi().ownerId});
+      return true;
+    } catch (e) {
+      showErrorPopup(e.toString());
+    }
+    return false;
+  }
+
+  // 액자 리스트 조회
+  Future<List<Photo>> getFrames() async {
+    try {
+      final response = await dio
+          .get('$baseUrl/photos/frames', queryParameters: {"userId": UserManagerApi().ownerId});
+      List<Photo> photos = (response.data as List).map((json) => Photo.fromJson(json)).toList();
+      return photos;
+    } catch (e) {
+      showErrorPopup(e.toString());
+    }
+    return [];
+  }
+
+  // 프레임 사진 업로드
+  Future<bool> uploadPhotoInFrame({required int photoId, required Uint8List image}) async {
+    try {
+      final mimeType = detectMimeType(image) ?? 'application/octet-stream';
+      print("[INFO] mine type : $mimeType");
+      final formData = FormData.fromMap({
+        'file': MultipartFile.fromBytes(image,
+            contentType: MediaType('image', 'jpeg'), filename: "$photoId.jpg"),
+        'request': MultipartFile.fromString(
+            jsonEncode({"frameActive": false, "sharedActive": false}),
+            contentType: MediaType('application', 'json')),
+      });
+      final response = await dio.patch('$baseUrl/photos/frame/$photoId', data: formData);
       return true;
     } catch (e) {
       showErrorPopup(e.toString());

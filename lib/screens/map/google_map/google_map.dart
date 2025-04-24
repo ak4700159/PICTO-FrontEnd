@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:picto_frontend/screens/location_bottom_sheet.dart';
 import 'package:picto_frontend/screens/map/top_box.dart';
 import 'package:picto_frontend/utils/popup.dart';
 
@@ -31,7 +32,7 @@ class CustomGoogleMap extends StatelessWidget {
             mapType: MapType.normal,
             initialCameraPosition: googleMapViewModel.currentCameraPos,
             onMapCreated: googleMapViewModel.setController,
-            style: googleMapViewModel.mapStyleString,
+            // style: googleMapViewModel.mapStyleString,
             // 카메라 움직일 때마다 실행되는 콜백 함수
             onCameraMove: googleMapViewModel.onCameraMove,
             // 카메라 이동이 멈출 때 실행되는 콜백 함수
@@ -106,16 +107,48 @@ class CustomGoogleMap extends StatelessWidget {
         child: SizedBox(
           height: context.mediaQuery.size.height * 0.06,
           child: FloatingActionButton(
-            onPressed: () {
-              // 사진 공유 화면으로 이동
-              Get.toNamed('/upload');
-            },
+            onPressed: () {},
             backgroundColor: Colors.blueAccent,
             heroTag: "share",
-            child: Icon(
-              Icons.add,
-              color: AppConfig.backgroundColor,
-              size: 30,
+            child: PopupMenuButton(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              menuPadding: EdgeInsets.all(4),
+              color: Colors.white,
+              icon: Icon(
+                Icons.add,
+                color: Colors.white,
+              ),
+              itemBuilder: (context) => <PopupMenuItem>[
+                PopupMenuItem(
+                  onTap: () {
+                    Get.toNamed('/upload');
+                  },
+                  child: Text(
+                    "사진 업로드",
+                    style: TextStyle(
+                        fontSize: 13,
+                        color: Colors.black,
+                        fontFamily: "NotoSansKR",
+                        fontWeight: FontWeight.w700),
+                  ),
+                ),
+                PopupMenuItem(
+                  onTap: () {
+                    showLocationBottomSheet(context);
+                    // 액자 걸기 -> 위치 저장
+                  },
+                  child: Text(
+                    "위치 저장하기",
+                    style: TextStyle(
+                        fontSize: 13,
+                        color: Colors.black,
+                        fontFamily: "NotoSansKR",
+                        fontWeight: FontWeight.w700),
+                  ),
+                ),
+              ],
             ),
           ),
         ),
