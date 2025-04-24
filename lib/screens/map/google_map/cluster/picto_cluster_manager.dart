@@ -1,18 +1,15 @@
-import 'dart:typed_data';
-import 'dart:ui';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:google_maps_cluster_manager_2/google_maps_cluster_manager_2.dart' as cluster;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:picto_frontend/screens/map/google_map/cluster/marker_bottom_sheet.dart';
 import 'package:picto_frontend/screens/map/google_map/cluster/picto_cluster_item.dart';
 import 'package:picto_frontend/screens/map/google_map/google_map_view_model.dart';
 import 'package:picto_frontend/services/photo_store_service/photo_store_api.dart';
 import '../../../../config/app_config.dart';
 import '../../../../utils/functions.dart';
-import '../marker/animated_marker_widget.dart';
 import '../marker/picto_marker.dart';
 
 class PictoClusterManager {
@@ -44,8 +41,7 @@ class PictoClusterManager {
     print("[DEBUG] cluster count: ${cluster.items.length}, isMultiple: ${cluster.isMultiple}");
     // 가장 좋아요를 많이 맏은 사진
     List<PictoMarker> markers = {
-      for (var pictoItem in cluster.items)
-        pictoItem.pictoMarker.photo.photoId: pictoItem.pictoMarker
+      for (var pictoItem in cluster.items) pictoItem.pictoMarker.photo.photoId: pictoItem.pictoMarker
     }.values.toList();
     final mostLiked = markers.toList().reduce((a, b) => a.photo.likes > b.photo.likes ? a : b);
     mostLiked.onTap = () {
@@ -55,7 +51,7 @@ class PictoClusterManager {
         _setSinglePhoto(mostLiked);
       }
     };
-    mostLiked.imageData ??= await PhotoStoreHandler().downloadPhoto(mostLiked.photo.photoId);
+    mostLiked.imageData ??= await PhotoStoreApi().downloadPhoto(mostLiked.photo.photoId);
     return mostLiked.toGoogleMarker(most: true);
   }
 
@@ -69,58 +65,17 @@ class PictoClusterManager {
     }
   }
 
+  Future<void> _downloadAllImages(List<PictoMarker> markers) async {
+    await Future.wait(markers.map((marker) async {
+      marker.imageData ??= await PhotoStoreApi().downloadPhoto(marker.photo.photoId);
+    }));
+  }
+
   void _openClusterBottomSheet(List<PictoMarker> markers) {
     Get.bottomSheet(
-        ListView.builder(
-          scrollDirection: Axis.horizontal,
-          padding: const EdgeInsets.all(8),
-          itemCount: markers.length,
-          itemBuilder: (BuildContext context, int index) {
-            return Align(
-              alignment: Alignment.topCenter,
-              child: SizedBox(
-                width: MediaQuery.of(context).size.width * 0.5,
-                height: MediaQuery.of(context).size.height * 0.3,
-                child: GestureDetector(
-                  onTap: () async {
-                    BoxFit fit = await determineFit(markers[index].imageData!);
-                    Get.toNamed("/photo", arguments: {
-                      "photo": markers[index].photo,
-                      "data": markers[index].imageData,
-                      "fit": fit,
-                    });
-                  },
-                  child: markers[index].imageData == null
-                      ? FutureBuilder(
-                          builder: (BuildContext context, AsyncSnapshot snapshot) {
-                            if (snapshot.data == null || snapshot.data == false) {
-                              return Center(child: CircularProgressIndicator(color: AppConfig.mainColor,));
-                            } else if (snapshot.hasError) {
-                              return Image.asset(
-                                'assets/images/picto_logo.png',
-                                fit: BoxFit.cover,
-                              );
-                            } else {
-                              Uint8List data = snapshot.data;
-                              markers[index].imageData = data;
-                              return AnimatedMarkerWidget(
-                                type: markers[index].type,
-                                imageData: markers[index].imageData,
-                              );
-                            }
-                          },
-                          future: PhotoStoreHandler().downloadPhoto(markers[index].photo.photoId),
-                        )
-                      : AnimatedMarkerWidget(
-                          type: markers[index].type,
-                          imageData: markers[index].imageData,
-                        ),
-                ),
-              ),
-            );
-          },
-        ),
-        shape: BeveledRectangleBorder());
+      MarkerListBottomSheet(markers: markers),
+      shape: BeveledRectangleBorder(),
+    );
   }
 
   void _setSinglePhoto(PictoMarker marker) {

@@ -19,6 +19,7 @@ class FolderFrame extends StatelessWidget {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
+          scrolledUnderElevation: 0,
           centerTitle: true,
           automaticallyImplyLeading: false,
           backgroundColor: Colors.white,

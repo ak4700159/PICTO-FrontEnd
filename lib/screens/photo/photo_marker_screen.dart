@@ -62,7 +62,7 @@ class PhotoMarkerScreen extends StatelessWidget {
                       value: "delete",
                       onTap: () async {
                         final folderViewModel = Get.find<FolderViewModel>();
-                        bool isSuccess = await PhotoStoreHandler().deletePhoto(photo.photoId);
+                        bool isSuccess = await PhotoStoreApi().deletePhoto(photo.photoId);
                         if (isSuccess) {
                           // showPositivePopup("삭제에 성공했습니다!");
                           folderViewModel.currentFolder.value!.photos

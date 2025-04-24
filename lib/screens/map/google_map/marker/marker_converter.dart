@@ -18,7 +18,7 @@ import '../google_map_view_model.dart';
 class MarkerConverter {
   MarkerConverter._();
 
-  final PhotoStoreHandler photoStoreHandler = PhotoStoreHandler();
+  final PhotoStoreApi photoStoreHandler = PhotoStoreApi();
   static final MarkerConverter _converter = MarkerConverter._();
 
   factory MarkerConverter() {
@@ -34,9 +34,6 @@ class MarkerConverter {
                   photo.folderId != null ? PictoMarkerType.folderPhoto : PictoMarkerType.userPhoto,
             ))
         .toSet();
-    pictoMarkers.forEach((pictoMarker) async {
-      // pictoMarker.imageData = await PhotoStoreHandler().downloadPhoto(pictoMarker.photo.photoId);
-    });
     return pictoMarkers;
   }
 
@@ -81,7 +78,7 @@ class MarkerConverter {
   // 이미지 다운로드
   Future<void> downloadPhotos(Set<PictoMarker> pictoMarkers) async {
     await Future.wait(pictoMarkers.map((pictoMarker) async {
-      pictoMarker.imageData ??= await PhotoStoreHandler().downloadPhoto(pictoMarker.photo.photoId);
+      pictoMarker.imageData ??= await PhotoStoreApi().downloadPhoto(pictoMarker.photo.photoId);
     }));
   }
 }

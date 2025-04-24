@@ -21,6 +21,8 @@ class FolderViewModel extends GetxController {
   RxList<ChatMsg> currentMsgList = <ChatMsg>[].obs;
   RxBool isUpdate = false.obs;
   ScrollController chatScrollController = ScrollController();
+  RxDouble progress = 0.0.obs;
+  RxBool loadingComplete = false.obs;
 
   @override
   void onInit() {
@@ -58,19 +60,26 @@ class FolderViewModel extends GetxController {
     }
   }
 
-  void downloadFolder() async {
-    for (int i = 0; i < currentMarkers.length; i++) {
+  Future<void> downloadFolder() async {
+    int completed = 0;
+    int total = currentMarkers.length;
+    for (int i = 0; i < currentMarkers.length; i++)  {
       if (currentMarkers[i].imageData == null) {
-        Uint8List? data = await PhotoStoreHandler().downloadPhoto(currentMarkers[i].photo.photoId);
+        Uint8List? data = await PhotoStoreApi().downloadPhoto(currentMarkers[i].photo.photoId);
         currentMarkers[i].imageData = data;
         currentMarkers[i] = currentMarkers[i]; // 중요! 다시 assign
       }
+      completed++;
+      progress.value = completed / total;
     }
+    loadingComplete.value = true;
   }
 
   // 폴더 화면 변화
   void changeFolder({required int folderId}) {
     folders[folderId]?.updateFolder();
+    progress.value = 0.0;
+    loadingComplete.value = false;
     for (int key in folders.keys) {
       if (key == folderId) {
         currentFolder.value = folders[folderId];
@@ -81,8 +90,6 @@ class FolderViewModel extends GetxController {
     downloadFolder();
     changeSocket();
   }
-
-  // void updateFolder({})
 
   // 현재 선택된 폴더에 소켓 연결
   void changeSocket() {

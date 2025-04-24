@@ -6,7 +6,7 @@ class UploadRequest {
   double lat;
   double lng;
   String? tag;
-  File file;
+  File? file;
   bool frameActive;
   bool sharedActive;
 
@@ -14,7 +14,7 @@ class UploadRequest {
       {required this.userId,
       required this.lat,
       required this.lng,
-      required this.file,
+      this.file,
       required this.frameActive,
       required this.sharedActive,
       this.tag});

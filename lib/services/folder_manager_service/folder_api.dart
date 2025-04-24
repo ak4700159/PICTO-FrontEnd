@@ -63,6 +63,7 @@ class FolderManagerApi {
   // 폴더 목록 조회,
   Future<List<Folder>> getFoldersByOwnerId() async {
     try {
+      // 기본 폴더도 같이 옴
       final response = await dio.get('$baseUrl/folders/shares/users/${UserManagerApi().ownerId}');
       List<dynamic> data = response.data;
       return data.map((json) => Folder.fromJson(json, false)).toList();
@@ -94,6 +95,7 @@ class FolderManagerApi {
   }
 
   // 폴더 안 전체 사진 조회
+  // 문제발생 -> 기본 폴더 안에 있는 사진 리스트 조회시 액자 사진도 같이 조회됨
   Future<List<Photo>> getPhotosInFolder({required int folderId}) async {
     try {
       final response = await dio.get('$baseUrl/folders/$folderId/photos',
@@ -155,6 +157,7 @@ class FolderManagerApi {
     return false;
   }
 
+  // 다른 폴더에 사진 저장
   Future<bool> copyPhotoToOtherFolder({required int photoId, required int folderId}) async {
     try {
       final response = await dio.post('$baseUrl/folders/$folderId/photos/upload', queryParameters: {

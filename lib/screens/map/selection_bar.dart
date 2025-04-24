@@ -54,7 +54,15 @@ class SelectionBar extends StatelessWidget {
         items: (field == "sort" ? selectionViewModel.sorts : selectionViewModel.periods)
             .map((sort) => DropdownMenuItem(
                   value: sort,
-                  child: Text(sort, style: TextStyle(fontSize: 15, color: Colors.black)),
+                  child: Text(
+                    sort,
+                    style: TextStyle(
+                      fontFamily: "NotoSansKR",
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.black,
+                    ),
+                  ),
                 ))
             .toList(),
         // 클릭 시 이벤트

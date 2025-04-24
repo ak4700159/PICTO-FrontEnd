@@ -1,10 +1,8 @@
-import 'dart:typed_data';
-
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:picto_frontend/services/user_manager_service/user_api.dart';
 
 class Photo {
   final int photoId;
-  final int userId;
+  final int? userId;
   final int? folderId;
   String photoPath; // S3 파일 경로
   final double lat;
@@ -24,7 +22,7 @@ class Photo {
   factory Photo.fromJson(Map<String, dynamic> json) {
     return Photo(
       photoId: json['photoId'] as int,
-      userId: json['userId'] as int,
+      userId: json['userId'] ?? UserManagerApi().ownerId,
       folderId: json['folderId'] as int?,
       photoPath: json['photoPath'] as String,
       lat: json['lat'] as double,

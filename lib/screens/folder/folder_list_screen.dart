@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:picto_frontend/screens/folder/folder_view_model.dart';
-import 'package:picto_frontend/utils/popup.dart';
 
 import '../../config/app_config.dart';
 import '../../models/folder.dart';
 import '../../services/user_manager_service/user_api.dart';
-import '../main_frame_view_model.dart';
 import '../profile/profile_view_model.dart';
 
 class FolderListScreen extends StatelessWidget {
@@ -130,7 +128,7 @@ class FolderListScreen extends StatelessWidget {
                           children: [
                             Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: _getFolderIcon(idx),
+                              child: _getFolderMenuIcon(idx),
                             ),
                             Padding(
                               padding: const EdgeInsets.all(8.0),
@@ -153,7 +151,7 @@ class FolderListScreen extends StatelessWidget {
   }
 
   // 폴더 메뉴 아이콘
-  Widget _getFolderIcon(int idx) {
+  Widget _getFolderMenuIcon(int idx) {
     return switch (idx) {
       0 => Icon(
           Icons.create_new_folder_rounded,
@@ -185,14 +183,12 @@ class FolderListScreen extends StatelessWidget {
               // 폴더 사진 화면 이동
               final folderViewModel = Get.find<FolderViewModel>();
               folderViewModel.changeFolder(folderId: folder.folderId);
-              // showBlockingLoading(Duration(seconds: 1));
-              print("[INFO] target folder Id : ${folder.folderId}");
               Get.toNamed('/folder', arguments: {
                 "folderId": folder.folderId,
               });
             },
             icon: Icon(
-              folder.name == "default" ? Icons.person : Icons.folder,
+              _getFolderIcon(folder.generatorId, folder.name),
               color: _getFolderColor(folder.generatorId, folder.name),
               weight: 1,
               size: 60,
@@ -205,6 +201,15 @@ class FolderListScreen extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  IconData _getFolderIcon(int generatorId, String folderName) {
+    if(folderName == "default") {
+      return Icons.person;
+    } else if(UserManagerApi().ownerId == generatorId) {
+      return Icons.folder;
+    }
+    return Icons.folder_shared;
   }
 
   Color _getFolderColor(int generatorId, String folderName) {

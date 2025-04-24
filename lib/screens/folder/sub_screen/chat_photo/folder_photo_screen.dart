@@ -1,40 +1,84 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
+import 'package:picto_frontend/models/folder.dart';
 import 'package:picto_frontend/screens/folder/folder_view_model.dart';
 import 'package:picto_frontend/screens/map/google_map/marker/picto_marker.dart';
 import '../../../../utils/functions.dart';
 
 class FolderPhotoScreen extends StatelessWidget {
-  const FolderPhotoScreen({super.key, required this.folderId});
+  FolderPhotoScreen({super.key, required this.folderId});
 
+  final folderViewModel = Get.find<FolderViewModel>();
   final int folderId;
 
   @override
   Widget build(BuildContext context) {
     final folderViewModel = Get.find<FolderViewModel>();
-    // Folder? folder = folderViewModel.getFolder(folderId: folderId);
-    return Obx(() => GridView.builder(
-          padding: const EdgeInsets.all(10),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            crossAxisSpacing: 10,
-            mainAxisSpacing: 10,
-          ),
-          itemCount: folderViewModel.currentMarkers.length,
-          itemBuilder: (context, index) {
-            return Obx(() => folderViewModel.currentMarkers[index].imageData == null
-                ? SpinKitSpinningCircle(
-              duration: Duration(seconds: 8),
-              itemBuilder: (context, index) {
-                return Center(
-                  child: Image.asset('assets/images/pictory_color.png'),
-                );
-              },
+    return Obx(
+      () => folderViewModel.loadingComplete.value
+          ? Obx(
+              () => GridView.builder(
+                padding: const EdgeInsets.all(10),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                ),
+                itemCount: folderViewModel.currentMarkers.length,
+                itemBuilder: (context, index) {
+                  return Obx(() => folderViewModel.currentMarkers[index].imageData == null
+                      ? SpinKitSpinningCircle(
+                          duration: Duration(seconds: 8),
+                          itemBuilder: (context, index) {
+                            return Center(
+                              child: Image.asset('assets/images/pictory_color.png'),
+                            );
+                          },
+                        )
+                      : _getPhotoTile(folderViewModel.currentMarkers[index]));
+                },
+              ),
             )
-                : _getPhotoTile(folderViewModel.currentMarkers[index]));
-          },
-        ));
+          : Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    "사진을 불러오는 중입니다...",
+                    style: TextStyle(
+                      fontFamily: "NotoSansKR",
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.grey,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  CircularProgressIndicator(color: Colors.grey, ),
+                  // LinearProgressIndicator(
+                  //   borderRadius: BorderRadius.circular(20),
+                  //   stopIndicatorColor: Colors.lightBlue,
+                  //   // backgroundColor: Colors.black,
+                  //   value: folderViewModel.progress.value,
+                  //   color: Colors.grey,
+                  //   minHeight: 20,
+                  // ),
+                  const SizedBox(height: 10),
+                  Text(
+                    "${(folderViewModel.progress.value * 100).toStringAsFixed(1)}%",
+                    style: TextStyle(
+                      fontFamily: "NotoSansKR",
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+    );
   }
 
   Widget _getPhotoTile(PictoMarker marker) {

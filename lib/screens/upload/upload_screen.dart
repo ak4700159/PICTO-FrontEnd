@@ -3,55 +3,91 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:picto_frontend/config/app_config.dart';
+import 'package:picto_frontend/models/photo.dart';
 import 'package:picto_frontend/screens/map/google_map/google_map_view_model.dart';
 import 'package:picto_frontend/screens/map/top_box.dart';
 import 'package:picto_frontend/screens/upload/upload_view_model.dart';
+import 'package:picto_frontend/services/photo_store_service/photo_store_api.dart';
+import 'package:picto_frontend/utils/functions.dart';
 import 'package:picto_frontend/utils/location.dart';
 
 // 요구사항
 // 1. 갤러리에서 사진 선택
 // 2. 사진 전송
 // 3. 예외 처리(글자, 얼굴, 합성, 유해 -> 예외처리)
-// 4.
 class UploadScreen extends StatelessWidget {
-  const UploadScreen({super.key});
+  UploadScreen({super.key});
+
+  final googleViewModel = Get.find<GoogleMapViewModel>();
+  final uploadViewModel = Get.find<UploadViewModel>();
 
   @override
   Widget build(BuildContext context) {
-    final googleViewModel = Get.find<GoogleMapViewModel>();
     return Scaffold(
       appBar: AppBar(
+        // 스크롤링 중 앱바 색상 변화 방지
+        scrolledUnderElevation: 0,
         automaticallyImplyLeading: false,
         backgroundColor: Colors.white,
-        title: FutureBuilder(
-          builder: (BuildContext context, AsyncSnapshot snapshot) {
-            if (snapshot.data == null || snapshot.data == false) {
-              return CircularProgressIndicator(
-                color: Colors.grey,
-              );
-            } else if (snapshot.hasError) {
-              return Icon(
-                Icons.error,
-                color: Colors.red,
-              );
-            } else {
-              return Row(
-                children: [
-                  Icon(
-                    Icons.location_on,
-                    color: AppConfig.mainColor,
-                  ),
-                  Text(
-                    snapshot.data,
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ],
-              );
-            }
-          },
-          future: fetchAddressFromKakao(
-              latitude: googleViewModel.currentLat.value,
-              longitude: googleViewModel.currentLng.value),
+        title: Obx(
+          () => uploadViewModel.selectedFrame.value == null
+              ? FutureBuilder(
+                  builder: (BuildContext context, AsyncSnapshot snapshot) {
+                    if (snapshot.data == null || snapshot.data == false) {
+                      return CircularProgressIndicator(
+                        color: Colors.grey,
+                      );
+                    } else if (snapshot.hasError) {
+                      return Icon(
+                        Icons.error,
+                        color: Colors.red,
+                      );
+                    } else {
+                      return Row(
+                        children: [
+                          Icon(
+                            Icons.location_on,
+                            color: AppConfig.mainColor,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              snapshot.data,
+                              style: TextStyle(
+                                fontSize: 17,
+                                color: Colors.black,
+                                fontFamily: "NotoSansKR",
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    }
+                  },
+                  future: fetchAddressFromKakao(
+                      latitude: googleViewModel.currentLat.value, longitude: googleViewModel.currentLng.value),
+                )
+              : Row(
+                  children: [
+                    Icon(
+                      Icons.location_on,
+                      color: Colors.green,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        uploadViewModel.selectedFrame.value!.location,
+                        style: TextStyle(
+                          fontSize: 17,
+                          color: Colors.black,
+                          fontFamily: "NotoSansKR",
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
         ),
       ),
       body: Column(
@@ -93,8 +129,8 @@ class UploadScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(20),
                           child: Image.file(
                             File(uploadViewModel.selectedImage.value!.path),
-                            height: width * 0.8,
-                            width: width * 0.8,
+                            height: width * 0.85,
+                            width: width * 0.85,
                             fit: BoxFit.cover,
                           ),
                         ),
@@ -123,71 +159,11 @@ class UploadScreen extends StatelessWidget {
                                 children: [
                                   TextButton(
                                     onPressed: () {
-                                      Get.dialog(
-                                        AlertDialog(
-                                          backgroundColor: Colors.white,
-                                          shape: BeveledRectangleBorder(),
-                                          title: Row(
-                                            children: [
-                                              const Icon(Icons.share, color: AppConfig.mainColor),
-                                              Text(
-                                                '사진 공유',
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          content: Text(
-                                            "PICTO에 사진을 공유하시겠습니까?",
-                                          ),
-                                          actions: [
-                                            Obx(
-                                              () => uploadViewModel.isLoading.value
-                                                  ? Center(
-                                                      child: CircularProgressIndicator(
-                                                          color: AppConfig.mainColor,
-                                                          strokeWidth: 6),
-                                                    )
-                                                  : Row(
-                                                      children: [
-                                                        TextButton(
-                                                          child: const Text(
-                                                            "공유하고 저장",
-                                                            style: TextStyle(
-                                                              fontWeight: FontWeight.bold,
-                                                            ),
-                                                          ),
-                                                          onPressed: () {
-                                                            uploadViewModel.savePhoto(
-                                                                isShared: true);
-                                                          },
-                                                        ),
-                                                        TextButton(
-                                                          child: const Text(
-                                                            "공유하지 않고 저장",
-                                                            style: TextStyle(
-                                                              fontWeight: FontWeight.bold,
-                                                            ),
-                                                          ),
-                                                          onPressed: () {
-                                                            uploadViewModel.savePhoto(
-                                                                isShared: false);
-                                                          },
-                                                        )
-                                                      ],
-                                                    ),
-                                            ),
-                                          ],
-                                        ),
-                                      );
+                                      showSharePopup();
                                     },
                                     child: Text(
                                       "사진 저장",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 15,
-                                          color: Colors.black),
+                                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Colors.black),
                                     ),
                                   ),
                                   IconButton(
@@ -209,7 +185,7 @@ class UploadScreen extends StatelessWidget {
                     )
                   // 사진 선택 화면
                   : SizedBox(
-                      height: height * 0.5,
+                      height: height * 0.495,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -242,6 +218,7 @@ class UploadScreen extends StatelessWidget {
                     ),
             ),
           ),
+
           // 지도핀 + 등록된 위치
           Row(
             children: [
@@ -262,15 +239,46 @@ class UploadScreen extends StatelessWidget {
             ],
           ),
           TopBox(size: 0.02),
+
+          // 액자 리스트
+          SizedBox(
+            height: height * 0.2,
+            child: FutureBuilder(
+                future: PhotoStoreApi().getFrames(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator());
+                  }
+
+                  if (snapshot.hasError) {
+                    return Text(
+                      "등록된 위치를 불러오기 실패",
+                      style: TextStyle(
+                        fontFamily: "NotoSansKR",
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.red,
+                      ),
+                    );
+                  }
+                  uploadViewModel.frames.clear();
+                  uploadViewModel.frames.addAll(snapshot.data!);
+                  return Obx(() => ListView.builder(
+                        itemBuilder: (context, idx) {
+                          return _getFrameTime(uploadViewModel.frames[idx]);
+                        },
+                        itemCount: uploadViewModel.frames.length,
+                      ));
+                }),
+          ),
+
+          // 전송 결과 확인
           Container(
             width: width,
-            height: height * 0.15,
+            height: height * 0.1,
             decoration: BoxDecoration(
               color: Colors.white,
-              border:  Border.all(
-                width: 1,
-                color: Colors.grey
-              ),
+              border: Border.all(width: 1, color: Colors.grey),
               borderRadius: BorderRadius.circular(20),
             ),
             child: SingleChildScrollView(
@@ -279,16 +287,168 @@ class UploadScreen extends StatelessWidget {
                 child: Obx(
                   () => Text(
                     uploadViewModel.result.value,
-                    style: TextStyle(
-                      fontFamily: "Roboto",
-                      fontWeight: FontWeight.bold,
-                    ),
+                      style: TextStyle(
+                        fontFamily: "NotoSansKR",
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.black,
+                      ),
                     maxLines: 10,
                     overflow: TextOverflow.visible,
                   ),
                 ),
               ),
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _getFrameTime(Photo photo) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(10)),
+          boxShadow: [
+            BoxShadow(color: Colors.grey, blurRadius: 8, offset: Offset(0, 0)),
+          ],
+          color: Colors.white,
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              flex: 1,
+              child: IconButton(
+                onPressed: () {},
+                icon: Icon(
+                  Icons.map,
+                  color: AppConfig.mainColor,
+                ),
+              ),
+            ),
+            Expanded(
+              flex: 5,
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      photo.location,
+                      style: TextStyle(
+                        fontFamily: "Roboto",
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 8.0, bottom: 8.0),
+                    child: Text(
+                      formatDateKorean(photo.updateDatetime!),
+                      style: TextStyle(
+                          fontFamily: "Roboto", fontWeight: FontWeight.bold, color: Colors.grey, fontSize: 10),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              flex: 3,
+              child: Container(
+                padding: EdgeInsets.all(10),
+                child: Row(
+                  children: [
+                    Expanded(
+                      flex: 1,
+                      child: IconButton(
+                          icon: Icon(
+                            Icons.delete,
+                            color: Colors.red,
+                            size: 30,
+                          ),
+                          onPressed: () {
+                            uploadViewModel.removeFrame(photo.photoId);
+                          }),
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: Obx(() => IconButton(
+                            icon: Icon(
+                              uploadViewModel.selectedFrame.value?.photoId == photo.photoId
+                                  ? Icons.check_box
+                                  : Icons.add_box_rounded,
+                              color: uploadViewModel.selectedFrame.value?.photoId == photo.photoId
+                                  ? Colors.green
+                                  : Colors.grey,
+                              size: 30,
+                            ),
+                            onPressed: () {
+                              uploadViewModel.rollFrame(adapt: photo);
+                            },
+                          )),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void showSharePopup() {
+    Get.dialog(
+      AlertDialog(
+        backgroundColor: Colors.white,
+        shape: BeveledRectangleBorder(),
+        title: Row(
+          children: [
+            const Icon(Icons.share, color: AppConfig.mainColor),
+            Text(
+              '사진 공유',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+        content: Text(
+          "PICTO에 사진을 공유하시겠습니까?",
+        ),
+        actions: [
+          Obx(
+            () => uploadViewModel.isLoading.value
+                ? Center(
+                    child: CircularProgressIndicator(color: AppConfig.mainColor, strokeWidth: 6),
+                  )
+                : Row(
+                    children: [
+                      TextButton(
+                        child: const Text(
+                          "공유하고 저장",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        onPressed: () {
+                          uploadViewModel.savePhoto(isShared: true);
+                        },
+                      ),
+                      TextButton(
+                        child: const Text(
+                          "공유하지 않고 저장",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        onPressed: () {
+                          uploadViewModel.savePhoto(isShared: false);
+                        },
+                      )
+                    ],
+                  ),
           ),
         ],
       ),

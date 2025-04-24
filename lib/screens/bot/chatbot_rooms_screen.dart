@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:picto_frontend/screens/bot/chatbot_room_tile.dart';
 import 'package:picto_frontend/screens/bot/chatbot_view_model.dart';
+import 'package:picto_frontend/screens/map/top_box.dart';
 
 import '../../config/app_config.dart';
 
@@ -57,24 +58,29 @@ class ChatbotListScreen extends StatelessWidget {
 
   Widget _getFirstScreen(BuildContext context) {
     final chatbotViewModel = Get.find<ChatbotViewModel>();
-    return Center(
-      child: SizedBox(
-        width: context.mediaQuery.size.width * 0.7,
-        child: FloatingActionButton(
-          backgroundColor: AppConfig.mainColor,
-          onPressed: () {
-            chatbotViewModel.addChatbotRoom();
-          },
-          child: Text(
-            "새로운 채팅방 생성",
-            style: TextStyle(
-                fontFamily: "NotoSansKR",
-                fontWeight: FontWeight.w600,
-                fontSize: 20,
-                color: Colors.white),
+    return Column(
+      children: [
+        TopBox(size: 0.2),
+        Center(
+          child: SizedBox(
+            width: context.mediaQuery.size.width * 0.7,
+            child: FloatingActionButton(
+              backgroundColor: AppConfig.mainColor,
+              onPressed: () {
+                chatbotViewModel.addChatbotRoom();
+              },
+              child: Text(
+                "새로운 채팅방 생성",
+                style: TextStyle(
+                    fontFamily: "NotoSansKR",
+                    fontWeight: FontWeight.w600,
+                    fontSize: 20,
+                    color: Colors.white),
+              ),
+            ),
           ),
         ),
-      ),
+      ],
     );
   }
 

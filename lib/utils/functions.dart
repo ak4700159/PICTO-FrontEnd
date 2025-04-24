@@ -41,8 +41,7 @@ String formatDateKorean(int timestamp) {
   final day = date.day.toString().padLeft(2, '0');
   final hour = date.hour.toString().padLeft(2, '0');
   final minute = date.minute.toString().padLeft(2, '0');
-
-  return "$month월 $day일 $hour:$minute";
+  return "$year년 $month월 $day일 $hour시 $minute분";
 }
 
 Future<BoxFit> determineFit(Uint8List data) async {

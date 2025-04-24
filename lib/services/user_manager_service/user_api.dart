@@ -258,7 +258,7 @@ class UserManagerApi {
     Get.find<SelectionBarViewModel>().convertFromJson(response.data["filter"]);
     Get.find<ProfileViewModel>().convertFromJson(response.data["user"]);
     Get.find<UserConfig>().convertFromJson(response.data["userSetting"]);
-    Get.find<GoogleMapViewModel>().initPhotos(response.data["folderPhotos"]);
+    // Get.find<GoogleMapViewModel>().initPhotos(response.data["folderPhotos"]);
     Get.find<TagSelectionViewModel>().initTags(response.data["tags"]);
     Get.find<FolderViewModel>().resetFolder();
 

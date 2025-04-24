@@ -7,6 +7,8 @@ import '../config/app_config.dart';
 void showErrorPopup(String errorMsg) {
   Get.dialog(
     AlertDialog(
+      titlePadding: EdgeInsets.all(20),
+      contentPadding: EdgeInsets.all(12),
       backgroundColor: Colors.white,
       title: Row(
         children: [
@@ -14,13 +16,20 @@ void showErrorPopup(String errorMsg) {
             Icons.error,
             color: Colors.red,
           ),
-          const Text('[ERROR INFO]'),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: const Text(
+              '[ERROR INFO]',
+              style:
+                  TextStyle(fontSize: 17, color: Colors.black, fontFamily: "NotoSansKR", fontWeight: FontWeight.w700),
+            ),
+          ),
         ],
       ),
       content: SingleChildScrollView(
           child: Text(
         errorMsg,
-        style: TextStyle(fontSize: 11, color: Colors.red,  fontFamily: "NotoSansKR", fontWeight: FontWeight.w700),
+        style: TextStyle(fontSize: 14, color: Colors.red, fontFamily: "NotoSansKR", fontWeight: FontWeight.w700),
       )),
       actions: [
         // TextButton(
@@ -32,23 +41,32 @@ void showErrorPopup(String errorMsg) {
   );
 }
 
-void showPositivePopup(String errorMsg) {
+void showPositivePopup(String msg) {
   Get.dialog(
     AlertDialog(
+      titlePadding: EdgeInsets.all(20),
+      contentPadding: EdgeInsets.all(12),
       backgroundColor: Colors.white,
       title: Row(
         children: [
           const Icon(
             Icons.info,
-            color: AppConfig.mainColor,
+            color: Colors.blueAccent,
           ),
-          const Text('[INFO]'),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: const Text(
+              '[INFO]',
+              style:
+                  TextStyle(fontSize: 17, color: Colors.black, fontFamily: "NotoSansKR", fontWeight: FontWeight.w700),
+            ),
+          ),
         ],
       ),
       content: SingleChildScrollView(
           child: Text(
-        errorMsg,
-        style: TextStyle(fontSize: 11, color: Colors.black, fontFamily: "NotoSansKR", fontWeight: FontWeight.w700),
+        msg,
+        style: TextStyle(fontSize: 14, color: Colors.black, fontFamily: "NotoSansKR", fontWeight: FontWeight.w700),
       )),
       actions: [
         // TextButton(

@@ -33,11 +33,11 @@ class PreProcessorApi {
   // 유효성 검사 및 사진 전송 api 호출
   Future<String> validatePhoto({required UploadRequest request}) async {
     try {
-      final fileName = request.file.path.split('/').last;
-      final mimeType = lookupMimeType(request.file.path) ?? 'application/octet-stream';
+      final fileName = request.file!.path.split('/').last;
+      final mimeType = lookupMimeType(request.file!.path) ?? 'application/octet-stream';
       final formData = FormData.fromMap({
         'file':
-            await MultipartFile.fromFile(request.file.path, filename: fileName, contentType: MediaType.parse(mimeType)),
+            await MultipartFile.fromFile(request.file!.path, filename: fileName, contentType: MediaType.parse(mimeType)),
         'request': MultipartFile.fromString(request.toJson(), contentType: MediaType('application', 'json')),
       });
       final response = await dio.post('$baseUrl/validate', data: formData);
