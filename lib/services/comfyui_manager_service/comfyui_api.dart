@@ -43,7 +43,7 @@ class ComfyuiAPI {
         'categories':
             MultipartFile.fromString(prompt, contentType: MediaType('application', 'json')),
       });
-      final response = await dio.post("$baseUrl/upload/upscale", data: formData);
+      final response = await dio.post("$baseUrl/upload/inpaint", data: formData);
       if (response.data["success"] == true) {
         result = await downloadImageBytes("$baseUrl/static/results/${response.data["result"]}");
         print("[INFO] result image bytes : ${result.lengthInBytes}");

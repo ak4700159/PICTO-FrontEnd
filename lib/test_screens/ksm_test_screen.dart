@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:picto_frontend/services/chatting_scheduler_service/chatting_api.dart';
+
+import '../screens/folder/folder_view_model.dart';
 
 class TestScreen extends StatelessWidget {
   const TestScreen({super.key});
@@ -30,6 +34,8 @@ class AppBarMenuExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final folderViewModel = Get.find<FolderViewModel>();
+    folderViewModel.isUpdate.value = false;
     return Scaffold(
       appBar: AppBar(
         title: const Text('테스트 화면'),

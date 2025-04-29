@@ -7,12 +7,16 @@ import 'package:picto_frontend/screens/comfyui/comfyui_view_model.dart';
 import 'package:picto_frontend/screens/comfyui/remove_screen.dart';
 import 'package:picto_frontend/screens/comfyui/upscaling_screen.dart';
 
+import '../folder/folder_view_model.dart';
+
 class ComfyuiScreen extends StatelessWidget {
   ComfyuiScreen({super.key});
   final comfyuiViewModel = Get.find<ComfyuiViewModel>();
 
   @override
   Widget build(BuildContext context) {
+    final folderViewModel = Get.find<FolderViewModel>();
+    folderViewModel.isUpdate.value = false;
     return DefaultTabController(
       length: 2,
       child: Scaffold(

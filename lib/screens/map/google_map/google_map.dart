@@ -9,6 +9,7 @@ import 'package:picto_frontend/screens/map/top_box.dart';
 import 'package:picto_frontend/utils/popup.dart';
 
 import '../../../../config/app_config.dart';
+import '../../folder/folder_view_model.dart';
 import '../selection_bar.dart';
 import 'google_map_view_model.dart';
 
@@ -18,6 +19,8 @@ class CustomGoogleMap extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final googleMapViewModel = Get.find<GoogleMapViewModel>();
+    final folderViewModel = Get.find<FolderViewModel>();
+    folderViewModel.isUpdate.value = false;
     return Stack(
       children: [
         // 메인 지도 설정

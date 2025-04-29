@@ -93,6 +93,10 @@ class RemoveScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(20),
                         ),
                       ),
+                      onChanged: (value) {
+                        comfyuiViewModel.currentPrompt = value;
+                        print("[INFO] ${comfyuiViewModel.currentPrompt}");
+                      },
                     ),
                   )
                 ],

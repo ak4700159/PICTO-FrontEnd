@@ -48,10 +48,8 @@ Future<BoxFit> determineFit(Uint8List data) async {
   final codec = await ui.instantiateImageCodec(data);
   final frame = await codec.getNextFrame();
   final image = frame.image;
-
   final width = image.width;
   final height = image.height;
-
   if (width > height) {
     return BoxFit.fitWidth;
   } else {

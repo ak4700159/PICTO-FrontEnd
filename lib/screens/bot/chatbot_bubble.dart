@@ -16,38 +16,76 @@ class ChatbotBubble extends StatelessWidget {
     return Column(
       crossAxisAlignment: msg.isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
       children: [
-        // 사용자 채팅
         msg.isMe
+            // 사용자 채팅
             ? Row(
                 mainAxisAlignment: msg.isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   // 사진 있으면 사진 처리
-                  Container(
-                    constraints: BoxConstraints(
-                      maxWidth: MediaQuery.of(context).size.width * 0.7, // 최대 너비 제한
-                    ),
-                    margin: const EdgeInsets.all(2),
-                    padding: const EdgeInsets.all(12.0),
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade200,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(30),
-                        topRight: Radius.circular(5),
-                        bottomLeft: Radius.circular(30),
-                        bottomRight: Radius.circular(30),
+                  Column(
+                    children: [
+                      if (msg.images.isNotEmpty)
+                        SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            mainAxisAlignment:
+                                msg.isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+                            children: msg.images
+                                .map((image) => Padding(
+                                      padding: const EdgeInsets.only(left: 8.0, top: 8.0),
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(16),
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            // 이게 문제
+                                            if (image.photoId != null) {
+                                              chatbotViewModel.selectPhoto(
+                                                  image.photoId!, image.data);
+                                            }
+                                          },
+                                          child: SizedBox(
+                                            width: 120,
+                                            height: 120,
+                                            child: Image.memory(
+                                              image.data,
+                                              fit: BoxFit.cover,
+                                              cacheWidth: 300,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ))
+                                .toList(),
+                          ),
+                        ),
+                      Container(
+                        constraints: BoxConstraints(
+                          maxWidth: MediaQuery.of(context).size.width * 0.7, // 최대 너비 제한
+                        ),
+                        margin: const EdgeInsets.all(2),
+                        padding: const EdgeInsets.all(12.0),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade200,
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(30),
+                            topRight: Radius.circular(5),
+                            bottomLeft: Radius.circular(30),
+                            bottomRight: Radius.circular(30),
+                          ),
+                        ),
+                        child: Text(
+                          overflow: TextOverflow.visible,
+                          msg.content,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: AppConfig.mainColor,
+                            fontFamily: "NotoSansKR",
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                       ),
-                    ),
-                    child: Text(
-                      overflow: TextOverflow.visible,
-                      msg.content,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: AppConfig.mainColor,
-                        fontFamily: "NotoSansKR",
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
+                    ],
                   ),
                 ],
               )
@@ -92,6 +130,40 @@ class ChatbotBubble extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        if (msg.images.isNotEmpty)
+                          SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              mainAxisAlignment:
+                                  msg.isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+                              children: msg.images
+                                  .map((image) => Padding(
+                                        padding: const EdgeInsets.only(left: 8.0, top: 8.0),
+                                        child: ClipRRect(
+                                          borderRadius: BorderRadius.circular(16),
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              // 이게 문제
+                                              if (image.photoId != null) {
+                                                chatbotViewModel.selectPhoto(
+                                                    image.photoId!, image.data);
+                                              }
+                                            },
+                                            child: SizedBox(
+                                              width: 120,
+                                              height: 120,
+                                              child: Image.memory(
+                                                image.data,
+                                                fit: BoxFit.cover,
+                                                cacheWidth: 300,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ))
+                                  .toList(),
+                            ),
+                          ),
                         Container(
                           margin: const EdgeInsets.symmetric(vertical: 2),
                           padding: const EdgeInsets.all(12),
@@ -126,37 +198,6 @@ class ChatbotBubble extends StatelessWidget {
                   ),
                 ],
               ),
-        // 메시지에 담긴 사진
-        if (msg.images.isNotEmpty)
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              mainAxisAlignment: msg.isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
-              children: msg.images
-                  .map((image) => Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(16),
-                          child: GestureDetector(
-                            onTap: () {
-                              // 이게 문제
-                              if (image.photoId != null) {
-                                chatbotViewModel.selectPhoto(image.photoId!, image.data);
-                              }
-                            },
-                            child: SizedBox(
-                              width: 120,
-                              child: Image.memory(
-                                image.data,
-                                cacheWidth: 300,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ))
-                  .toList(),
-            ),
-          )
       ],
     );
   }

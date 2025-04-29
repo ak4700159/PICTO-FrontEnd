@@ -7,6 +7,7 @@ import 'package:picto_frontend/screens/bot/chatbot_view_model.dart';
 import 'package:picto_frontend/screens/map/top_box.dart';
 
 import '../../config/app_config.dart';
+import '../folder/folder_view_model.dart';
 
 class ChatbotListScreen extends StatelessWidget {
   const ChatbotListScreen({super.key});
@@ -14,6 +15,8 @@ class ChatbotListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final chatbotViewModel = Get.find<ChatbotViewModel>();
+    final folderViewModel = Get.find<FolderViewModel>();
+    folderViewModel.isUpdate.value = false;
     return Stack(children: [
       Scaffold(
         appBar: AppBar(
