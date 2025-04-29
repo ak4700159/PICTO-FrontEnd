@@ -4,14 +4,13 @@ import 'package:get/get.dart';
 import 'package:picto_frontend/config/app_config.dart';
 import 'package:picto_frontend/screens/folder/folder_list_screen.dart';
 import 'package:picto_frontend/screens/main_frame_view_model.dart';
-import 'package:picto_frontend/utils/popup.dart';
-
 import '../icon/picto_icons.dart';
 import '../test_screens/ksm_test_screen.dart';
 import 'bot/chatbot_rooms_screen.dart';
 import 'comfyui/comfyui_screen.dart';
 import 'map/google_map/google_map.dart';
 
+enum MapStatus { googleMap, folder, comfyUI, chatbot, setting }
 class MapScreen extends StatelessWidget {
   MapScreen({super.key});
 
@@ -24,9 +23,7 @@ class MapScreen extends StatelessWidget {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: Obx(() => FloatingActionButton(
             heroTag: "map",
-            backgroundColor: 2 == mapViewModel.navigationBarCurrentIndex.value
-                ? AppConfig.mainColor
-                : Colors.grey,
+            backgroundColor: 2 == mapViewModel.navigationBarCurrentIndex.value ? AppConfig.mainColor : Colors.grey,
             shape: CircleBorder(),
             onPressed: () {
               mapViewModel.changeNavigationBarIndex(2);
@@ -48,6 +45,7 @@ class MapScreen extends StatelessWidget {
 
   // 하단 네비게이션바 호출마다 실행되는 함수
   Widget _getMainFrame(BuildContext context) {
+    print("[INFO] main frame rebuild!");
     final mapViewModel = Get.find<MapViewModel>();
     return switch (mapViewModel.navigationBarCurrentIndex.value) {
       // 수정필요 : 0 -> chat_photo bot / 1 -> comfy ui / 2 -> google map / 3 -> folder / 4 -> profile /
@@ -124,7 +122,7 @@ class MapScreen extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey, width: 1),
+        // border: Border.all(color: Colors.grey, width: 1),
         borderRadius: BorderRadius.circular(20),
         // boxShadow: [
         //   BoxShadow(color: Colors.grey, blurRadius: 10, offset: Offset(-220, 0)),
@@ -142,7 +140,7 @@ class MapScreen extends StatelessWidget {
         clipBehavior: Clip.antiAlias,
         shape: AutomaticNotchedShape(
           RoundedRectangleBorder(
-            side: BorderSide(color: Colors.black, width: 10),
+            // side: BorderSide(color: Colors.black, width: 10),
             borderRadius: BorderRadius.only(
               topLeft: Radius.circular(20),
               topRight: Radius.circular(20),
@@ -172,3 +170,4 @@ class MapScreen extends StatelessWidget {
     );
   }
 }
+

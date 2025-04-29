@@ -57,14 +57,6 @@ class FolderPhotoScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 20),
                   CircularProgressIndicator(color: Colors.grey, ),
-                  // LinearProgressIndicator(
-                  //   borderRadius: BorderRadius.circular(20),
-                  //   stopIndicatorColor: Colors.lightBlue,
-                  //   // backgroundColor: Colors.black,
-                  //   value: folderViewModel.progress.value,
-                  //   color: Colors.grey,
-                  //   minHeight: 20,
-                  // ),
                   const SizedBox(height: 10),
                   Text(
                     "${(folderViewModel.progress.value * 100).toStringAsFixed(1)}%",

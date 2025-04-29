@@ -35,4 +35,9 @@ class MapViewModel extends GetxController {
       showErrorPopup("위치 저장에 실패했습니다.");
     }
   }
+
+  // 다른 화면으로 전환할 때 데이터 정리
+  void resetFrame() {
+
+  }
 }
