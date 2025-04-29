@@ -25,7 +25,12 @@ class FolderInfoScreen extends StatelessWidget {
             ),
             Text(
               " ${folder.name} 폴더 정보",
-              style: TextStyle(fontWeight: FontWeight.bold, fontFamily: "Roboto"),
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.black,
+                fontFamily: "NotoSansKR",
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ],
         ),
@@ -47,7 +52,10 @@ class FolderInfoScreen extends StatelessWidget {
                   Text(
                     " 폴더 내용",
                     style: TextStyle(
-                        fontWeight: FontWeight.w700, fontFamily: "NotoSansKR", fontSize: 22),
+                      fontWeight: FontWeight.w600,
+                      fontFamily: "NotoSansKR",
+                      fontSize: 15,
+                    ),
                   ),
                 ],
               ),
@@ -76,6 +84,7 @@ class FolderInfoScreen extends StatelessWidget {
                     style: TextStyle(
                       fontFamily: 'NotoSansKR',
                       fontWeight: FontWeight.w600, // Bold
+                      fontSize: 12,
                     ),
                   ),
                 ),
@@ -94,7 +103,10 @@ class FolderInfoScreen extends StatelessWidget {
                   Text(
                     " 공유 인원(${folder.users.length})",
                     style: TextStyle(
-                        fontWeight: FontWeight.w700, fontFamily: "NotoSansKR", fontSize: 22),
+                      fontWeight: FontWeight.w600,
+                      fontFamily: "NotoSansKR",
+                      fontSize: 15,
+                    ),
                   ),
                 ],
               ),
@@ -131,7 +143,10 @@ class FolderInfoScreen extends StatelessWidget {
                   Text(
                     " 기타 정보",
                     style: TextStyle(
-                        fontWeight: FontWeight.w700, fontFamily: "NotoSansKR", fontSize: 22),
+                      fontWeight: FontWeight.w600,
+                      fontFamily: "NotoSansKR",
+                      fontSize: 15,
+                    ),
                   ),
                 ],
               ),
@@ -155,31 +170,28 @@ class FolderInfoScreen extends StatelessWidget {
                 children: [
                   Text(
                     '생성일 : ${formatDate(folder.sharedDatetime)}',
-                    style: TextStyle(
-                      fontFamily: 'NotoSansKR',
-                      fontWeight: FontWeight.w600, // Bold
-                    ),
+                    style: TextStyle(fontFamily: 'NotoSansKR', fontWeight: FontWeight.w600, fontSize: 12),
                   ),
                   Text(
                     '생성자 : ${folder.getUser(folder.generatorId)!.name}',
                     style: TextStyle(
-                      fontFamily: 'NotoSansKR',
-                      fontWeight: FontWeight.w600, // Bold
-                    ),
+                        fontFamily: 'NotoSansKR',
+                        fontWeight: FontWeight.w600, // Bold
+                        fontSize: 12),
                   ),
                   Text(
                     '사진수 : ${folder.photos.length}장',
                     style: TextStyle(
-                      fontFamily: 'NotoSansKR',
-                      fontWeight: FontWeight.w600, // Bold
-                    ),
+                        fontFamily: 'NotoSansKR',
+                        fontWeight: FontWeight.w600, // Bold
+                        fontSize: 12),
                   ),
                   Text(
                     '채팅수 : ${folder.messages.length}개',
                     style: TextStyle(
-                      fontFamily: 'NotoSansKR',
-                      fontWeight: FontWeight.w600, // Bold
-                    ),
+                        fontFamily: 'NotoSansKR',
+                        fontWeight: FontWeight.w600, // Bold
+                        fontSize: 12),
                   ),
                 ],
               ),
@@ -194,11 +206,9 @@ class FolderInfoScreen extends StatelessWidget {
     Folder folder = Get.arguments["folder"];
     return folder.users
         .map((u) => Container(
-      padding: EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        border: Border(bottom: BorderSide(width: 1, color: Colors.grey))
-      ),
-          child: Row(
+              padding: EdgeInsets.all(8),
+              decoration: BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: Colors.grey))),
+              child: Row(
                 // mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Icon(
@@ -207,11 +217,26 @@ class FolderInfoScreen extends StatelessWidget {
                   ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [Text("  [계정명]  ${u.name}"), Text("  [이메일]  ${u.email}")],
+                    children: [
+                      Text(
+                        "  [계정명]  ${u.name}",
+                        style: TextStyle(
+                            fontFamily: 'NotoSansKR',
+                            fontWeight: FontWeight.w600, // Bold
+                            fontSize: 12),
+                      ),
+                      Text(
+                        "  [이메일]  ${u.email}",
+                        style: TextStyle(
+                            fontFamily: 'NotoSansKR',
+                            fontWeight: FontWeight.w600, // Bold
+                            fontSize: 12),
+                      ),
+                    ],
                   ),
                 ],
               ),
-        ))
+            ))
         .toList();
   }
 }

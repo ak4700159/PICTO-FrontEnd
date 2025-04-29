@@ -27,7 +27,7 @@ class ComfyuiScreen extends StatelessWidget {
             style: TextStyle(
               fontFamily: "NotoSansKR",
               fontWeight: FontWeight.w800,
-              fontSize: 25,
+              fontSize: 20,
               color: AppConfig.mainColor,
             ),
           ),
@@ -36,17 +36,21 @@ class ComfyuiScreen extends StatelessWidget {
             bottom: TabBar(
               indicatorSize: TabBarIndicatorSize.tab,
               dividerColor: Colors.grey,
-              labelPadding: EdgeInsets.all(8),
-              indicatorPadding: EdgeInsets.all(8),
+              // labelPadding: EdgeInsets.all(8),
+              // indicatorPadding: EdgeInsets.all(8),
               indicator: BoxDecoration(
                 color: AppConfig.mainColor,
-                borderRadius: BorderRadius.all(Radius.circular(20)),
+                // borderRadius: BorderRadius.all(Radius.circular(20)),
               ),
               indicatorColor: Colors.white,
               labelColor: Colors.white,
               unselectedLabelColor: Colors.grey,
-              labelStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
-              tabs: [
+              labelStyle: TextStyle(
+                fontFamily: "NotoSansKR",
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: Colors.black,
+              ),                   tabs: [
                 Tab(text: "업스케일링"),
                 Tab(text: "불필요한 영역 제거"),
               ],

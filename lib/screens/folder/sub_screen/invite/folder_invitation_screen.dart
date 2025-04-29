@@ -25,15 +25,21 @@ class FolderInvitationScreen extends StatelessWidget {
         backgroundColor: Colors.white,
         automaticallyImplyLeading: false,
         title: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Icon(
               Icons.email,
               color: AppConfig.mainColor,
+              size: 30,
             ),
             Text(
               "  공유 폴더 초대 목록",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
+              style: TextStyle(
+                fontFamily: "NotoSansKR",
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+                color: Colors.black,
+              ),
             ),
           ],
         ),
@@ -54,8 +60,7 @@ class FolderInvitationScreen extends StatelessWidget {
                 itemCount: viewModel.notices.length,
                 itemBuilder: (context, idx) {
                   return FutureBuilder(
-                      future:
-                          UserManagerApi().getUserByUserId(userId: viewModel.notices[idx].senderId),
+                      future: UserManagerApi().getUserByUserId(userId: viewModel.notices[idx].senderId),
                       builder: (context, snapshot) {
                         if (snapshot.data == null || snapshot.data == false) {
                           return Center(child: CircularProgressIndicator());
@@ -68,8 +73,7 @@ class FolderInvitationScreen extends StatelessWidget {
                             ),
                           );
                         } else {
-                          return _getNoticeTile(
-                              context, idx, viewModel.notices[idx], snapshot.data!);
+                          return _getNoticeTile(context, idx, viewModel.notices[idx], snapshot.data!);
                         }
                       });
                 },

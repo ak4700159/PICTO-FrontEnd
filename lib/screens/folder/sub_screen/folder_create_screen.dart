@@ -20,80 +20,95 @@ class FolderCreateScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     String? folderName;
     String? folderContent;
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus(); // 외부 터치 시 키보드 내림
+      },
+      child: Scaffold(
         backgroundColor: Colors.white,
-        automaticallyImplyLeading: false,
-        title: Row(
-          children: [
-            Icon(
-              Icons.folder_open,
-              color: AppConfig.mainColor,
-              weight: 10,
-            ),
-            Text(
-              "  폴더 생성",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
-            ),
-          ],
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          automaticallyImplyLeading: false,
+          title: Row(
+            children: [
+              Icon(
+                Icons.folder_rounded,
+                color: AppConfig.mainColor,
+                size: 30,
+              ),
+              Text(
+                "  폴더 생성",
+                style: TextStyle(
+                  fontFamily: "NotoSansKR",
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                  color: AppConfig.mainColor,
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
-      body: Form(
-        key: formKey,
-        child: SingleChildScrollView(
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                TopBox(size: 0.05),
-                PictoLogo(
-                  scale: 1.5,
-                  fontSize: 0,
-                ),
-                Container(
-                  padding: EdgeInsets.all(8),
-                  width: context.mediaQuery.size.width * 0.9,
-                  child: TextFormField(
-                    validator: folderValidator,
-                    onSaved: (val) => folderName = val,
-                    decoration: getCustomInputDecoration2(label: "폴더 제목"),
+        body: Form(
+          key: formKey,
+          child: SingleChildScrollView(
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  TopBox(size: 0.05),
+                  PictoLogo(
+                    scale: 1.5,
+                    fontSize: 0,
                   ),
-                ),
-                Container(
-                  padding: EdgeInsets.all(8),
-                  width: context.mediaQuery.size.width * 0.9,
-                  child: TextFormField(
-                    validator: folderValidator,
-                    onSaved: (val) => folderContent = val,
-                    maxLines: 10,
-                    decoration: getCustomInputDecoration2(label: "폴더 내용"),
-                  ),
-                ),
-                Container(
-                  padding: EdgeInsets.all(8),
-                  width: context.mediaQuery.size.width * 0.9,
-                  child: FloatingActionButton(
-                    backgroundColor: AppConfig.mainColor,
-                    onPressed: () async {
-                      if (formKey.currentState?.validate() ?? false) {
-                        formKey.currentState?.save();
-                      }
-                      Folder? newFolder = await FolderManagerApi()
-                          .createFolder(folderName: folderName!, content: folderContent!);
-                      if (newFolder != null) {
-                        Get.find<FolderViewModel>().resetFolder();
-                      }
-                      Get.back();
-                      Get.back();
-                    },
-                    child: Text(
-                      "폴더 생성하기",
-                      style: TextStyle(color: Colors.white, fontSize: 16),
+                  Container(
+                    padding: EdgeInsets.all(8),
+                    width: context.mediaQuery.size.width * 0.9,
+                    child: TextFormField(
+                      validator: folderValidator,
+                      onSaved: (val) => folderName = val,
+                      decoration: getCustomInputDecoration2(label: "폴더 제목"),
                     ),
                   ),
-                )
-              ],
+                  Container(
+                    padding: EdgeInsets.all(8),
+                    width: context.mediaQuery.size.width * 0.9,
+                    child: TextFormField(
+                      validator: folderValidator,
+                      onSaved: (val) => folderContent = val,
+                      maxLines: 10,
+                      decoration: getCustomInputDecoration2(label: "폴더 내용"),
+                    ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.all(8),
+                    width: context.mediaQuery.size.width * 0.9,
+                    child: FloatingActionButton(
+                      backgroundColor: AppConfig.mainColor,
+                      onPressed: () async {
+                        if (formKey.currentState?.validate() ?? false) {
+                          formKey.currentState?.save();
+                        }
+                        Folder? newFolder =
+                            await FolderManagerApi().createFolder(folderName: folderName!, content: folderContent!);
+                        if (newFolder != null) {
+                          Get.find<FolderViewModel>().resetFolder();
+                        }
+                        Get.back();
+                        Get.back();
+                      },
+                      child: Text(
+                        "폴더 생성하기",
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.white,
+                          fontFamily: "NotoSansKR",
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+              ),
             ),
           ),
         ),

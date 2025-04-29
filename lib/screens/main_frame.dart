@@ -122,12 +122,7 @@ class MapScreen extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        // border: Border.all(color: Colors.grey, width: 1),
         borderRadius: BorderRadius.circular(20),
-        // boxShadow: [
-        //   BoxShadow(color: Colors.grey, blurRadius: 10, offset: Offset(-220, 0)),
-        //   BoxShadow(color: Colors.grey, blurRadius: 10, offset: Offset(220, 0)),
-        // ]
       ),
       child: BottomAppBar(
         padding: EdgeInsets.all(0),

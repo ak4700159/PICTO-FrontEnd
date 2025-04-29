@@ -22,10 +22,6 @@ class SelectionBar extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             PictoTextLogo(),
-            // Padding(
-            //   padding: const EdgeInsets.all(3.0),
-            //   child: Obx(() => _getDropDownButton("sort", context)),
-            // ),
             SizedBox(
               width: context.mediaQuery.size.width * 0.3,
             ),
@@ -58,8 +54,8 @@ class SelectionBar extends StatelessWidget {
                     sort,
                     style: TextStyle(
                       fontFamily: "NotoSansKR",
-                      fontSize: 14,
-                      fontWeight: FontWeight.w700,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
                       color: Colors.black,
                     ),
                   ),
@@ -75,13 +71,14 @@ class SelectionBar extends StatelessWidget {
         buttonStyleData: ButtonStyleData(
           height: context.mediaQuery.size.height * 0.05,
           decoration: BoxDecoration(
-            border: Border.all(width: 1),
+            // border: Border.all(width: 1),
             color: AppConfig.backgroundColor,
             borderRadius: BorderRadius.circular(40),
             boxShadow: <BoxShadow>[BoxShadow(color: Color.fromRGBO(0, 0, 0, 0.57), blurRadius: 5)],
           ),
         ),
         dropdownStyleData: DropdownStyleData(
+          padding: EdgeInsets.all(0),
           decoration: BoxDecoration(
             color: AppConfig.backgroundColor,
             borderRadius: BorderRadius.circular(10),
@@ -101,7 +98,7 @@ class SelectionBar extends StatelessWidget {
         // 어떻게 구현할지 고민중 // 팝업 형식?
         Get.toNamed('/tag');
       },
-      shape: BeveledRectangleBorder(side: BorderSide(width: 1)),
+      // shape: BeveledRectangleBorder(side: BorderSide(width: 1)),
       backgroundColor: AppConfig.backgroundColor,
       child: Icon(
         Icons.tag,

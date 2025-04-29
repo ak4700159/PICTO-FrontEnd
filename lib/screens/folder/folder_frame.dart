@@ -27,11 +27,18 @@ class FolderFrame extends StatelessWidget {
             padding: const EdgeInsets.all(8.0),
             child: Text(
               folderViewModel.getFolder(folderId: folderId)!.name,
-              style: TextStyle(color: AppConfig.mainColor),
+              style: TextStyle(
+                fontFamily: "NotoSansKR",
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+                color: AppConfig.mainColor,
+              ),
             ),
           ),
           actions: [
             PopupMenuButton<String>(
+              padding: EdgeInsets.all(0),
+              menuPadding: EdgeInsets.all(0),
               color: Colors.white,
               icon: const Icon(Icons.more_vert, color: AppConfig.mainColor),
               onSelected: (value) {
@@ -40,46 +47,73 @@ class FolderFrame extends StatelessWidget {
                     break;
                   case "notify":
                     break;
-                  case "info" :
+                  case "info":
                     break;
                 }
               },
               itemBuilder: (context) => [
                 PopupMenuItem(
                   value: "delete",
+                  padding: EdgeInsets.all(4),
                   onTap: _showFolderDeleteCheck,
                   child: Row(
                     children: [
-                      Icon(Icons.folder_delete),
+                      Icon(
+                        Icons.folder_delete,
+                        color: AppConfig.mainColor,
+                      ),
                       const Text(
                         " 폴더 삭제",
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.black,
+                          fontFamily: "NotoSansKR",
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ],
                   ),
                 ),
                 PopupMenuItem(
                   value: "send",
+                  padding: EdgeInsets.all(4),
                   onTap: () => Get.toNamed('/folder/invite/send', arguments: {"folderId": folderId}),
                   child: Row(
                     children: [
-                      Icon(Icons.send),
+                      Icon(
+                        Icons.send,
+                        color: AppConfig.mainColor,
+                      ),
                       Text(
                         " 초대 알림 전송",
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.black,
+                          fontFamily: "NotoSansKR",
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ],
                   ),
                 ),
                 PopupMenuItem(
                   value: "info",
+                  padding: EdgeInsets.all(4),
                   onTap: () => Get.toNamed('/folder/info', arguments: {"folder": folderViewModel.currentFolder.value}),
                   child: Row(
                     children: [
-                      Icon(Icons.info),
+                      Icon(
+                        Icons.info,
+                        color: AppConfig.mainColor,
+                      ),
                       Text(
                         " 폴더 정보",
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.black,
+                          fontFamily: "NotoSansKR",
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ],
                   ),
@@ -90,23 +124,22 @@ class FolderFrame extends StatelessWidget {
           bottom: TabBar(
             indicatorSize: TabBarIndicatorSize.tab,
             dividerColor: Colors.grey,
-            labelPadding: EdgeInsets.all(8),
-            indicatorPadding: EdgeInsets.all(8),
             indicator: BoxDecoration(
               color: AppConfig.mainColor,
-              borderRadius: BorderRadius.all(Radius.circular(20)),
             ),
             indicatorColor: Colors.white,
             labelColor: Colors.white,
             unselectedLabelColor: Colors.grey,
-            labelStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
-            tabs: [
+            labelStyle: TextStyle(
+              fontFamily: "NotoSansKR",
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: Colors.black,
+            ),            tabs: [
               Tab(text: "저장된 사진"),
               Tab(text: "채팅"),
             ],
-            onTap: (idx) {
-
-            },
+            onTap: (idx) {},
           ),
         ),
         body: TabBarView(
@@ -127,16 +160,30 @@ class FolderFrame extends StatelessWidget {
         backgroundColor: Colors.white,
         title: Row(
           children: [
-            Icon(Icons.delete),
+            Icon(
+              Icons.delete,
+              size: 30,
+              color: Colors.red,
+            ),
             Text(
               "폴더 삭제",
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.black,
+                fontFamily: "NotoSansKR",
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ],
         ),
         content: Text(
           "폴더를 삭제하시겠습니까?",
-          style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontSize: 13,
+            color: Colors.black,
+            fontFamily: "NotoSansKR",
+            fontWeight: FontWeight.w600,
+          ),
         ),
         actions: [
           TextButton(
@@ -147,7 +194,6 @@ class FolderFrame extends StatelessWidget {
                 showErrorPopup("기본 폴더는 삭제할 수 없습니다.");
                 return;
               }
-
               bool isSuccess = await FolderManagerApi().removeFolder(folderId: folderId);
               Get.back();
               Get.back();
@@ -160,7 +206,12 @@ class FolderFrame extends StatelessWidget {
             },
             child: Text(
               "네",
-              style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.black,
+                fontFamily: "NotoSansKR",
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
           TextButton(
@@ -169,7 +220,12 @@ class FolderFrame extends StatelessWidget {
             },
             child: Text(
               "아니요",
-              style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.black,
+                fontFamily: "NotoSansKR",
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
         ],

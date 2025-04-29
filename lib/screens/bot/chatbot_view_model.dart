@@ -1,4 +1,6 @@
+import 'dart:collection';
 import 'dart:io';
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
@@ -7,12 +9,12 @@ import 'package:hive/hive.dart';
 import 'package:multi_image_picker_view/multi_image_picker_view.dart';
 import 'package:picto_frontend/models/chatbot_msg.dart';
 import 'package:picto_frontend/models/chatbot_room.dart';
-import 'package:picto_frontend/services/chatbot_manager_api/chatbot_api.dart';
-import 'package:picto_frontend/services/chatbot_manager_api/prompt_response.dart';
 import 'package:picto_frontend/services/photo_manager_service/photo_manager_api.dart';
 
 import '../../models/photo.dart';
 import '../../models/photo_data.dart';
+import '../../services/chatbot_manager_service/chatbot_api.dart';
+import '../../services/chatbot_manager_service/prompt_response.dart';
 import '../../utils/functions.dart';
 import '../../utils/picker.dart';
 
@@ -53,6 +55,21 @@ class ChatbotViewModel extends GetxController {
     List<ChatbotRoom> data = box.values
         .whereType<ChatbotRoom>() // ChatbotList 타입만 필터링
         .toList();
+
+    // 오늘 기준으로 1년 이내 랜덤 날짜 생성
+    final now = DateTime.now();
+    final random = Random();
+
+    for (int i = 0; i < 10; i++) {
+      final randomDaysAgo = random.nextInt(365); // 0~364일 전
+      final created = now.subtract(Duration(days: randomDaysAgo));
+      final createdMillis = created.millisecondsSinceEpoch;
+      final dummyRoom = ChatbotRoom(createdDatetime: createdMillis);
+
+      // await box.put(createdMillis.toString(), dummyRoom);
+      data.add(dummyRoom);
+    }
+
     chatbotRooms.value = data;
   }
 
@@ -148,13 +165,23 @@ class ChatbotViewModel extends GetxController {
   // 월별로 그룹핑
   Map<String, List<ChatbotRoom>> groupChatbotRoomsByMonth() {
     Map<String, List<ChatbotRoom>> grouped = {};
+
     for (var room in chatbotRooms) {
       DateTime created = DateTime.fromMillisecondsSinceEpoch(room.createdDatetime);
       String monthKey = '${created.year}-${created.month.toString().padLeft(2, '0')}';
       grouped.putIfAbsent(monthKey, () => []);
       grouped[monthKey]!.add(room);
     }
-    return grouped;
+
+    // 🔽 날짜 기준 내림차순으로 키 정렬
+    var sortedKeys = grouped.keys.toList()
+      ..sort((a, b) => b.compareTo(a)); // 최신 순
+    LinkedHashMap<String, List<ChatbotRoom>> sortedMap = LinkedHashMap.fromIterable(
+      sortedKeys,
+      key: (k) => k,
+      value: (k) => grouped[k]!,
+    );
+    return sortedMap;
   }
 
   // 검색한 사진 선택

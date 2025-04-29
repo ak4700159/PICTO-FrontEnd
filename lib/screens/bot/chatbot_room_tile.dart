@@ -33,80 +33,79 @@ class ChatbotRoomTile extends StatelessWidget {
         });
       },
       child: Obx(() => AnimatedOpacity(
-        duration: Duration(milliseconds: 400),
-        opacity: chatbotViewModel.opacity.value ,
-        child: Container(
-          padding: EdgeInsets.all(4),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey,
-                blurRadius: 4, // 흐림 정도
-                spreadRadius: 1, // 그림자 확산 정도
-                offset: Offset(2, 5), // 그림자 위치 조정
-              )
-            ],
-            color: Colors.white,
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                flex: 2,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    chatbotList.listName ??
-                        formatDate(chatbotList.messages.first.sendDatetime)
-                            .substring("0000-".length, "0000-00-00".length),
-                    style:
-                    TextStyle(fontFamily: "NotoSansKR", fontWeight: FontWeight.w600, fontSize: 15),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+            duration: Duration(milliseconds: 400),
+            opacity: chatbotViewModel.opacity.value,
+            child: Container(
+              padding: EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey,
+                    blurRadius: 4, // 흐림 정도
+                    spreadRadius: 1, // 그림자 확산 정도
+                    offset: Offset(2, 5), // 그림자 위치 조정
+                  )
+                ],
+                color: Colors.white,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    flex: 2,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        chatbotList.listName ??
+                            formatDate(chatbotList.messages.first.sendDatetime)
+                                .substring("0000-".length, "0000-00-00".length),
+                        style: TextStyle(fontFamily: "NotoSansKR", fontWeight: FontWeight.w600, fontSize: 15),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
                   ),
-                ),
+                  Expanded(
+                    flex: 7,
+                    child: Text(
+                      chatbotList.messages.isEmpty ? "  아직 채팅 내용이 없습니다" : chatbotList.messages.last.content,
+                      style: TextStyle(fontFamily: "NotoSansKR", fontWeight: FontWeight.w200, fontSize: 12),
+                      maxLines: 3,
+                    ),
+                  ),
+                  Expanded(
+                    flex: 2,
+                    child: Padding(
+                      padding: const EdgeInsets.all(4.0),
+                      child: Obx(() => chatbotViewModel.isDelete.value
+                          ? IconButton(
+                              onPressed: () {
+                                chatbotViewModel.removeChatbotRoom(chatbotList.createdDatetime);
+                                // 클릭시 삭제
+                              },
+                              icon: Icon(
+                                Icons.delete,
+                                size: 30,
+                                color: Colors.red,
+                              ))
+                          : IconButton(
+                              onPressed: () {
+                                final chatbotViewModel = Get.find<ChatbotViewModel>();
+                                chatbotViewModel.selectChatRoom(chatbotList.createdDatetime);
+                                Get.toNamed('/chatbot');
+                              },
+                              icon: Icon(
+                                Icons.meeting_room_outlined,
+                                color: AppConfig.mainColor,
+                                size: 30,
+                              ))),
+                    ),
+                  ),
+                ],
               ),
-              Expanded(
-                flex: 7,
-                child: Text(
-                  chatbotList.messages.isEmpty ? "  아직 채팅 내용이 없습니다" : chatbotList.messages.last.content,
-                  style: TextStyle(fontFamily: "NotoSansKR", fontWeight: FontWeight.w200, fontSize: 12),
-                  maxLines: 3,
-                ),
-              ),
-              Expanded(
-                flex: 2,
-                child: Padding(
-                  padding: const EdgeInsets.all(4.0),
-                  child: Obx(() => chatbotViewModel.isDelete.value
-                      ? IconButton(
-                      onPressed: () {
-                        chatbotViewModel.removeChatbotRoom(chatbotList.createdDatetime);
-                        // 클릭시 삭제
-                      },
-                      icon: Icon(
-                        Icons.delete,
-                        size: 30,
-                        color: Colors.red,
-                      ))
-                      : IconButton(
-                      onPressed: () {
-                        final chatbotViewModel = Get.find<ChatbotViewModel>();
-                        chatbotViewModel.selectChatRoom(chatbotList.createdDatetime);
-                        Get.toNamed('/chatbot');
-                      },
-                      icon: Icon(
-                        Icons.meeting_room_outlined,
-                        color: AppConfig.mainColor,
-                        size: 30,
-                      ))),
-                ),
-              ),
-            ],
-          ),
-        ),
-      )),
+            ),
+          )),
     );
   }
 
@@ -115,9 +114,16 @@ class ChatbotRoomTile extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Container(
+          padding: EdgeInsets.only(top: 12),
           width: context.mediaQuery.size.width * 0.95,
           decoration: BoxDecoration(
-              border: BorderDirectional(bottom: BorderSide(width: 2, color: Colors.grey))),
+            border: BorderDirectional(
+              bottom: BorderSide(
+                width: 2,
+                color: Colors.grey,
+              ),
+            ),
+          ),
           child: Row(
             children: [
               Icon(
@@ -126,11 +132,11 @@ class ChatbotRoomTile extends StatelessWidget {
                 size: 25,
               ),
               Text(
-                "$date 채팅 목록",
+                "   $date 채팅",
                 style: TextStyle(
                   fontFamily: "NotoSansKR",
-                  fontWeight: FontWeight.w700,
-                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 18,
                 ),
               ),
             ],

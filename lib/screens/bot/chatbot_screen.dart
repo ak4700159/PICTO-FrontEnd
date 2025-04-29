@@ -30,8 +30,8 @@ class ChatbotScreen extends StatelessWidget {
             "Chat Bot",
             style: TextStyle(
               fontFamily: "NotoSansKR",
-              fontWeight: FontWeight.w800,
-              fontSize: 25,
+              fontWeight: FontWeight.w600,
+              fontSize: 20,
               color: AppConfig.mainColor,
             ),
           ),

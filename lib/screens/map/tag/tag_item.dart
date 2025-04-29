@@ -1,7 +1,8 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:picto_frontend/config/app_config.dart';
 
 class TagItem extends StatelessWidget {
   TagItem({super.key, required this.tagName, required this.remove});
@@ -16,12 +17,12 @@ class TagItem extends StatelessWidget {
       child: Container(
         height: context.mediaQuery.size.height * 0.06,
         decoration: BoxDecoration(
-          border: Border.all(
-            color: Colors.black, // 테두리 색상
-            width: 1, // 테두리 두께
-          ),
-          color: AppConfig.mainColor,
-          borderRadius: BorderRadius.circular(20), // 전체 둥글게
+          // border: Border.all(
+          //   color: Colors.black, // 테두리 색상
+          //   width: 1, // 테두리 두께
+          // ),
+          color: Colors.primaries[Random().nextInt(Colors.primaries.length)],
+          borderRadius: BorderRadius.circular(10), // 전체 둥글게
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -30,7 +31,12 @@ class TagItem extends StatelessWidget {
               padding: const EdgeInsets.all(8.0),
               child: Text(
                 tagName,
-                style: TextStyle(color: Colors.white),
+                style: TextStyle(
+                  fontFamily: "NotoSansKR",
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.white,
+                ),
               ),
             ),
             IconButton(

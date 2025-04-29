@@ -20,12 +20,14 @@ class ChatbotListScreen extends StatelessWidget {
     return Stack(children: [
       Scaffold(
         appBar: AppBar(
+          // 스크롤 시 그림자 정도
+          scrolledUnderElevation: 0,
           title: Text(
             "PICTORY",
             style: TextStyle(
               fontFamily: "NotoSansKR",
               fontWeight: FontWeight.w800,
-              fontSize: 25,
+              fontSize: 20,
               color: AppConfig.mainColor,
             ),
           ),

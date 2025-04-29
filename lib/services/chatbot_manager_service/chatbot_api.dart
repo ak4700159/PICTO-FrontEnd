@@ -3,7 +3,7 @@ import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:http_parser/http_parser.dart';
-import 'package:picto_frontend/services/chatbot_manager_api/prompt_response.dart';
+import 'package:picto_frontend/services/chatbot_manager_service/prompt_response.dart';
 import 'package:picto_frontend/utils/popup.dart';
 
 import '../../config/app_config.dart';

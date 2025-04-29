@@ -16,101 +16,132 @@ class FolderInvitationSendScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final viewModel = Get.find<FolderInvitationViewModel>();
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.send,
-              color: AppConfig.mainColor,
-            ),
-            Text(
-              "  폴더 공유",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
-            ),
-          ],
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus(); // 외부 터치 시 키보드 내림
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Icon(
+                Icons.send,
+                color: AppConfig.mainColor,
+                size: 30,
+              ),
+              Text(
+                "  폴더 공유",
+                style: TextStyle(
+                  fontFamily: "NotoSansKR",
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black,
+                ),
+              ),
+            ],
+          ),
+          backgroundColor: Colors.white,
         ),
-        backgroundColor: Colors.white,
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            TopBox(size: 0.05),
-            // 공유할 사용자 이메일 입력
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(
-                  width: context.mediaQuery.size.width * 0.8,
-                  child: Form(
-                    key: viewModel.formKey,
-                    child: TextFormField(
-                      controller: viewModel.textController,
-                      keyboardType: TextInputType.emailAddress,
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                      decoration: InputDecoration(
-                        errorMaxLines: 2,
-                        errorBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.red, width: 2),
-                          borderRadius: BorderRadius.all(Radius.circular(0)),
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              TopBox(size: 0.05),
+              // 공유할 사용자 이메일 입력
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    width: context.mediaQuery.size.width * 0.8,
+                    child: Form(
+                      key: viewModel.formKey,
+                      child: TextFormField(
+                        controller: viewModel.textController,
+                        keyboardType: TextInputType.emailAddress,
+                        style: TextStyle(
+                          fontFamily: "NotoSansKR",
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black,
                         ),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.black, width: 2),
-                          borderRadius: BorderRadius.all(Radius.circular(0)),
+                        decoration: InputDecoration(
+                          errorMaxLines: 2,
+                          errorBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.red, width: 2),
+                            borderRadius: BorderRadius.all(Radius.circular(0)),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide.none,
+                            borderRadius: BorderRadius.all(Radius.circular(0)),
+                          ),
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide.none,
+                            borderRadius: BorderRadius.all(Radius.circular(0)),
+                          ),
+                          labelStyle: TextStyle(
+                            fontFamily: "NotoSansKR",
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black,
+                          ),
+                          labelText: "공유할 사용자 이메일 입력",
+                          hintText: "이메일 형식으로 적어주세요",
+                          hintStyle: TextStyle(
+                            fontFamily: "NotoSansKR",
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black,
+                          ),
+                          fillColor: Colors.grey.shade300,
+                          filled: true,
                         ),
-                        border: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.black, width: 2),
-                          borderRadius: BorderRadius.all(Radius.circular(0)),
-                        ),
-                        labelStyle: TextStyle(fontWeight: FontWeight.bold),
-                        labelText: "공유할 사용자 이메일 입력",
-                        hintText: "이메일 형식으로 적어주세요",
+                        validator: emailValidator,
+                        // onSaved: viewModel.addEmail,
+                        onFieldSubmitted: viewModel.submitEmail,
                       ),
-                      validator: emailValidator,
-                      // onSaved: viewModel.addEmail,
-                      onFieldSubmitted: viewModel.submitEmail,
                     ),
-                  ),
-                )
-              ],
-            ),
-            TopBox(size: 0.02),
-            SizedBox(
-              height: context.mediaQuery.size.height * 0.5,
-              child: Obx(() => ListView.builder(
+                  )
+                ],
+              ),
+              TopBox(size: 0.02),
+              SizedBox(
+                height: context.mediaQuery.size.height * 0.5,
+                child: Obx(
+                  () => ListView.builder(
                     itemCount: viewModel.selectedUsers.length,
                     itemBuilder: (context, idx) {
                       return _getUserTile(context, idx, viewModel.selectedUsers[idx]);
                     },
-                  ),),
-            ),
-            TopBox(size: 0.05),
-
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(
-                  width: context.mediaQuery.size.width * 0.7,
-                  child: FloatingActionButton(
-                    onPressed: () {
-                      viewModel.sendInvitation();
-                    },
-                    backgroundColor: AppConfig.mainColor,
-                    child: Text(
-                      "전송하기",
-                      style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                  ),
+                ),
+              ),
+              TopBox(size: 0.05),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    width: context.mediaQuery.size.width * 0.7,
+                    child: FloatingActionButton(
+                      onPressed: () {
+                        viewModel.sendInvitation();
+                      },
+                      backgroundColor: AppConfig.mainColor,
+                      child: Text(
+                        "전송하기",
+                        style: TextStyle(
+                          fontFamily: "NotoSansKR",
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
-            ),
-          ],
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -119,7 +150,7 @@ class FolderInvitationSendScreen extends StatelessWidget {
   _getUserTile(BuildContext context, int idx, User user) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+          color: Colors.white,
           border: Border(bottom: BorderSide(width: 0.5, color: Colors.grey)),
           boxShadow: [
             BoxShadow(
@@ -138,7 +169,29 @@ class FolderInvitationSendScreen extends StatelessWidget {
             size: 30,
             color: getColorFromUserId(user.userId!),
           ),
-          Text("${user.accountName}\n${user.email}"),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "${user.accountName}",
+                style: TextStyle(
+                  fontFamily: "NotoSansKR",
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black,
+                ),
+              ),
+              Text(
+                "${user.email}",
+                style: TextStyle(
+                  fontFamily: "NotoSansKR",
+                  fontSize: 12,
+                  fontWeight: FontWeight.w400,
+                  color: Colors.grey,
+                ),
+              ),
+            ],
+          ),
           IconButton(
             onPressed: () {
               Get.find<FolderInvitationViewModel>().deleteUser(user.userId!);

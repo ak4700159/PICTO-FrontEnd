@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hive/hive.dart';
 import 'package:picto_frontend/screens/folder/folder_view_model.dart';
 
 import '../../config/app_config.dart';
@@ -20,31 +21,90 @@ class FolderListScreen extends StatelessWidget {
     }
     return Scaffold(
       appBar: AppBar(
+        titleSpacing: 1,
         backgroundColor: Colors.white,
         // 제목
         title: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(
-            "${profileViewModel.accountName.value}의 폴더 목록",
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
+          padding: const EdgeInsets.only(left : 8.0),
+          child: Container(
+            padding: EdgeInsets.all(4),
+            decoration: BoxDecoration(color: Colors.grey.shade200, borderRadius: BorderRadius.circular(10)),
+            child: Text(
+              "${profileViewModel.accountName.value}의 폴더 목록",
+              overflow: TextOverflow.ellipsis,
+              maxLines: 2,
+              style: TextStyle(
+                fontFamily: "NotoSansKR",
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: Colors.black,
+              ),
             ),
           ),
         ),
         automaticallyImplyLeading: false,
         // 메뉴 버튼
         actions: [
-          IconButton(
-              onPressed: () {
-                _showFolderEventList(context);
-              },
-              icon: Icon(
-                Icons.menu,
-                color: AppConfig.mainColor,
-              )),
-          // 드롭박스 버튼 추가
-          // 폴더 생성 , 삭제 , 폴더 초대 확인(수락 및 거절)
+          PopupMenuButton<String>(
+            padding: EdgeInsets.all(0),
+            menuPadding: EdgeInsets.all(0),
+            color: Colors.white,
+            icon: const Icon(Icons.more_vert, color: AppConfig.mainColor),
+            onSelected: (value) {
+              switch (value) {
+                case "create":
+                  break;
+                case "invite":
+                  break;
+              }
+            },
+            itemBuilder: (context) => [
+              PopupMenuItem(
+                padding: EdgeInsets.all(4),
+                value: "create",
+                onTap: () {
+                  Get.back();
+                  Get.toNamed('/folder/create');
+                },
+                child: Row(
+                  children: [
+                    Icon(Icons.create_new_folder, color: AppConfig.mainColor),
+                    const Text(
+                      "  폴더 생성",
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.black,
+                        fontFamily: "NotoSansKR",
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              PopupMenuItem(
+                value: "invite",
+                padding: EdgeInsets.all(4),
+                onTap: () {
+                  Get.back();
+                  Get.toNamed('/folder/invite');
+                },
+                child: Row(
+                  children: [
+                    Icon(Icons.mail_lock, color: AppConfig.mainColor),
+                    Text(
+                      "  초대 알림 전송",
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.black,
+                        fontFamily: "NotoSansKR",
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          )
         ],
       ),
       body: Obx(() => GridView.builder(
@@ -56,117 +116,12 @@ class FolderListScreen extends StatelessWidget {
             ),
             itemCount: folderViewModel.folders.length,
             itemBuilder: (context, index) {
-              return _getFolderWidget(folderViewModel.folders.values.toList()[index]);
+              List<Folder> folders = folderViewModel.folders.values.toList();
+              folders.sort((a, b) => a.sharedDatetime.compareTo(b.sharedDatetime));
+              return _getFolderWidget(folders[index]);
             },
           )),
     );
-  }
-
-  // 폴더 이벤트 다이얼로그
-  void _showFolderEventList(BuildContext context) {
-    List<String> items = ["폴더 생성", "초대 알림 확인"];
-    // final width = context.mediaQuery.size.width * 0.4;
-    // final height = context.mediaQuery.size.height * 0.8;
-    Get.dialog(
-      AlertDialog(
-          // insetPadding: EdgeInsets.all(2),
-          backgroundColor: Colors.white,
-          scrollable: true,
-          title: Row(
-            children: [
-              Icon(
-                Icons.folder_open,
-                color: AppConfig.mainColor,
-                weight: 10,
-              ),
-              Text(
-                "  기능",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
-              ),
-            ],
-          ),
-          content: Container(
-            height: context.mediaQuery.size.height * 0.2,
-            decoration: BoxDecoration(
-              color: Colors.white,
-            ),
-            child: ListView.builder(
-              shrinkWrap: true,
-              itemBuilder: (context, idx) {
-                return Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: GestureDetector(
-                    onTap: switch (idx) {
-                      0 => () {
-                          Get.back();
-                          Get.toNamed('/folder/create');
-                        },
-                      1 => () {
-                          Get.back();
-                          Get.toNamed('/folder/invite');
-                        },
-                      2 => () {
-                          Get.back();
-                        },
-                      _ => () {}
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          // border: Border.all(width: 1),
-                          borderRadius: BorderRadius.all(Radius.circular(5)),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.5),
-                              spreadRadius: 3,
-                              blurRadius: 5,
-                              offset: Offset(0, 3), // changes position of shadow
-                            ),
-                          ]),
-                      child: Center(
-                        child: Row(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: _getFolderMenuIcon(idx),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                items[idx],
-                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                );
-              },
-              itemCount: items.length,
-            ),
-          )),
-    );
-  }
-
-  // 폴더 메뉴 아이콘
-  Widget _getFolderMenuIcon(int idx) {
-    return switch (idx) {
-      0 => Icon(
-          Icons.create_new_folder_rounded,
-          color: AppConfig.mainColor,
-        ),
-      1 => Icon(
-          Icons.email,
-          color: AppConfig.mainColor,
-        ),
-      2 => Icon(
-          Icons.folder_shared,
-          color: AppConfig.mainColor,
-        ),
-      _ => Icon(Icons.hourglass_empty),
-    };
   }
 
   // 폴더 위젯
@@ -204,9 +159,9 @@ class FolderListScreen extends StatelessWidget {
   }
 
   IconData _getFolderIcon(int generatorId, String folderName) {
-    if(folderName == "default") {
+    if (folderName == "default") {
       return Icons.person;
-    } else if(UserManagerApi().ownerId == generatorId) {
+    } else if (UserManagerApi().ownerId == generatorId) {
       return Icons.folder;
     }
     return Icons.folder_shared;

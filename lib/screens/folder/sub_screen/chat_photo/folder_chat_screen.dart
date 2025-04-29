@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:picto_frontend/config/user_config.dart';
 import 'package:picto_frontend/models/chatting_msg.dart';
 import 'package:picto_frontend/screens/folder/folder_view_model.dart';
 import 'package:picto_frontend/screens/profile/profile_view_model.dart';
-import 'package:picto_frontend/services/chatting_scheduler_service/chatting_api.dart';
 import 'package:picto_frontend/services/user_manager_service/user_api.dart';
 
 import '../../../../config/app_config.dart';
