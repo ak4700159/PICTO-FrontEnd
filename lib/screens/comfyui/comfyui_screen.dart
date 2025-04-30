@@ -11,6 +11,7 @@ import '../folder/folder_view_model.dart';
 
 class ComfyuiScreen extends StatelessWidget {
   ComfyuiScreen({super.key});
+
   final comfyuiViewModel = Get.find<ComfyuiViewModel>();
 
   @override
@@ -21,18 +22,18 @@ class ComfyuiScreen extends StatelessWidget {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.white,
-          title: Text(
-            "ComfyUI",
-            style: TextStyle(
-              fontFamily: "NotoSansKR",
-              fontWeight: FontWeight.w800,
-              fontSize: 20,
-              color: AppConfig.mainColor,
+            backgroundColor: Colors.white,
+            title: Text(
+              "ComfyUI",
+              style: TextStyle(
+                fontFamily: "NotoSansKR",
+                fontWeight: FontWeight.w800,
+                fontSize: 20,
+                color: AppConfig.mainColor,
+              ),
             ),
-          ),
-          automaticallyImplyLeading: false,
-          centerTitle: true,
+            automaticallyImplyLeading: false,
+            centerTitle: true,
             bottom: TabBar(
               indicatorSize: TabBarIndicatorSize.tab,
               dividerColor: Colors.grey,
@@ -50,15 +51,13 @@ class ComfyuiScreen extends StatelessWidget {
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
                 color: Colors.black,
-              ),                   tabs: [
+              ),
+              tabs: [
                 Tab(text: "업스케일링"),
                 Tab(text: "불필요한 영역 제거"),
               ],
-              onTap: (idx) {
-
-              },
-            )
-        ),
+              onTap: (idx) {},
+            )),
         body: TabBarView(
           children: [
             UpscalingScreen(),

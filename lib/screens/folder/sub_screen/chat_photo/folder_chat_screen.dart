@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:picto_frontend/models/chatting_msg.dart';
@@ -33,12 +35,20 @@ class FolderChatScreen extends StatelessWidget {
                   folderViewModel.scrollToBottom();
                 }
               });
+              Map<String, List<ChatMsg>> groupedChatMessages = folderViewModel.groupMessagesByDay();
+              List<Widget> result = [];
+              groupedChatMessages.forEach((String date, List<ChatMsg> messages) {
+                result.add(_getDayTitleWidget(date, context));
+                for (ChatMsg msg in messages) {
+                  result.add(ChatBubble(msg: msg));
+                }
+              });
               return ListView(
                 controller: folderViewModel.chatScrollController,
                 reverse: false,
                 padding: const EdgeInsets.all(10),
                 // 이거 일자별로 그룹핑하는 함수 필요
-                children: folderViewModel.currentMsgList.map((m) => ChatBubble(msg: m)).toList(),
+                children: result,
               );
             }),
           ),
@@ -101,6 +111,31 @@ class FolderChatScreen extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _getDayTitleWidget(String date, BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.grey.shade400,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          // width: context.mediaQuery.size.width,
+          padding: EdgeInsets.all(8),
+          child: Text(
+            date,
+            style: TextStyle(
+              fontSize: 10,
+              color: Colors.grey,
+              fontFamily: "NotoSansKR",
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

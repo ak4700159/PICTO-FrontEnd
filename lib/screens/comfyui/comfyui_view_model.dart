@@ -3,10 +3,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:picto_frontend/services/comfyui_manager_service/comfyui_api.dart';
+import 'package:picto_frontend/utils/popup.dart';
 
 class ComfyuiViewModel extends GetxController {
   Rxn<XFile?> currentUpscalingSelectedPhoto = Rxn();
   Rxn<XFile?> currentRemoveSelectedPhoto = Rxn();
+  RxBool removeReady = false.obs;
   String? currentPrompt;
   final textController = TextEditingController();
   final ImagePicker _picker = ImagePicker();
@@ -22,14 +24,16 @@ class ComfyuiViewModel extends GetxController {
   }
 
   // 사진만 있으면 됨.
-  void upscalingPhoto() {
-
-  }
+  // void upscalingPhoto() {
+  //
+  // }
 
   // 사진 + 프롬프트
   void removePhoto() async {
-    currentPrompt = textController.text;
-    textController.text = "";
+    if(currentPrompt!.isEmpty) {
+      showErrorPopup("지우고 싶은 카테고리를 입력해주세요!");
+      return;
+    }
     await ComfyuiAPI().removePhoto(prompt: currentPrompt!, original: currentRemoveSelectedPhoto.value!);
     currentRemoveSelectedPhoto.value = null;
   }
@@ -39,5 +43,13 @@ class ComfyuiViewModel extends GetxController {
     isFirstScreen
         ? currentUpscalingSelectedPhoto.value = null
         : currentRemoveSelectedPhoto.value = null;
+    if(isFirstScreen) removeReady.value = false;
+  }
+
+  // 카테고리 저장
+  void saveCategories(String? value) {
+    currentPrompt = value;
+    textController.text = "";
+    // FocusScope.of(context).unfocus();
   }
 }

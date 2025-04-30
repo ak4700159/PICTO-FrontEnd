@@ -1,11 +1,10 @@
-import 'package:flutter/cupertino.dart';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:picto_frontend/config/app_config.dart';
 
 import '../../services/comfyui_manager_service/comfyui_api.dart';
-import '../../services/photo_store_service/photo_store_api.dart';
 import '../map/top_box.dart';
 import 'comfyui_result.dart';
 import 'comfyui_view_model.dart';
@@ -29,14 +28,16 @@ class RemoveScreen extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  // 여백
                   TopBox(size: 0.05),
-                  // 사진이 없으면 선택 화면
-                  if (comfyuiViewModel.currentRemoveSelectedPhoto.value != null)
+                  // [사진 + 프롬프트가 준비된 상태 / 사진만 선택된 상태 / 사진도 선택되지 않은 상태]
+                  if (comfyuiViewModel.currentRemoveSelectedPhoto.value != null &&
+                      comfyuiViewModel.removeReady.value)
                     _getAnimationPhoto(context)
+                  else if (comfyuiViewModel.currentRemoveSelectedPhoto.value != null)
+                    _getOriginalPhoto(context)
                   else
                     _getSelection(context),
-                  // 아이콘 버튼 리스트
+                  // 아이콘 버튼
                   SizedBox(
                     width: context.mediaQuery.size.width,
                     child: Row(
@@ -46,7 +47,7 @@ class RemoveScreen extends StatelessWidget {
                         if (comfyuiViewModel.currentRemoveSelectedPhoto.value != null)
                           IconButton(
                             onPressed: () {
-                              comfyuiViewModel.reset(isFirstScreen: true);
+                              comfyuiViewModel.reset(isFirstScreen: false);
                             },
                             icon: Icon(
                               Icons.delete,
@@ -56,6 +57,7 @@ class RemoveScreen extends StatelessWidget {
                         // 사진 속 불필요한 영역 지우기
                         IconButton(
                           onPressed: () {
+                            comfyuiViewModel.removeReady.value = true;
                             comfyuiViewModel.removePhoto();
                           },
                           icon: Icon(
@@ -69,41 +71,49 @@ class RemoveScreen extends StatelessWidget {
                   // 텍스트 필드
                   Container(
                     padding: EdgeInsets.all(8),
-                    height: context.mediaQuery.size.height * 0.5,
+                    height: context.mediaQuery.size.height * 0.2,
                     width: context.mediaQuery.size.width,
                     child: TextFormField(
-                      minLines: 3,
-                      maxLines: 5,
-                      controller: comfyuiViewModel.textController,
-                      decoration: InputDecoration(
-                        contentPadding: EdgeInsets.all(9),
-                        isDense: true,
-                        filled: true,
-                        fillColor: Colors.grey.shade300,
-                        hintStyle: TextStyle(
-                          fontFamily: "NotoSansKR",
-                          fontWeight: FontWeight.w800,
-                          fontSize: 12,
-                          color: Colors.black,
+                        minLines: 1,
+                        maxLines: 5,
+                        controller: comfyuiViewModel.textController,
+                        decoration: InputDecoration(
+                          contentPadding: EdgeInsets.all(9),
+                          isDense: true,
+                          filled: true,
+                          fillColor: Colors.grey.shade300,
+                          hintStyle: TextStyle(
+                            fontFamily: "NotoSansKR",
+                            fontWeight: FontWeight.w800,
+                            fontSize: 12,
+                            color: Colors.black,
+                          ),
+                          hintText: "지우고 싶은 영역의 카테고리를 입력해주세요!",
+                          border: OutlineInputBorder(
+                            gapPadding: 0,
+                            borderSide: BorderSide.none,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
                         ),
-                        hintText: "지우고 싶은 영역의 카테고리를 입력해주세요!",
-                        border: OutlineInputBorder(
-                          gapPadding: 0,
-                          borderSide: BorderSide.none,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                      ),
-                      onChanged: (value) {
-                        comfyuiViewModel.currentPrompt = value;
-                        print("[INFO] ${comfyuiViewModel.currentPrompt}");
-                      },
-                    ),
+                        onSaved: comfyuiViewModel.saveCategories),
                   )
                 ],
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _getOriginalPhoto(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(20),
+      child: Image.file(
+        File(comfyuiViewModel.currentRemoveSelectedPhoto.value!.path),
+        width: context.mediaQuery.size.width * 0.8,
+        height: context.mediaQuery.size.width * 0.8,
+        fit: BoxFit.cover,
       ),
     );
   }

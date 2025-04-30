@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
@@ -9,6 +10,7 @@ import 'package:picto_frontend/services/chatting_scheduler_service/chatting_sock
 import 'package:picto_frontend/services/folder_manager_service/folder_api.dart';
 import 'package:picto_frontend/services/user_manager_service/user_api.dart';
 import '../../services/photo_store_service/photo_store_api.dart';
+import '../../utils/functions.dart';
 import '../../utils/popup.dart';
 
 class FolderViewModel extends GetxController {
@@ -166,5 +168,28 @@ class FolderViewModel extends GetxController {
     final max = chatScrollController.position.maxScrollExtent;
     final current = chatScrollController.offset;
     return (max - current).abs() < 50; // 여유값 50px
+  }
+
+  // 날짜 별로 그룹화하는 함수
+  Map<String, List<ChatMsg>> groupMessagesByDay() {
+    Map<String, List<ChatMsg>> grouped = {};
+
+    for (var msg in currentMsgList) {
+      String dayKey = formatDateKorean(msg.sendDatetime);
+      if (!grouped.containsKey(dayKey)) {
+        grouped[dayKey] = [];
+      }
+      grouped[dayKey]!.add(msg);
+    }
+
+    // 키값(날짜)을 오름차순 정렬한 LinkedHashMap 생성
+    final sortedKeys = grouped.keys.toList()..sort(); // 문자열 정렬은 날짜 포맷에 대해 안정적
+    final sortedMap = LinkedHashMap<String, List<ChatMsg>>.fromIterable(
+      sortedKeys,
+      key: (k) => k,
+      value: (k) => grouped[k]!,
+    );
+
+    return sortedMap;
   }
 }
