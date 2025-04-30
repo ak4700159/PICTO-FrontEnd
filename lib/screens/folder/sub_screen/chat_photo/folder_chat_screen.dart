@@ -12,7 +12,6 @@ import 'folder_chat_bubble.dart';
 
 class FolderChatScreen extends StatelessWidget {
   FolderChatScreen({super.key, required this.folderId});
-
   final int folderId;
   final TextEditingController _controller = TextEditingController();
   final profileViewModel = Get.find<ProfileViewModel>();

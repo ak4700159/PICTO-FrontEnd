@@ -46,15 +46,15 @@ class FolderViewModel extends GetxController {
 
     // 제거
     final existFolderKeys = folders.keys;
-    for(int oldKey in existFolderKeys) {
-      if(!search.any((f) => f.folderId == oldKey)) {
+    for (int oldKey in existFolderKeys) {
+      if (!search.any((f) => f.folderId == oldKey)) {
         folders.remove(oldKey);
       }
     }
 
     // 기존에 있었던 폴더는 업데이트. 없었으면 추가
-    for(Folder newFolder in search) {
-      if(folders.keys.contains(newFolder.folderId)) {
+    for (Folder newFolder in search) {
+      if (folders.keys.contains(newFolder.folderId)) {
         folders[newFolder.folderId]?.updateFolder();
       } else {
         folders[newFolder.folderId] = newFolder;
@@ -65,7 +65,7 @@ class FolderViewModel extends GetxController {
   Future<void> downloadFolder() async {
     int completed = 0;
     int total = currentMarkers.length;
-    for (int i = 0; i < currentMarkers.length; i++)  {
+    for (int i = 0; i < currentMarkers.length; i++) {
       if (currentMarkers[i].imageData == null) {
         Uint8List? data = await PhotoStoreApi().downloadPhoto(currentMarkers[i].photo.photoId);
         currentMarkers[i].imageData = data;
@@ -145,7 +145,7 @@ class FolderViewModel extends GetxController {
   // 폴더 안에 사진 있는지
   bool isPhotoInFolder({required int folderId, required int photoId}) {
     final photoKeys = folders[folderId]?.photos.map((p) => p.photoId).toList();
-    if(photoKeys!.contains(photoId)) {
+    if (photoKeys!.contains(photoId)) {
       return true;
     }
     return false;
