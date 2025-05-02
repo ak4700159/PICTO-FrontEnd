@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:picto_frontend/screens/folder/folder_view_model.dart';
@@ -12,7 +10,8 @@ import '../../../models/folder.dart';
 
 class FolderSelectionScreen extends StatelessWidget {
   FolderSelectionScreen({super.key});
-  var selectedPhotoId = Get.arguments["photoId"];
+
+  final selectedPhotoId = Get.arguments["photoId"];
 
   @override
   Widget build(BuildContext context) {
@@ -20,6 +19,7 @@ class FolderSelectionScreen extends StatelessWidget {
     viewModel.setSelectionMode();
     return Scaffold(
       appBar: AppBar(
+        scrolledUnderElevation: 0,
         backgroundColor: Colors.white,
         title: Row(
           children: [
@@ -30,8 +30,10 @@ class FolderSelectionScreen extends StatelessWidget {
             Text(
               "  폴더 선택 후 복사",
               style: TextStyle(
-                fontFamily: "Roboto",
-                fontWeight: FontWeight.bold,
+                fontFamily: "NotoSansKR",
+                fontWeight: FontWeight.w500,
+                fontSize: 12,
+                color: Colors.black,
               ),
             )
           ],
@@ -42,7 +44,7 @@ class FolderSelectionScreen extends StatelessWidget {
           // 컬럼 안에 컬럼이 있는 이유는 그러게
           TopBox(size: 0.05),
           SizedBox(
-            height: context.mediaQuery.size.height * 0.5,
+            height: context.mediaQuery.size.height * 0.65,
             child: SingleChildScrollView(
               child: Column(
                 children: _getFolderList(context),
@@ -67,10 +69,10 @@ class FolderSelectionScreen extends StatelessWidget {
                   Text(
                     "   복사",
                     style: TextStyle(
+                      fontFamily: "NotoSansKR",
+                      fontWeight: FontWeight.w500,
+                      fontSize: 18,
                       color: Colors.white,
-                      fontFamily: "Roboto",
-                      fontWeight: FontWeight.bold,
-                      fontSize: 22,
                     ),
                   ),
                 ],
@@ -84,16 +86,29 @@ class FolderSelectionScreen extends StatelessWidget {
 
   List<Widget> _getFolderList(BuildContext context) {
     final folderViewModel = Get.find<FolderViewModel>();
-    // final folderSelectionViewModel = Get.find<FolderSelectionViewModel>();
-    final folderList =
-        folderViewModel.folders.values.map((folder) => _getFolderTile(folder, context)).toList();
-    return folderList;
+    final folders = folderViewModel.folders.values.toList();
+
+    // 1. 정렬 기준에 따라 정렬
+    folders.sort((a, b) {
+      // "default" 폴더는 항상 최상단
+      if (a.name == "default") return -1;
+      if (b.name == "default") return 1;
+
+      // 이미 사진이 존재하는 폴더는 상위로
+      bool aHasPhoto = folderViewModel.isPhotoInFolder(folderId: a.folderId, photoId: selectedPhotoId);
+      bool bHasPhoto = folderViewModel.isPhotoInFolder(folderId: b.folderId, photoId: selectedPhotoId);
+
+      if (aHasPhoto && !bHasPhoto) return -1;
+      if (!aHasPhoto && bHasPhoto) return 1;
+
+      // 그 외는 이름 기준 오름차순
+      return a.name.compareTo(b.name);
+    });
+
+    return folders.map((folder) => _getFolderTile(folder, context)).toList();
   }
 
   Widget _getFolderTile(Folder folder, BuildContext context) {
-    // folder.users.forEach((u) {
-    //   // print("[INFO[ ${u.userId} // ${folder.generatorId}");
-    // });
     final folderSelectionViewModel = Get.find<FolderSelectionViewModel>();
     final folderViewModel = Get.find<FolderViewModel>();
     return Container(
@@ -109,65 +124,90 @@ class FolderSelectionScreen extends StatelessWidget {
         ],
         color: Colors.white,
       ),
-      child: Obx(()=> !folderViewModel.isPhotoInFolder(folderId: folder.folderId, photoId: selectedPhotoId)
+      child: Obx(() => !folderViewModel.isPhotoInFolder(folderId: folder.folderId, photoId: selectedPhotoId)
           ? Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          IconButton(
-              onPressed: () {
-                // 폴더 정보 화면으로 이동
-                Get.toNamed('/folder/info', arguments: {
-                  "folder": folder,
-                });
-              },
-              icon: Icon(
-                Icons.info,
-                color: AppConfig.mainColor,
-              )),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "[폴더명] ${folder.name}",
-                style: TextStyle(fontWeight: FontWeight.bold, fontFamily: "Roboto"),
-              ),
-              Text(
-                "[생성 시점] ${formatDate(folder.sharedDatetime)}",
-                style: TextStyle(fontWeight: FontWeight.bold, fontFamily: "Roboto"),
-              ),
-              Text(
-                "[생성자 이메일] ${folder.getUser(folder.generatorId)?.email}",
-                style: TextStyle(fontWeight: FontWeight.bold, fontFamily: "Roboto"),
-                overflow: TextOverflow.ellipsis,
-              ),
-              Text(
-                "[생성자 계정명] ${folder.getUser(folder.generatorId)?.accountName}",
-                style: TextStyle(fontWeight: FontWeight.bold, fontFamily: "Roboto"),
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
-          ),
-          Checkbox(
-            value: folderSelectionViewModel.selectedList[folder.folderId],
-            onChanged: (val) {
-              folderSelectionViewModel.selectedList[folder.folderId] = val!;
-            },
-          ),
-        ],
-      )
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                IconButton(
+                    onPressed: () {
+                      // 폴더 정보 화면으로 이동
+                      Get.toNamed('/folder/info', arguments: {
+                        "folder": folder,
+                      });
+                    },
+                    icon: Icon(
+                      Icons.info,
+                      color: AppConfig.mainColor,
+                    )),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "[폴더명] ${folder.name}",
+                      style: TextStyle(
+                        fontFamily: "NotoSansKR",
+                        fontWeight: FontWeight.w500,
+                        fontSize: 12,
+                        color: Colors.black,
+                      ),
+                    ),
+                    Text(
+                      "[생성 시점] ${formatDate(folder.sharedDatetime)}",
+                      style: TextStyle(
+                        fontFamily: "NotoSansKR",
+                        fontWeight: FontWeight.w500,
+                        fontSize: 12,
+                        color: Colors.black,
+                      ),
+                    ),
+                    Text(
+                      "[생성자 이메일] ${folder.getUser(folder.generatorId)?.email}",
+                      style: TextStyle(
+                        fontFamily: "NotoSansKR",
+                        fontWeight: FontWeight.w500,
+                        fontSize: 12,
+                        color: Colors.black,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    Text(
+                      "[생성자 계정명] ${folder.getUser(folder.generatorId)?.accountName}",
+                      style: TextStyle(
+                        fontFamily: "NotoSansKR",
+                        fontWeight: FontWeight.w500,
+                        fontSize: 12,
+                        color: Colors.black,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+                Checkbox(
+                  value: folderSelectionViewModel.selectedList[folder.folderId],
+                  onChanged: (val) {
+                    folderSelectionViewModel.selectedList[folder.folderId] = val!;
+                  },
+                ),
+              ],
+            )
           : Row(
-        children: [
-          // IconButton(
-          //   onPressed: () {},
-          //   icon: Icon(Icons.folder_open),
-          //   color: AppConfig.mainColor,
-          // ),
-          Text(
-            " ${folder.name} 에는 사진이 존재합니다.",
-            style: TextStyle(fontWeight: FontWeight.bold, fontFamily: "Roboto"),
-          ),
-        ],
-      )),
+              children: [
+                // IconButton(
+                //   onPressed: () {},
+                //   icon: Icon(Icons.folder_open),
+                //   color: AppConfig.mainColor,
+                // ),
+                Text(
+                  " ${folder.name} 에는 사진이 존재합니다.",
+                  style: TextStyle(
+                    fontFamily: "NotoSansKR",
+                    fontWeight: FontWeight.w500,
+                    fontSize: 12,
+                    color: Colors.black,
+                  ),
+                ),
+              ],
+            )),
     );
   }
 }

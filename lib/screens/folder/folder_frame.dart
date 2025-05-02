@@ -9,7 +9,7 @@ import 'package:picto_frontend/utils/popup.dart';
 import 'sub_screen/chat_photo/folder_photo_screen.dart';
 
 class FolderFrame extends StatelessWidget {
-  FolderFrame({super.key});
+  const FolderFrame({super.key});
 
   @override
   Widget build(BuildContext context) {

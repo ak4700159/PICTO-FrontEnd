@@ -175,7 +175,9 @@ class FolderViewModel extends GetxController {
     Map<String, List<ChatMsg>> grouped = {};
 
     for (var msg in currentMsgList) {
-      String dayKey = formatDateKorean(msg.sendDatetime);
+      DateTime date = DateTime.fromMillisecondsSinceEpoch(msg.sendDatetime);
+      String weekdayKor = getKoreanWeekday(date.weekday);
+      String dayKey = '${date.year}년 ${date.month.toString().padLeft(2, '0')}월 ${date.day.toString().padLeft(2, '0')}일 $weekdayKor';
       if (!grouped.containsKey(dayKey)) {
         grouped[dayKey] = [];
       }

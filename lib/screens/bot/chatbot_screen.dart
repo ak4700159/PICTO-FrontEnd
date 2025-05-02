@@ -1,7 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:multi_image_picker_view/multi_image_picker_view.dart';
 import 'package:picto_frontend/models/chatbot_msg.dart';
 import 'package:picto_frontend/screens/bot/chatbot_bubble.dart';

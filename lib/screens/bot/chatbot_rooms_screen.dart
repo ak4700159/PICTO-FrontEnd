@@ -1,7 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:picto_frontend/screens/bot/chatbot_room_tile.dart';
 import 'package:picto_frontend/screens/bot/chatbot_view_model.dart';
 import 'package:picto_frontend/screens/map/top_box.dart';
@@ -99,6 +97,7 @@ class ChatbotListScreen extends StatelessWidget {
         result.add(ChatbotRoomTile(chatbotList: room, isTitle: false));
       }
     });
+    result.add((SizedBox(height: 150,)));
     return result;
   }
 

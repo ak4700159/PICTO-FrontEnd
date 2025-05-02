@@ -76,3 +76,8 @@ String? detectMimeType(Uint8List bytes) {
 
   return null;
 }
+
+String getKoreanWeekday(int weekday) {
+  const weekdays = ['월', '화', '수', '목', '금', '토', '일'];
+  return weekdays[(weekday - 1) % 7]; // DateTime.weekday는 1(월) ~ 7(일)
+}

@@ -1,7 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:picto_frontend/config/app_config.dart';
 import 'package:picto_frontend/models/chatbot_room.dart';
 import 'package:picto_frontend/screens/bot/chatbot_view_model.dart';
@@ -9,7 +7,6 @@ import 'package:picto_frontend/utils/functions.dart';
 
 class ChatbotRoomTile extends StatelessWidget {
   ChatbotRoomTile({required this.chatbotList, required this.isTitle, super.key, this.date});
-
   final bool isTitle;
   final String? date;
   final ChatbotRoom chatbotList;
