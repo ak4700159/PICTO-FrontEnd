@@ -46,7 +46,7 @@ class UpscalingScreen extends StatelessWidget {
       width: context.mediaQuery.size.width * 0.8,
       height: context.mediaQuery.size.width * 0.8,
       decoration:
-          BoxDecoration(borderRadius: BorderRadius.circular(15), color: Colors.grey.shade300),
+          BoxDecoration(borderRadius: BorderRadius.circular(15), color: Colors.grey.shade100),
       child: IconButton(
           onPressed: () {
             comfyuiViewModel.selectPhoto(isFirstScreen: true);

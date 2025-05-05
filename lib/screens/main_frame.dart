@@ -128,7 +128,7 @@ class MapScreen extends StatelessWidget {
         padding: EdgeInsets.all(0),
         shadowColor: Colors.grey,
         height: context.mediaQuery.size.height * 0.08,
-        color: Colors.white,
+        color: Colors.grey.shade100,
         elevation: 0,
         notchMargin: 8,
         // 중요한 속성, 자식의 부모 위젯의 크기를 벗어날 경우 자동으로 잘라줌
@@ -141,7 +141,7 @@ class MapScreen extends StatelessWidget {
               topRight: Radius.circular(20),
             ),
           ),
-          StadiumBorder(side: BorderSide(width: 10, color: Colors.blue)),
+          StadiumBorder(side: BorderSide(width: 10)),
         ),
         child: Obx(
           () => MediaQuery(
@@ -156,7 +156,7 @@ class MapScreen extends StatelessWidget {
               iconSize: 30,
               selectedFontSize: 0,
               items: bottomNavigationBarItems,
-              backgroundColor: Colors.white,
+              backgroundColor: Colors.grey.shade100,
               type: BottomNavigationBarType.fixed,
             ),
           ),

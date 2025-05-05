@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:picto_frontend/models/user.dart';
 import 'package:picto_frontend/services/user_manager_service/user_api.dart';
+import 'package:picto_frontend/utils/popup.dart';
 
 import '../../map/google_map/google_map_view_model.dart';
 
@@ -18,10 +19,12 @@ class RegisterViewModel extends GetxController{
   void validateEmail() async {
     try{
       await UserManagerApi().duplicatedEmail(email.value);
-      emailDuplicatedMsg.value = "사용 가능";
+      showPositivePopup("사용 가능한 메일입니다.");
+      // emailDuplicatedMsg.value = "사용 가능";
     } on DioException catch(e) {
       print("[ERROR]duplicate error");
-      emailDuplicatedMsg.value = "다시 검사해주세요";
+      showErrorPopup("다시 중복 검사해주세요");
+      // emailDuplicatedMsg.value = "다시 검사해주세요";
     }
   }
 

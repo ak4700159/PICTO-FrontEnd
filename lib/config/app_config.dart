@@ -47,6 +47,7 @@ class AppConfig {
   // global
   static const Color backgroundColor = Colors.white;
   static const Color mainColor = Color(0xff7038ff);
+  static const Color secondaryColor = Color.fromRGBO(209, 197, 252, 1);
 
   // GetX 등록
   static void enrollGetxController () {

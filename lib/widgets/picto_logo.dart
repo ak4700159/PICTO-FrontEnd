@@ -15,15 +15,8 @@ class PictoLogo extends StatelessWidget {
       children: [
         Container(
           decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(100),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey,
-                  blurRadius: 8, // 흐림 정도
-                  spreadRadius: 1, // 그림자 확산 정도
-                  offset: Offset(2, 5), // 그림자 위치 조정
-                ),
-              ]),
+            borderRadius: BorderRadius.circular(100),
+          ),
           child: Image.asset(
             'assets/images/picto_logo.png',
             fit: BoxFit.cover,

@@ -36,9 +36,14 @@ void main() async {
     SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
       statusBarIconBrightness: Brightness.dark,
-      systemNavigationBarColor: AppConfig.mainColor,
+      systemNavigationBarColor: Colors.grey.shade100,
+      systemNavigationBarIconBrightness: Brightness.dark,
     ),
   );
+  // SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: [
+  //   SystemUiOverlay.top,
+  //   SystemUiOverlay.bottom,
+  // ]);
   runApp(Picto());
 }
 

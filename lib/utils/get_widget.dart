@@ -5,20 +5,40 @@ import '../config/app_config.dart';
 import '../services/session_scheduler_service/session_socket.dart';
 import '../services/socket_function_controller.dart';
 
-InputDecoration getCustomInputDecoration({required String label, String? hintText, Widget? suffixIcon}) {
+InputDecoration getCustomInputDecoration({
+  required String label,
+  required BorderRadius borderRadius,
+  BorderSide? borderSide,
+  String? hintText,
+  Widget? suffixIcon,
+}) {
   return InputDecoration(
+    filled: true,
+    fillColor: Color.fromRGBO(217, 217, 217, 0.19),
     errorMaxLines: 2,
     errorBorder: OutlineInputBorder(
       borderSide: BorderSide(color: Colors.red),
-      borderRadius: BorderRadius.all(Radius.circular(30)),
+      borderRadius: borderRadius,
     ),
     enabledBorder: OutlineInputBorder(
-      borderSide: BorderSide(color: Colors.grey),
-      borderRadius: BorderRadius.all(Radius.circular(30)),
+      borderSide: borderSide ?? BorderSide.none,
+      borderRadius: borderRadius,
     ),
     border: OutlineInputBorder(
-      borderSide: BorderSide(color: Colors.grey),
-      borderRadius: BorderRadius.all(Radius.circular(30)),
+      borderSide: borderSide ?? BorderSide.none,
+      borderRadius: borderRadius,
+    ),
+    hintStyle: TextStyle(
+      fontFamily: "NotoSansKR",
+      fontSize: 16,
+      fontWeight: FontWeight.w600,
+      color: Colors.black,
+    ),
+    labelStyle: TextStyle(
+      fontFamily: "NotoSansKR",
+      fontSize: 14,
+      fontWeight: FontWeight.w600,
+      color: Colors.grey,
     ),
     labelText: label,
     hintText: hintText,
@@ -26,7 +46,8 @@ InputDecoration getCustomInputDecoration({required String label, String? hintTex
   );
 }
 
-InputDecoration getCustomInputDecoration2({required String label, String? hintText, Widget? suffixIcon}) {
+InputDecoration getCustomInputDecoration2(
+    {required String label, String? hintText, Widget? suffixIcon}) {
   return InputDecoration(
     filled: true,
     fillColor: Colors.grey.shade300,

@@ -81,7 +81,7 @@ class RemoveScreen extends StatelessWidget {
                           contentPadding: EdgeInsets.all(9),
                           isDense: true,
                           filled: true,
-                          fillColor: Colors.grey.shade300,
+                          fillColor: Colors.grey.shade100,
                           hintStyle: TextStyle(
                             fontFamily: "NotoSansKR",
                             fontWeight: FontWeight.w800,
@@ -124,7 +124,7 @@ class RemoveScreen extends StatelessWidget {
       width: context.mediaQuery.size.width * 0.8,
       height: context.mediaQuery.size.width * 0.8,
       decoration:
-          BoxDecoration(borderRadius: BorderRadius.circular(15), color: Colors.grey.shade300),
+          BoxDecoration(borderRadius: BorderRadius.circular(15), color: Colors.grey.shade100),
       child: IconButton(
         onPressed: () {
           comfyuiViewModel.selectPhoto(isFirstScreen: false);
