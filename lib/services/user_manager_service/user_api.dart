@@ -254,9 +254,59 @@ class UserManagerApi {
     return null;
   }
 
-  void _sendInitValue(response) {
+  Future<bool> updateUserProfilePhoto({required int photoId}) async {
+    try {
+      final response = await dio.put(
+        '$baseUrl/profile/photo',
+        queryParameters: {
+          "userId": UserManagerApi().ownerId,
+          "photoId": photoId,
+        },
+        options: _authOptions()
+      );
+      return true;
+    } on DioException catch (e) {
+      showErrorPopup(e.toString());
+    }
+    return false;
+  }
+
+  Future<bool> removeUserProfilePhoto() async {
+    try {
+      final response = await dio.put(
+          '$baseUrl/profile/photo',
+          queryParameters: {
+            "userId": UserManagerApi().ownerId,
+          },
+          options: _authOptions()
+      );
+      return true;
+    } on DioException catch (e) {
+      showErrorPopup(e.toString());
+    }
+    return false;
+  }
+
+  Future<int?> getUserProfilePhoto({required int userId}) async {
+    try {
+      final response = await dio.put(
+          '$baseUrl/profile/photo',
+          queryParameters: {
+            "userId": UserManagerApi().ownerId,
+          },
+          options: _authOptions()
+      );
+      return response.data as int?;
+    } on DioException catch (e) {
+      showErrorPopup(e.toString());
+    }
+    return null;
+  }
+
+  void _sendInitValue(response) async {
     Get.find<SelectionBarViewModel>().convertFromJson(response.data["filter"]);
-    Get.find<ProfileViewModel>().convertFromJson(response.data["user"]);
+    int? photoId =  await UserManagerApi().getUserProfilePhoto(userId: ownerId!);
+    Get.find<ProfileViewModel>().convertFromJson(response.data["user"], photoId);
     Get.find<UserConfig>().convertFromJson(response.data["userSetting"]);
     // Get.find<GoogleMapViewModel>().initPhotos(response.data["folderPhotos"]);
     Get.find<TagSelectionViewModel>().initTags(response.data["tags"]);

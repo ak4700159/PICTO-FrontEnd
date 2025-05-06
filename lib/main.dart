@@ -25,7 +25,8 @@ void main() async {
     ..init(path)
     ..registerAdapter((ChatbotRoomAdapter()))
     ..registerAdapter((PhotoDataAdapter()))
-    ..registerAdapter(ChatbotMsgAdapter());
+    ..registerAdapter(ChatbotMsgAdapter())
+    ..registerAdapter(ChatbotStatusAdapter());
 
   // 환경 설정 파일 로드
   WidgetsFlutterBinding.ensureInitialized();

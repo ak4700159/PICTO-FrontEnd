@@ -32,6 +32,7 @@ class ChatbotViewModel extends GetxController {
   RxList<ImageFile> currentSelectedImages = <ImageFile>[].obs;
   RxList<ChatbotMsg> currentMessages = <ChatbotMsg>[].obs;
   Rxn<ChatbotRoom> currentRoom = Rxn();
+  // Rxn<ChatbotMsg> sendingChatbotMsg = Rxn();
   RxList<ChatbotRoom> chatbotRooms = <ChatbotRoom>[].obs;
   RxList<bool> currentCheckbox = <bool>[].obs;
   RxBool isSending = false.obs;
@@ -83,30 +84,66 @@ class ChatbotViewModel extends GetxController {
   }
 
   // 채팅 전달 + 응답 처리
-  void sendMsg(ChatbotMsg newMsg) async {
+  void sendMsg(ChatbotMsg myMsg) async {
     List<PhotoData> images = [];
     isSending.value = true;
+
+    // 현재 선택된 사진을 이미지에 포함
     if (currentSelectedImages.isNotEmpty) {
       for (ImageFile file in currentSelectedImages) {
         images.add(PhotoData(data: await File(file.path!).readAsBytes()));
       }
     }
+    // 전송될 예정이기에 선택된 사진들을 지우고 사진 선택창을 내린다
     imagePickerController.images = [];
-    newMsg.images = images;
-    currentMessages.add(newMsg);
-    currentRoom.value?.messages.add(newMsg);
-    PromptResponse? response = await ChatbotAPI().sendPrompt(newMsg.content, images.map((data) => data.data).toList());
-    if (response == null) return;
+    currentSelectedImages.clear();
+    isUp.value = false;
+
+    // 전송될 채팅에 이미지 추가
+    myMsg.images = images;
+    currentMessages.add(myMsg);
+    currentRoom.value?.messages.add(myMsg);
+
+
+    // 챗봇 메시지 전송
     final chatbotMsg = ChatbotMsg(
-        sendDatetime: DateTime.now().millisecondsSinceEpoch,
-        content: response.response,
-        isMe: false,
-        images: response.photos);
+      sendDatetime: DateTime.now().millisecondsSinceEpoch,
+      content: "",
+      isMe: false,
+      images: [],
+      status: ChatbotStatus.sending,
+    );
+    // 현재 채팅방에 메시지 등록
+    currentMessages.add(chatbotMsg);
+    // Chatbot API 호출
+    PromptResponse? response = await ChatbotAPI().sendPrompt(myMsg.content, images.map((data) => data.data).toList());
+    if (response == null) {
+      isSending.value = false;
+      return;
+    }
+
+    // 챗봇 상태 변경
+    currentMessages.removeLast();
+    chatbotMsg
+      ..images = response.photos
+      ..content = response.response
+      ..status = _getStatusInResponse(response.response);
     currentMessages.add(chatbotMsg);
     currentRoom.value?.messages.add(chatbotMsg);
     box.put(currentRoom.value?.createdDatetime.toString(), currentRoom.value);
     isSending.value = false;
-    currentSelectedImages.clear();
+  }
+
+  ChatbotStatus _getStatusInResponse(String result) {
+    if (result.contains("분석")) {
+      return ChatbotStatus.analysis;
+    } else if (result.contains("비교")) {
+      return ChatbotStatus.compare;
+    } else if (result.contains("추천")) {
+      return ChatbotStatus.recommend;
+    } else {
+      return ChatbotStatus.intro;
+    }
   }
 
   // 채팅방 선택
@@ -174,8 +211,7 @@ class ChatbotViewModel extends GetxController {
     }
 
     // 🔽 날짜 기준 내림차순으로 키 정렬
-    var sortedKeys = grouped.keys.toList()
-      ..sort((a, b) => b.compareTo(a)); // 최신 순
+    var sortedKeys = grouped.keys.toList()..sort((a, b) => b.compareTo(a)); // 최신 순
     LinkedHashMap<String, List<ChatbotRoom>> sortedMap = LinkedHashMap.fromIterable(
       sortedKeys,
       key: (k) => k,

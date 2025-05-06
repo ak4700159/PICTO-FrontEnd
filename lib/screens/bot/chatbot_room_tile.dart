@@ -39,9 +39,9 @@ class ChatbotRoomTile extends StatelessWidget {
                 boxShadow: [
                   BoxShadow(
                     color: Colors.grey,
-                    blurRadius: 4, // 흐림 정도
-                    spreadRadius: 1, // 그림자 확산 정도
-                    offset: Offset(2, 5), // 그림자 위치 조정
+                    blurRadius: 1, // 흐림 정도
+                    spreadRadius: 0.1, // 그림자 확산 정도
+                    offset: Offset(2, 4), // 그림자 위치 조정
                   )
                 ],
                 color: Colors.white,

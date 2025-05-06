@@ -50,7 +50,7 @@ class AppConfig {
   static const Color secondaryColor = Color.fromRGBO(209, 197, 252, 1);
 
   // GetX 등록
-  static void enrollGetxController () {
+  static void enrollGetxController() {
     // 로그인 관련 컨트롤러 ----------------------
     final sessionHandler = Get.put<SessionSocket>(SessionSocket());
     final registerViewModle = Get.put<RegisterViewModel>(RegisterViewModel());
@@ -76,5 +76,15 @@ class AppConfig {
     final chatbotViewModel = Get.put<ChatbotViewModel>(ChatbotViewModel());
     // ComfyUI
     final comfyuiViewModel = Get.put<ComfyuiViewModel>(ComfyuiViewModel());
+  }
+
+  // NotoSansKR체 적용
+  static TextStyle getDefaultTextStyle(Color color, double fontSize, FontWeight fontWeight) {
+    return TextStyle(
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontFamily: "NotoSansKR",
+      color: color,
+    );
   }
 }

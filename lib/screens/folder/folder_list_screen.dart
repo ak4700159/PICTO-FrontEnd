@@ -164,7 +164,7 @@ class FolderListScreen extends StatelessWidget {
     } else if (UserManagerApi().ownerId == generatorId) {
       return Icons.folder;
     }
-    return Icons.folder_shared;
+    return Icons.folder;
   }
 
   Color _getFolderColor(int generatorId, String folderName) {

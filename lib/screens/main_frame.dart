@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:picto_frontend/config/app_config.dart';
 import 'package:picto_frontend/screens/folder/folder_list_screen.dart';
 import 'package:picto_frontend/screens/main_frame_view_model.dart';
+import 'package:picto_frontend/screens/profile/profile_screen.dart';
 import '../icon/picto_icons.dart';
 import '../test_screens/ksm_test_screen.dart';
 import 'bot/chatbot_rooms_screen.dart';
@@ -53,7 +54,7 @@ class MapScreen extends StatelessWidget {
       1 => ComfyuiScreen(),
       2 => CustomGoogleMap(),
       3 => FolderListScreen(),
-      4 => AppBarMenuExample(),
+      4 => ProfileScreen(),
       _ => Center(
           child: Text(
             'error',
