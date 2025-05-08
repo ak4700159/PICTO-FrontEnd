@@ -2,12 +2,16 @@ import 'dart:typed_data';
 
 import 'package:get/get.dart';
 import 'package:picto_frontend/screens/map/google_map/marker/picto_marker.dart';
+import 'package:picto_frontend/services/photo_manager_service/photo_manager_api.dart';
 import 'package:picto_frontend/services/photo_store_service/photo_store_api.dart';
+import 'package:picto_frontend/services/user_manager_service/user_api.dart';
+import 'package:picto_frontend/utils/popup.dart';
 
 class ProfileViewModel extends GetxController {
   late int userId;
   late Uint8List profilePhoto;
-  int? profilePhotoId;
+
+  Rxn<int?> profilePhotoId = Rxn();
   RxString name = "".obs;
   RxString email = "".obs;
   RxString accountName = "".obs;
@@ -35,10 +39,23 @@ class ProfileViewModel extends GetxController {
 
   // 프로필 사진 선택 이벤트
   void selectedProfilePhoto({required PictoMarker marker}) {
-    if(selectedPictoMarker.value == null) {
-      selectedPictoMarker.value = marker;
-    } else if(selectedPictoMarker.value == marker) {
+    if (selectedPictoMarker.value == marker) {
       selectedPictoMarker.value = null;
+    } else {
+      selectedPictoMarker.value = marker;
     }
+  }
+
+  // 프로필 적용하기
+  void adaptProfile() async {
+    Get.back();
+    if (await UserManagerApi().updateUserProfilePhoto(photoId: selectedPictoMarker.value!.photo.photoId)) {
+      profilePhotoId.value = selectedPictoMarker.value!.photo.photoId;
+      profilePhoto = selectedPictoMarker.value!.imageData!;
+      showPositivePopup("대표 사진이 업데이트되었습니다.");
+    } else {
+      showPositivePopup("대표 사진을 업데이트하지 못했습니다.");
+    }
+    selectedPictoMarker.value = null;
   }
 }

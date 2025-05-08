@@ -4,6 +4,7 @@ import 'package:picto_frontend/screens/map/top_box.dart';
 import 'package:picto_frontend/utils/functions.dart';
 import '../../../config/app_config.dart';
 import '../../../models/folder.dart';
+import '../../../models/user.dart';
 
 class FolderInfoScreen extends StatelessWidget {
   const FolderInfoScreen({super.key});
@@ -128,10 +129,11 @@ class FolderInfoScreen extends StatelessWidget {
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: _getSharedPerson(),
+                children: _getSharedPerson(context),
               ),
             ),
             TopBox(size: 0.05),
+            // 기타정보
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(
@@ -202,41 +204,65 @@ class FolderInfoScreen extends StatelessWidget {
     );
   }
 
-  List<Widget> _getSharedPerson() {
+  List<Widget> _getSharedPerson(BuildContext context) {
     Folder folder = Get.arguments["folder"];
     return folder.users
-        .map((u) => Container(
-              padding: EdgeInsets.all(8),
-              decoration: BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: Colors.grey))),
-              child: Row(
-                // mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Icon(
-                    Icons.person,
-                    color: getColorFromUserId(u.userId!),
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "  [계정명]  ${u.name}",
-                        style: TextStyle(
-                            fontFamily: 'NotoSansKR',
-                            fontWeight: FontWeight.w600, // Bold
-                            fontSize: 12),
-                      ),
-                      Text(
-                        "  [이메일]  ${u.email}",
-                        style: TextStyle(
-                            fontFamily: 'NotoSansKR',
-                            fontWeight: FontWeight.w600, // Bold
-                            fontSize: 12),
-                      ),
-                    ],
-                  ),
-                ],
+        .map(
+          (u) => Container(
+            padding: EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              border: Border(
+                bottom: BorderSide(
+                  width: 1,
+                  color: Colors.grey,
+                ),
               ),
-            ))
+            ),
+            child: Row(
+              children: [
+                // 사용자 프로필
+                _getUserProfile(context: context, user: u),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "  [계정명]  ${u.name}",
+                      style: TextStyle(
+                          fontFamily: 'NotoSansKR',
+                          fontWeight: FontWeight.w600, // Bold
+                          fontSize: 12),
+                    ),
+                    Text(
+                      "  [이메일]  ${u.email}",
+                      style: TextStyle(
+                          fontFamily: 'NotoSansKR',
+                          fontWeight: FontWeight.w600, // Bold
+                          fontSize: 12),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        )
         .toList();
+  }
+
+  Widget _getUserProfile({required User user, required BuildContext context}) {
+    if (user.userProfileId == null || user.userProfileData == null) {
+      return Icon(
+        Icons.person,
+        color: getColorFromUserId(user.userId!),
+      );
+    }
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(100),
+      child: Image.memory(
+        user.userProfileData!,
+        fit: BoxFit.cover,
+        height: context.mediaQuery.size.width * 0.08,
+        width: context.mediaQuery.size.width * 0.08,
+      ),
+    );
   }
 }

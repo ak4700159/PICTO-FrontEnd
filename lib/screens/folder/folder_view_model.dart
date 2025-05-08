@@ -9,6 +9,7 @@ import 'package:picto_frontend/screens/map/google_map/marker/picto_marker.dart';
 import 'package:picto_frontend/services/chatting_scheduler_service/chatting_socket.dart';
 import 'package:picto_frontend/services/folder_manager_service/folder_api.dart';
 import 'package:picto_frontend/services/user_manager_service/user_api.dart';
+import '../../models/user.dart';
 import '../../services/photo_store_service/photo_store_api.dart';
 import '../../utils/functions.dart';
 import '../../utils/popup.dart';
@@ -62,13 +63,35 @@ class FolderViewModel extends GetxController {
     }
   }
 
+  // 폴더 다운로드
   Future<void> downloadFolder() async {
+    final firstTasks = <Future<void>>[];
     final tasks = <Future<void>>[];
 
     final nullMarkers = currentMarkers.where((m) => m.imageData == null).toList();
     int total = nullMarkers.length;
     int completed = 0;
 
+    // 폴더 안의 사용자 프로필 다운로드
+    final nullUsers = currentFolder.value!.users.where((u) => u.userProfileData == null).toList();
+    // print("[INFO] null users : ${nullUsers.map((u) => u.userId).toList()}");
+    for (var user in nullUsers) {
+      final capturedUser = user; // 🔑 클로저 캡처 방지
+      firstTasks.add(() async {
+        // print("[DEBUG] downloading profile for userId: ${capturedUser.userId}");
+        capturedUser.userProfileId = await UserManagerApi().getUserProfilePhoto(userId: capturedUser.userId!);
+        if (capturedUser.userProfileId != null) {
+          capturedUser.userProfileData = await PhotoStoreApi().downloadPhoto(
+            photoId: capturedUser.userProfileId!,
+            scale: 0.08,
+          );
+          currentFolder.value!.users[currentFolder.value!.users.indexOf(capturedUser)] = capturedUser;
+        }
+      }());
+    }
+    await Future.wait(firstTasks);
+
+    // 폴더 안 사진 다운로드
     for (var marker in nullMarkers) {
       tasks.add(() async {
         Uint8List? data = await PhotoStoreApi().downloadPhoto(
@@ -76,21 +99,19 @@ class FolderViewModel extends GetxController {
           scale: 0.3,
         );
         marker.imageData = data;
-
-        // assign to trigger update in observable list
         currentMarkers[currentMarkers.indexOf(marker)] = marker;
-
         completed++;
         progress.value = completed / total;
       }());
     }
-
     await Future.wait(tasks);
+
+    // 로딩 완료
     loadingComplete.value = true;
   }
 
   // 폴더 화면 변화
-  void changeFolder({required int folderId}) {
+  void changeFolder({required int folderId}) async {
     folders[folderId]?.updateFolder();
     progress.value = 0.0;
     loadingComplete.value = false;
@@ -103,6 +124,7 @@ class FolderViewModel extends GetxController {
     }
     downloadFolder();
     changeSocket();
+    // await showBlockingLoading(Duration(seconds: 1));
   }
 
   // 현재 선택된 폴더에 소켓 연결
@@ -114,14 +136,12 @@ class FolderViewModel extends GetxController {
       receive: (frame) {
         final data = jsonDecode(frame.body ?? "");
         if (data["userId"] == UserManagerApi().ownerId) return;
-        // folders[currentFolder.value?.folderId]?.messages.add(ChatMsg.fromJson(data));
         currentMsgList.add(ChatMsg.fromJson(data));
       },
     );
     currentSocket.value?.connectWebSocket();
     currentMsgList.clear();
     currentMsgList.value = folders[currentFolder.value?.folderId]!.messages;
-    // print("[INFO] chatting socket change completed...?");
   }
 
   // 폴더 삭제
@@ -133,8 +153,7 @@ class FolderViewModel extends GetxController {
 
   // 폴더 생성
   void createFolder({required String folderName, required String content}) async {
-    Folder? newFolder =
-        await FolderManagerApi().createFolder(folderName: folderName, content: content);
+    Folder? newFolder = await FolderManagerApi().createFolder(folderName: folderName, content: content);
   }
 
   // 현재 연결된 소켓에 채팅 전송
@@ -155,8 +174,10 @@ class FolderViewModel extends GetxController {
   }
 
   // 폴더 이름 통해서 폴더 사진 조회
-  List<PictoMarker> getPictoMarkersByName({required String folderName}) {
+  Future<List<PictoMarker>> getPictoMarkersByName({required String folderName}) async {
     Folder folder = folders.values.firstWhere((f) => f.name == "default");
+    await folder.updateFolder();
+    await folder.downloadPhotos();
     return folder.markers;
   }
 
@@ -191,7 +212,6 @@ class FolderViewModel extends GetxController {
   // 날짜 별로 그룹화하는 함수
   Map<String, List<ChatMsg>> groupMessagesByDay() {
     Map<String, List<ChatMsg>> grouped = {};
-
     for (var msg in currentMsgList) {
       DateTime date = DateTime.fromMillisecondsSinceEpoch(msg.sendDatetime);
       String weekdayKor = getKoreanWeekday(date.weekday);
@@ -210,7 +230,11 @@ class FolderViewModel extends GetxController {
       key: (k) => k,
       value: (k) => grouped[k]!,
     );
-
     return sortedMap;
+  }
+
+  Uint8List? getOtherProfilePhoto({required int userId}) {
+    User find = currentFolder.value!.users.firstWhere((u) => u.userId == userId);
+    return find.userProfileData;
   }
 }

@@ -28,6 +28,7 @@ class UploadViewModel extends GetxController {
   // 프레임에 있는 사진으로 전송을 원할 경우 값을 넣으면 됨 -> 갤러리 사진일 때 null 값 유지.
   Rxn<Photo?> selectedFrame = Rxn();
 
+
   Future<void> pickSingleImage() async {
     final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
     if (image != null) {
@@ -44,7 +45,7 @@ class UploadViewModel extends GetxController {
     UploadRequest request;
     try {
       isLoading.value = true;
-      if(selectedFrame.value != null) {
+      if (selectedFrame.value != null) {
         request = UploadRequest(
           userId: UserManagerApi().ownerId as int,
           lat: selectedFrame.value!.lat,
@@ -53,7 +54,7 @@ class UploadViewModel extends GetxController {
           frameActive: false,
           sharedActive: isShared,
         );
-      }else {
+      } else {
         request = UploadRequest(
           userId: UserManagerApi().ownerId as int,
           lat: googleViewModel.currentLat.value,
@@ -64,9 +65,10 @@ class UploadViewModel extends GetxController {
         );
       }
       final data = await PreProcessorApi().validatePhoto(request: request);
+      frames.removeWhere((p) => p.photoId == selectedFrame.value!.photoId);
+      selectedFrame.value = null;
       result.value = "사진 저장에 성공했습니다! \n $data";
-
-    } on DioException catch(e) {
+    } on DioException catch (e) {
       result.value = e.response?.data["error"] ?? "서버 오류 발생";
     }
     isLoading.value = false;
@@ -87,7 +89,7 @@ class UploadViewModel extends GetxController {
 
   // 사진 선택
   void rollFrame({required Photo adapt}) {
-    if(selectedFrame.value?.photoId == adapt.photoId) {
+    if (selectedFrame.value?.photoId == adapt.photoId) {
       print("[INFO] duplicated.. !");
       selectedFrame.value = null;
     } else {
@@ -96,7 +98,8 @@ class UploadViewModel extends GetxController {
   }
 
   void removeFrame(int photoId) async {
-    if(await PhotoStoreApi().deletePhoto(photoId)) {
+    if (await PhotoStoreApi().deletePhoto(photoId)) {
+      if (photoId == selectedFrame.value!.photoId) selectedFrame.value = null;
       frames.removeWhere((photo) => photo.photoId == photoId);
     }
   }

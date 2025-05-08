@@ -1,22 +1,23 @@
-import 'package:flutter/cupertino.dart';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hive/hive.dart';
 import 'package:picto_frontend/config/app_config.dart';
 import 'package:picto_frontend/models/chatting_msg.dart';
+import 'package:picto_frontend/screens/folder/folder_view_model.dart';
 import 'package:picto_frontend/services/user_manager_service/user_api.dart';
 import 'package:picto_frontend/utils/functions.dart';
 
 // 날짜 버블인지 확인할 것
 class ChatBubble extends StatelessWidget {
   final ChatMsg msg;
+  final folderViewModel = Get.find<FolderViewModel>();
 
-  const ChatBubble({super.key, required this.msg});
+  ChatBubble({super.key, required this.msg});
 
   @override
   Widget build(BuildContext context) {
     bool isMe = UserManagerApi().ownerId == msg.userId ? true : false;
-
     return isMe ? _getMyChat(msg) : _getOtherChat(msg, context);
   }
 
@@ -59,19 +60,34 @@ class ChatBubble extends StatelessWidget {
   }
 
   Widget _getOtherChat(ChatMsg msg, BuildContext context) {
+    Uint8List? profile = folderViewModel.getOtherProfilePhoto(userId: msg.userId);
     return IntrinsicHeight(
       child: Row(
         children: [
           Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.all(4.0),
-                child: Icon(
-                  Icons.person_pin,
-                  color: getColorFromUserId(msg.userId),
-                  size: 35,
-                ),
-              ),
+              // 사용자 프로픨
+              profile != null
+                  ? Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ClipRRect(
+                        borderRadius: BorderRadius.circular(100),
+                        child: Image.memory(
+                          profile,
+                          fit: BoxFit.cover,
+                          height: context.mediaQuery.size.width * 0.1,
+                          width: context.mediaQuery.size.width * 0.1,
+                        ),
+                      ),
+                  )
+                  : Padding(
+                      padding: const EdgeInsets.all(4.0),
+                      child: Icon(
+                        Icons.person_pin,
+                        color: getColorFromUserId(msg.userId),
+                        size: 35,
+                      ),
+                    ),
             ],
           ),
           Column(
@@ -101,10 +117,7 @@ class ChatBubble extends StatelessWidget {
                 child: Text(
                   msg.content,
                   style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.white,
-                      fontFamily: "NotoSansKR",
-                      fontWeight: FontWeight.w600),
+                      fontSize: 12, color: Colors.white, fontFamily: "NotoSansKR", fontWeight: FontWeight.w600),
                 ),
               ),
             ],

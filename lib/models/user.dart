@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 class User {
   final int? userId;
   final String? accountName;
@@ -7,6 +9,8 @@ class User {
   final String? intro;
   final bool? profileActive;
   final String? password;
+  int? userProfileId;
+  Uint8List? userProfileData;
 
   User({
     required this.name,
@@ -17,6 +21,8 @@ class User {
     this.intro,
     this.profilePath,
     this.profileActive,
+    this.userProfileData,
+    this.userProfileId,
   });
 
   factory User.fromJson(Map<String, dynamic> json) => User(

@@ -13,7 +13,6 @@ import 'package:picto_frontend/utils/popup.dart';
 import '../../models/photo.dart';
 import '../../utils/functions.dart';
 
-
 // 1. 마커 클러스터 화면에서 선택
 // 2. 폴더 사진에서 선택
 class PhotoMarkerScreen extends StatelessWidget {
@@ -32,15 +31,22 @@ class PhotoMarkerScreen extends StatelessWidget {
           // 사진
           Positioned.fill(
             child: FutureBuilder(
-                future: PhotoStoreApi().downloadPhoto(photoId: photo.photoId, scale: 1), builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(child: CircularProgressIndicator());
-              }
-              if (snapshot.data == null || snapshot.hasError) {
-                return Image.asset('/assets/images/picto_logo.png', fit: BoxFit.cover,);
-              }
-              return Image.memory(snapshot.data!, fit:fit,);
-            }),
+                future: PhotoStoreApi().downloadPhoto(photoId: photo.photoId, scale: 1),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator());
+                  }
+                  if (snapshot.data == null || snapshot.hasError) {
+                    return Image.asset(
+                      '/assets/images/picto_logo.png',
+                      fit: BoxFit.cover,
+                    );
+                  }
+                  return Image.memory(
+                    snapshot.data!,
+                    fit: fit,
+                  );
+                }),
           ),
           if (photo.userId == UserManagerApi().ownerId)
             Positioned(
@@ -61,8 +67,7 @@ class PhotoMarkerScreen extends StatelessWidget {
                         break;
                     }
                   },
-                  itemBuilder: (context) =>
-                  [
+                  itemBuilder: (context) => [
                     PopupMenuItem(
                       value: "delete",
                       onTap: () async {
@@ -70,12 +75,10 @@ class PhotoMarkerScreen extends StatelessWidget {
                         bool isSuccess = await PhotoStoreApi().deletePhoto(photo.photoId);
                         if (isSuccess) {
                           // showPositivePopup("삭제에 성공했습니다!");
-                          folderViewModel.currentFolder.value!.photos
-                              .removeWhere((p) => p.photoId == photo.photoId);
+                          folderViewModel.currentFolder.value!.photos.removeWhere((p) => p.photoId == photo.photoId);
                           folderViewModel.currentFolder.value!.markers
                               .removeWhere((m) => m.photo.photoId == photo.photoId);
-                          folderViewModel.currentMarkers
-                              .removeWhere((m) => m.photo.photoId == photo.photoId);
+                          folderViewModel.currentMarkers.removeWhere((m) => m.photo.photoId == photo.photoId);
                           await folderViewModel.resetFolder();
                           Get.back();
                           // Get.back()
@@ -93,10 +96,9 @@ class PhotoMarkerScreen extends StatelessWidget {
                     ),
                     PopupMenuItem(
                       value: "move",
-                      onTap: () =>
-                          Get.toNamed('/folder/select', arguments: {
-                            "photoId": photo.photoId,
-                          }),
+                      onTap: () => Get.toNamed('/folder/select', arguments: {
+                        "photoId": photo.photoId,
+                      }),
                       child: Row(
                         children: [
                           Icon(Icons.drive_file_move),
@@ -168,7 +170,14 @@ class PhotoMarkerScreen extends StatelessWidget {
                       color: Colors.white70,
                       size: 15,
                     ),
-                    Text('  ${photo.tag}', style: TextStyle(color: Colors.white70, fontSize: 12)),
+                    Text(
+                      '  ${photo.tag}',
+                      style: TextStyle(
+                        color: Colors.white70,
+                        fontFamily: "NotoSansKR",
+                        fontSize: 12,
+                      ),
+                    ),
                   ],
                 ),
                 Row(
@@ -178,8 +187,14 @@ class PhotoMarkerScreen extends StatelessWidget {
                       color: Colors.white70,
                       size: 15,
                     ),
-                    Text('  ${photo.location}',
-                        style: TextStyle(color: Colors.white70, fontSize: 12)),
+                    Text(
+                      '  ${photo.location}',
+                      style: TextStyle(
+                        color: Colors.white70,
+                        fontFamily: "NotoSansKR",
+                        fontSize: 12,
+                      ),
+                    ),
                   ],
                 ),
                 Row(
@@ -189,8 +204,14 @@ class PhotoMarkerScreen extends StatelessWidget {
                       color: Colors.white70,
                       size: 15,
                     ),
-                    Text('  ${formatDate(photo.updateDatetime ?? 0)}',
-                        style: TextStyle(color: Colors.white70, fontSize: 12)),
+                    Text(
+                      '  ${formatDateKorean(photo.updateDatetime ?? 0)}',
+                      style: TextStyle(
+                        fontFamily: "NotoSansKR",
+                        color: Colors.white70,
+                        fontSize: 12,
+                      ),
+                    ),
                   ],
                 ),
               ],

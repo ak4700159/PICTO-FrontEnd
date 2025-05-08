@@ -292,13 +292,13 @@ class UserManagerApi {
       final response = await dio.get(
           '$baseUrl/profile/photo',
           queryParameters: {
-            "userId": UserManagerApi().ownerId,
+            "userId": userId,
           },
           options: _authOptions()
       );
       return int.tryParse(response.data.toString());
     } on DioException catch (e) {
-      showErrorPopup(e.toString());
+      // showErrorPopup(e.toString());
     }
     return null;
   }

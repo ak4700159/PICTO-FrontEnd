@@ -35,7 +35,7 @@ class Folder {
     this.content,
   }) {
     if (folderId == -1) return;
-    if(allInit) {
+    if (allInit) {
       initFolder();
     }
   }
@@ -78,13 +78,28 @@ class Folder {
     updateMessage();
   }
 
-  void downloadPhotos() async {
+  Future<void> downloadPhotos() async {
+    final tasks = <Future<void>>[];
+
     for (var m in markers) {
-      m.imageData ??= await PhotoStoreApi().downloadPhoto(photoId : m.photo.photoId, scale: 0.3);
+      if (m.imageData == null) {
+        tasks.add(() async {
+          try {
+            m.imageData = await PhotoStoreApi().downloadPhoto(
+              photoId: m.photo.photoId,
+              scale: 0.3,
+            );
+          } catch (e) {
+            print("[ERROR] Failed to download photoId ${m.photo.photoId}");
+          }
+        }());
+      }
     }
+
+    await Future.wait(tasks);
   }
 
-  void updateUser() async {
+  Future<void> updateUser() async {
     var newUsers = await FolderManagerApi().getUsersInFolder(folderId: folderId);
     var removeUsers = [];
     for (User oldUser in users) {
@@ -101,7 +116,7 @@ class Folder {
     }
   }
 
-  void updateMessage() async {
+  Future<void> updateMessage() async {
     var newMessages = await ChattingApi().getMessagesByFolderId(folderId: folderId);
     var addMessages = <ChatMsg>[];
     var removeMessages = <ChatMsg>[];
@@ -125,7 +140,7 @@ class Folder {
     messages.addAll(addMessages);
   }
 
-  void updatePhoto() async {
+  Future<void> updatePhoto() async {
     var newPhotos = await FolderManagerApi().getPhotosInFolder(folderId: folderId);
     var addPhotos = <Photo>[];
     var removePhotos = <Photo>[];
@@ -159,9 +174,7 @@ class Folder {
         newMarkers.add(
           PictoMarker(
             photo: newPhoto,
-            type: newPhoto.userId == UserManagerApi().ownerId
-                ? PictoMarkerType.userPhoto
-                : PictoMarkerType.folderPhoto,
+            type: newPhoto.userId == UserManagerApi().ownerId ? PictoMarkerType.userPhoto : PictoMarkerType.folderPhoto,
           ),
         );
       }
@@ -180,8 +193,7 @@ class Folder {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is Folder && runtimeType == other.runtimeType && folderId == other.folderId);
+      identical(this, other) || (other is Folder && runtimeType == other.runtimeType && folderId == other.folderId);
 
   @override
   int get hashCode => folderId.hashCode;
