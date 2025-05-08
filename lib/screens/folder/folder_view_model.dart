@@ -63,17 +63,29 @@ class FolderViewModel extends GetxController {
   }
 
   Future<void> downloadFolder() async {
+    final tasks = <Future<void>>[];
+
+    final nullMarkers = currentMarkers.where((m) => m.imageData == null).toList();
+    int total = nullMarkers.length;
     int completed = 0;
-    int total = currentMarkers.length;
-    for (int i = 0; i < currentMarkers.length; i++) {
-      if (currentMarkers[i].imageData == null) {
-        Uint8List? data = await PhotoStoreApi().downloadPhoto(currentMarkers[i].photo.photoId);
-        currentMarkers[i].imageData = data;
-        currentMarkers[i] = currentMarkers[i]; // 중요! 다시 assign
-      }
-      completed++;
-      progress.value = completed / total;
+
+    for (var marker in nullMarkers) {
+      tasks.add(() async {
+        Uint8List? data = await PhotoStoreApi().downloadPhoto(
+          photoId: marker.photo.photoId,
+          scale: 0.3,
+        );
+        marker.imageData = data;
+
+        // assign to trigger update in observable list
+        currentMarkers[currentMarkers.indexOf(marker)] = marker;
+
+        completed++;
+        progress.value = completed / total;
+      }());
     }
+
+    await Future.wait(tasks);
     loadingComplete.value = true;
   }
 
@@ -142,6 +154,12 @@ class FolderViewModel extends GetxController {
     return folders[folderId];
   }
 
+  // 폴더 이름 통해서 폴더 사진 조회
+  List<PictoMarker> getPictoMarkersByName({required String folderName}) {
+    Folder folder = folders.values.firstWhere((f) => f.name == "default");
+    return folder.markers;
+  }
+
   // 폴더 안에 사진 있는지
   bool isPhotoInFolder({required int folderId, required int photoId}) {
     final photoKeys = folders[folderId]?.photos.map((p) => p.photoId).toList();
@@ -177,7 +195,8 @@ class FolderViewModel extends GetxController {
     for (var msg in currentMsgList) {
       DateTime date = DateTime.fromMillisecondsSinceEpoch(msg.sendDatetime);
       String weekdayKor = getKoreanWeekday(date.weekday);
-      String dayKey = '${date.year}년 ${date.month.toString().padLeft(2, '0')}월 ${date.day.toString().padLeft(2, '0')}일 $weekdayKor';
+      String dayKey =
+          '${date.year}년 ${date.month.toString().padLeft(2, '0')}월 ${date.day.toString().padLeft(2, '0')}일 $weekdayKor';
       if (!grouped.containsKey(dayKey)) {
         grouped[dayKey] = [];
       }

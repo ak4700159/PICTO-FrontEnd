@@ -13,12 +13,12 @@ class LoginScreen extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
   final _loginController = Get.find<LoginViewModel>();
   final CarouselSliderController _controller = CarouselSliderController();
-  List imageList = [
-    "https://cdn.pixabay.com/photo/2014/04/14/20/11/pink-324175_1280.jpg",
-    "https://cdn.pixabay.com/photo/2014/02/27/16/10/flowers-276014_1280.jpg",
-    "https://cdn.pixabay.com/photo/2012/03/01/00/55/flowers-19830_1280.jpg",
-    "https://cdn.pixabay.com/photo/2015/06/19/20/13/sunset-815270_1280.jpg",
-    "https://cdn.pixabay.com/photo/2016/01/08/05/24/sunflower-1127174_1280.jpg",
+  List bannerNames = [
+    "banner1.jpg",
+    "banner2.jpg",
+    "banner3.jpg",
+    "banner4.jpg",
+    "banner5.jpg",
   ];
 
   @override
@@ -202,17 +202,15 @@ class LoginScreen extends StatelessWidget {
   Widget sliderWidget(BuildContext parent) {
     return CarouselSlider(
       carouselController: _controller,
-      items: imageList.map(
-        (imgLink) {
+      items: bannerNames.map(
+        (name) {
           return Builder(
             builder: (context) {
               return SizedBox(
                 width: MediaQuery.of(context).size.width,
-                child: Image(
+                child: Image.asset(
+                  "assets/images/$name",
                   fit: BoxFit.cover,
-                  image: NetworkImage(
-                    imgLink,
-                  ),
                 ),
               );
             },
@@ -236,7 +234,7 @@ class LoginScreen extends StatelessWidget {
       alignment: Alignment.bottomCenter,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: imageList.asMap().entries.map((entry) {
+        children: bannerNames.asMap().entries.map((entry) {
           return GestureDetector(
             onTap: () => _controller.animateToPage(entry.key),
             child: Container(

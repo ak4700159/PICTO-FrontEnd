@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:picto_frontend/screens/profile/profile_view_model.dart';
+import 'package:picto_frontend/services/photo_store_service/photo_store_api.dart';
 import 'package:picto_frontend/services/user_manager_service/user_api.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -70,6 +71,7 @@ class ProfileScreen extends StatelessWidget {
                 )
               ],
             ),
+            SizedBox(height: context.mediaQuery.size.height * 0.05,),
             // 사용자 프로필
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -77,15 +79,65 @@ class ProfileScreen extends StatelessWidget {
                 Stack(
                   children: [
                     Container(
-                      child: Center(),
-                    )
+                      width: context.mediaQuery.size.width * 0.5,
+                      height: context.mediaQuery.size.width * 0.5,
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey.shade300, width: 0.5),
+                        borderRadius: BorderRadius.circular(100),
+                      ),
+                      child: _getProfileWidget(),
+                    ),
+                    Positioned(
+                      bottom: 10,
+                      right: 10,
+                      child: IconButton(
+                        onPressed: () {
+                          // 프로필 사진 수정 및 선택  화면
+                        },
+                        icon: Icon(
+                          Icons.edit,
+                          color: Colors.grey.shade300,
+                        ),
+                      ),
+                    ),
                   ],
                 )
               ],
-            )
+            ),
+            SizedBox(height: context.mediaQuery.size.height * 0.1,),
+            // 캘린더
+            Container(
+              color: Colors.grey.shade300,
+              child: Text("캘린더 위치"),
+            ),
           ],
         ),
       ),
     );
+  }
+
+  Widget _getProfileWidget() {
+    if (profileViewModel.profilePhotoId == null) {
+      return Icon(
+        Icons.person,
+        size: 100,
+        color: Colors.grey.shade300,
+      );
+    }
+    return FutureBuilder(
+        future: PhotoStoreApi().downloadPhoto(photoId:profileViewModel.profilePhotoId!, scale: 0.8),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return CircularProgressIndicator();
+          }
+          if (snapshot.hasError) {
+            return Icon(
+              Icons.error,
+              size: 100,
+              color: Colors.red,
+            );
+          }
+          return Image.memory(snapshot.data!);
+        });
   }
 }

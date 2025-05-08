@@ -80,7 +80,7 @@ class Folder {
 
   void downloadPhotos() async {
     for (var m in markers) {
-      m.imageData ??= await PhotoStoreApi().downloadPhoto(m.photo.photoId);
+      m.imageData ??= await PhotoStoreApi().downloadPhoto(photoId : m.photo.photoId, scale: 0.3);
     }
   }
 

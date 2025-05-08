@@ -41,7 +41,8 @@ class PictoClusterManager {
     print("[DEBUG] cluster count: ${cluster.items.length}, isMultiple: ${cluster.isMultiple}");
     // 가장 좋아요를 많이 맏은 사진
     List<PictoMarker> markers = {
-      for (var pictoItem in cluster.items) pictoItem.pictoMarker.photo.photoId: pictoItem.pictoMarker
+      for (var pictoItem in cluster.items)
+        pictoItem.pictoMarker.photo.photoId: pictoItem.pictoMarker
     }.values.toList();
     final mostLiked = markers.toList().reduce((a, b) => a.photo.likes > b.photo.likes ? a : b);
     mostLiked.onTap = () {
@@ -51,7 +52,10 @@ class PictoClusterManager {
         _setSinglePhoto(mostLiked);
       }
     };
-    mostLiked.imageData ??= await PhotoStoreApi().downloadPhoto(mostLiked.photo.photoId);
+    mostLiked.imageData ??= await PhotoStoreApi().downloadPhoto(
+      photoId: mostLiked.photo.photoId,
+      scale: 0.3,
+    );
     return mostLiked.toGoogleMarker(most: true);
   }
 
@@ -65,11 +69,11 @@ class PictoClusterManager {
     }
   }
 
-  Future<void> _downloadAllImages(List<PictoMarker> markers) async {
-    await Future.wait(markers.map((marker) async {
-      marker.imageData ??= await PhotoStoreApi().downloadPhoto(marker.photo.photoId);
-    }));
-  }
+  // Future<void> _downloadAllImages(List<PictoMarker> markers) async {
+  //   await Future.wait(markers.map((marker) async {
+  //     marker.imageData ??= await PhotoStoreApi().downloadPhoto(marker.photo.photoId);
+  //   }));
+  // }
 
   void _openClusterBottomSheet(List<PictoMarker> markers) {
     Get.bottomSheet(

@@ -13,6 +13,9 @@ import 'package:picto_frontend/utils/popup.dart';
 import '../../models/photo.dart';
 import '../../utils/functions.dart';
 
+
+// 1. 마커 클러스터 화면에서 선택
+// 2. 폴더 사진에서 선택
 class PhotoMarkerScreen extends StatelessWidget {
   const PhotoMarkerScreen({super.key});
 
@@ -28,15 +31,16 @@ class PhotoMarkerScreen extends StatelessWidget {
         children: [
           // 사진
           Positioned.fill(
-            child: Image.memory(
-              data,
-              fit: fit,
-              errorBuilder: (context, object, trace) => const Center(
-                  child: Text(
-                "[ERROR]",
-                style: TextStyle(color: Colors.red, fontSize: 30),
-              )),
-            ),
+            child: FutureBuilder(
+                future: PhotoStoreApi().downloadPhoto(photoId: photo.photoId, scale: 1), builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(child: CircularProgressIndicator());
+              }
+              if (snapshot.data == null || snapshot.hasError) {
+                return Image.asset('/assets/images/picto_logo.png', fit: BoxFit.cover,);
+              }
+              return Image.memory(snapshot.data!, fit:fit,);
+            }),
           ),
           if (photo.userId == UserManagerApi().ownerId)
             Positioned(
@@ -57,7 +61,8 @@ class PhotoMarkerScreen extends StatelessWidget {
                         break;
                     }
                   },
-                  itemBuilder: (context) => [
+                  itemBuilder: (context) =>
+                  [
                     PopupMenuItem(
                       value: "delete",
                       onTap: () async {
@@ -88,9 +93,10 @@ class PhotoMarkerScreen extends StatelessWidget {
                     ),
                     PopupMenuItem(
                       value: "move",
-                      onTap: () => Get.toNamed('/folder/select', arguments: {
-                        "photoId": photo.photoId,
-                      }),
+                      onTap: () =>
+                          Get.toNamed('/folder/select', arguments: {
+                            "photoId": photo.photoId,
+                          }),
                       child: Row(
                         children: [
                           Icon(Icons.drive_file_move),

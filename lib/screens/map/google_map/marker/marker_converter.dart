@@ -78,7 +78,7 @@ class MarkerConverter {
   // 이미지 단체 다운로드
   Future<void> downloadPhotos(Set<PictoMarker> pictoMarkers) async {
     Future.wait(pictoMarkers.map((pictoMarker) async {
-      pictoMarker.imageData ??= await PhotoStoreApi().downloadPhoto(pictoMarker.photo.photoId);
+      pictoMarker.imageData ??= await PhotoStoreApi().downloadPhoto(photoId: pictoMarker.photo.photoId, scale: 0.3);
     }));
   }
 }

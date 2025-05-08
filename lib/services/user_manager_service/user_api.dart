@@ -273,7 +273,7 @@ class UserManagerApi {
 
   Future<bool> removeUserProfilePhoto() async {
     try {
-      final response = await dio.put(
+      final response = await dio.delete(
           '$baseUrl/profile/photo',
           queryParameters: {
             "userId": UserManagerApi().ownerId,
@@ -289,14 +289,14 @@ class UserManagerApi {
 
   Future<int?> getUserProfilePhoto({required int userId}) async {
     try {
-      final response = await dio.put(
+      final response = await dio.get(
           '$baseUrl/profile/photo',
           queryParameters: {
             "userId": UserManagerApi().ownerId,
           },
           options: _authOptions()
       );
-      return response.data as int?;
+      return int.tryParse(response.data.toString());
     } on DioException catch (e) {
       showErrorPopup(e.toString());
     }

@@ -27,26 +27,50 @@ class _MarkerListBottomSheetState extends State<MarkerListBottomSheet> {
 
   Future<void> _startDownloadAllImages() async {
     int completed = 0;
-    int total = widget.markers.length;
+    int total = widget.markers.where((m) => m.imageData == null).length;
 
-    for (int i = 0; i < total; i++) {
-      final marker = widget.markers[i];
-      if (marker.imageData == null) {
-        try {
-          marker.imageData = await PhotoStoreApi().downloadPhoto(marker.photo.photoId);
-        } catch (e) {
-          print("[ERROR] Failed to download image for photoId ${marker.photo.photoId}");
-        }
-      }
-      completed++;
+    if (total == 0) {
       setState(() {
-        progress = completed / total;
+        progress = 1.0;
+        loadingComplete = true;
       });
+      return;
     }
 
-    setState(() {
-      loadingComplete = true;
-    });
+    final tasks = <Future<void>>[];
+
+    for (int i = 0; i < widget.markers.length; i++) {
+      final marker = widget.markers[i];
+      if (marker.imageData == null) {
+        tasks.add(() async {
+          try {
+            final data = await PhotoStoreApi().downloadPhoto(
+              photoId: marker.photo.photoId,
+              scale: 0.5,
+            );
+            marker.imageData = data;
+          } catch (e) {
+            print("[ERROR] Failed to download image for photoId ${marker.photo.photoId}");
+          }
+
+          completed++;
+          // UI 갱신은 메인 스레드에서
+          if (mounted) {
+            setState(() {
+              progress = completed / total;
+            });
+          }
+        }());
+      }
+    }
+
+    await Future.wait(tasks);
+
+    if (mounted) {
+      setState(() {
+        loadingComplete = true;
+      });
+    }
   }
 
   @override

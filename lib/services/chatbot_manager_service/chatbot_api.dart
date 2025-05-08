@@ -1,8 +1,10 @@
-
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
+import 'package:get/get_core/get_core.dart';
+import 'package:get/get_instance/get_instance.dart';
 import 'package:http_parser/http_parser.dart';
+import 'package:picto_frontend/screens/map/google_map/google_map_view_model.dart';
 import 'package:picto_frontend/services/chatbot_manager_service/prompt_response.dart';
 import 'package:picto_frontend/utils/popup.dart';
 
@@ -42,7 +44,8 @@ class ChatbotAPI {
       }
       print("[INFO] send files length : ${sendFiles.length}");
       final formData = FormData.fromMap({
-        "text": query,
+        "text":
+            "$query lat:${Get.find<GoogleMapViewModel>().currentLat.value} lng:${Get.find<GoogleMapViewModel>().currentLng.value}",
         if (sendFiles.isNotEmpty && imagesData.isNotEmpty) "image1": sendFiles[0],
         if (sendFiles.length > 1 && imagesData.isNotEmpty) "image2": sendFiles[1],
       });
