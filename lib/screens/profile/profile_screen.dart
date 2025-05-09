@@ -5,6 +5,7 @@ import 'package:hive/hive.dart';
 import 'package:picto_frontend/config/app_config.dart';
 import 'package:picto_frontend/screens/folder/folder_view_model.dart';
 import 'package:picto_frontend/screens/map/google_map/marker/picto_marker.dart';
+import 'package:picto_frontend/screens/profile/picto_calendar.dart';
 import 'package:picto_frontend/screens/profile/profile_view_model.dart';
 import 'package:picto_frontend/services/photo_store_service/photo_store_api.dart';
 
@@ -120,8 +121,9 @@ class ProfileScreen extends StatelessWidget {
             // 캘린더
             Container(
               color: Colors.grey.shade300,
-              child: Text("캘린더 위치"),
+              child: PictoCalendar(),
             ),
+            SizedBox(height: context.mediaQuery.size.height * 0.2,)
           ],
         ),
       ),

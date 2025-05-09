@@ -7,6 +7,7 @@ import 'package:picto_frontend/screens/folder/folder_view_model.dart';
 import 'package:picto_frontend/screens/folder/sub_screen/folder_selection_view_model.dart';
 import 'package:picto_frontend/screens/main_frame_view_model.dart';
 import 'package:picto_frontend/screens/map/tag/tag_selection_view_model.dart';
+import 'package:picto_frontend/screens/profile/calendar_view_model.dart';
 import 'package:picto_frontend/screens/profile/profile_view_model.dart';
 import 'package:picto_frontend/screens/upload/upload_view_model.dart';
 
@@ -52,30 +53,33 @@ class AppConfig {
   // GetX 등록
   static void enrollGetxController() {
     // 로그인 관련 컨트롤러 ----------------------
-    final sessionHandler = Get.put<SessionSocket>(SessionSocket());
-    final registerViewModle = Get.put<RegisterViewModel>(RegisterViewModel());
-    final splashViewModel = Get.put<SplashViewModel>(SplashViewModel());
-    final loginViewModel = Get.put<LoginViewModel>(LoginViewModel());
+    Get.put<SessionSocket>(SessionSocket());
+    Get.put<RegisterViewModel>(RegisterViewModel());
+    Get.put<SplashViewModel>(SplashViewModel());
+    Get.put<LoginViewModel>(LoginViewModel());
 
     // 로그인 이후 사용될 컨트롤러 ----------------------
-    final pictoClusterManager = Get.put<PictoClusterManager>(PictoClusterManager());
-    final selectionViewModel = Get.put<SelectionBarViewModel>(SelectionBarViewModel());
-    final tagSelectionViewModel = Get.put<TagSelectionViewModel>(TagSelectionViewModel());
-    final googleViewModel = Get.put<GoogleMapViewModel>(GoogleMapViewModel());
-    final mapViewModel = Get.put<MapViewModel>(MapViewModel());
-    final uploadViewModel = Get.put<UploadViewModel>(UploadViewModel());
-    final folderViewModel = Get.put<FolderViewModel>(FolderViewModel());
-    final folderSelectionViewModel = Get.put<FolderSelectionViewModel>(FolderSelectionViewModel());
-    final folderInvitationViewModel = Get.put<FolderInvitationViewModel>(FolderInvitationViewModel());
+    Get.put<PictoClusterManager>(PictoClusterManager());
+    Get.put<SelectionBarViewModel>(SelectionBarViewModel());
+    Get.put<TagSelectionViewModel>(TagSelectionViewModel());
+    Get.put<GoogleMapViewModel>(GoogleMapViewModel());
+    Get.put<MapViewModel>(MapViewModel());
+    Get.put<UploadViewModel>(UploadViewModel());
+    Get.put<FolderViewModel>(FolderViewModel());
+    Get.put<FolderSelectionViewModel>(FolderSelectionViewModel());
+    Get.put<FolderInvitationViewModel>(FolderInvitationViewModel());
 
     // 사용자 정보 ----------------------
-    final profileViewModel = Get.put<ProfileViewModel>(ProfileViewModel());
-    final userConfig = Get.put<UserConfig>(UserConfig());
+    Get.put<ProfileViewModel>(ProfileViewModel());
+    Get.put<UserConfig>(UserConfig());
 
     // 챗봇
-    final chatbotViewModel = Get.put<ChatbotViewModel>(ChatbotViewModel());
+    Get.put<ChatbotViewModel>(ChatbotViewModel());
     // ComfyUI
-    final comfyuiViewModel = Get.put<ComfyuiViewModel>(ComfyuiViewModel());
+    Get.put<ComfyuiViewModel>(ComfyuiViewModel());
+
+    // 캘린더
+    Get.put<CalendarViewModel>(CalendarViewModel());
   }
 
   // NotoSansKR체 적용

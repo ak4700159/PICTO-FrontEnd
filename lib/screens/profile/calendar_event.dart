@@ -4,10 +4,30 @@
 // 3. 공유 시간(시간만 00시 00분)
 // 4. 공유자
 
-class CalendarEvent{
+import 'dart:typed_data';
 
+class CalendarEvent {
+  final int uploadTime;
+  final List<String> folderNames;
+  final int photoId;
+  final int folderId;
+  final int ownerId;
+  final String accountName;
+  final String location;
+  final Uint8List? data;
+
+  CalendarEvent({
+    required this.photoId,
+    required this.folderId,
+    required this.ownerId,
+    required this.uploadTime,
+    required this.location,
+    required this.folderNames,
+    required this.accountName,
+    this.data,
+  });
+
+  @override
+  String toString() => "owner : $ownerId / photo : $photoId / folder : $folderId";
 }
 
-int getHashCode(DateTime key) {
-  return key.day * 1000000 + key.month * 10000 + key.year;
-}
