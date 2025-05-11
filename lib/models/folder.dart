@@ -3,6 +3,7 @@ import 'package:picto_frontend/models/chatting_msg.dart';
 import 'package:picto_frontend/models/photo.dart';
 import 'package:picto_frontend/models/user.dart';
 import 'package:picto_frontend/screens/map/google_map/marker/picto_marker.dart';
+import 'package:picto_frontend/screens/profile/profile_view_model.dart';
 import 'package:picto_frontend/services/folder_manager_service/folder_api.dart';
 import 'package:picto_frontend/services/user_manager_service/user_api.dart';
 
@@ -72,7 +73,20 @@ class Folder {
   // 폴더 업데이트
   // !! 기존 데이터에서 새로운 데이터와 비교하여 추가하고 삭제할 부분을 반영 !!
   Future<void> updateFolder() async {
-    updateUser();
+    if (generatorId == UserManagerApi().ownerId) {
+      final profileViewModel = Get.find<ProfileViewModel>();
+      users = [
+        User(
+          password: "",
+          userId: generatorId,
+          name: profileViewModel.name.value,
+          email: profileViewModel.email.value,
+          accountName: profileViewModel.accountName.value,
+        )
+      ];
+    } else {
+      await updateUser();
+    }
     updatePhoto();
     updateMarker();
     updateMessage();
@@ -115,6 +129,7 @@ class Folder {
     for (User removeUser in removeUsers) {
       users.removeWhere((u) => u.userId == removeUser.userId);
     }
+    // print("[INFO] update user ids : ${users.map((u) => u.userId).toList()}");
   }
 
   Future<void> updateMessage() async {
@@ -175,7 +190,9 @@ class Folder {
         newMarkers.add(
           PictoMarker(
             photo: newPhoto,
-            type: newPhoto.userId == UserManagerApi().ownerId ? PictoMarkerType.userPhoto : PictoMarkerType.folderPhoto,
+            type: newPhoto.userId == UserManagerApi().ownerId
+                ? PictoMarkerType.userPhoto
+                : PictoMarkerType.folderPhoto,
           ),
         );
       }
@@ -184,6 +201,8 @@ class Folder {
   }
 
   User? getUser(int userId) {
+    // print("[INFO] get user : $userId");
+    // print("[INFO] users ids : ${users.map((u) => u.userId).toList()}");
     for (var value in users) {
       if (value.userId == userId) {
         return value;
@@ -194,7 +213,8 @@ class Folder {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) || (other is Folder && runtimeType == other.runtimeType && folderId == other.folderId);
+      identical(this, other) ||
+      (other is Folder && runtimeType == other.runtimeType && folderId == other.folderId);
 
   @override
   int get hashCode => folderId.hashCode;

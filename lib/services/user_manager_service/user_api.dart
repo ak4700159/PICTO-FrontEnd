@@ -9,12 +9,15 @@ import 'package:picto_frontend/screens/folder/folder_view_model.dart';
 import 'package:picto_frontend/screens/login/login_view_model.dart';
 import 'package:picto_frontend/screens/map/selection_bar_view_model.dart';
 import 'package:picto_frontend/screens/map/tag/tag_selection_view_model.dart';
+import 'package:picto_frontend/screens/profile/calendar_event.dart';
+import 'package:picto_frontend/screens/profile/calendar_view_model.dart';
 import 'package:picto_frontend/screens/profile/profile_view_model.dart';
 import 'package:picto_frontend/services/http_interceptor.dart';
 import 'package:picto_frontend/services/user_manager_service/signin_response.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../config/user_config.dart';
 import '../../screens/map/google_map/google_map_view_model.dart';
+import '../../screens/splash/splash_view_model.dart';
 import '../../utils/popup.dart';
 import '../socket_function_controller.dart';
 
@@ -132,14 +135,14 @@ class UserManagerApi {
     String hostUrl = "$baseUrl/user-all/$ownerId";
     try {
       final response = await dio.get(hostUrl, options: _authOptions());
-      _sendInitValue(response);
+      await _sendInitValueToViewModel(response);
     } on DioException catch (e) {
       if (e.response?.statusCode == 403) {
         print('[ERROR] access token fail');
         try {
           await republishAccessToken();
           final response = await dio.get(hostUrl, options: _authOptions());
-          _sendInitValue(response);
+          await _sendInitValueToViewModel(response);
         } catch (e) {
           print('[ERROR] refresh token fail');
           Get.find<LoginViewModel>().loginStatus.value = "fail";
@@ -303,15 +306,24 @@ class UserManagerApi {
     return null;
   }
 
-  void _sendInitValue(response) async {
+  Future<void> _sendInitValueToViewModel(response) async {
+    Get.find<SplashViewModel>().statusMsg.value = "데이터 초기화 중 ... ";
+    // 필터값 적용
     Get.find<SelectionBarViewModel>().convertFromJson(response.data["filter"]);
+    // 프로필 적용
     int? photoId =  await UserManagerApi().getUserProfilePhoto(userId: ownerId!);
     Get.find<ProfileViewModel>().convertFromJson(response.data["user"], photoId);
+    // 사용자 세팅값 적용
     Get.find<UserConfig>().convertFromJson(response.data["userSetting"]);
     // Get.find<GoogleMapViewModel>().initPhotos(response.data["folderPhotos"]);
+    // 태그 적용
     Get.find<TagSelectionViewModel>().initTags(response.data["tags"]);
-    Get.find<FolderViewModel>().resetFolder();
-
+    // 폴더 적용
+    await Get.find<FolderViewModel>().resetFolder();
+    // 캘릭더 적용
+    List<CalendarEvent> calendarEvents = await Get.find<FolderViewModel>().convertCalendarEvent();
+    Get.find<CalendarViewModel>().buildCalendarEventMap(calendarEvents);
+    // 위치 소켓 적용
     final socketInterceptor = SocketFunctionController();
     socketInterceptor.callSession(connected: true);
     Get.offNamed('/map');
@@ -322,9 +334,4 @@ class UserManagerApi {
           "Authorization": "Bearer $accessToken",
         },
       );
-
-// 시간되면 구현할 기능
-// 1. 즐겨찾기 추가, 해제
-// 2. 차단 추가, 해제
-// 3. 탈퇴
 }

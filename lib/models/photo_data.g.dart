@@ -19,7 +19,7 @@ class PhotoDataAdapter extends TypeAdapter<PhotoData> {
     return PhotoData(
       photoId: fields[0] as int?,
       data: fields[1] as Uint8List,
-      contentType: fields[2] as String?,
+      content: fields[2] as String?,
     );
   }
 
@@ -32,7 +32,7 @@ class PhotoDataAdapter extends TypeAdapter<PhotoData> {
       ..writeByte(1)
       ..write(obj.data)
       ..writeByte(2)
-      ..write(obj.contentType);
+      ..write(obj.content);
   }
 
   @override

@@ -128,6 +128,9 @@ class ChatbotViewModel extends GetxController {
       ..images = response.photos
       ..content = response.response
       ..status = _getStatusInResponse(response.response);
+    if(chatbotMsg.status == ChatbotStatus.intro) {
+      chatbotMsg.content = chatbotMsg.content.substring("기타\n".length);
+    }
     currentMessages.add(chatbotMsg);
     currentRoom.value?.messages.add(chatbotMsg);
     box.put(currentRoom.value?.createdDatetime.toString(), currentRoom.value);
@@ -139,11 +142,12 @@ class ChatbotViewModel extends GetxController {
       return ChatbotStatus.analysis;
     } else if (result.contains("비교")) {
       return ChatbotStatus.compare;
-    } else if (result.contains("추천")) {
+    } else if (result.contains("검색")) {
       return ChatbotStatus.recommend;
-    } else {
+    } else if (result.contains("기타")){
       return ChatbotStatus.intro;
     }
+    return ChatbotStatus.intro;
   }
 
   // 채팅방 선택

@@ -34,16 +34,7 @@ class ChatbotScreen extends StatelessWidget {
             ),
           ),
           actions: [
-            // if (chatbotViewModel.isDelete.value)
-            //   IconButton(
-            //     onPressed: () {
-            //       // 챗봇 삭제?
-            //     },
-            //     icon: Icon(
-            //       Icons.delete,
-            //       color: Colors.red,
-            //     ),
-            //   )
+
           ],
           automaticallyImplyLeading: false,
           centerTitle: true,

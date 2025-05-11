@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:picto_frontend/config/app_config.dart';
+import 'package:picto_frontend/screens/folder/folder_view_model.dart';
 import 'package:picto_frontend/screens/profile/calendar_view_model.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -10,36 +11,63 @@ class PictoCalendar extends StatelessWidget {
   PictoCalendar({super.key});
 
   final calendarViewModel = Get.find<CalendarViewModel>();
+  final folderViewModel = Get.find<FolderViewModel>();
 
   @override
   Widget build(BuildContext context) {
-    return Obx(() => TableCalendar(
-          locale: 'ko_KR',
-          firstDay: calendarViewModel.kFirstDay,
-          focusedDay: calendarViewModel.focusedDay.value!,
-          lastDay: calendarViewModel.kLastDay,
-          daysOfWeekHeight: 30,
-          headerStyle: _getCalendarHeaderStyle(),
-          // 선택 마커가 결정되기 전 동일한 마커인지 검증
-          selectedDayPredicate: (day) => isSameDay(calendarViewModel.selectedDay.value, day),
-          rangeStartDay: calendarViewModel.rangeStart.value,
-          rangeEndDay: calendarViewModel.rangeEnd.value,
-          calendarFormat: calendarViewModel.calendarFormat,
-          rangeSelectionMode: calendarViewModel.rangeSelectionMode.value!,
-          eventLoader: calendarViewModel.getEventsForDay,
-          // 캘린더 스타일
-          calendarStyle: _getCalendarStyle(),
-          // 캘린더 내부 빌더 설정
-          calendarBuilders: _getCalendarBuilders(),
-          // 휴일 표시
-          // holidayPredicate: (day) {
-          //   // Every 20th day of the month will be treated as a holiday
-          //   return day.day == 20;
-          // },
-          onDaySelected: calendarViewModel.onDaySelected,
-          onRangeSelected: calendarViewModel.onRangeSelected,
-          // onCalendarCreated: (controller) => _pageController = controller,
-        ));
+    return FutureBuilder(
+        future: folderViewModel.convertCalendarEvent(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+
+          if (snapshot.hasError) {
+            return Center(
+              child: Text(
+                "서버 오류",
+                style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  fontFamily: "NotoSansKR",
+                  fontSize: 16,
+                  color: Colors.red
+                ),
+              ),
+            );
+          }
+
+          // 데이터 초기화
+          calendarViewModel.buildCalendarEventMap(snapshot.data!);
+          return Obx(() => TableCalendar(
+                locale: 'ko_KR',
+                firstDay: calendarViewModel.kFirstDay,
+                focusedDay: calendarViewModel.focusedDay.value!,
+                lastDay: calendarViewModel.kLastDay,
+                daysOfWeekHeight: 30,
+                headerStyle: _getCalendarHeaderStyle(),
+                // 선택 마커가 결정되기 전 동일한 마커인지 검증
+                selectedDayPredicate: (day) => isSameDay(calendarViewModel.selectedDay.value, day),
+                rangeStartDay: calendarViewModel.rangeStart.value,
+                rangeEndDay: calendarViewModel.rangeEnd.value,
+                calendarFormat: calendarViewModel.calendarFormat,
+                rangeSelectionMode: calendarViewModel.rangeSelectionMode.value!,
+                eventLoader: calendarViewModel.getEventsForDay,
+                // 캘린더 스타일
+                calendarStyle: _getCalendarStyle(),
+                // 캘린더 내부 빌더 설정
+                calendarBuilders: _getCalendarBuilders(),
+                // 휴일 표시
+                // holidayPredicate: (day) {
+                //   // Every 20th day of the month will be treated as a holiday
+                //   return day.day == 20;
+                // },
+                onDaySelected: calendarViewModel.onDaySelected,
+                onRangeSelected: calendarViewModel.onRangeSelected,
+                // onCalendarCreated: (controller) => _pageController = controller,
+              ));
+        });
   }
 
   HeaderStyle _getCalendarHeaderStyle() {
@@ -114,31 +142,54 @@ class PictoCalendar extends StatelessWidget {
       switch (day.weekday) {
         case 1:
           return Center(
-            child: Text('월', style: TextStyle(fontFamily: "NotoSansKR", fontWeight: FontWeight.w500),),
+            child: Text(
+              '월',
+              style: TextStyle(fontFamily: "NotoSansKR", fontWeight: FontWeight.w500),
+            ),
           );
         case 2:
           return Center(
-            child: Text('화', style: TextStyle(fontFamily: "NotoSansKR", fontWeight: FontWeight.w500),),
+            child: Text(
+              '화',
+              style: TextStyle(fontFamily: "NotoSansKR", fontWeight: FontWeight.w500),
+            ),
           );
         case 3:
           return Center(
-            child: Text('수', style: TextStyle(fontFamily: "NotoSansKR", fontWeight: FontWeight.w500),),
+            child: Text(
+              '수',
+              style: TextStyle(fontFamily: "NotoSansKR", fontWeight: FontWeight.w500),
+            ),
           );
         case 4:
           return Center(
-            child: Text('목', style: TextStyle(fontFamily: "NotoSansKR", fontWeight: FontWeight.w500),),
+            child: Text(
+              '목',
+              style: TextStyle(fontFamily: "NotoSansKR", fontWeight: FontWeight.w500),
+            ),
           );
         case 5:
           return Center(
-            child: Text('금', style: TextStyle(fontFamily: "NotoSansKR", fontWeight: FontWeight.w500),),
+            child: Text(
+              '금',
+              style: TextStyle(fontFamily: "NotoSansKR", fontWeight: FontWeight.w500),
+            ),
           );
         case 6:
           return Center(
-            child: Text('토', style: TextStyle(fontFamily: "NotoSansKR", fontWeight: FontWeight.w500, color: Colors.blue),),
+            child: Text(
+              '토',
+              style: TextStyle(
+                  fontFamily: "NotoSansKR", fontWeight: FontWeight.w500, color: Colors.blue),
+            ),
           );
         case 7:
           return Center(
-            child: Text('일', style: TextStyle(fontFamily: "NotoSansKR", fontWeight: FontWeight.w500, color: Colors.red),),
+            child: Text(
+              '일',
+              style: TextStyle(
+                  fontFamily: "NotoSansKR", fontWeight: FontWeight.w500, color: Colors.red),
+            ),
           );
       }
     });

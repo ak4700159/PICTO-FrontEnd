@@ -44,7 +44,7 @@ class FolderViewModel extends GetxController {
   //  폴더 초기화 -> 새로운 폴더는 추가, 중복되는 폴더는 업데이트
   Future<void> resetFolder() async {
     List<Folder> search = await FolderManagerApi().getFoldersByOwnerId();
-    await showBlockingLoading(Duration(seconds: 1));
+    // showBlockingLoading(Duration(seconds: 1));
 
     // 제거
     final existFolderKeys = folders.keys;
@@ -186,7 +186,7 @@ class FolderViewModel extends GetxController {
   Future<List<PictoMarker>> getPictoMarkersByName({required String folderName}) async {
     Folder folder = folders.values.firstWhere((f) => f.name == "default");
     await folder.updateFolder();
-    await folder.downloadPhotos(0.3);
+    await folder.downloadPhotos(0.1);
     return folder.markers;
   }
 
@@ -254,7 +254,7 @@ class FolderViewModel extends GetxController {
     final tasks = <Future<void>>[];
     for (Folder folder in folders.values) {
       tasks.add(() async {
-        folder.updateFolder();
+        await folder.updateFolder();
       }());
     }
     await Future.wait(tasks);
@@ -274,8 +274,8 @@ class FolderViewModel extends GetxController {
               photoId: photo.photoId,
               folderId: folder.folderId,
               folderNames: [folder.name],
-              ownerId: folder.generatorId,
-              accountName: folder.getUser(folder.generatorId)?.accountName ?? "unknown",
+              ownerId: photo.userId!,
+              accountName: folder.getUser(photo.userId!)?.accountName ?? "unknown",
               uploadTime: photo.updateDatetime!,
               location: photo.location,
             ),

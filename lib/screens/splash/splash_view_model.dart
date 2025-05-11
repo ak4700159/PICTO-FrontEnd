@@ -50,11 +50,12 @@ class SplashViewModel extends GetxController {
   // return true = 처음 접속
   // return false = 이전에 로그인한 적이 있음
   Future<bool> _checkNullLoginData() async {
-    await Future.delayed(Duration(seconds: AppConfig.stopScreenSec));
     try {
       await UserManagerApi().init();
     } catch (e) {
-      print("[ERROR] ${e.toString()}");
+      statusMsg.value = "안녕하세요! 처음 접속하시네요 반가워요!";
+      await Future.delayed(Duration(seconds: AppConfig.stopScreenSec));
+      // 가이드 화면으로 이동
       Get.offNamed('/login');
       return true;
     }

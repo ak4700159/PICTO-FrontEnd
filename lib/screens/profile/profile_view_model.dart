@@ -2,7 +2,6 @@ import 'dart:typed_data';
 
 import 'package:get/get.dart';
 import 'package:picto_frontend/screens/map/google_map/marker/picto_marker.dart';
-import 'package:picto_frontend/services/photo_manager_service/photo_manager_api.dart';
 import 'package:picto_frontend/services/photo_store_service/photo_store_api.dart';
 import 'package:picto_frontend/services/user_manager_service/user_api.dart';
 import 'package:picto_frontend/utils/popup.dart';

@@ -1,5 +1,4 @@
 import 'dart:collection';
-import 'dart:math';
 import 'package:get/get.dart';
 import 'package:picto_frontend/screens/profile/calendar_event.dart';
 import 'package:picto_frontend/screens/profile/picto_calendar.dart';
@@ -37,24 +36,24 @@ class CalendarViewModel extends GetxController {
       hashCode: getHashCode,
     );
 
-    final now = DateTime.now();
-    final rand = Random();
-    for (int i = 0; i < 200; i++) {
-      final offset = rand.nextInt(61) - 30; // -30 ~ +30
-      final date = DateTime(now.year, now.month, now.day + offset);
-
-      // 동일 날짜에 여러 이벤트를 넣기 위해 리스트 병합
-      events.value!.putIfAbsent(date, () => <CalendarEvent>[]);
-      events.value![date]!.add(CalendarEvent(
-        photoId: i,
-        folderId: rand.nextInt(5),
-        folderNames: ["Folder ${rand.nextInt(5)}"],
-        ownerId: rand.nextInt(100),
-        accountName: "user$i",
-        uploadTime: DateTime.now().millisecondsSinceEpoch,
-        location: "위치 ${rand.nextInt(10)}",
-      ));
-    }
+    // final now = DateTime.now();
+    // final rand = Random();
+    // for (int i = 0; i < 200; i++) {
+    //   final offset = rand.nextInt(61) - 30; // -30 ~ +30
+    //   final date = DateTime(now.year, now.month, now.day + offset);
+    //
+    //   // 동일 날짜에 여러 이벤트를 넣기 위해 리스트 병합
+    //   events.value!.putIfAbsent(date, () => <CalendarEvent>[]);
+    //   events.value![date]!.add(CalendarEvent(
+    //     photoId: i,
+    //     folderId: rand.nextInt(5),
+    //     folderNames: ["Folder ${rand.nextInt(5)}"],
+    //     ownerId: rand.nextInt(100),
+    //     accountName: "user$i",
+    //     uploadTime: DateTime.now().millisecondsSinceEpoch,
+    //     location: "위치 ${rand.nextInt(10)}",
+    //   ));
+    // }
     rangeSelectionMode.value = RangeSelectionMode.toggledOff;
   }
 
@@ -111,5 +110,25 @@ class CalendarViewModel extends GetxController {
     } else if (end != null) {
       selectedEvents.value = getEventsForDay(end);
     }
+  }
+
+  // 달력 데이터 초기화
+  void buildCalendarEventMap(List<CalendarEvent> notOrderedEvents) async {
+    final grouped = LinkedHashMap<DateTime, List<CalendarEvent>>(
+      equals: isSameDay,
+      hashCode: getHashCode,
+    );
+
+    for (final event in notOrderedEvents) {
+      final date = DateTime(
+        DateTime.fromMillisecondsSinceEpoch(event.uploadTime).year,
+        DateTime.fromMillisecondsSinceEpoch(event.uploadTime).month,
+        DateTime.fromMillisecondsSinceEpoch(event.uploadTime).day,
+      );
+
+      grouped.putIfAbsent(date, () => []);
+      grouped[date]!.add(event);
+    }
+    events.value = grouped;
   }
 }

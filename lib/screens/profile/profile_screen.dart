@@ -5,6 +5,8 @@ import 'package:hive/hive.dart';
 import 'package:picto_frontend/config/app_config.dart';
 import 'package:picto_frontend/screens/folder/folder_view_model.dart';
 import 'package:picto_frontend/screens/map/google_map/marker/picto_marker.dart';
+import 'package:picto_frontend/screens/profile/calendar_event_tile.dart';
+import 'package:picto_frontend/screens/profile/calendar_view_model.dart';
 import 'package:picto_frontend/screens/profile/picto_calendar.dart';
 import 'package:picto_frontend/screens/profile/profile_view_model.dart';
 import 'package:picto_frontend/services/photo_store_service/photo_store_api.dart';
@@ -16,6 +18,7 @@ class ProfileScreen extends StatelessWidget {
 
   final profileViewModel = Get.find<ProfileViewModel>();
   final folderViewModel = Get.find<FolderViewModel>();
+  final calendarViewModel = Get.find<CalendarViewModel>();
 
   @override
   Widget build(BuildContext context) {
@@ -94,7 +97,7 @@ class ProfileScreen extends StatelessWidget {
                         border: Border.all(color: Colors.grey.shade300, width: 0.5),
                         borderRadius: BorderRadius.circular(100),
                       ),
-                      child: _getProfileWidget(),
+                      child: Obx(() => _getProfileWidget()),
                     ),
                     Positioned(
                       top: 1,
@@ -121,12 +124,15 @@ class ProfileScreen extends StatelessWidget {
             // 캘린더
             Container(
               decoration: BoxDecoration(
-                color: Colors.white,
-                // borderRadius: BorderRadius.circular(100)
-                boxShadow: [
-                  BoxShadow(spreadRadius: 1, color: Colors.grey.shade100, blurRadius: 3, offset: Offset(0, 8)),
-                ]
-              ),
+                  color: Colors.white,
+                  // borderRadius: BorderRadius.circular(100)
+                  boxShadow: [
+                    BoxShadow(
+                        spreadRadius: 1,
+                        color: Colors.grey.shade100,
+                        blurRadius: 3,
+                        offset: Offset(0, 8)),
+                  ]),
               child: PictoCalendar(),
             ),
             // 캘린더 선택 날짜에 따른 리스트
@@ -141,7 +147,7 @@ class ProfileScreen extends StatelessWidget {
                 ),
               ),
             ),
-
+            _getCalendarEventList(),
             // 위로 올릴 수 있도록
             SizedBox(
               height: context.mediaQuery.size.height * 0.3,
@@ -153,7 +159,7 @@ class ProfileScreen extends StatelessWidget {
   }
 
   Widget _getProfileWidget() {
-    print("[INFO] get profile widget : ${profileViewModel.profilePhotoId.value}");
+    // print("[INFO] get profile widget : ${profileViewModel.profilePhotoId.value}");
     if (profileViewModel.profilePhotoId.value == null) {
       return Icon(
         Icons.person,
@@ -359,5 +365,13 @@ class ProfileScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Widget _getCalendarEventList() {
+    return Obx(() => Column(
+          children: calendarViewModel.selectedEvents
+              .map((event) => CalendarEventTile(event: event))
+              .toList(),
+        ));
   }
 }

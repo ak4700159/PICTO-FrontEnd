@@ -15,10 +15,10 @@ class FolderListScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final profileViewModel = Get.find<ProfileViewModel>();
     final folderViewModel = Get.find<FolderViewModel>();
-    if (!folderViewModel.isUpdate.value) {
-      folderViewModel.resetFolder();
-      folderViewModel.isUpdate.value = true;
-    }
+    // if (!folderViewModel.isUpdate.value) {
+    //   folderViewModel.resetFolder();
+    //   folderViewModel.isUpdate.value = true;
+    // }
     return Scaffold(
       appBar: AppBar(
         titleSpacing: 1,
