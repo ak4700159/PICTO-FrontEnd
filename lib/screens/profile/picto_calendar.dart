@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:picto_frontend/config/app_config.dart';
 import 'package:picto_frontend/screens/profile/calendar_view_model.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -12,10 +14,146 @@ class PictoCalendar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() => TableCalendar(
-      locale: 'ko_KR',
-      firstDay: calendarViewModel.kFirstDay,
-      focusedDay: calendarViewModel.focusedDay.value!,
-      lastDay: calendarViewModel.kLastDay,
-    ));
+          locale: 'ko_KR',
+          firstDay: calendarViewModel.kFirstDay,
+          focusedDay: calendarViewModel.focusedDay.value!,
+          lastDay: calendarViewModel.kLastDay,
+          daysOfWeekHeight: 30,
+          headerStyle: _getCalendarHeaderStyle(),
+          // 선택 마커가 결정되기 전 동일한 마커인지 검증
+          selectedDayPredicate: (day) => isSameDay(calendarViewModel.selectedDay.value, day),
+          rangeStartDay: calendarViewModel.rangeStart.value,
+          rangeEndDay: calendarViewModel.rangeEnd.value,
+          calendarFormat: calendarViewModel.calendarFormat,
+          rangeSelectionMode: calendarViewModel.rangeSelectionMode.value!,
+          eventLoader: calendarViewModel.getEventsForDay,
+          // 캘린더 스타일
+          calendarStyle: _getCalendarStyle(),
+          // 캘린더 내부 빌더 설정
+          calendarBuilders: _getCalendarBuilders(),
+          // 휴일 표시
+          // holidayPredicate: (day) {
+          //   // Every 20th day of the month will be treated as a holiday
+          //   return day.day == 20;
+          // },
+          onDaySelected: calendarViewModel.onDaySelected,
+          onRangeSelected: calendarViewModel.onRangeSelected,
+          // onCalendarCreated: (controller) => _pageController = controller,
+        ));
   }
+
+  HeaderStyle _getCalendarHeaderStyle() {
+    return HeaderStyle(
+      headerPadding: const EdgeInsets.symmetric(vertical: 2.0),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        ),
+        color: Colors.grey.shade100,
+      ),
+      titleCentered: true,
+      titleTextStyle: TextStyle(
+        fontSize: 17,
+        fontFamily: "NotoSansKR",
+        fontWeight: FontWeight.w700,
+        color: AppConfig.mainColor,
+      ),
+      formatButtonVisible: false,
+    );
+  }
+
+  CalendarStyle _getCalendarStyle() {
+    return CalendarStyle(
+      tableBorder: TableBorder(
+        horizontalInside: BorderSide(
+          color: Colors.grey.shade200,
+        ),
+        verticalInside: BorderSide(
+          color: Colors.grey.shade200,
+        ),
+      ),
+      cellMargin: const EdgeInsets.all(15.0),
+      markerDecoration: BoxDecoration(color: AppConfig.mainColor),
+    );
+  }
+
+  CalendarBuilders _getCalendarBuilders() {
+    return CalendarBuilders(markerBuilder: (context, day, events) {
+      Color color = Colors.grey;
+      FontWeight fontWeight = FontWeight.w300;
+      if (events.isNotEmpty) {
+        color = Colors.black;
+        fontWeight = FontWeight.w500;
+      }
+
+      if (events.length > 5) {
+        color = Colors.red;
+        fontWeight = FontWeight.w600;
+      }
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Container(
+            margin: EdgeInsets.all(4),
+            padding: EdgeInsets.all(2),
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: Colors.grey, width: 0.5)),
+            child: Text("${events.length}",
+                style: TextStyle(
+                  color: color,
+                  fontWeight: fontWeight,
+                  fontFamily: "NotoSansKR",
+                  fontSize: 8,
+                )),
+          ),
+        ],
+      );
+    }, dowBuilder: (context, day) {
+      switch (day.weekday) {
+        case 1:
+          return Center(
+            child: Text('월', style: TextStyle(fontFamily: "NotoSansKR", fontWeight: FontWeight.w500),),
+          );
+        case 2:
+          return Center(
+            child: Text('화', style: TextStyle(fontFamily: "NotoSansKR", fontWeight: FontWeight.w500),),
+          );
+        case 3:
+          return Center(
+            child: Text('수', style: TextStyle(fontFamily: "NotoSansKR", fontWeight: FontWeight.w500),),
+          );
+        case 4:
+          return Center(
+            child: Text('목', style: TextStyle(fontFamily: "NotoSansKR", fontWeight: FontWeight.w500),),
+          );
+        case 5:
+          return Center(
+            child: Text('금', style: TextStyle(fontFamily: "NotoSansKR", fontWeight: FontWeight.w500),),
+          );
+        case 6:
+          return Center(
+            child: Text('토', style: TextStyle(fontFamily: "NotoSansKR", fontWeight: FontWeight.w500, color: Colors.blue),),
+          );
+        case 7:
+          return Center(
+            child: Text('일', style: TextStyle(fontFamily: "NotoSansKR", fontWeight: FontWeight.w500, color: Colors.red),),
+          );
+      }
+    });
+  }
+}
+
+int getHashCode(DateTime key) {
+  return key.day * 1000000 + key.month * 10000 + key.year;
+}
+
+/// Returns a list of [DateTime] objects from [first] to [last], inclusive.
+List<DateTime> daysInRange(DateTime first, DateTime last) {
+  final dayCount = last.difference(first).inDays + 1;
+  return List.generate(
+    dayCount,
+    (index) => DateTime.utc(first.year, first.month, first.day + index),
+  );
 }

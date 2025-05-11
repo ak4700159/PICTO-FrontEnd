@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:picto_frontend/models/chatting_msg.dart';
 import 'package:picto_frontend/models/folder.dart';
 import 'package:picto_frontend/screens/map/google_map/marker/picto_marker.dart';
+import 'package:picto_frontend/screens/profile/calendar_event.dart';
 import 'package:picto_frontend/services/chatting_scheduler_service/chatting_socket.dart';
 import 'package:picto_frontend/services/folder_manager_service/folder_api.dart';
 import 'package:picto_frontend/services/user_manager_service/user_api.dart';
@@ -63,7 +64,7 @@ class FolderViewModel extends GetxController {
     }
   }
 
-  // 폴더 다운로드
+  // 폴더 다운로드 : 폴더 아이콘을 선택해서 변화할 때만 작동
   Future<void> downloadFolder() async {
     final firstTasks = <Future<void>>[];
     final tasks = <Future<void>>[];
@@ -79,13 +80,15 @@ class FolderViewModel extends GetxController {
       final capturedUser = user; // 🔑 클로저 캡처 방지
       firstTasks.add(() async {
         // print("[DEBUG] downloading profile for userId: ${capturedUser.userId}");
-        capturedUser.userProfileId = await UserManagerApi().getUserProfilePhoto(userId: capturedUser.userId!);
+        capturedUser.userProfileId =
+            await UserManagerApi().getUserProfilePhoto(userId: capturedUser.userId!);
         if (capturedUser.userProfileId != null) {
           capturedUser.userProfileData = await PhotoStoreApi().downloadPhoto(
             photoId: capturedUser.userProfileId!,
             scale: 0.08,
           );
-          currentFolder.value!.users[currentFolder.value!.users.indexOf(capturedUser)] = capturedUser;
+          currentFolder.value!.users[currentFolder.value!.users.indexOf(capturedUser)] =
+              capturedUser;
         }
       }());
     }
@@ -144,6 +147,11 @@ class FolderViewModel extends GetxController {
     currentMsgList.value = folders[currentFolder.value?.folderId]!.messages;
   }
 
+  // 폴더 화면에서 벗어날 경우
+  void disconnectSocket() {
+    currentSocket.value?.disconnectWebSocket();
+  }
+
   // 폴더 삭제
   void removeFolder({required int folderId}) async {
     if (await FolderManagerApi().removeFolder(folderId: folderId)) {
@@ -153,7 +161,8 @@ class FolderViewModel extends GetxController {
 
   // 폴더 생성
   void createFolder({required String folderName, required String content}) async {
-    Folder? newFolder = await FolderManagerApi().createFolder(folderName: folderName, content: content);
+    Folder? newFolder =
+        await FolderManagerApi().createFolder(folderName: folderName, content: content);
   }
 
   // 현재 연결된 소켓에 채팅 전송
@@ -177,7 +186,7 @@ class FolderViewModel extends GetxController {
   Future<List<PictoMarker>> getPictoMarkersByName({required String folderName}) async {
     Folder folder = folders.values.firstWhere((f) => f.name == "default");
     await folder.updateFolder();
-    await folder.downloadPhotos();
+    await folder.downloadPhotos(0.3);
     return folder.markers;
   }
 
@@ -236,5 +245,44 @@ class FolderViewModel extends GetxController {
   Uint8List? getOtherProfilePhoto({required int userId}) {
     User find = currentFolder.value!.users.firstWhere((u) => u.userId == userId);
     return find.userProfileData;
+  }
+
+  // 폴더 안의 모든 사진들을 바탕으로 CalendarEvent 만들어서 반환
+  Future<List<CalendarEvent>> convertCalendarEvent() async {
+    List<CalendarEvent> result = [];
+    // 폴더 전체 업데이트(정보만!)
+    final tasks = <Future<void>>[];
+    for (Folder folder in folders.values) {
+      tasks.add(() async {
+        folder.updateFolder();
+      }());
+    }
+    await Future.wait(tasks);
+
+    // 폴더 순회하며 CalendarEvent 생성
+    for (Folder folder in folders.values) {
+      for (var photo in folder.photos) {
+        final existingEventIndex = result.indexWhere((e) => e.photoId == photo.photoId);
+
+        if (existingEventIndex != -1) {
+          // 이미 존재하는 이벤트 → 폴더 이름만 추가
+          result[existingEventIndex].folderNames.add(folder.name);
+        } else {
+          // 새로운 이벤트 생성
+          result.add(
+            CalendarEvent(
+              photoId: photo.photoId,
+              folderId: folder.folderId,
+              folderNames: [folder.name],
+              ownerId: folder.generatorId,
+              accountName: folder.getUser(folder.generatorId)?.accountName ?? "unknown",
+              uploadTime: photo.updateDatetime!,
+              location: photo.location,
+            ),
+          );
+        }
+      }
+    }
+    return result;
   }
 }

@@ -11,6 +11,7 @@ import 'package:picto_frontend/models/photo_data.dart';
 import 'package:picto_frontend/page_router.dart';
 import 'package:picto_frontend/theme.dart';
 import 'package:path_provider/path_provider.dart' show getApplicationDocumentsDirectory;
+import 'package:intl/date_symbol_data_local.dart' show initializeDateFormatting;
 
 import 'config/app_config.dart';
 import 'models/chatbot_room.dart';
@@ -31,7 +32,8 @@ void main() async {
   // 환경 설정 파일 로드
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
-
+  // 달력 지역화
+  await initializeDateFormatting();
   // 상단 상태바, 하단 네비게이션 바 설정
   SystemChrome.setSystemUIOverlayStyle(
     SystemUiOverlayStyle(

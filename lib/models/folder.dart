@@ -78,7 +78,8 @@ class Folder {
     updateMessage();
   }
 
-  Future<void> downloadPhotos() async {
+  // 폴더에 명시되어 있는 사진 다운로드
+  Future<void> downloadPhotos(double scale) async {
     final tasks = <Future<void>>[];
 
     for (var m in markers) {
@@ -87,7 +88,7 @@ class Folder {
           try {
             m.imageData = await PhotoStoreApi().downloadPhoto(
               photoId: m.photo.photoId,
-              scale: 0.3,
+              scale: scale,
             );
           } catch (e) {
             print("[ERROR] Failed to download photoId ${m.photo.photoId}");

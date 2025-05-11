@@ -32,6 +32,7 @@ class ProfileViewModel extends GetxController {
     profilePath.value = json["profilePath"];
     intro.value = json["intro"];
     userId = json["userId"];
+    this.profilePhotoId.value = profilePhotoId;
     if (profilePhotoId != null) {
       profilePhoto = await PhotoStoreApi().downloadPhoto(photoId: profilePhotoId, scale: 0.5);
     }
@@ -54,7 +55,7 @@ class ProfileViewModel extends GetxController {
       profilePhoto = selectedPictoMarker.value!.imageData!;
       showPositivePopup("대표 사진이 업데이트되었습니다.");
     } else {
-      showPositivePopup("대표 사진을 업데이트하지 못했습니다.");
+      showErrorPopup("대표 사진을 업데이트하지 못했습니다.");
     }
     selectedPictoMarker.value = null;
   }

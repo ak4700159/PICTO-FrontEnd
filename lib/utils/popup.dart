@@ -8,7 +8,11 @@ void showErrorPopup(String errorMsg) {
   Get.dialog(
     AlertDialog(
       titlePadding: EdgeInsets.all(20),
-      contentPadding: EdgeInsets.all(12),
+      contentPadding: EdgeInsets.only(
+        bottom: 12,
+        left: 30,
+        right: 12,
+      ),
       backgroundColor: Colors.white,
       title: Row(
         children: [
@@ -20,8 +24,11 @@ void showErrorPopup(String errorMsg) {
             padding: const EdgeInsets.all(8.0),
             child: const Text(
               '[ERROR INFO]',
-              style:
-                  TextStyle(fontSize: 17, color: Colors.black, fontFamily: "NotoSansKR", fontWeight: FontWeight.w700),
+              style: TextStyle(
+                  fontSize: 17,
+                  color: Colors.black,
+                  fontFamily: "NotoSansKR",
+                  fontWeight: FontWeight.w700),
             ),
           ),
         ],
@@ -29,7 +36,8 @@ void showErrorPopup(String errorMsg) {
       content: SingleChildScrollView(
           child: Text(
         errorMsg,
-        style: TextStyle(fontSize: 14, color: Colors.red, fontFamily: "NotoSansKR", fontWeight: FontWeight.w700),
+        style: TextStyle(
+            fontSize: 14, color: Colors.red, fontFamily: "NotoSansKR", fontWeight: FontWeight.w700),
       )),
       actions: [
         // TextButton(
@@ -57,8 +65,11 @@ void showPositivePopup(String msg) {
             padding: const EdgeInsets.all(8.0),
             child: const Text(
               '[INFO]',
-              style:
-                  TextStyle(fontSize: 17, color: Colors.black, fontFamily: "NotoSansKR", fontWeight: FontWeight.w700),
+              style: TextStyle(
+                  fontSize: 17,
+                  color: Colors.black,
+                  fontFamily: "NotoSansKR",
+                  fontWeight: FontWeight.w700),
             ),
           ),
         ],
@@ -66,7 +77,11 @@ void showPositivePopup(String msg) {
       content: SingleChildScrollView(
           child: Text(
         msg,
-        style: TextStyle(fontSize: 14, color: Colors.black, fontFamily: "NotoSansKR", fontWeight: FontWeight.w700),
+        style: TextStyle(
+            fontSize: 14,
+            color: Colors.black,
+            fontFamily: "NotoSansKR",
+            fontWeight: FontWeight.w700),
       )),
       actions: [
         // TextButton(

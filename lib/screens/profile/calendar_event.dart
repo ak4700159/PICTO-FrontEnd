@@ -30,4 +30,3 @@ class CalendarEvent {
   @override
   String toString() => "owner : $ownerId / photo : $photoId / folder : $folderId";
 }
-

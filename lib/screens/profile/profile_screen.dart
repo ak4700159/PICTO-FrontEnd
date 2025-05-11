@@ -94,7 +94,7 @@ class ProfileScreen extends StatelessWidget {
                         border: Border.all(color: Colors.grey.shade300, width: 0.5),
                         borderRadius: BorderRadius.circular(100),
                       ),
-                      child: Obx(() => _getProfileWidget()),
+                      child: _getProfileWidget(),
                     ),
                     Positioned(
                       top: 1,
@@ -116,14 +116,36 @@ class ProfileScreen extends StatelessWidget {
               ],
             ),
             SizedBox(
-              height: context.mediaQuery.size.height * 0.1,
+              height: context.mediaQuery.size.height * 0.05,
             ),
             // 캘린더
             Container(
-              color: Colors.grey.shade300,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                // borderRadius: BorderRadius.circular(100)
+                boxShadow: [
+                  BoxShadow(spreadRadius: 1, color: Colors.grey.shade100, blurRadius: 3, offset: Offset(0, 8)),
+                ]
+              ),
               child: PictoCalendar(),
             ),
-            SizedBox(height: context.mediaQuery.size.height * 0.2,)
+            // 캘린더 선택 날짜에 따른 리스트
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text(
+                "선택한 날짜의 사진 목록",
+                style: TextStyle(
+                  fontSize: 14,
+                  fontFamily: "NotoSansKR",
+                  fontWeight: FontWeight.w300,
+                ),
+              ),
+            ),
+
+            // 위로 올릴 수 있도록
+            SizedBox(
+              height: context.mediaQuery.size.height * 0.3,
+            )
           ],
         ),
       ),
@@ -131,6 +153,7 @@ class ProfileScreen extends StatelessWidget {
   }
 
   Widget _getProfileWidget() {
+    print("[INFO] get profile widget : ${profileViewModel.profilePhotoId.value}");
     if (profileViewModel.profilePhotoId.value == null) {
       return Icon(
         Icons.person,
@@ -150,7 +173,8 @@ class ProfileScreen extends StatelessWidget {
     }
 
     return FutureBuilder(
-      future: PhotoStoreApi().downloadPhoto(photoId: profileViewModel.profilePhotoId.value!, scale: 0.3),
+      future: PhotoStoreApi()
+          .downloadPhoto(photoId: profileViewModel.profilePhotoId.value!, scale: 0.3),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(child: CircularProgressIndicator());
@@ -318,7 +342,8 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
             Obx(() => Positioned(
-                  child: profileViewModel.selectedPictoMarker.value?.photo.photoId == marker.photo.photoId
+                  child: profileViewModel.selectedPictoMarker.value?.photo.photoId ==
+                          marker.photo.photoId
                       ? Icon(
                           Icons.check_box,
                           color: Colors.green,
