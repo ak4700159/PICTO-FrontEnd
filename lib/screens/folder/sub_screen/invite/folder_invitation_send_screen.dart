@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:picto_frontend/config/app_config.dart';
 import 'package:picto_frontend/screens/folder/sub_screen/invite/folder_invitation_view_model.dart';
 import 'package:picto_frontend/screens/map/top_box.dart';
+import 'package:picto_frontend/utils/get_widget.dart';
 import 'package:picto_frontend/utils/validator.dart';
 
 import '../../../../models/user.dart';
@@ -148,61 +149,61 @@ class FolderInvitationSendScreen extends StatelessWidget {
   }
 
   _getUserTile(BuildContext context, int idx, User user) {
-    return Container(
-      decoration: BoxDecoration(
-          color: Colors.white,
-          border: Border(bottom: BorderSide(width: 0.5, color: Colors.grey)),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey,
-              blurRadius: 8, // 흐림 정도
-              spreadRadius: 1, // 그림자 확산 정도
-              offset: Offset(2, 5), // 그림자 위치 조정
-            )
-          ]),
-      padding: EdgeInsets.all(8),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Icon(
-            Icons.person_pin_rounded,
-            size: 30,
-            color: getColorFromUserId(user.userId!),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "${user.accountName}",
-                style: TextStyle(
-                  fontFamily: "NotoSansKR",
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black,
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+            color: Colors.white,
+            border: Border(bottom: BorderSide(width: 0.5, color: Colors.grey)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey,
+                blurRadius: 4, // 흐림 정도
+                spreadRadius: 0.1, // 그림자 확산 정도
+                offset: Offset(2, 3), // 그림자 위치 조정
+              )
+            ]),
+        padding: EdgeInsets.all(8),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            getUserProfile(user: user, context: context, size: 0.14, scale : 0.2),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "${user.accountName}",
+                  style: TextStyle(
+                    fontFamily: "NotoSansKR",
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black,
+                  ),
                 ),
-              ),
-              Text(
-                "${user.email}",
-                style: TextStyle(
-                  fontFamily: "NotoSansKR",
-                  fontSize: 12,
-                  fontWeight: FontWeight.w400,
-                  color: Colors.grey,
+                Text(
+                  "${user.email}",
+                  style: TextStyle(
+                    fontFamily: "NotoSansKR",
+                    fontSize: 12,
+                    fontWeight: FontWeight.w400,
+                    color: Colors.grey,
+                  ),
                 ),
-              ),
-            ],
-          ),
-          IconButton(
-            onPressed: () {
-              Get.find<FolderInvitationViewModel>().deleteUser(user.userId!);
-            },
-            icon: Icon(
-              Icons.delete,
-              size: 30,
-              color: Colors.red,
+              ],
             ),
-          ),
-        ],
+            IconButton(
+              onPressed: () {
+                Get.find<FolderInvitationViewModel>().deleteUser(user.userId!);
+              },
+              icon: Icon(
+                Icons.delete,
+                size: 30,
+                color: Colors.red,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

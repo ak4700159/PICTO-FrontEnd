@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:picto_frontend/models/folder.dart';
 import 'package:picto_frontend/models/notice.dart';
 import 'package:picto_frontend/models/photo.dart';
@@ -167,6 +168,22 @@ class FolderManagerApi {
       return true;
     } on DioException catch(e) {
       showErrorPopup(e.toString());
+    }
+    return false;
+  }
+
+  // fcm 토큰 전달
+  Future<bool> fetchFCM() async {
+    try{
+      String? token = await FirebaseMessaging.instance.getToken();
+      print("[INFO] user ID : ${UserManagerApi().ownerId}, token : $token");
+      final response = await dio.patch('$baseUrl/folders/fcm_token', data:  {
+        "userId" : UserManagerApi().ownerId,
+        "fcmToken" : token,
+      });
+      return true;
+    } catch(e) {
+      showErrorPopup("푸쉬 알림 오류 :$e");
     }
     return false;
   }

@@ -3,12 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:picto_frontend/config/app_config.dart';
 import 'package:picto_frontend/screens/folder/folder_list_screen.dart';
+import 'package:picto_frontend/screens/folder/folder_view_model.dart';
 import 'package:picto_frontend/screens/main_frame_view_model.dart';
+import 'package:picto_frontend/screens/profile/calendar/calendar_view_model.dart';
 import 'package:picto_frontend/screens/profile/profile_screen.dart';
 import '../icon/picto_icons.dart';
-import '../test_screens/ksm_test_screen.dart';
+import '../test_screens/test_screen.dart';
 import 'bot/chatbot_rooms_screen.dart';
 import 'comfyui/comfyui_screen.dart';
+import 'comfyui/comfyui_view_model.dart';
 import 'map/google_map/google_map.dart';
 
 enum MapStatus { googleMap, folder, comfyUI, chatbot, setting }
@@ -48,6 +51,13 @@ class MapScreen extends StatelessWidget {
   Widget _getMainFrame(BuildContext context) {
     print("[INFO] main frame rebuild!");
     final mapViewModel = Get.find<MapViewModel>();
+    final comfyuiViewModel = Get.find<ComfyuiViewModel>();
+    final calendarViewModel = Get.find<CalendarViewModel>();
+    final folderViewModel = Get.find<FolderViewModel>();
+    if(mapViewModel.navigationBarCurrentIndex.value == 4) {
+      // calendarViewModel.buildCalendarEventMap(folderViewModel.convertCalendarEvent());
+    }
+    comfyuiViewModel.reset();
     return switch (mapViewModel.navigationBarCurrentIndex.value) {
       // 수정필요 : 0 -> chat_photo bot / 1 -> comfy ui / 2 -> google map / 3 -> folder / 4 -> profile /
       0 => ChatbotListScreen(),

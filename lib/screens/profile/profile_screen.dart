@@ -5,9 +5,10 @@ import 'package:hive/hive.dart';
 import 'package:picto_frontend/config/app_config.dart';
 import 'package:picto_frontend/screens/folder/folder_view_model.dart';
 import 'package:picto_frontend/screens/map/google_map/marker/picto_marker.dart';
-import 'package:picto_frontend/screens/profile/calendar_event_tile.dart';
-import 'package:picto_frontend/screens/profile/calendar_view_model.dart';
-import 'package:picto_frontend/screens/profile/picto_calendar.dart';
+import 'package:picto_frontend/screens/profile/calendar/calendar_event_tile.dart';
+import 'package:picto_frontend/screens/profile/calendar/calendar_view_model.dart';
+import 'package:picto_frontend/screens/profile/calendar/picto_calendar.dart';
+import 'package:picto_frontend/screens/profile/profile_modify_dialog.dart';
 import 'package:picto_frontend/screens/profile/profile_view_model.dart';
 import 'package:picto_frontend/services/photo_store_service/photo_store_api.dart';
 
@@ -36,6 +37,7 @@ class ProfileScreen extends StatelessWidget {
                   child: TextButton(
                     onPressed: () {
                       // 사용자 프로필 수정 팝업 생성
+                      showProfileModifyDialog(context);
                     },
                     child: Text(
                       "수정하기",
@@ -118,6 +120,10 @@ class ProfileScreen extends StatelessWidget {
                 )
               ],
             ),
+            SizedBox(
+              height: context.mediaQuery.size.height * 0.02,
+            ),
+
             SizedBox(
               height: context.mediaQuery.size.height * 0.05,
             ),

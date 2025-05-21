@@ -35,7 +35,7 @@ class ChatBubble extends StatelessWidget {
         ),
         Container(
           margin: const EdgeInsets.symmetric(vertical: 2),
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.all(9),
           decoration: BoxDecoration(
             color: AppConfig.mainColor,
             borderRadius: BorderRadius.only(
@@ -51,7 +51,7 @@ class ChatBubble extends StatelessWidget {
               fontSize: 12,
               color: Colors.white,
               fontFamily: "NotoSansKR",
-              fontWeight: FontWeight.w600,
+              fontWeight: FontWeight.w400,
             ),
           ),
         ),
@@ -69,8 +69,8 @@ class ChatBubble extends StatelessWidget {
               // 사용자 프로픨
               profile != null
                   ? Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ClipRRect(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ClipRRect(
                         borderRadius: BorderRadius.circular(100),
                         child: Image.memory(
                           profile,
@@ -79,7 +79,7 @@ class ChatBubble extends StatelessWidget {
                           width: context.mediaQuery.size.width * 0.1,
                         ),
                       ),
-                  )
+                    )
                   : Padding(
                       padding: const EdgeInsets.all(4.0),
                       child: Icon(
@@ -104,9 +104,9 @@ class ChatBubble extends StatelessWidget {
               ),
               Container(
                 margin: const EdgeInsets.symmetric(vertical: 2),
-                padding: const EdgeInsets.all(12),
+                padding: const EdgeInsets.all(9),
                 decoration: BoxDecoration(
-                  color: Colors.grey.shade400,
+                  color: Colors.grey.shade200,
                   borderRadius: BorderRadius.only(
                     topRight: Radius.circular(15),
                     topLeft: Radius.circular(8),
@@ -117,7 +117,11 @@ class ChatBubble extends StatelessWidget {
                 child: Text(
                   msg.content,
                   style: TextStyle(
-                      fontSize: 12, color: Colors.white, fontFamily: "NotoSansKR", fontWeight: FontWeight.w600),
+                    fontSize: 12,
+                    color: AppConfig.mainColor,
+                    fontFamily: "NotoSansKR",
+                    fontWeight: FontWeight.w400,
+                  ),
                 ),
               ),
             ],
@@ -129,7 +133,7 @@ class ChatBubble extends StatelessWidget {
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
                   formatDate(msg.sendDatetime).substring("0000-00-00".length),
-                  style: TextStyle(fontSize: 10, color: Colors.grey, fontFamily: "NotoSansKR"),
+                  style: TextStyle(fontSize: 10, color: Colors.grey, fontFamily: "NotoSansKR",),
                 ),
               ),
             ],

@@ -2,9 +2,11 @@ import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:get/get.dart' show Get, Inst;
 import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mime/mime.dart';
+import 'package:picto_frontend/screens/comfyui/comfyui_view_model.dart';
 import 'package:picto_frontend/services/comfyui_manager_service/comfyui_response.dart';
 import 'package:picto_frontend/utils/popup.dart';
 
@@ -23,13 +25,14 @@ class ComfyuiAPI {
   final String baseUrl = "http://${dotenv.env['PROCESSOR_IP']}:8086";
   Dio dio = Dio(
     BaseOptions(
-        connectTimeout: const Duration(seconds: 120),
+        connectTimeout: const Duration(minutes: 10),
         contentType: Headers.jsonContentType,
-        receiveTimeout: const Duration(seconds: 120)),
+        receiveTimeout: const Duration(minutes: 10)),
   )..interceptors.add(CustomInterceptor());
 
   Future<ComfyuiResponse> removePhoto({required String prompt, required XFile original}) async {
     final originalData = await original.readAsBytes();
+    final comfyuiViewModel = Get.find<ComfyuiViewModel>();
     Uint8List result = Uint8List(0);
     try {
       final fileName = original.path.split('/').last;
@@ -46,12 +49,17 @@ class ComfyuiAPI {
       final response = await dio.post("$baseUrl/upload/inpaint", data: formData);
       if (response.data["success"] == true) {
         result = await downloadImageBytes("$baseUrl/static/results/${response.data["result"]}");
-        print("[INFO] result image bytes : ${result.lengthInBytes}");
       }
     } catch (e) {
+      comfyuiViewModel.removing.value = false;
+      // comfyuiViewModel.determinedRmovePhoto.value = null;
+      // comfyuiViewModel.currentPrompt.value = "";/
       showErrorPopup(e.toString());
       rethrow;
     }
+    comfyuiViewModel.removing.value = false;
+    // comfyuiViewModel.determinedRmovePhoto.value = null;
+    // comfyuiViewModel.currentPrompt.value = "";
     return ComfyuiResponse(result: result, original: originalData);
   }
 
@@ -65,11 +73,9 @@ class ComfyuiAPI {
         'file': await MultipartFile.fromFile(original.path,
             filename: fileName, contentType: MediaType.parse(mimeType)),
       });
-      print("[INFO] original image bytes : ${originalData.lengthInBytes}");
       final response = await dio.post("$baseUrl/upload/upscale", data: formData);
       if (response.data["success"] == true) {
         result = await downloadImageBytes("$baseUrl/static/results/${response.data["result"]}");
-        print("[INFO] result image bytes : ${result.lengthInBytes}");
       }
     } catch (e) {
       showErrorPopup(e.toString());

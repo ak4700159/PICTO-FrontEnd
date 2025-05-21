@@ -7,7 +7,7 @@ import 'package:picto_frontend/screens/folder/folder_view_model.dart';
 import 'package:picto_frontend/screens/folder/sub_screen/folder_selection_view_model.dart';
 import 'package:picto_frontend/screens/main_frame_view_model.dart';
 import 'package:picto_frontend/screens/map/tag/tag_selection_view_model.dart';
-import 'package:picto_frontend/screens/profile/calendar_view_model.dart';
+import 'package:picto_frontend/screens/profile/calendar/calendar_view_model.dart';
 import 'package:picto_frontend/screens/profile/profile_view_model.dart';
 import 'package:picto_frontend/screens/upload/upload_view_model.dart';
 

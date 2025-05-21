@@ -15,6 +15,7 @@ class LoginViewModel extends GetxController {
   RxString email = "".obs;
   RxString loginStatus = "not".obs;
   RxInt sliderIdx = 0.obs;
+  RxInt guideSliderIdx = 0.obs;
 
   void togglePasswordVisible() {
     isPasswordVisible.value = !isPasswordVisible.value;

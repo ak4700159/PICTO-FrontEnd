@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:picto_frontend/config/app_config.dart';
 import 'package:picto_frontend/screens/folder/folder_view_model.dart';
-import 'package:picto_frontend/screens/profile/calendar_view_model.dart';
+import 'package:picto_frontend/screens/profile/calendar/calendar_view_model.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class PictoCalendar extends StatelessWidget {
@@ -29,11 +29,10 @@ class PictoCalendar extends StatelessWidget {
               child: Text(
                 "서버 오류",
                 style: TextStyle(
-                  fontWeight: FontWeight.w500,
-                  fontFamily: "NotoSansKR",
-                  fontSize: 16,
-                  color: Colors.red
-                ),
+                    fontWeight: FontWeight.w500,
+                    fontFamily: "NotoSansKR",
+                    fontSize: 16,
+                    color: Colors.red),
               ),
             );
           }
@@ -107,92 +106,122 @@ class PictoCalendar extends StatelessWidget {
   }
 
   CalendarBuilders _getCalendarBuilders() {
-    return CalendarBuilders(markerBuilder: (context, day, events) {
-      Color color = Colors.grey;
-      FontWeight fontWeight = FontWeight.w300;
-      if (events.isNotEmpty) {
-        color = Colors.black;
-        fontWeight = FontWeight.w500;
-      }
+    return CalendarBuilders(
+      markerBuilder: (context, day, events) {
+        Color color = Colors.grey;
+        FontWeight fontWeight = FontWeight.w300;
+        if (events.isNotEmpty) {
+          color = Colors.black;
+          fontWeight = FontWeight.w500;
+        }
 
-      if (events.length > 5) {
-        color = Colors.red;
-        fontWeight = FontWeight.w600;
-      }
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          Container(
-            margin: EdgeInsets.all(4),
-            padding: EdgeInsets.all(2),
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: Colors.grey, width: 0.5)),
-            child: Text("${events.length}",
+        if (events.length > 5) {
+          color = Colors.red;
+          fontWeight = FontWeight.w600;
+        }
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Container(
+              margin: EdgeInsets.all(4),
+              padding: EdgeInsets.all(2),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: Colors.grey, width: 0.5)),
+              child: Text("${events.length}",
+                  style: TextStyle(
+                    color: color,
+                    fontWeight: fontWeight,
+                    fontFamily: "NotoSansKR",
+                    fontSize: 8,
+                  )),
+            ),
+          ],
+        );
+      },
+      dowBuilder: (context, day) {
+        switch (day.weekday) {
+          case 1:
+            return Center(
+              child: Text(
+                '월',
+                style: TextStyle(fontFamily: "NotoSansKR", fontWeight: FontWeight.w500),
+              ),
+            );
+          case 2:
+            return Center(
+              child: Text(
+                '화',
+                style: TextStyle(fontFamily: "NotoSansKR", fontWeight: FontWeight.w500),
+              ),
+            );
+          case 3:
+            return Center(
+              child: Text(
+                '수',
+                style: TextStyle(fontFamily: "NotoSansKR", fontWeight: FontWeight.w500),
+              ),
+            );
+          case 4:
+            return Center(
+              child: Text(
+                '목',
+                style: TextStyle(fontFamily: "NotoSansKR", fontWeight: FontWeight.w500),
+              ),
+            );
+          case 5:
+            return Center(
+              child: Text(
+                '금',
+                style: TextStyle(fontFamily: "NotoSansKR", fontWeight: FontWeight.w500),
+              ),
+            );
+          case 6:
+            return Center(
+              child: Text(
+                '토',
                 style: TextStyle(
-                  color: color,
-                  fontWeight: fontWeight,
-                  fontFamily: "NotoSansKR",
-                  fontSize: 8,
-                )),
+                    fontFamily: "NotoSansKR", fontWeight: FontWeight.w500, color: Colors.blue),
+              ),
+            );
+          case 7:
+            return Center(
+              child: Text(
+                '일',
+                style: TextStyle(
+                    fontFamily: "NotoSansKR", fontWeight: FontWeight.w500, color: Colors.red),
+              ),
+            );
+        }
+      },
+      defaultBuilder: (context, day, focusedDay) {
+        if(calendarViewModel.getEventsForDay(day).isEmpty) {
+          return Center(
+            child: Text(
+              '${day.day}',
+              style: TextStyle(
+                fontSize: 14,
+                fontFamily: "NotoSansKR",
+                fontWeight: FontWeight.bold,
+                color: Colors.grey,
+              ),
+            ),
+          );
+        }
+
+        return Center(
+          child: Text(
+            '${day.day}',
+            style: TextStyle(
+              fontSize: 14,
+              fontFamily: "NotoSansKR",
+              fontWeight: FontWeight.bold,
+              color: Colors.black, // 일반 날짜 색상
+            ),
           ),
-        ],
-      );
-    }, dowBuilder: (context, day) {
-      switch (day.weekday) {
-        case 1:
-          return Center(
-            child: Text(
-              '월',
-              style: TextStyle(fontFamily: "NotoSansKR", fontWeight: FontWeight.w500),
-            ),
-          );
-        case 2:
-          return Center(
-            child: Text(
-              '화',
-              style: TextStyle(fontFamily: "NotoSansKR", fontWeight: FontWeight.w500),
-            ),
-          );
-        case 3:
-          return Center(
-            child: Text(
-              '수',
-              style: TextStyle(fontFamily: "NotoSansKR", fontWeight: FontWeight.w500),
-            ),
-          );
-        case 4:
-          return Center(
-            child: Text(
-              '목',
-              style: TextStyle(fontFamily: "NotoSansKR", fontWeight: FontWeight.w500),
-            ),
-          );
-        case 5:
-          return Center(
-            child: Text(
-              '금',
-              style: TextStyle(fontFamily: "NotoSansKR", fontWeight: FontWeight.w500),
-            ),
-          );
-        case 6:
-          return Center(
-            child: Text(
-              '토',
-              style: TextStyle(
-                  fontFamily: "NotoSansKR", fontWeight: FontWeight.w500, color: Colors.blue),
-            ),
-          );
-        case 7:
-          return Center(
-            child: Text(
-              '일',
-              style: TextStyle(
-                  fontFamily: "NotoSansKR", fontWeight: FontWeight.w500, color: Colors.red),
-            ),
-          );
-      }
-    });
+        );
+      },
+    );
   }
 }
 

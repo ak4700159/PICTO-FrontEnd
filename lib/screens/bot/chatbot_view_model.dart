@@ -32,6 +32,7 @@ class ChatbotViewModel extends GetxController {
   RxList<ImageFile> currentSelectedImages = <ImageFile>[].obs;
   RxList<ChatbotMsg> currentMessages = <ChatbotMsg>[].obs;
   Rxn<ChatbotRoom> currentRoom = Rxn();
+
   // Rxn<ChatbotMsg> sendingChatbotMsg = Rxn();
   RxList<ChatbotRoom> chatbotRooms = <ChatbotRoom>[].obs;
   RxList<bool> currentCheckbox = <bool>[].obs;
@@ -104,7 +105,6 @@ class ChatbotViewModel extends GetxController {
     currentMessages.add(myMsg);
     currentRoom.value?.messages.add(myMsg);
 
-
     // 챗봇 메시지 전송
     final chatbotMsg = ChatbotMsg(
       sendDatetime: DateTime.now().millisecondsSinceEpoch,
@@ -116,7 +116,8 @@ class ChatbotViewModel extends GetxController {
     // 현재 채팅방에 메시지 등록
     currentMessages.add(chatbotMsg);
     // Chatbot API 호출
-    PromptResponse? response = await ChatbotAPI().sendPrompt(myMsg.content, images.map((data) => data.data).toList());
+    PromptResponse? response =
+        await ChatbotAPI().sendPrompt(myMsg.content, images.map((data) => data.data).toList());
     if (response == null) {
       isSending.value = false;
       return;
@@ -128,9 +129,7 @@ class ChatbotViewModel extends GetxController {
       ..images = response.photos
       ..content = response.response
       ..status = _getStatusInResponse(response.response);
-    if(chatbotMsg.status == ChatbotStatus.intro) {
-      chatbotMsg.content = chatbotMsg.content.substring("기타\n".length);
-    }
+    chatbotMsg.content = chatbotMsg.content.substring("00\n".length);
     currentMessages.add(chatbotMsg);
     currentRoom.value?.messages.add(chatbotMsg);
     box.put(currentRoom.value?.createdDatetime.toString(), currentRoom.value);
@@ -144,7 +143,7 @@ class ChatbotViewModel extends GetxController {
       return ChatbotStatus.compare;
     } else if (result.contains("검색")) {
       return ChatbotStatus.recommend;
-    } else if (result.contains("기타")){
+    } else if (result.contains("기타")) {
       return ChatbotStatus.intro;
     }
     return ChatbotStatus.intro;
@@ -225,13 +224,21 @@ class ChatbotViewModel extends GetxController {
   }
 
   // 검색한 사진 선택
-  Future<void> selectPhoto(int photoId, Uint8List data) async {
+  Future<void> selectOtherPhoto(int photoId, Uint8List data) async {
     Photo? photo = await PhotoManagerApi().getPhoto(photoId: photoId);
     // 사진 검색 실패 시
     if (photo == null) return;
     final fit = await determineFit(data);
     Get.toNamed('/chatbot/photo', arguments: {
       "photo": photo,
+      "data": data,
+      "fit": fit,
+    });
+  }
+
+  Future<void> selectMyPhoto(Uint8List data) async {
+    final fit = await determineFit(data);
+    Get.toNamed('/comfyui/photo', arguments: {
       "data": data,
       "fit": fit,
     });

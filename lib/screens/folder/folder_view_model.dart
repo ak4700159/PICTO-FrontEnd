@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 import 'package:picto_frontend/models/chatting_msg.dart';
 import 'package:picto_frontend/models/folder.dart';
 import 'package:picto_frontend/screens/map/google_map/marker/picto_marker.dart';
-import 'package:picto_frontend/screens/profile/calendar_event.dart';
+import 'package:picto_frontend/screens/profile/calendar/calendar_event.dart';
 import 'package:picto_frontend/services/chatting_scheduler_service/chatting_socket.dart';
 import 'package:picto_frontend/services/folder_manager_service/folder_api.dart';
 import 'package:picto_frontend/services/user_manager_service/user_api.dart';

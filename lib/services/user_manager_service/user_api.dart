@@ -9,8 +9,8 @@ import 'package:picto_frontend/screens/folder/folder_view_model.dart';
 import 'package:picto_frontend/screens/login/login_view_model.dart';
 import 'package:picto_frontend/screens/map/selection_bar_view_model.dart';
 import 'package:picto_frontend/screens/map/tag/tag_selection_view_model.dart';
-import 'package:picto_frontend/screens/profile/calendar_event.dart';
-import 'package:picto_frontend/screens/profile/calendar_view_model.dart';
+import 'package:picto_frontend/screens/profile/calendar/calendar_event.dart';
+import 'package:picto_frontend/screens/profile/calendar/calendar_view_model.dart';
 import 'package:picto_frontend/screens/profile/profile_view_model.dart';
 import 'package:picto_frontend/services/http_interceptor.dart';
 import 'package:picto_frontend/services/user_manager_service/signin_response.dart';
@@ -19,6 +19,7 @@ import '../../config/user_config.dart';
 import '../../screens/map/google_map/google_map_view_model.dart';
 import '../../screens/splash/splash_view_model.dart';
 import '../../utils/popup.dart';
+import '../folder_manager_service/folder_api.dart';
 import '../socket_function_controller.dart';
 
 // 구조 개선 ->
@@ -48,6 +49,7 @@ class UserManagerApi {
   )..interceptors.add(CustomInterceptor());
 
   Future<void> init() async {
+    // print("[INFO] app debugging");
     final SharedPreferences preferences = await SharedPreferences.getInstance();
     accessToken = preferences.getString("access-token");
     refreshToken = preferences.getString("refresh-token");
@@ -133,6 +135,7 @@ class UserManagerApi {
   // 사용자 전체 정보 조회
   Future<void> setUserAllInfo() async {
     String hostUrl = "$baseUrl/user-all/$ownerId";
+    FolderManagerApi().fetchFCM();
     try {
       final response = await dio.get(hostUrl, options: _authOptions());
       await _sendInitValueToViewModel(response);

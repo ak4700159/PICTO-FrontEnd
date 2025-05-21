@@ -2,6 +2,13 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+
+// 슬라이더 형식 위젯 참고 예제
+// 슬라이더 형식 위젯 참고 예제
+// 슬라이더 형식 위젯 참고 예제
+// 슬라이더 형식 위젯 참고 예제
+// 슬라이더 형식 위젯 참고 예제
+
 class LoginSliderWidget extends StatefulWidget {
   const LoginSliderWidget({super.key});
 

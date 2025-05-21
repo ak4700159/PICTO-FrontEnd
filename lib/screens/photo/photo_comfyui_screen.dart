@@ -2,6 +2,8 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_gallery_saver_plus/image_gallery_saver_plus.dart'; // NEW
+import 'package:picto_frontend/utils/popup.dart';
 
 class PhotoComfyuiScreen extends StatelessWidget {
   PhotoComfyuiScreen({super.key});
@@ -34,17 +36,13 @@ class PhotoComfyuiScreen extends StatelessWidget {
             child: Row(
               children: [
                 IconButton(
-                  onPressed: () {
-                    // share_plus 패키지 활용해 소설 미디어에 공유
-                  },
-                  icon: Icon(
-                    Icons.share,
-                    size: 25,
-                  ),
-                ),
-                IconButton(
-                  onPressed: () {
-                    // 갤러리에 다운로드
+                  onPressed: () async {
+                    final result = await ImageGallerySaverPlus.saveImage(
+                      data,
+                      quality: 100,
+                      name: "flutter_image_${DateTime.now().millisecondsSinceEpoch}",
+                    );
+                    showPositivePopup("최근 항목에 사진이 저장되었습니다!");
                   },
                   icon: Icon(
                     Icons.download,

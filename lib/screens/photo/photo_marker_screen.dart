@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:picto_frontend/config/app_config.dart';
 import 'package:picto_frontend/screens/folder/folder_view_model.dart';
+import 'package:picto_frontend/screens/profile/calendar/calendar_view_model.dart';
 import 'package:picto_frontend/services/photo_store_service/photo_store_api.dart';
 import 'package:picto_frontend/services/user_manager_service/user_api.dart';
 import 'package:picto_frontend/utils/popup.dart';
@@ -74,14 +75,15 @@ class PhotoMarkerScreen extends StatelessWidget {
                         final folderViewModel = Get.find<FolderViewModel>();
                         bool isSuccess = await PhotoStoreApi().deletePhoto(photo.photoId);
                         if (isSuccess) {
+                          // 이거 캘린더에도 데이터 반영되게끔 수정 필요
                           // showPositivePopup("삭제에 성공했습니다!");
                           folderViewModel.currentFolder.value!.photos.removeWhere((p) => p.photoId == photo.photoId);
                           folderViewModel.currentFolder.value!.markers
                               .removeWhere((m) => m.photo.photoId == photo.photoId);
                           folderViewModel.currentMarkers.removeWhere((m) => m.photo.photoId == photo.photoId);
                           await folderViewModel.resetFolder();
+                          // await calendarViewModel.buildCalendarEventMap(await folderViewModel.convertCalendarEvent());
                           Get.back();
-                          // Get.back()
                         }
                       },
                       child: Row(
@@ -89,7 +91,7 @@ class PhotoMarkerScreen extends StatelessWidget {
                           Icon(Icons.folder_delete),
                           const Text(
                             " 사진 삭제",
-                            style: TextStyle(fontWeight: FontWeight.bold),
+                            style: TextStyle(fontWeight: FontWeight.w600, fontFamily: "NotoSansKR", fontSize: 12,),
                           ),
                         ],
                       ),
@@ -104,7 +106,7 @@ class PhotoMarkerScreen extends StatelessWidget {
                           Icon(Icons.drive_file_move),
                           Text(
                             " 사진 이동",
-                            style: TextStyle(fontWeight: FontWeight.bold),
+                            style: TextStyle(fontWeight: FontWeight.w600, fontFamily: "NotoSansKR", fontSize: 12,),
                           ),
                         ],
                       ),

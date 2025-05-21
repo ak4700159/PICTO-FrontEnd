@@ -23,6 +23,12 @@ class ProfileViewModel extends GetxController {
   // RxBool isSelected = false.obs;
   Rxn<PictoMarker?> selectedPictoMarker = Rxn();
 
+  // 한줄 소개 편집 여부
+
+  // 닉네임 변경 여부
+
+  // 비밀번호 변경
+
   void convertFromJson(Map json, int? profilePhotoId) async {
     name.value = json["name"];
     email.value = json["email"];

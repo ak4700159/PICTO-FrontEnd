@@ -2,6 +2,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:picto_frontend/screens/comfyui/comfyui_view_model.dart';
 import 'package:picto_frontend/utils/functions.dart';
 
 class ComfyuiResult extends StatefulWidget {
@@ -68,7 +69,7 @@ class _ComfyuiResultState extends State<ComfyuiResult> with TickerProviderStateM
 
   @override
   Widget build(BuildContext context) {
-    final double fullWidth = MediaQuery.of(context).size.width * 0.8;
+    final double fullWidth = MediaQuery.of(context).size.width * 0.9;
 
     return SizedBox(
       width: fullWidth,
@@ -85,6 +86,8 @@ class _ComfyuiResultState extends State<ComfyuiResult> with TickerProviderStateM
                   scale: _scaleAnimation.value,
                   child: GestureDetector(
                     onTap: () async {
+                      final comfyuiViewModel = Get.find<ComfyuiViewModel>();
+                      comfyuiViewModel.reset();
                       final fit = await determineFit(widget.upscaledImage);
                       Get.toNamed('/comfyui/photo', arguments: {
                         "fit": fit,

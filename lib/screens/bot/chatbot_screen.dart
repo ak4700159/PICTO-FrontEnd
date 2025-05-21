@@ -25,7 +25,7 @@ class ChatbotScreen extends StatelessWidget {
           scrolledUnderElevation: 0,
           backgroundColor: Colors.white,
           title: Text(
-            "Chat Bot",
+            "Pictory",
             style: TextStyle(
               fontFamily: "NotoSansKR",
               fontWeight: FontWeight.w600,
@@ -51,12 +51,17 @@ class ChatbotScreen extends StatelessWidget {
                     chatbotViewModel.scrollToBottom();
                   }
                 });
+                ChatbotMsg? save;
                 return ListView(
                   addAutomaticKeepAlives: false,
                   controller: chatbotViewModel.chatScrollController,
                   reverse: false,
                   padding: const EdgeInsets.all(10),
-                  children: chatbotViewModel.currentMessages.map((m) => ChatbotBubble(msg: m)).toList(),
+                  children: chatbotViewModel.currentMessages.map((m) {
+                    ChatbotMsg? pre = save;
+                    save = m;
+                    return ChatbotBubble(msg: m, preMsg: pre,);
+                  }).toList(),
                 );
               }),
             ),

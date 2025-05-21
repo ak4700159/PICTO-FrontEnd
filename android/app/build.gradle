@@ -1,9 +1,13 @@
 plugins {
     id "com.android.application"
+    // START: FlutterFire Configuration
+    id 'com.google.gms.google-services'
+    // END: FlutterFire Configuration
     id "kotlin-android"
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id "dev.flutter.flutter-gradle-plugin"
 }
+apply plugin: 'com.google.gms.google-services'
 
 //  api키 로딩
 def localProperties = new Properties()
@@ -35,8 +39,10 @@ android {
     namespace = "com.example.picto_frontend"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = "25.1.8937393"
+//    multiDexEnabled true
 
     compileOptions {
+        coreLibraryDesugaringEnabled = true
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
@@ -53,6 +59,7 @@ android {
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
+        multiDexEnabled = true
         versionName = flutter.versionName
         manifestPlaceholders["googleMapApiKey"] = googleMapApiKey
     }
@@ -66,6 +73,16 @@ android {
     }
 }
 
+dependencies {
+    // For AGP 7.4+
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'
+    // For AGP 7.3
+    // coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.2.3'
+    // For AGP 4.0 to 7.2
+    // coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.9'
+}
+
 flutter {
     source = "../.."
 }
+

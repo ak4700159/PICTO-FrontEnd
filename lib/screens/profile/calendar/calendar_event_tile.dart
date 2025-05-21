@@ -2,7 +2,10 @@ import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_utils/get_utils.dart';
+import 'package:picto_frontend/screens/profile/calendar/calendar_view_model.dart';
 import 'package:picto_frontend/services/photo_store_service/photo_store_api.dart';
 import 'package:picto_frontend/utils/functions.dart';
 
@@ -26,16 +29,18 @@ class CalendarEventTile extends StatelessWidget {
         ),
       ),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           // 사용자 프로필
           _getPhotoTile(context: context, photoId: event.photoId, data: event.data),
           Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
                 "  장소 ",
                 style: TextStyle(
                     fontFamily: 'NotoSansKR',
+                    color: Color.fromRGBO(61, 87, 255, 1),
                     fontWeight: FontWeight.w800, // Bold
                     fontSize: 12),
               ),
@@ -43,6 +48,7 @@ class CalendarEventTile extends StatelessWidget {
                 "  공유시간 ",
                 style: TextStyle(
                     fontFamily: 'NotoSansKR',
+                    color: Color.fromRGBO(61, 87, 255, 1),
                     fontWeight: FontWeight.w800, // Bold
                     fontSize: 12),
               ),
@@ -50,6 +56,7 @@ class CalendarEventTile extends StatelessWidget {
                 "  공유자 ",
                 style: TextStyle(
                     fontFamily: 'NotoSansKR',
+                    color: Color.fromRGBO(61, 87, 255, 1),
                     fontWeight: FontWeight.w800, // Bold
                     fontSize: 12),
               ),
@@ -57,13 +64,14 @@ class CalendarEventTile extends StatelessWidget {
                 "  저장된 폴더 ",
                 style: TextStyle(
                     fontFamily: 'NotoSansKR',
+                    color: Color.fromRGBO(61, 87, 255, 1),
                     fontWeight: FontWeight.w800, // Bold
                     fontSize: 12),
               ),
             ],
           ),
           Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
                 " ${event.location}",
@@ -115,8 +123,8 @@ class CalendarEventTile extends StatelessWidget {
                       height: context.mediaQuery.size.width * 0.05,
                       width: context.mediaQuery.size.width * 0.05,
                       child: CircularProgressIndicator(
-                    color: Colors.grey,
-                  )),
+                        color: Colors.grey,
+                      )),
                 ),
               );
             }
@@ -135,6 +143,14 @@ class CalendarEventTile extends StatelessWidget {
                 fit: BoxFit.cover,
                 height: context.mediaQuery.size.width * 0.2,
                 width: context.mediaQuery.size.width * 0.2,
+                errorBuilder: (context, object, trace) {
+                  return Image.asset(
+                    "assets/images/picto_logo.png",
+                    fit: BoxFit.cover,
+                    height: context.mediaQuery.size.width * 0.2,
+                    width: context.mediaQuery.size.width * 0.2,
+                  );
+                },
               ),
             );
           });
@@ -147,6 +163,14 @@ class CalendarEventTile extends StatelessWidget {
         fit: BoxFit.cover,
         height: context.mediaQuery.size.width * 0.2,
         width: context.mediaQuery.size.width * 0.2,
+        errorBuilder: (context, object, trace) {
+          return Image.asset(
+            "assets/images/picto_logo.png",
+            fit: BoxFit.cover,
+            height: context.mediaQuery.size.width * 0.2,
+            width: context.mediaQuery.size.width * 0.2,
+          );
+        },
       ),
     );
   }

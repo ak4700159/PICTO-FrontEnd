@@ -201,8 +201,15 @@ class GoogleMapViewModel extends GetxController {
       }
     }
 
+    if (permission == LocationPermission.deniedForever) {
+      return Future.error('위치 권한이 영구적으로 거부되었습니다. 설정에서 직접 허용해야 합니다.');
+    }
+
+    // print("[INFO] check!");
     // 최초 카메라 설정
-    Position position = await Geolocator.getCurrentPosition();
+    Position position = await Geolocator.getCurrentPosition(
+    );
+    // print("[INFO] check2!");
     currentLat.value = position.latitude;
     currentLng.value = position.longitude;
     currentZoom.value = 14;
@@ -211,7 +218,7 @@ class GoogleMapViewModel extends GetxController {
       zoom: 14,
     );
     currentScreenCenterLatLng = LatLng(position.latitude, position.longitude);
-    print("[INFO] now location : ${currentLat.value}/${currentLng.value}\n");
+    // print("[INFO] now location : ${currentLat.value}/${currentLng.value}\n");
 
     // 현재 위치 주소를 구독하기
     _positionStreamSubscription = Geolocator.getPositionStream().listen(

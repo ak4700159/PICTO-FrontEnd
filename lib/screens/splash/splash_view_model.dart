@@ -26,14 +26,17 @@ class SplashViewModel extends GetxController {
   }
 
   Future<void> logging() async {
+    // print("[INFO] logging start");
     // step1. 위치 권환 획득
     final googleMapController = Get.find<GoogleMapViewModel>();
+    // print("[INFO] requesting location permission");
     await googleMapController.getPermission();
+    // print("[INFO] location permission granted");
 
     // step2. 첫번째 접속 확인
     if (await _checkNullLoginData()) {
-      print("[INFO] first connection");
-      Get.offNamed('/login');
+      // print("[INFO] first connection");
+      Get.offNamed('/guide');
       return;
     }
 
@@ -51,6 +54,7 @@ class SplashViewModel extends GetxController {
   // return false = 이전에 로그인한 적이 있음
   Future<bool> _checkNullLoginData() async {
     try {
+      // print("[INFO] login info null check");
       await UserManagerApi().init();
     } catch (e) {
       statusMsg.value = "안녕하세요! 처음 접속하시네요 반가워요!";

@@ -27,13 +27,14 @@ class UpscalingScreen extends StatelessWidget {
                   _getSelection(context),
                 if (comfyuiViewModel.currentUpscalingSelectedPhoto.value != null)
                   IconButton(
-                      onPressed: () {
-                        comfyuiViewModel.reset(isFirstScreen: true);
-                      },
-                      icon: Icon(
-                        Icons.delete,
-                        color: Colors.red,
-                      ))
+                    onPressed: () {
+                      comfyuiViewModel.reset();
+                    },
+                    icon: Icon(
+                      Icons.delete,
+                      color: Colors.red,
+                    ),
+                  )
               ],
             ),
           ],
@@ -75,12 +76,18 @@ class UpscalingScreen extends StatelessWidget {
                   child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  CircularProgressIndicator(color: AppConfig.mainColor,),
+                  CircularProgressIndicator(
+                    color: AppConfig.mainColor,
+                  ),
                   Padding(
                     padding: const EdgeInsets.all(10.0),
                     child: Text(
                       "1~2분 정도 소요됩니다. 잠시만 기다려주세요!",
-                      style: TextStyle(fontSize: 13, color: Colors.black, fontFamily: "NotoSansKR", fontWeight: FontWeight.w700),
+                      style: TextStyle(
+                          fontSize: 13,
+                          color: Colors.black,
+                          fontFamily: "NotoSansKR",
+                          fontWeight: FontWeight.w700),
                     ),
                   )
                 ],
@@ -93,7 +100,11 @@ class UpscalingScreen extends StatelessWidget {
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
                     "업스케일링에 실패했습니다.",
-                    style: TextStyle(fontSize: 13, color: Colors.black, fontFamily: "NotoSansKR", fontWeight: FontWeight.w700),
+                    style: TextStyle(
+                        fontSize: 13,
+                        color: Colors.black,
+                        fontFamily: "NotoSansKR",
+                        fontWeight: FontWeight.w700),
                   ),
                 ),
               );

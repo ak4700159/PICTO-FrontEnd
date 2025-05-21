@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../config/app_config.dart';
+import '../models/user.dart';
+import '../services/photo_store_service/photo_store_api.dart';
 import '../services/session_scheduler_service/session_socket.dart';
 import '../services/socket_function_controller.dart';
 
@@ -103,6 +105,61 @@ Widget getTestConnectionFloatBtn(BuildContext context) {
         ),
       ),
     ],
+  );
+}
+
+Widget getUserProfile({required User user, required BuildContext context, required double size, required double scale}) {
+  if(size > 1.0 || size < 0) {
+    throw Exception("사이즈 오류");
+  }
+
+  if(scale > 1.0 || scale < 0) {
+    throw Exception("스케일 오류");
+  }
+
+  return FutureBuilder(
+    future: PhotoStoreApi().downloadUserProfile(userId: user.userId!, scale: scale),
+    builder: (context, snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return SizedBox(
+          height: context.mediaQuery.size.width * size,
+          width: context.mediaQuery.size.width * size,
+          child: Center(
+            child: SizedBox(
+                height: context.mediaQuery.size.width * size / 2,
+                width: context.mediaQuery.size.width * size / 2,
+                child: CircularProgressIndicator(
+                  color: Colors.grey,
+                )),
+          ),
+        );
+      }
+
+      if (snapshot.hasError) {
+        return Image.asset(
+          "/assets/images/picto_logo.png",
+          fit: BoxFit.cover,
+        );
+      }
+
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(100),
+        child: Image.memory(
+          snapshot.data!,
+          fit: BoxFit.cover,
+          height: context.mediaQuery.size.width * size,
+          width: context.mediaQuery.size.width * size,
+          errorBuilder: (context, object, trace) {
+            return Image.asset(
+              "assets/images/picto_logo.png",
+              fit: BoxFit.cover,
+              height: context.mediaQuery.size.width * size,
+              width: context.mediaQuery.size.width * size,
+            );
+          },
+        ),
+      );
+    },
   );
 }
 

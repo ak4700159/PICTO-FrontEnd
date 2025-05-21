@@ -5,6 +5,8 @@ import 'package:picto_frontend/utils/functions.dart';
 import '../../../config/app_config.dart';
 import '../../../models/folder.dart';
 import '../../../models/user.dart';
+import '../../../services/photo_store_service/photo_store_api.dart';
+import '../../../utils/get_widget.dart';
 
 class FolderInfoScreen extends StatelessWidget {
   const FolderInfoScreen({super.key});
@@ -221,23 +223,24 @@ class FolderInfoScreen extends StatelessWidget {
             child: Row(
               children: [
                 // 사용자 프로필
-                _getUserProfile(context: context, user: u),
+                getUserProfile(context: context, user: u, size: 0.2, scale: 0.2),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "  [계정명]  ${u.name}",
+                      "  ${u.name}",
                       style: TextStyle(
                           fontFamily: 'NotoSansKR',
                           fontWeight: FontWeight.w600, // Bold
-                          fontSize: 12),
+                          fontSize: 15),
                     ),
                     Text(
-                      "  [이메일]  ${u.email}",
+                      "  ${u.email}",
                       style: TextStyle(
                           fontFamily: 'NotoSansKR',
-                          fontWeight: FontWeight.w600, // Bold
-                          fontSize: 12),
+                          color: Colors.grey,
+                          fontWeight: FontWeight.w500, // Bold
+                          fontSize: 14),
                     ),
                   ],
                 ),
@@ -246,23 +249,5 @@ class FolderInfoScreen extends StatelessWidget {
           ),
         )
         .toList();
-  }
-
-  Widget _getUserProfile({required User user, required BuildContext context}) {
-    if (user.userProfileId == null || user.userProfileData == null) {
-      return Icon(
-        Icons.person,
-        color: getColorFromUserId(user.userId!),
-      );
-    }
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(100),
-      child: Image.memory(
-        user.userProfileData!,
-        fit: BoxFit.cover,
-        height: context.mediaQuery.size.width * 0.08,
-        width: context.mediaQuery.size.width * 0.08,
-      ),
-    );
   }
 }

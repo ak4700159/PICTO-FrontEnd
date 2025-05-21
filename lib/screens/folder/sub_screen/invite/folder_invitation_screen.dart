@@ -12,7 +12,9 @@ import 'package:picto_frontend/widgets/picto_logo.dart';
 
 import '../../../../models/notice.dart';
 import '../../../../models/user.dart';
+import '../../../../services/photo_store_service/photo_store_api.dart';
 import '../../../../utils/functions.dart';
+import '../../../../utils/get_widget.dart';
 
 class FolderInvitationScreen extends StatelessWidget {
   @override
@@ -60,10 +62,15 @@ class FolderInvitationScreen extends StatelessWidget {
                 itemCount: viewModel.notices.length,
                 itemBuilder: (context, idx) {
                   return FutureBuilder(
-                      future: UserManagerApi().getUserByUserId(userId: viewModel.notices[idx].senderId),
+                      future:
+                          UserManagerApi().getUserByUserId(userId: viewModel.notices[idx].senderId),
                       builder: (context, snapshot) {
                         if (snapshot.data == null || snapshot.data == false) {
-                          return Center(child: CircularProgressIndicator());
+                          return Row(
+                            children: [
+                              Center(child: CircularProgressIndicator()),
+                            ],
+                          );
                         } else if (snapshot.hasError) {
                           return Text(
                             "사용자 정보를 불러올 수 없습니다.",
@@ -73,7 +80,8 @@ class FolderInvitationScreen extends StatelessWidget {
                             ),
                           );
                         } else {
-                          return _getNoticeTile(context, idx, viewModel.notices[idx], snapshot.data!);
+                          return _getNoticeTile(
+                              context, idx, viewModel.notices[idx], snapshot.data!);
                         }
                       });
                 },
@@ -86,65 +94,77 @@ class FolderInvitationScreen extends StatelessWidget {
   }
 
   Widget _getNoticeTile(BuildContext context, int idx, Notice notice, User sender) {
-    return Container(
-      decoration: BoxDecoration(
-          color: Colors.white,
-          border: Border(bottom: BorderSide(width: 0.5, color: Colors.grey)),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey,
-              blurRadius: 8, // 흐림 정도
-              spreadRadius: 1, // 그림자 확산 정도
-              offset: Offset(2, 5), // 그림자 위치 조정
-            )
-          ]),
-      padding: EdgeInsets.all(8),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Padding(
-            padding: EdgeInsets.all(2),
-            child: Icon(
-              Icons.person_pin_rounded,
-              size: 30,
-              color: getColorFromUserId(notice.noticeId),
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Container(
+        width: context.mediaQuery.size.width,
+        decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border(bottom: BorderSide(width: 0.5, color: Colors.grey)),
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey,
+                blurRadius: 4, // 흐림 정도
+                spreadRadius: 0.1, // 그림자 확산 정도
+                offset: Offset(2, 3), // 그림자 위치 조정
+              )
+            ]),
+        padding: EdgeInsets.all(8),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Padding(
+              padding: EdgeInsets.all(2),
+              child: getUserProfile(user: sender, context: context, size: 0.1, scale : 0.08),
             ),
-          ),
-          SizedBox(
-            width: context.mediaQuery.size.width * 0.55,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "${sender.accountName}님 ${notice.folderName}로 초대하였습니다.",
-                  overflow: TextOverflow.visible,
-                  maxLines: 2,
-                  style: TextStyle(fontWeight: FontWeight.bold),
+            SizedBox(
+              width: context.mediaQuery.size.width * 0.45,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "${sender.accountName}님 ${notice.folderName}로 초대하였습니다.",
+                      overflow: TextOverflow.visible,
+                      maxLines: 2,
+                      style: TextStyle(
+                          fontWeight: FontWeight.w500, fontFamily: "NotoSansKR", fontSize: 13),
+                    ),
+                    Text(
+                      "전송 시간 : ${formatDateKorean(notice.createDatetime)}",
+                      style: TextStyle(
+                          fontWeight: FontWeight.w400, fontFamily: "NotoSansKR", fontSize: 10),
+                    )
+                  ],
                 ),
-                Text("전송 시간 : ${formatDate(notice.createDatetime)}")
-              ],
+              ),
             ),
-          ),
-          IconButton(
-            onPressed: () {
-              final viewModel = Get.find<FolderInvitationViewModel>();
-              viewModel.eventInvitation(notice);
-            },
-            icon: Icon(
-              Icons.check,
-              size: 25,
-              color: Colors.green,
+            IconButton(
+              onPressed: () {
+                final viewModel = Get.find<FolderInvitationViewModel>();
+                viewModel.eventInvitation(notice, true);
+              },
+              icon: Icon(
+                Icons.check,
+                size: 25,
+                color: Colors.green,
+              ),
             ),
-          ),
-          IconButton(
-            onPressed: () {},
-            icon: Icon(
-              Icons.delete,
-              size: 25,
-              color: Colors.red,
+            IconButton(
+              onPressed: () {
+                final viewModel = Get.find<FolderInvitationViewModel>();
+                viewModel.eventInvitation(notice, false);
+              },
+              icon: Icon(
+                Icons.delete,
+                size: 25,
+                color: Colors.red,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

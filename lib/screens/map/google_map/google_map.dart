@@ -7,6 +7,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:picto_frontend/screens/location_bottom_sheet.dart';
 import 'package:picto_frontend/screens/map/top_box.dart';
 import 'package:picto_frontend/utils/popup.dart';
+import 'package:restart_app/restart_app.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../config/app_config.dart';
 import '../../folder/folder_view_model.dart';
@@ -90,9 +92,19 @@ class CustomGoogleMap extends StatelessWidget {
         child: SizedBox(
           height: context.mediaQuery.size.height * 0.06,
           child: FloatingActionButton(
-            onPressed: () {
+            onPressed: () async {
               // 저장된 shared preferences 초기화 후 로그인 화면으로 이동
-              Get.offNamed('/login');
+              final SharedPreferences preferences = await SharedPreferences.getInstance();
+              await preferences.clear();
+              Restart.restartApp(
+                /// In Web Platform, Fill webOrigin only when your new origin is different than the app's origin
+                // webOrigin: 'http://example.com',
+
+                // Customizing the restart notification message (only needed on iOS)
+                // notificationTitle: 'Restarting App',
+                // notificationBody: 'Please tap here to open the app again.',
+              );
+              // Get.offNamed('/login');
             },
             backgroundColor: Colors.orange,
             heroTag: "exit",

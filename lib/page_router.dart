@@ -14,16 +14,18 @@ import 'package:picto_frontend/screens/map/tag/tag_selection_screen.dart';
 import 'package:picto_frontend/screens/photo/photo_chatbot_screen.dart';
 import 'package:picto_frontend/screens/photo/photo_comfyui_screen.dart';
 import 'package:picto_frontend/screens/photo/photo_marker_screen.dart';
+import 'package:picto_frontend/screens/splash/guide_screen.dart';
 import 'package:picto_frontend/screens/splash/splash_screen.dart';
 import 'package:picto_frontend/screens/upload/upload_screen.dart';
-import 'package:picto_frontend/test_screens/ksm_test_screen.dart';
+import 'package:picto_frontend/test_screens/test_screen.dart';
 
-class PageRouter{
+class PageRouter {
   static List<GetPage> getPages() {
     List<GetPage> pages = [
       // 테스트 화면
       GetPage(name: '/', page: () => TestScreen()),
       // 로그인 + 지도 관련 화면
+      GetPage(name: '/guide', page: () => GuideScreen()),
       GetPage(name: '/splash', page: () => SplashScreen()),
       GetPage(name: '/login', page: () => LoginScreen()),
       GetPage(name: '/register', page: () => RegisterScreen()),

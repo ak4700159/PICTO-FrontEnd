@@ -44,15 +44,19 @@ class FolderInvitationViewModel extends GetxController {
         await FolderManagerApi().getFolderInvitations(receiverId: UserManagerApi().ownerId!));
   }
 
-  void eventInvitation(Notice target) async {
+  void eventInvitation(Notice target, bool isAccept) async {
     bool isSuccess = await FolderManagerApi().eventFolderInvitation(
-      isAccept: true,
+      isAccept: isAccept,
       receiverId: UserManagerApi().ownerId!,
       noticeId: target.noticeId,
     );
     if (isSuccess) {
       // Get.find<FolderViewModel>().resetFolder();
-      showPositivePopup("공유 폴더를 추가하였습니다.");
+      if(isAccept) {
+        showPositivePopup("공유 폴더를 추가하였습니다.");
+      } else {
+        showPositivePopup("공유 폴더를 거절하였습니다.");
+      }
     }
     notices.removeWhere((n) => n.noticeId == target.noticeId);
   }

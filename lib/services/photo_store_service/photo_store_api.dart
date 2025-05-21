@@ -46,6 +46,23 @@ class PhotoStoreApi {
     return Uint8List(0);
   }
 
+  Future<Uint8List> downloadUserProfile({required int userId, required double scale}) async {
+    int? photoId = await UserManagerApi().getUserProfilePhoto(userId: userId);
+    if (photoId == null) throw Exception("프로필 조회 실패");
+    final hostUrl = "$baseUrl/photos/download/$photoId";
+    try {
+      final response = await dio.get(hostUrl,
+          options: Options(responseType: ResponseType.bytes), // 🔥 핵심 포인트
+          queryParameters: {
+            "scale": scale,
+          });
+      return response.data;
+    } catch (e) {
+      // 에러
+    }
+    return Uint8List(0);
+  }
+
   // 리사이징된 사진 조회
   // Future<Uint8List> downloadResizedPhoto(
   //     {required int photoId, required int height, required int width}) async {

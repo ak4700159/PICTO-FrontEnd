@@ -16,7 +16,7 @@ class FolderListScreen extends StatelessWidget {
     final profileViewModel = Get.find<ProfileViewModel>();
     final folderViewModel = Get.find<FolderViewModel>();
     // if (!folderViewModel.isUpdate.value) {
-    //   folderViewModel.resetFolder();
+    // folderViewModel.resetFolder();
     //   folderViewModel.isUpdate.value = true;
     // }
     return Scaffold(
@@ -25,10 +25,11 @@ class FolderListScreen extends StatelessWidget {
         backgroundColor: Colors.white,
         // 제목
         title: Padding(
-          padding: const EdgeInsets.only(left : 8.0),
+          padding: const EdgeInsets.only(left: 8.0),
           child: Container(
             padding: EdgeInsets.all(4),
-            decoration: BoxDecoration(color: Colors.grey.shade200, borderRadius: BorderRadius.circular(10)),
+            decoration:
+                BoxDecoration(color: Colors.grey.shade200, borderRadius: BorderRadius.circular(10)),
             child: Text(
               "${profileViewModel.accountName.value}의 폴더 목록",
               overflow: TextOverflow.ellipsis,
@@ -36,7 +37,7 @@ class FolderListScreen extends StatelessWidget {
               style: TextStyle(
                 fontFamily: "NotoSansKR",
                 fontSize: 18,
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w600,  
                 color: Colors.black,
               ),
             ),
@@ -92,7 +93,7 @@ class FolderListScreen extends StatelessWidget {
                   children: [
                     Icon(Icons.mail_lock, color: AppConfig.mainColor),
                     Text(
-                      "  초대 알림 전송",
+                      "  초대 알림 확인",
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.black,
@@ -149,9 +150,12 @@ class FolderListScreen extends StatelessWidget {
               size: 60,
             ),
           ),
-          Text(
-            folder.name,
-            style: TextStyle(fontWeight: FontWeight.bold, overflow: TextOverflow.ellipsis),
+          Padding(
+            padding: const EdgeInsets.only(left: 4.0, right: 4.0),
+            child: Text(
+              folder.name,
+              style: TextStyle(fontWeight: FontWeight.bold, overflow: TextOverflow.ellipsis),
+            ),
           ),
         ],
       ),

@@ -1,7 +1,7 @@
 import 'dart:collection';
 import 'package:get/get.dart';
-import 'package:picto_frontend/screens/profile/calendar_event.dart';
-import 'package:picto_frontend/screens/profile/picto_calendar.dart';
+import 'package:picto_frontend/screens/profile/calendar/calendar_event.dart';
+import 'package:picto_frontend/screens/profile/calendar/picto_calendar.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class CalendarViewModel extends GetxController {
@@ -113,7 +113,7 @@ class CalendarViewModel extends GetxController {
   }
 
   // 달력 데이터 초기화
-  void buildCalendarEventMap(List<CalendarEvent> notOrderedEvents) async {
+  Future<void> buildCalendarEventMap(List<CalendarEvent> notOrderedEvents) async {
     final grouped = LinkedHashMap<DateTime, List<CalendarEvent>>(
       equals: isSameDay,
       hashCode: getHashCode,
