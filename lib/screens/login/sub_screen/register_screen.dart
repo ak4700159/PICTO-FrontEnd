@@ -40,7 +40,7 @@ class RegisterScreen extends StatelessWidget {
                       opacity: const AlwaysStoppedAnimation(0.5)),
                   TopBox(size: 0.01),
                   _getFormFiled(context),
-                  TopBox(size: 0.05),
+                  TopBox(size: 0.08),
                   Obx(() => _getRegisterButton(context)),
                 ],
               ),
@@ -52,6 +52,8 @@ class RegisterScreen extends StatelessWidget {
   }
 
   SizedBox _getFormFiled(BuildContext context) {
+    double width = context.mediaQuery.size.width;
+    double height = context.mediaQuery.size.height;
     return SizedBox(
       width: context.mediaQuery.size.width * 0.9,
       child: Form(
@@ -61,29 +63,37 @@ class RegisterScreen extends StatelessWidget {
             // 이름 FormField
             Padding(
               padding: const EdgeInsets.all(4.0),
-              child: TextFormField(
-                keyboardType: TextInputType.name,
-                decoration: getCustomInputDecoration(
-                  label: "이름",
-                  hintText: "홍길동",
-                  borderRadius: BorderRadius.circular(25),
+              child: SizedBox(
+                height: height * 0.06,
+                child: TextFormField(
+                  style : TextStyle(fontSize: 12, fontFamily: "NotoSansKR", fontWeight: FontWeight.w600),
+                  keyboardType: TextInputType.name,
+                  decoration: getCustomInputDecoration(
+                    label: "이름",
+                    hintText: "홍길동",
+                    borderRadius: BorderRadius.circular(25),
+                  ),
+                  validator: nameValidator,
+                  onSaved: (value) => _registerController.name.value = value!,
                 ),
-                validator: nameValidator,
-                onSaved: (value) => _registerController.name.value = value!,
               ),
             ),
             // 별칭 FormField
             Padding(
               padding: const EdgeInsets.all(4.0),
-              child: TextFormField(
-                keyboardType: TextInputType.name,
-                decoration: getCustomInputDecoration(
-                  label: "계정명",
-                  hintText: "Hong",
-                  borderRadius: BorderRadius.circular(25),
+              child: SizedBox(
+                height: height * 0.06,
+                child: TextFormField(
+                  style : TextStyle(fontSize: 12, fontFamily: "NotoSansKR", fontWeight: FontWeight.w600),
+                  keyboardType: TextInputType.name,
+                  decoration: getCustomInputDecoration(
+                    label: "계정명",
+                    hintText: "Hong",
+                    borderRadius: BorderRadius.circular(25),
+                  ),
+                  validator: accountValidator,
+                  onSaved: (value) => _registerController.accountName.value = value!,
                 ),
-                validator: accountValidator,
-                onSaved: (value) => _registerController.accountName.value = value!,
               ),
             ),
             // 이메일 FormField + 중복 검사 버튼
@@ -98,19 +108,23 @@ class RegisterScreen extends StatelessWidget {
                       child: Column(
                         mainAxisSize: MainAxisSize.max,
                         children: [
-                          TextFormField(
-                            keyboardType: TextInputType.emailAddress,
-                            decoration: getCustomInputDecoration(
-                              label: "이메일",
-                              hintText: "your@eamil.com",
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(25),
-                                bottomLeft: Radius.circular(25),
+                          SizedBox(
+                            height: height * 0.06,
+                            child: TextFormField(
+                              style : TextStyle(fontSize: 12, fontFamily: "NotoSansKR", fontWeight: FontWeight.w600),
+                              keyboardType: TextInputType.emailAddress,
+                              decoration: getCustomInputDecoration(
+                                label: "이메일",
+                                hintText: "your@eamil.com",
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(25),
+                                  bottomLeft: Radius.circular(25),
+                                ),
                               ),
+                              validator: emailValidator,
+                              onChanged: (value) => _registerController.email.value = value,
+                              onSaved: (value) => _registerController.email.value = value!,
                             ),
-                            validator: emailValidator,
-                            onChanged: (value) => _registerController.email.value = value,
-                            onSaved: (value) => _registerController.email.value = value!,
                           ),
                         ],
                       ),
@@ -118,6 +132,7 @@ class RegisterScreen extends StatelessWidget {
                     Expanded(
                       flex: 3,
                       child: Container(
+                        height: height * 0.06,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.only(
                             topRight: Radius.circular(25),
@@ -125,28 +140,23 @@ class RegisterScreen extends StatelessWidget {
                           ),
                           color: AppConfig.mainColor,
                         ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            TextButton(
-                              onPressed: () {
-                                _registerController.validateEmail();
-                                // 이메일 중복 검사
-                              },
-                              // style: TextButton.styleFrom(backgroundColor: AppConfig.mainColor),
-                              child: Obx(
-                                () => Text(
-                                  _registerController.emailDuplicatedMsg.value,
-                                  style: TextStyle(
-                                    fontFamily: "NotoSansKR",
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w700,
-                                    color: Colors.white,
-                                  ),
-                                ),
+                        child: TextButton(
+                          onPressed: () {
+                            _registerController.validateEmail();
+                            // 이메일 중복 검사
+                          },
+                          // style: TextButton.styleFrom(backgroundColor: AppConfig.mainColor),
+                          child: Obx(
+                            () => Text(
+                              _registerController.emailDuplicatedMsg.value,
+                              style: TextStyle(
+                                fontFamily: "NotoSansKR",
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
                               ),
                             ),
-                          ],
+                          ),
                         ),
                       ),
                     )
@@ -158,24 +168,28 @@ class RegisterScreen extends StatelessWidget {
             Obx(
               () => Padding(
                 padding: const EdgeInsets.all(4.0),
-                child: TextFormField(
-                  obscureText: _registerController.isPasswordVisible.value,
-                  decoration: getCustomInputDecoration(
-                    label: "비밀번호",
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        !_registerController.isPasswordVisible.value
-                            ? Icons.visibility
-                            : Icons.visibility_off,
+                child: SizedBox(
+                  height: height * 0.06,
+                  child: TextFormField(
+                    style : TextStyle(fontSize: 12, fontFamily: "NotoSansKR", fontWeight: FontWeight.w600),
+                    obscureText: _registerController.isPasswordVisible.value,
+                    decoration: getCustomInputDecoration(
+                      label: "비밀번호",
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          !_registerController.isPasswordVisible.value
+                              ? Icons.visibility
+                              : Icons.visibility_off,
+                        ),
+                        onPressed: () {
+                          _registerController.togglePasswordVisible();
+                        },
                       ),
-                      onPressed: () {
-                        _registerController.togglePasswordVisible();
-                      },
+                      borderRadius: BorderRadius.circular(25),
                     ),
-                    borderRadius: BorderRadius.circular(25),
+                    validator: passwdValidator,
+                    onSaved: (value) => _registerController.passwd.value = value!,
                   ),
-                  validator: passwdValidator,
-                  onSaved: (value) => _registerController.passwd.value = value!,
                 ),
               ),
             ),
@@ -183,24 +197,28 @@ class RegisterScreen extends StatelessWidget {
             Obx(
               () => Padding(
                 padding: const EdgeInsets.all(4.0),
-                child: TextFormField(
-                  obscureText: _registerController.isPasswordVisible.value,
-                  decoration: getCustomInputDecoration(
-                    label: "비밀번호 재입력",
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        !_registerController.isPasswordVisible.value
-                            ? Icons.visibility
-                            : Icons.visibility_off,
+                child: SizedBox(
+                  height: height * 0.06,
+                  child: TextFormField(
+                    style : TextStyle(fontSize: 12, fontFamily: "NotoSansKR", fontWeight: FontWeight.w600),
+                    obscureText: _registerController.isPasswordVisible.value,
+                    decoration: getCustomInputDecoration(
+                      label: "비밀번호 재입력",
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          !_registerController.isPasswordVisible.value
+                              ? Icons.visibility
+                              : Icons.visibility_off,
+                        ),
+                        onPressed: () {
+                          _registerController.togglePasswordVisible();
+                        },
                       ),
-                      onPressed: () {
-                        _registerController.togglePasswordVisible();
-                      },
+                      borderRadius: BorderRadius.circular(25),
                     ),
-                    borderRadius: BorderRadius.circular(25),
+                    // validator: passwdValidator,
+                    onSaved: (value) => _registerController.passwdCheck.value = value!,
                   ),
-                  // validator: passwdValidator,
-                  onSaved: (value) => _registerController.passwdCheck.value = value!,
                 ),
               ),
             ),
@@ -216,7 +234,7 @@ class RegisterScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(25),
         color: AppConfig.mainColor,
       ),
-      width: context.mediaQuery.size.width * 0.6,
+      width: context.mediaQuery.size.width * 0.7,
       height: context.mediaQuery.size.height * 0.06,
       child: Padding(
         padding: const EdgeInsets.all(2.0),
@@ -262,7 +280,7 @@ class RegisterScreen extends StatelessWidget {
             style: TextStyle(
               fontFamily: "NotoSansKR",
               fontSize: 16,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w600,
               color: Colors.white,
             ),
           ),

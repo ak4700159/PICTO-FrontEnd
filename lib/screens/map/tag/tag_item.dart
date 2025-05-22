@@ -2,13 +2,40 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_randomcolor/flutter_randomcolor.dart';
 import 'package:get/get.dart';
 
 class TagItem extends StatelessWidget {
   TagItem({super.key, required this.tagName, required this.remove});
+  List<Color> colors = [
+    Color.fromRGBO(216, 189, 255, 1),
+    Color.fromRGBO(216, 198, 255, 1),
+    Color.fromRGBO(176, 235, 164, 1),
+    Color.fromRGBO(249, 227, 191, 1),
+    Color.fromRGBO(250, 179, 179, 1),
+    Color.fromRGBO(179, 208, 250, 1),
+    Color.fromRGBO(255, 202, 231, 1),
+  ];
+  final String tagName;
+  final VoidCallback remove;
 
-  String tagName;
-  VoidCallback remove;
+  // 고정된 색상 생성을 위해 Options에 tagName 기반 seed 값을 활용
+  Color getStableColorFromTag(String tag) {
+    // tagName의 해시값을 기반으로 seed를 고정 (음수 방지를 위해 절댓값)
+    // final int seed = tagName.hashCode.abs();
+    //
+    // final Options options = Options(
+    //   luminosity: Luminosity.light,
+    //   format: Format.rgb,
+    //   seed: seed,
+    // );
+    //
+    // return RandomColor.getColorObject(options);
+    final index = tag.hashCode.abs() % colors.length;
+    return colors[index];
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -17,11 +44,7 @@ class TagItem extends StatelessWidget {
       child: Container(
         height: context.mediaQuery.size.height * 0.06,
         decoration: BoxDecoration(
-          // border: Border.all(
-          //   color: Colors.black, // 테두리 색상
-          //   width: 1, // 테두리 두께
-          // ),
-          color: Colors.primaries[Random().nextInt(Colors.primaries.length)],
+          color: getStableColorFromTag(tagName),
           borderRadius: BorderRadius.circular(10), // 전체 둥글게
         ),
         child: Row(

@@ -32,13 +32,13 @@ InputDecoration getCustomInputDecoration({
     ),
     hintStyle: TextStyle(
       fontFamily: "NotoSansKR",
-      fontSize: 16,
+      fontSize: 12,
       fontWeight: FontWeight.w600,
       color: Colors.black,
     ),
     labelStyle: TextStyle(
       fontFamily: "NotoSansKR",
-      fontSize: 14,
+      fontSize: 12,
       fontWeight: FontWeight.w600,
       color: Colors.grey,
     ),

@@ -179,6 +179,7 @@ class ChatbotScreen extends StatelessWidget {
                                 ),
                                 // 추가 버튼은 안넣어도 될듯? submit 콜백 함수 활용
                                 IconButton(
+                                    // padding : EdgeInsets.all(0),
                                   icon: const Icon(Icons.send, color: Colors.black, size: 25),
                                   onPressed: () {
                                     // 챗봇 형식 정해야됨

@@ -25,12 +25,21 @@ class GuideScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Obx(() => Stack(
           children: [
-            Center(child: sliderWidget(context)),
+            Center(
+                child: Column(
+              children: [
+                Container(
+                  // height: context.mediaQuery.size.height * 0.03,
+                  color: Colors.white,
+                ),
+                sliderWidget(context),
+              ],
+            )),
             Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 SizedBox(
-                  height: context.mediaQuery.size.height * 0.1,
+                  height: context.mediaQuery.size.height * 0.24,
                 ),
                 sliderIndicator(),
               ],
@@ -48,13 +57,13 @@ class GuideScreen extends StatelessWidget {
           return Builder(
             builder: (context) {
               return Container(
-                padding: EdgeInsets.all(40),
+                padding: EdgeInsets.all(20),
                 color: Colors.white,
                 child: Image.asset(
                   "assets/images/$name",
-                  fit: BoxFit.fitWidth,
-                  width: parent.mediaQuery.size.width,
-                  // height: parent.mediaQuery.size.height,
+                  fit: BoxFit.contain,
+                  // width: parent.mediaQuery.size.width,
+                  // height: parent.mediaQuery.size.height * 0.8,
                 ),
               );
             },
@@ -82,9 +91,9 @@ class GuideScreen extends StatelessWidget {
           return GestureDetector(
             onTap: () => _controller.animateToPage(entry.key),
             child: Container(
-              width: 15,
-              height: 15,
-              margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+              width: 10,
+              height: 10,
+              margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: loginViewModel.guideSliderIdx.value != entry.key
@@ -111,7 +120,8 @@ class GuideScreen extends StatelessWidget {
               onPressed: () {
                 Get.offNamed('/login');
               },
-              child: Text("PICTO 시작하기",
+              child: Text(
+                "PICTO 시작하기",
                 style: TextStyle(
                   fontFamily: "NotoSansKR",
                   fontSize: 18,
@@ -123,7 +133,7 @@ class GuideScreen extends StatelessWidget {
           ),
         ),
         SizedBox(
-          height: context.mediaQuery.size.height * 0.08,
+          height: context.mediaQuery.size.height * 0.04,
         ),
       ],
     );

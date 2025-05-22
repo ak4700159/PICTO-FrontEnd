@@ -69,12 +69,12 @@ class TagSelectionViewModel extends GetxController {
   }
 
   bool compareTags() {
-    print("[INFO] 현재 선택 태그 : ${selectedTags.toString()}");
-    print("[INFO] 이전 선택 태그 : ${previousTags.toString()}");
+    // print("[INFO] 현재 선택 태그 : ${selectedTags.toString()}");
+    // print("[INFO] 이전 선택 태그 : ${previousTags.toString()}");
     for(String tag in previousTags) {
       // 이전에 선택된 태그 안에서 현재 선택된 태그 내용이 없으면 false 반환
       if(!selectedTags.contains(tag)){
-        print("[INFO] 다른 항목 : $tag");
+        // print("[INFO] 다른 항목 : $tag");
         return false;
       }
     }
@@ -82,7 +82,7 @@ class TagSelectionViewModel extends GetxController {
     for(String tag in selectedTags) {
       // 현재 선택된 태그 안에서 이전에 선택된 태그 내용이 없으면 false 반환
       if(!previousTags.contains(tag)){
-        print("[INFO] 다른 항목 : $tag");
+        // print("[INFO] 다른 항목 : $tag");
         return false;
       }
     }

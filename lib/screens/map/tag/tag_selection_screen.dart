@@ -1,13 +1,15 @@
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:picto_frontend/config/app_config.dart';
 import 'package:picto_frontend/screens/map/tag/tag_selection_view_model.dart';
 import 'package:picto_frontend/screens/map/top_box.dart';
 import 'package:picto_frontend/screens/map/tag/tag_item.dart';
 
 class TagSelectionScreen extends StatelessWidget {
-  const TagSelectionScreen({Key? key}) : super(key: key);
+  TagSelectionScreen({Key? key}) : super(key: key);
+  final tagSelectionViewModel = Get.find<TagSelectionViewModel>();
 
   @override
   Widget build(BuildContext context) {
@@ -19,24 +21,6 @@ class TagSelectionScreen extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Icon(
-                Icons.tag,
-                color: AppConfig.mainColor,
-              ),
-              Text(
-                "태그 선택",
-                style: TextStyle(
-                  fontFamily: "NotoSansKR",
-                  fontSize: 20,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black,
-                ),
-              ),
-            ],
-          ),
           actions: [
             Obx(() => Column(
                   children: [
@@ -54,32 +38,33 @@ class TagSelectionScreen extends StatelessWidget {
                                 size: 35,
                               )
                             : Icon(
-                                Icons.add_box_outlined,
-                                color: Colors.green,
+                                Icons.check,
+                                color: AppConfig.mainColor,
                                 size: 35,
+                                // fill: 5,
                               ),
                         color: Colors.white,
                       ),
                     ),
-                    !tagSelectionViewModel.isChanged.value
-                        ? Text(
-                            "변경사항 없음",
-                            style: TextStyle(
-                              fontFamily: "NotoSansKR",
-                              fontSize: 11,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.black,
-                            ),
-                          )
-                        : Text(
-                            "변경사항 저장",
-                            style: TextStyle(
-                              fontFamily: "NotoSansKR",
-                              fontSize: 11,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.green,
-                            ),
-                          ),
+                    // !tagSelectionViewModel.isChanged.value
+                    //     ? Text(
+                    //         "변경사항 없음",
+                    //         style: TextStyle(
+                    //           fontFamily: "NotoSansKR",
+                    //           fontSize: 11,
+                    //           fontWeight: FontWeight.w500,
+                    //           color: Colors.black,
+                    //         ),
+                    //       )
+                    //     : Text(
+                    //         "변경사항 저장",
+                    //         style: TextStyle(
+                    //           fontFamily: "NotoSansKR",
+                    //           fontSize: 11,
+                    //           fontWeight: FontWeight.w500,
+                    //           color: Colors.green,
+                    //         ),
+                    //       ),
                   ],
                 )),
             SizedBox(
@@ -92,29 +77,65 @@ class TagSelectionScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              TopBox(size: 0.1),
+              TopBox(size: 0.03),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SizedBox(
-                    width: context.mediaQuery.size.width * 0.9,
-                    child: _getTagTextFromField(context),
+                  Text(
+                    "태그 선택  ",
+                    style: TextStyle(
+                      fontFamily: "NotoSansKR",
+                      fontSize: 21,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black,
+                    ),
+                  ),
+                  Icon(
+                    Icons.search_rounded,
+                    color: AppConfig.mainColor,
                   ),
                 ],
               ),
-              TopBox(size: 0.01),
+              TopBox(size: 0.03),
+              Container(
+                margin: EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade100,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      flex: 5,
+                      child: _getTagTextFromField(context),
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: _sendButton(context),
+                    ),
+                  ],
+                ),
+              ),
+              TopBox(size: 0.005),
               Text(
-                "[선택한 태그 목록]",
+                "선택한 태그 목록",
                 style: TextStyle(
                   fontFamily: "NotoSansKR",
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
                   color: Colors.black,
-                ),            ),
+                ),
+              ),
               Container(
-                padding: EdgeInsets.all(8),
+                margin: EdgeInsets.all(8),
                 width: context.mediaQuery.size.width,
                 height: context.mediaQuery.size.height * 0.5,
+                decoration: BoxDecoration(
+                  // color: Colors.grey.shade100,
+                  borderRadius: BorderRadius.circular(20),
+                ),
                 child: Stack(
                   children: [
                     Center(
@@ -141,7 +162,6 @@ class TagSelectionScreen extends StatelessWidget {
   }
 
   Widget _getTagList(BuildContext context) {
-    final tagSelectionViewModel = Get.find<TagSelectionViewModel>();
     return Wrap(
       children: tagSelectionViewModel.selectedTags
           .map(
@@ -157,42 +177,56 @@ class TagSelectionScreen extends StatelessWidget {
   }
 
   Widget _getTagTextFromField(BuildContext context) {
-    final tagSelectionViewModel = Get.find<TagSelectionViewModel>();
     return Form(
       key: tagSelectionViewModel.formKey,
-      child: TextFormField(
-        controller: tagSelectionViewModel.textController,
-        style: TextStyle(fontWeight: FontWeight.bold),
-        decoration: InputDecoration(
-          contentPadding: EdgeInsets.all(14),
-          isDense: true,
-          filled: true,
-          fillColor: Colors.grey.shade300,
-          hintText: "태그 입력 후 엔터",
-          border: OutlineInputBorder(
-            borderSide: BorderSide.none,
-            gapPadding: 0,
-            borderRadius: BorderRadius.circular(20),
+      child: Container(
+        margin: EdgeInsets.all(8),
+        height: context.height * 0.1,
+        child: TextFormField(
+          controller: tagSelectionViewModel.textController,
+          style: TextStyle(fontSize: 12, fontFamily: "NotoSansKR", fontWeight: FontWeight.w600),
+          decoration: InputDecoration(
+            contentPadding: EdgeInsets.all(10),
+            isDense: true,
+            filled: true,
+            fillColor: Colors.grey.shade300,
+            hintText: "태그 입력",
+            border: OutlineInputBorder(
+              borderSide: BorderSide.none,
+              gapPadding: 0,
+              borderRadius: BorderRadius.circular(20),
+            ),
           ),
+          validator: (String? input) {
+            if (input?.isEmpty ?? true) {
+              return "1글자 이상의 태그명을 입력해주세요";
+            } else if (input!.length > 10) {
+              return "10글자 이하의 태그명을 입력해주세요.";
+            } else if (tagSelectionViewModel.selectedTags.contains(input)) {
+              return "이미 존재하는 태그명입니다.";
+            }
+            return null;
+          },
+          onSaved: (String? input) {
+            tagSelectionViewModel.addTag(input!);
+          },
+          onFieldSubmitted: (String? input) {
+            // tagSelectionViewModel.submitTag();
+            // tagSelectionViewModel.textController.text = "";
+          },
         ),
-        validator: (String? input) {
-          if (input?.isEmpty ?? true) {
-            return "1글자 이상의 태그명을 입력해주세요";
-          } else if (input!.length > 10) {
-            return "10글자 이하의 태그명을 입력해주세요.";
-          } else if (tagSelectionViewModel.selectedTags.contains(input)) {
-            return "이미 존재하는 태그명입니다.";
-          }
-          return null;
-        },
-        onSaved: (String? input) {
-          tagSelectionViewModel.addTag(input!);
-        },
-        onFieldSubmitted: (String? input) {
-          tagSelectionViewModel.submitTag();
-          tagSelectionViewModel.textController.text = "";
-        },
       ),
+    );
+  }
+
+  Widget _sendButton(BuildContext context) {
+    return IconButton(
+      padding: EdgeInsets.only(top: 10),
+      icon: const Icon(Icons.send, color: Colors.grey, size: 25),
+      onPressed: () {
+        tagSelectionViewModel.submitTag();
+        tagSelectionViewModel.textController.text = "";
+      },
     );
   }
 }

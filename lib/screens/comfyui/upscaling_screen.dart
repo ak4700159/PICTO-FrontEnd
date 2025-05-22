@@ -44,8 +44,8 @@ class UpscalingScreen extends StatelessWidget {
   // 갤러리에서 사진 선택 화면
   Widget _getSelection(BuildContext context) {
     return Container(
-      width: context.mediaQuery.size.width * 0.8,
-      height: context.mediaQuery.size.width * 0.8,
+      width: context.mediaQuery.size.width * 0.9,
+      height: context.mediaQuery.size.width * 0.9,
       decoration:
           BoxDecoration(borderRadius: BorderRadius.circular(15), color: Colors.grey.shade100),
       child: IconButton(
@@ -63,8 +63,8 @@ class UpscalingScreen extends StatelessWidget {
   // 사진 선택시 -> 로딩 -> 애니메이션 -> 결과 확인
   Widget _getAnimationPhoto(BuildContext context) {
     return Container(
-      width: context.mediaQuery.size.width * 0.8,
-      height: context.mediaQuery.size.width * 0.8,
+      width: context.mediaQuery.size.width * 0.9,
+      height: context.mediaQuery.size.width * 0.9,
       decoration:
           BoxDecoration(borderRadius: BorderRadius.circular(15), color: Colors.grey.shade300),
       child: FutureBuilder(

@@ -208,7 +208,7 @@ class ChatbotViewModel extends GetxController {
 
     for (var room in chatbotRooms) {
       DateTime created = DateTime.fromMillisecondsSinceEpoch(room.createdDatetime);
-      String monthKey = '${created.year}-${created.month.toString().padLeft(2, '0')}';
+      String monthKey = '${created.year}년 ${created.month.toString().padLeft(2, '0')}월';
       grouped.putIfAbsent(monthKey, () => []);
       grouped[monthKey]!.add(room);
     }

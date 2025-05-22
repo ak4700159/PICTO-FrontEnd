@@ -497,7 +497,7 @@ class ChatbotBubble extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(4.0),
             decoration: BoxDecoration(
-                color: Colors.grey.shade300, borderRadius: BorderRadius.circular(100)),
+                color: Colors.grey.shade100, borderRadius: BorderRadius.circular(100)),
             child: Image.asset(
               'assets/images/pictory_color.png',
               scale: 5,

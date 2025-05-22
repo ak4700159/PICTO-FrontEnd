@@ -16,11 +16,11 @@ class ChatbotRoomTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(5.0),
-      child: isTitle ? _getTitle(context) : _getTile(),
+      child: isTitle ? _getTitle(context) : _getTile(context),
     );
   }
 
-  Widget _getTile() {
+  Widget _getTile(BuildContext context) {
     return GestureDetector(
       onLongPress: () {
         chatbotViewModel.toggleIsDelete();
@@ -33,15 +33,16 @@ class ChatbotRoomTile extends StatelessWidget {
             duration: Duration(milliseconds: 400),
             opacity: chatbotViewModel.opacity.value,
             child: Container(
+              height: context.mediaQuery.size.height * 0.08,
               padding: EdgeInsets.all(4),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.grey,
-                    blurRadius: 1, // 흐림 정도
-                    spreadRadius: 0.1, // 그림자 확산 정도
-                    offset: Offset(2, 4), // 그림자 위치 조정
+                    blurRadius: 0.01, // 흐림 정도
+                    spreadRadius: 0.01, // 그림자 확산 정도
+                    offset: Offset(0, 1), // 그림자 위치 조정
                   )
                 ],
                 color: Colors.white,
@@ -55,9 +56,9 @@ class ChatbotRoomTile extends StatelessWidget {
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
                         chatbotList.listName ??
-                            formatDate(chatbotList.messages.first.sendDatetime)
-                                .substring("0000-".length, "0000-00-00".length),
-                        style: TextStyle(fontFamily: "NotoSansKR", fontWeight: FontWeight.w600, fontSize: 15),
+                            formatDateKorean(chatbotList.messages.first.sendDatetime)
+                                .substring("0000년 00월".length, "0000년 00월 00일".length),
+                        style: TextStyle(fontFamily: "NotoSansKR", fontWeight: FontWeight.w600, fontSize: 12),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -67,8 +68,8 @@ class ChatbotRoomTile extends StatelessWidget {
                     flex: 7,
                     child: Text(
                       chatbotList.messages.isEmpty ? "  아직 채팅 내용이 없습니다" : chatbotList.messages.last.content,
-                      style: TextStyle(fontFamily: "NotoSansKR", fontWeight: FontWeight.w200, fontSize: 12),
-                      maxLines: 3,
+                      style: TextStyle(fontFamily: "NotoSansKR", fontWeight: FontWeight.w300, fontSize: 13),
+                      maxLines: 2,
                     ),
                   ),
                   Expanded(
@@ -114,26 +115,26 @@ class ChatbotRoomTile extends StatelessWidget {
           padding: EdgeInsets.only(top: 12),
           width: context.mediaQuery.size.width * 0.95,
           decoration: BoxDecoration(
-            border: BorderDirectional(
-              bottom: BorderSide(
-                width: 2,
-                color: Colors.grey,
-              ),
-            ),
+            // border: BorderDirectional(
+            //   bottom: BorderSide(
+            //     width: 2,
+            //     color: Colors.grey,
+            //   ),
+            // ),
           ),
           child: Row(
             children: [
-              Icon(
-                Icons.date_range_rounded,
-                color: AppConfig.mainColor,
-                size: 25,
-              ),
+              // Icon(
+              //   Icons.date_range_rounded,
+              //   color: AppConfig.mainColor,
+              //   size: 25,
+              // ),
               Text(
-                "   $date 채팅",
+                "   $date",
                 style: TextStyle(
                   fontFamily: "NotoSansKR",
                   fontWeight: FontWeight.w600,
-                  fontSize: 18,
+                  fontSize: 17,
                 ),
               ),
             ],

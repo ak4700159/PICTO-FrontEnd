@@ -21,6 +21,7 @@ class TestScreen extends StatelessWidget {
             controller: textController,
             onSaved: (val) {
               testViewModel.updateTestObject(update: val ?? "");
+              textController.clear();
             },
           ),
 

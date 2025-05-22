@@ -56,8 +56,9 @@ class MapScreen extends StatelessWidget {
     final folderViewModel = Get.find<FolderViewModel>();
     if(mapViewModel.navigationBarCurrentIndex.value == 4) {
       // calendarViewModel.buildCalendarEventMap(folderViewModel.convertCalendarEvent());
+    } else if(mapViewModel.navigationBarCurrentIndex.value != 1) {
+      comfyuiViewModel.reset();
     }
-    comfyuiViewModel.reset();
     return switch (mapViewModel.navigationBarCurrentIndex.value) {
       // 수정필요 : 0 -> chat_photo bot / 1 -> comfy ui / 2 -> google map / 3 -> folder / 4 -> profile /
       0 => ChatbotListScreen(),
