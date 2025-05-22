@@ -218,6 +218,29 @@ class UserManagerApi {
     }
   }
 
+  Future<bool> modifyUserInfo() async {
+    try {
+      final profileViewModel = Get.find<ProfileViewModel>();
+      final response = await dio.patch('$baseUrl/user', options: _authOptions(), data: {
+        "userId": ownerId,
+        "email": profileViewModel.email.value,
+        "intro": profileViewModel.newIntro,
+        "accountName": profileViewModel.newAccount,
+        "profilePhotoPath": profileViewModel.profilePath.value,
+        "profileActive": profileViewModel.profileActive.value,
+        "name": profileViewModel.name.value,
+        "type": "info"
+      });
+      profileViewModel.accountName.value = profileViewModel.newAccount;
+      profileViewModel.intro.value = profileViewModel.newIntro;
+      showPositivePopup("사용자 프로필을 수정하였습니다");
+      return true;
+    } catch (e) {
+      showErrorPopup("사용자 프로필 수정에 실패했습니다.");
+    }
+    return false;
+  }
+
   // 다른 사용자 정보 불러오기
   Future<User?> getUserInfo({required int userId}) async {
     try {
@@ -262,14 +285,12 @@ class UserManagerApi {
 
   Future<bool> updateUserProfilePhoto({required int photoId}) async {
     try {
-      final response = await dio.put(
-        '$baseUrl/profile/photo',
-        queryParameters: {
-          "userId": UserManagerApi().ownerId,
-          "photoId": photoId,
-        },
-        options: _authOptions()
-      );
+      final response = await dio.put('$baseUrl/profile/photo',
+          queryParameters: {
+            "userId": UserManagerApi().ownerId,
+            "photoId": photoId,
+          },
+          options: _authOptions());
       return true;
     } on DioException catch (e) {
       showErrorPopup(e.toString());
@@ -279,13 +300,11 @@ class UserManagerApi {
 
   Future<bool> removeUserProfilePhoto() async {
     try {
-      final response = await dio.delete(
-          '$baseUrl/profile/photo',
+      final response = await dio.delete('$baseUrl/profile/photo',
           queryParameters: {
             "userId": UserManagerApi().ownerId,
           },
-          options: _authOptions()
-      );
+          options: _authOptions());
       return true;
     } on DioException catch (e) {
       showErrorPopup(e.toString());
@@ -295,13 +314,11 @@ class UserManagerApi {
 
   Future<int?> getUserProfilePhoto({required int userId}) async {
     try {
-      final response = await dio.get(
-          '$baseUrl/profile/photo',
+      final response = await dio.get('$baseUrl/profile/photo',
           queryParameters: {
             "userId": userId,
           },
-          options: _authOptions()
-      );
+          options: _authOptions());
       return int.tryParse(response.data.toString());
     } on DioException catch (e) {
       // showErrorPopup(e.toString());
@@ -314,7 +331,7 @@ class UserManagerApi {
     // 필터값 적용
     Get.find<SelectionBarViewModel>().convertFromJson(response.data["filter"]);
     // 프로필 적용
-    int? photoId =  await UserManagerApi().getUserProfilePhoto(userId: ownerId!);
+    int? photoId = await UserManagerApi().getUserProfilePhoto(userId: ownerId!);
     Get.find<ProfileViewModel>().convertFromJson(response.data["user"], photoId);
     // 사용자 세팅값 적용
     Get.find<UserConfig>().convertFromJson(response.data["userSetting"]);

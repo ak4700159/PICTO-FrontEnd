@@ -43,24 +43,28 @@ class FolderViewModel extends GetxController {
 
   //  폴더 초기화 -> 새로운 폴더는 추가, 중복되는 폴더는 업데이트
   Future<void> resetFolder() async {
-    List<Folder> search = await FolderManagerApi().getFoldersByOwnerId();
-    // showBlockingLoading(Duration(seconds: 1));
+    try {
+      List<Folder> search = await FolderManagerApi().getFoldersByOwnerId();
+      // showBlockingLoading(Duration(seconds: 1));
 
-    // 제거
-    final existFolderKeys = folders.keys;
-    for (int oldKey in existFolderKeys) {
-      if (!search.any((f) => f.folderId == oldKey)) {
-        folders.remove(oldKey);
+      // 제거
+      final existFolderKeys = folders.keys;
+      for (int oldKey in existFolderKeys) {
+        if (!search.any((f) => f.folderId == oldKey)) {
+          folders.remove(oldKey);
+        }
       }
-    }
 
-    // 기존에 있었던 폴더는 업데이트. 없었으면 추가
-    for (Folder newFolder in search) {
-      if (folders.keys.contains(newFolder.folderId)) {
-        folders[newFolder.folderId]?.updateFolder();
-      } else {
-        folders[newFolder.folderId] = newFolder;
+      // 기존에 있었던 폴더는 업데이트. 없었으면 추가
+      for (Folder newFolder in search) {
+        if (folders.keys.contains(newFolder.folderId)) {
+          folders[newFolder.folderId]?.updateFolder();
+        } else {
+          folders[newFolder.folderId] = newFolder;
+        }
       }
+    } catch(e) {
+      print("[ERROR] ${e.toString()}");
     }
   }
 
@@ -68,11 +72,9 @@ class FolderViewModel extends GetxController {
   Future<void> downloadFolder() async {
     final firstTasks = <Future<void>>[];
     final tasks = <Future<void>>[];
-
     final nullMarkers = currentMarkers.where((m) => m.imageData == null).toList();
     int total = nullMarkers.length;
     int completed = 0;
-
     // 폴더 안의 사용자 프로필 다운로드
     final nullUsers = currentFolder.value!.users.where((u) => u.userProfileData == null).toList();
     // print("[INFO] null users : ${nullUsers.map((u) => u.userId).toList()}");
@@ -80,20 +82,17 @@ class FolderViewModel extends GetxController {
       final capturedUser = user; // 🔑 클로저 캡처 방지
       firstTasks.add(() async {
         // print("[DEBUG] downloading profile for userId: ${capturedUser.userId}");
-        capturedUser.userProfileId =
-            await UserManagerApi().getUserProfilePhoto(userId: capturedUser.userId!);
+        capturedUser.userProfileId = await UserManagerApi().getUserProfilePhoto(userId: capturedUser.userId!);
         if (capturedUser.userProfileId != null) {
           capturedUser.userProfileData = await PhotoStoreApi().downloadPhoto(
             photoId: capturedUser.userProfileId!,
             scale: 0.08,
           );
-          currentFolder.value!.users[currentFolder.value!.users.indexOf(capturedUser)] =
-              capturedUser;
+          currentFolder.value!.users[currentFolder.value!.users.indexOf(capturedUser)] = capturedUser;
         }
       }());
     }
     await Future.wait(firstTasks);
-
     // 폴더 안 사진 다운로드
     for (var marker in nullMarkers) {
       tasks.add(() async {
@@ -108,26 +107,20 @@ class FolderViewModel extends GetxController {
       }());
     }
     await Future.wait(tasks);
-
-    // 로딩 완료
-    loadingComplete.value = true;
   }
 
   // 폴더 화면 변화
-  void changeFolder({required int folderId}) async {
-    folders[folderId]?.updateFolder();
-    progress.value = 0.0;
+  Future<void> changeFolder({required int folderId}) async {
     loadingComplete.value = false;
-    for (int key in folders.keys) {
-      if (key == folderId) {
-        currentFolder.value = folders[folderId];
-        currentMarkers.clear();
-        currentMarkers.addAll(folders[folderId]!.markers);
-      }
-    }
-    downloadFolder();
+    currentMarkers.clear();
+    await folders[folderId]?.updateFolder();
+    progress.value = 0.0;
+    currentFolder.value = folders[folderId];
+    currentMarkers.addAll(folders[folderId]!.markers);
+    await downloadFolder();
     changeSocket();
-    // await showBlockingLoading(Duration(seconds: 1));
+    // 로딩 완료
+    loadingComplete.value = true;
   }
 
   // 현재 선택된 폴더에 소켓 연결
@@ -161,8 +154,7 @@ class FolderViewModel extends GetxController {
 
   // 폴더 생성
   void createFolder({required String folderName, required String content}) async {
-    Folder? newFolder =
-        await FolderManagerApi().createFolder(folderName: folderName, content: content);
+    Folder? newFolder = await FolderManagerApi().createFolder(folderName: folderName, content: content);
   }
 
   // 현재 연결된 소켓에 채팅 전송
@@ -284,5 +276,27 @@ class FolderViewModel extends GetxController {
       }
     }
     return result;
+  }
+
+  // 사용자폴더와 공유팔더 나누니기
+  Map<String, List<Folder>> getPartitionedFolders() {
+    final ownerId = UserManagerApi().ownerId;
+    final partitioned = folders.entries.fold<Map<String, List<Folder>>>(
+      {
+        'my': [],
+        'shared': [],
+      },
+          (acc, entry) {
+        final folder = entry.value;
+        if (folder.generatorId == ownerId) {
+          acc['my']!.add(folder);
+        } else {
+          acc['shared']!.add(folder);
+        }
+        return acc;
+      },
+    );
+
+    return partitioned;
   }
 }

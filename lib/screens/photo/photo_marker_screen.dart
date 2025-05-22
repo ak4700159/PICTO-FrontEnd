@@ -192,6 +192,7 @@ class PhotoMarkerScreen extends StatelessWidget {
                     Text(
                       '  ${photo.location}',
                       style: TextStyle(
+                        overflow: TextOverflow.ellipsis,
                         color: Colors.white70,
                         fontFamily: "NotoSansKR",
                         fontSize: 12,

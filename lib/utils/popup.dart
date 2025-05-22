@@ -10,7 +10,7 @@ void showErrorPopup(String errorMsg) {
       titlePadding: EdgeInsets.all(20),
       contentPadding: EdgeInsets.only(
         bottom: 12,
-        left: 30,
+        left: 12,
         right: 12,
       ),
       backgroundColor: Colors.white,
@@ -23,28 +23,19 @@ void showErrorPopup(String errorMsg) {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: const Text(
-              '[ERROR INFO]',
-              style: TextStyle(
-                  fontSize: 17,
-                  color: Colors.black,
-                  fontFamily: "NotoSansKR",
-                  fontWeight: FontWeight.w700),
+              'ERROR INFO',
+              style:
+                  TextStyle(fontSize: 16, color: Colors.black, fontFamily: "NotoSansKR", fontWeight: FontWeight.w600),
             ),
           ),
         ],
       ),
       content: SingleChildScrollView(
-          child: Text(
-        errorMsg,
-        style: TextStyle(
-            fontSize: 14, color: Colors.red, fontFamily: "NotoSansKR", fontWeight: FontWeight.w700),
-      )),
-      actions: [
-        // TextButton(
-        //   child: const Text("닫기"),
-        //   onPressed: () => Get.back(),
-        // ),
-      ],
+        child: Text(
+          errorMsg,
+          style: TextStyle(fontSize: 14, color: Colors.red, fontFamily: "NotoSansKR", fontWeight: FontWeight.w400),
+        ),
+      ),
     ),
   );
 }
@@ -53,7 +44,11 @@ void showPositivePopup(String msg) {
   Get.dialog(
     AlertDialog(
       titlePadding: EdgeInsets.all(20),
-      contentPadding: EdgeInsets.all(12),
+      contentPadding: EdgeInsets.only(
+        bottom: 12,
+        left: 12,
+        right: 12,
+      ),
       backgroundColor: Colors.white,
       title: Row(
         children: [
@@ -64,31 +59,19 @@ void showPositivePopup(String msg) {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: const Text(
-              '[INFO]',
-              style: TextStyle(
-                  fontSize: 17,
-                  color: Colors.black,
-                  fontFamily: "NotoSansKR",
-                  fontWeight: FontWeight.w700),
+              'INFO',
+              style:
+                  TextStyle(fontSize: 16, color: Colors.black, fontFamily: "NotoSansKR", fontWeight: FontWeight.w600),
             ),
           ),
         ],
       ),
       content: SingleChildScrollView(
-          child: Text(
-        msg,
-        style: TextStyle(
-            fontSize: 14,
-            color: Colors.black,
-            fontFamily: "NotoSansKR",
-            fontWeight: FontWeight.w700),
-      )),
-      actions: [
-        // TextButton(
-        //   child: const Text("닫기"),
-        //   onPressed: () => Get.back(),
-        // ),
-      ],
+        child: Text(
+          msg,
+          style: TextStyle(fontSize: 14, color: Colors.black, fontFamily: "NotoSansKR", fontWeight: FontWeight.w400),
+        ),
+      ),
     ),
   );
 }

@@ -8,6 +8,7 @@ import 'package:picto_frontend/screens/upload/upload_request.dart';
 import 'package:picto_frontend/services/photo_store_service/photo_store_api.dart';
 import 'package:picto_frontend/services/pre_processor_service/processor_api.dart';
 import 'package:picto_frontend/services/user_manager_service/user_api.dart';
+import 'package:picto_frontend/utils/popup.dart';
 
 import '../../models/photo.dart';
 
@@ -65,14 +66,22 @@ class UploadViewModel extends GetxController {
         );
       }
       final data = await PreProcessorApi().validatePhoto(request: request);
-      frames.removeWhere((p) => p.photoId == selectedFrame.value!.photoId);
-      selectedFrame.value = null;
+      if(selectedFrame.value != null) {
+        frames.removeWhere((p) => p.photoId == selectedFrame.value?.photoId);
+        selectedFrame.value = null;
+      }
+
+      // 사진 저장 성공 시 팝업창?
       result.value = "사진 저장에 성공했습니다! \n $data";
+      Get.back();
+      showPositivePopup("사진 저장에 성공했습니다!");
     } on DioException catch (e) {
-      result.value = e.response?.data["error"] ?? "서버 오류 발생";
+      result.value = e.response?.data["error"].toString() ?? "서버 오류 발생";
+      Get.back();
+      showErrorPopup("사진 저장에 실패하였습니다... \n${result.value}");
+      // 유효성 검사 실패 시 팝업창
     }
     isLoading.value = false;
-    Get.back();
   }
 
   // 갤러리에서 선택한 사진 삭제

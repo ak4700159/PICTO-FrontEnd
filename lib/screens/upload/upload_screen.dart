@@ -7,6 +7,7 @@ import 'package:picto_frontend/config/app_config.dart';
 import 'package:picto_frontend/models/photo.dart';
 import 'package:picto_frontend/screens/map/google_map/google_map_view_model.dart';
 import 'package:picto_frontend/screens/map/top_box.dart';
+import 'package:picto_frontend/screens/upload/upload_dialog.dart';
 import 'package:picto_frontend/screens/upload/upload_view_model.dart';
 import 'package:picto_frontend/services/photo_store_service/photo_store_api.dart';
 import 'package:picto_frontend/utils/functions.dart';
@@ -67,8 +68,7 @@ class UploadScreen extends StatelessWidget {
                     }
                   },
                   future: fetchAddressFromKakao(
-                      latitude: googleViewModel.currentLat.value,
-                      longitude: googleViewModel.currentLng.value),
+                      latitude: googleViewModel.currentLat.value, longitude: googleViewModel.currentLng.value),
                 )
               : Row(
                   children: [
@@ -161,14 +161,11 @@ class UploadScreen extends StatelessWidget {
                                 children: [
                                   TextButton(
                                     onPressed: () {
-                                      showSharePopup();
+                                      showSharePopup(context);
                                     },
                                     child: Text(
                                       "사진 저장",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 15,
-                                          color: Colors.black),
+                                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Colors.black),
                                     ),
                                   ),
                                   IconButton(
@@ -249,32 +246,35 @@ class UploadScreen extends StatelessWidget {
           SizedBox(
             height: height * 0.3,
             child: FutureBuilder(
-                future: PhotoStoreApi().getFrames(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(child: CircularProgressIndicator());
-                  }
+              future: PhotoStoreApi().getFrames(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                }
 
-                  if (snapshot.hasError) {
-                    return Text(
-                      "등록된 위치를 불러오기 실패",
-                      style: TextStyle(
-                        fontFamily: "NotoSansKR",
-                        fontSize: 14,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.red,
-                      ),
-                    );
-                  }
-                  uploadViewModel.frames.clear();
-                  uploadViewModel.frames.addAll(snapshot.data!);
-                  return Obx(() => ListView.builder(
-                        itemBuilder: (context, idx) {
-                          return _getFrameTime(uploadViewModel.frames[idx]);
-                        },
-                        itemCount: uploadViewModel.frames.length,
-                      ));
-                }),
+                if (snapshot.hasError) {
+                  return Text(
+                    "등록된 위치를 불러오기 실패",
+                    style: TextStyle(
+                      fontFamily: "NotoSansKR",
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.red,
+                    ),
+                  );
+                }
+                uploadViewModel.frames.clear();
+                uploadViewModel.frames.addAll(snapshot.data!);
+                return Obx(
+                  () => ListView.builder(
+                    itemBuilder: (context, idx) {
+                      return _getFrameTime(uploadViewModel.frames[idx]);
+                    },
+                    itemCount: uploadViewModel.frames.length,
+                  ),
+                );
+              },
+            ),
           ),
 
           // 전송 결과 확인
@@ -317,7 +317,7 @@ class UploadScreen extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(10)),
           boxShadow: [
-            BoxShadow(color: Colors.grey, blurRadius: 8, offset: Offset(0, 0)),
+            BoxShadow(color: Colors.grey, blurRadius: 1, offset: Offset(0, 2)),
           ],
           color: Colors.white,
         ),
@@ -352,10 +352,7 @@ class UploadScreen extends StatelessWidget {
                     child: Text(
                       formatDateKorean(photo.updateDatetime!),
                       style: TextStyle(
-                          fontFamily: "Roboto",
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey,
-                          fontSize: 10),
+                          fontFamily: "Roboto", fontWeight: FontWeight.bold, color: Colors.grey, fontSize: 10),
                     ),
                   ),
                 ],
@@ -401,59 +398,6 @@ class UploadScreen extends StatelessWidget {
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-
-  void showSharePopup() {
-    Get.dialog(
-      Dialog(
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            color: Colors.white,
-          ),
-          padding: EdgeInsets.all(16),
-          child: Column(
-            children: [
-              Text(
-                "PICTO에 사진을 공유하시겠습니. 까?",
-              ),
-              Obx(
-                    () => uploadViewModel.isLoading.value
-                    ? Center(
-                  child: CircularProgressIndicator(color: AppConfig.mainColor, strokeWidth: 6),
-                )
-                    : Row(
-                  children: [
-                    TextButton(
-                      child: const Text(
-                        "공유하고 저장",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      onPressed: () {
-                        uploadViewModel.savePhoto(isShared: true);
-                      },
-                    ),
-                    TextButton(
-                      child: const Text(
-                        "공유하지 않고 저장",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      onPressed: () {
-                        uploadViewModel.savePhoto(isShared: false);
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
         ),
       ),
     );

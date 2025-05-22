@@ -43,57 +43,6 @@ class FolderInfoScreen extends StatelessWidget {
           children: [
             // 위쪽 여백
             TopBox(size: 0.02),
-            // 폴더 내용 헤드
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.content_paste_outlined,
-                    color: AppConfig.mainColor,
-                  ),
-                  Text(
-                    " 폴더 내용",
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontFamily: "NotoSansKR",
-                      fontSize: 15,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            // 폴더 내용
-            Row(
-              // mainAxisSize: MainAxisSize.max,
-              children: [
-                Container(
-                  width: context.mediaQuery.size.width,
-                  height: context.mediaQuery.size.height * 0.2,
-                  padding: EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey,
-                        blurRadius: 8, // 흐림 정도
-                        spreadRadius: 1, // 그림자 확산 정도
-                        offset: Offset(2, 5), // 그림자 위치 조정
-                      )
-                    ],
-                    color: Colors.white,
-                  ),
-                  child: Text(
-                    folder.content ?? "폴더 내용이 없습니다.",
-                    style: TextStyle(
-                      fontFamily: 'NotoSansKR',
-                      fontWeight: FontWeight.w600, // Bold
-                      fontSize: 12,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            TopBox(size: 0.05),
             // 공유 인원 헤드
             Padding(
               padding: const EdgeInsets.all(8.0),
@@ -135,6 +84,58 @@ class FolderInfoScreen extends StatelessWidget {
               ),
             ),
             TopBox(size: 0.05),
+            // 폴더 내용 헤드
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.content_paste_outlined,
+                    color: AppConfig.mainColor,
+                  ),
+                  Text(
+                    " 폴더 내용",
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontFamily: "NotoSansKR",
+                      fontSize: 15,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // 폴더 내용
+            Row(
+              // mainAxisSize: MainAxisSize.max,
+              children: [
+                Container(
+                  width: context.mediaQuery.size.width,
+                  height: context.mediaQuery.size.height * 0.1,
+                  padding: EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey,
+                        blurRadius: 8, // 흐림 정도
+                        spreadRadius: 1, // 그림자 확산 정도
+                        offset: Offset(2, 5), // 그림자 위치 조정
+                      )
+                    ],
+                    color: Colors.white,
+                  ),
+                  child: Text(
+                    folder.content ?? "폴더 내용이 없습니다.",
+                    style: TextStyle(
+                      fontFamily: 'NotoSansKR',
+                      fontWeight: FontWeight.w600, // Bold
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            TopBox(size: 0.05),
+
             // 기타정보
             Padding(
               padding: const EdgeInsets.all(8.0),

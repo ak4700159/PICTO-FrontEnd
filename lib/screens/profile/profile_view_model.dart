@@ -23,11 +23,8 @@ class ProfileViewModel extends GetxController {
   // RxBool isSelected = false.obs;
   Rxn<PictoMarker?> selectedPictoMarker = Rxn();
 
-  // 한줄 소개 편집 여부
-
-  // 닉네임 변경 여부
-
-  // 비밀번호 변경
+  String newIntro = "";
+  String newAccount = "";
 
   void convertFromJson(Map json, int? profilePhotoId) async {
     name.value = json["name"];
@@ -63,5 +60,10 @@ class ProfileViewModel extends GetxController {
       showErrorPopup("대표 사진을 업데이트하지 못했습니다.");
     }
     selectedPictoMarker.value = null;
+  }
+
+  // v
+  void modifyProfileContent() {
+
   }
 }

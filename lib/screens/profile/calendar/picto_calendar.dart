@@ -29,10 +29,11 @@ class PictoCalendar extends StatelessWidget {
               child: Text(
                 "서버 오류",
                 style: TextStyle(
-                    fontWeight: FontWeight.w500,
-                    fontFamily: "NotoSansKR",
-                    fontSize: 16,
-                    color: Colors.red),
+                  fontWeight: FontWeight.w500,
+                  fontFamily: "NotoSansKR",
+                  fontSize: 16,
+                  color: Colors.red,
+                ),
               ),
             );
           }
@@ -126,8 +127,7 @@ class PictoCalendar extends StatelessWidget {
               margin: EdgeInsets.all(4),
               padding: EdgeInsets.all(2),
               decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: Colors.grey, width: 0.5)),
+                  borderRadius: BorderRadius.circular(20), border: Border.all(color: Colors.grey, width: 0.5)),
               child: Text("${events.length}",
                   style: TextStyle(
                     color: color,
@@ -180,22 +180,20 @@ class PictoCalendar extends StatelessWidget {
             return Center(
               child: Text(
                 '토',
-                style: TextStyle(
-                    fontFamily: "NotoSansKR", fontWeight: FontWeight.w500, color: Colors.blue),
+                style: TextStyle(fontFamily: "NotoSansKR", fontWeight: FontWeight.w500, color: Colors.blue),
               ),
             );
           case 7:
             return Center(
               child: Text(
                 '일',
-                style: TextStyle(
-                    fontFamily: "NotoSansKR", fontWeight: FontWeight.w500, color: Colors.red),
+                style: TextStyle(fontFamily: "NotoSansKR", fontWeight: FontWeight.w500, color: Colors.red),
               ),
             );
         }
       },
       defaultBuilder: (context, day, focusedDay) {
-        if(calendarViewModel.getEventsForDay(day).isEmpty) {
+        if (calendarViewModel.getEventsForDay(day).isEmpty) {
           return Center(
             child: Text(
               '${day.day}',

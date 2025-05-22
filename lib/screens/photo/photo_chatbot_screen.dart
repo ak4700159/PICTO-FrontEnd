@@ -125,7 +125,15 @@ class PhotoChatbotScreen extends StatelessWidget {
                       color: Colors.white70,
                       size: 15,
                     ),
-                    Text('  ${photo.tag}', style: TextStyle(color: Colors.white70, fontSize: 12)),
+                    Text(
+                      '  ${photo.tag}',
+                      style: TextStyle(
+                        overflow: TextOverflow.ellipsis,
+                        color: Colors.white70,
+                        fontFamily: "NotoSansKR",
+                        fontSize: 12,
+                      ),
+                    ),
                   ],
                 ),
                 Row(
@@ -135,8 +143,15 @@ class PhotoChatbotScreen extends StatelessWidget {
                       color: Colors.white70,
                       size: 15,
                     ),
-                    Text('  ${photo.location}',
-                        style: TextStyle(color: Colors.white70, fontSize: 12)),
+                    Text(
+                      '  ${photo.location}',
+                      style: TextStyle(
+                        overflow: TextOverflow.ellipsis,
+                        color: Colors.white70,
+                        fontFamily: "NotoSansKR",
+                        fontSize: 12,
+                      ),
+                    ),
                   ],
                 ),
                 Row(
@@ -146,8 +161,15 @@ class PhotoChatbotScreen extends StatelessWidget {
                       color: Colors.white70,
                       size: 15,
                     ),
-                    Text('  ${formatDate(photo.updateDatetime ?? 0)}',
-                        style: TextStyle(color: Colors.white70, fontSize: 12)),
+                    Text(
+                      '  ${formatDate(photo.updateDatetime ?? 0)}',
+                      style: TextStyle(
+                        overflow: TextOverflow.ellipsis,
+                        color: Colors.white70,
+                        fontFamily: "NotoSansKR",
+                        fontSize: 12,
+                      ),
+                    ),
                   ],
                 ),
               ],

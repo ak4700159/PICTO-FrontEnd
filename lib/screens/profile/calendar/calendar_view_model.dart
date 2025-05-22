@@ -12,7 +12,7 @@ class CalendarViewModel extends GetxController {
   // 선택된
   RxList<CalendarEvent> selectedEvents = <CalendarEvent>[].obs;
   final kToday = DateTime.now();
-  final kFirstDay = DateTime(2020, 1, 1);
+  final kFirstDay = DateTime(2001, 1, 1);
   final kLastDay = DateTime(2030, 1, 1);
 
   CalendarFormat calendarFormat = CalendarFormat.month;
@@ -82,13 +82,12 @@ class CalendarViewModel extends GetxController {
   void onDaySelected(DateTime newSelectedDay, DateTime newFocusedDay) {
     if (isSameDay(selectedDay.value, newSelectedDay)) {
       // 이미 선택된 날짜를 다시 누르면 해제
-      selectedDay.value = null;
-      focusedDay.value = null;
+      // selectedDay.value = null;
+      // selectedEvents.value = [];
     } else {
       selectedDay.value = newSelectedDay;
       selectedEvents.value = getEventsForDay(newSelectedDay);
     }
-
     focusedDay.value = newFocusedDay;
     rangeStart.value = null;
     rangeEnd.value = null;

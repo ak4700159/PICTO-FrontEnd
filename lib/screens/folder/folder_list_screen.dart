@@ -9,12 +9,13 @@ import '../../services/user_manager_service/user_api.dart';
 import '../profile/profile_view_model.dart';
 
 class FolderListScreen extends StatelessWidget {
-  const FolderListScreen({super.key});
+  FolderListScreen({super.key});
+
+  final profileViewModel = Get.find<ProfileViewModel>();
+  final folderViewModel = Get.find<FolderViewModel>();
 
   @override
   Widget build(BuildContext context) {
-    final profileViewModel = Get.find<ProfileViewModel>();
-    final folderViewModel = Get.find<FolderViewModel>();
     // if (!folderViewModel.isUpdate.value) {
     // folderViewModel.resetFolder();
     //   folderViewModel.isUpdate.value = true;
@@ -28,8 +29,7 @@ class FolderListScreen extends StatelessWidget {
           padding: const EdgeInsets.only(left: 8.0),
           child: Container(
             padding: EdgeInsets.all(4),
-            decoration:
-                BoxDecoration(color: Colors.grey.shade200, borderRadius: BorderRadius.circular(10)),
+            decoration: BoxDecoration(color: Colors.grey.shade200, borderRadius: BorderRadius.circular(10)),
             child: Text(
               "${profileViewModel.accountName.value}의 폴더 목록",
               overflow: TextOverflow.ellipsis,
@@ -37,7 +37,7 @@ class FolderListScreen extends StatelessWidget {
               style: TextStyle(
                 fontFamily: "NotoSansKR",
                 fontSize: 18,
-                fontWeight: FontWeight.w600,  
+                fontWeight: FontWeight.w600,
                 color: Colors.black,
               ),
             ),
@@ -108,20 +108,7 @@ class FolderListScreen extends StatelessWidget {
           )
         ],
       ),
-      body: Obx(() => GridView.builder(
-            padding: const EdgeInsets.all(10),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              crossAxisSpacing: 10,
-              mainAxisSpacing: 10,
-            ),
-            itemCount: folderViewModel.folders.length,
-            itemBuilder: (context, index) {
-              List<Folder> folders = folderViewModel.folders.values.toList();
-              folders.sort((a, b) => a.sharedDatetime.compareTo(b.sharedDatetime));
-              return _getFolderWidget(folders[index]);
-            },
-          )),
+      body: Obx(() => _getFolderList(context)),
     );
   }
 
@@ -178,5 +165,75 @@ class FolderListScreen extends StatelessWidget {
       return AppConfig.mainColor;
     }
     return Colors.blue;
+  }
+
+  Widget _getFolderList(BuildContext context) {
+    Map<String, List<Folder>> notOrderedFolders = folderViewModel.getPartitionedFolders();
+    List<Folder> myFolders = notOrderedFolders["my"]!;
+    List<Folder> sharedFolders = notOrderedFolders["shared"]!;
+    double height = context.mediaQuery.size.height;
+    double width = context.mediaQuery.size.width;
+
+    return SingleChildScrollView(
+      child: RefreshIndicator(
+        displacement: 20,
+        backgroundColor: Colors.white,
+        color: AppConfig.mainColor,
+        onRefresh: () async {
+          await folderViewModel.resetFolder();
+        },
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SizedBox(
+              height: height * 0.4,
+              child: GridView.builder(
+                padding: const EdgeInsets.all(10),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                ),
+                itemCount: myFolders.length,
+                itemBuilder: (context, index) {
+                  // List<Folder> folders = folderViewModel.folders.values.toList();
+                  myFolders.sort((a, b) => a.sharedDatetime.compareTo(b.sharedDatetime));
+                  return _getFolderWidget(myFolders[index]);
+                },
+              ),
+            ),
+            // SizedBox(
+            //   height: height * 0.05,
+            // ),
+            Container(
+              padding: EdgeInsets.all(20),
+              height: 3.0,
+              width: width * 0.8,
+              color: Colors.grey.shade200,
+            ),
+            SizedBox(
+              height: height * 0.4,
+              child: GridView.builder(
+                padding: const EdgeInsets.all(10),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                ),
+                itemCount: sharedFolders.length,
+                itemBuilder: (context, index) {
+                  // List<Folder> folders = folderViewModel.folders.values.toList();
+                  sharedFolders.sort((a, b) => a.sharedDatetime.compareTo(b.sharedDatetime));
+                  return _getFolderWidget(sharedFolders[index]);
+                },
+              ),
+            ),
+            SizedBox(
+              height: height * 0.2,
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

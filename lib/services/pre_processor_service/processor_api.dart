@@ -25,9 +25,9 @@ class PreProcessorApi {
   final String baseUrl = "http://${dotenv.env['PROCESSOR_IP']}:8087";
   Dio dio = Dio(
     BaseOptions(
-        connectTimeout: const Duration(seconds: 15),
+        connectTimeout: const Duration(seconds: 100),
         contentType: Headers.jsonContentType,
-        receiveTimeout: const Duration(seconds: 15)),
+        receiveTimeout: const Duration(seconds: 100)),
   )..interceptors.add(CustomInterceptor());
 
   // 유효성 검사 및 사진 전송 api 호출

@@ -2,12 +2,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:picto_frontend/screens/profile/profile_view_model.dart';
+import 'package:picto_frontend/services/user_manager_service/user_api.dart';
 
 void showProfileModifyDialog(BuildContext context) {
   final profileViewModel = Get.find<ProfileViewModel>();
+  final accountEditController = TextEditingController();
+  final introEditController = TextEditingController();
   double width = context.mediaQuery.size.width;
   double height = context.mediaQuery.size.height;
   Get.dialog(
+    barrierDismissible: false,
     Dialog(
       insetPadding: EdgeInsets.all(0),
       child: Container(
@@ -16,72 +20,124 @@ void showProfileModifyDialog(BuildContext context) {
           color: Colors.white,
           borderRadius: BorderRadius.circular(20),
         ),
-        width: width,
-        height: height * 0.4,
+        width: width * 0.9,
+        height: height * 0.5,
         child: Column(
           children: [
             Row(
-              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                // 변경 확인 버튼
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Get.back();
+                  },
                   child: Text(
-                    "수정 사항 변경하기",
+                    "닫기",
+                    style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        fontFamily: "NotoSansKR",
+                        color: Colors.grey
+                    ),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () {
+                    // 변경 사항 적용
+                    UserManagerApi().modifyUserInfo();
+                  },
+                  child: Text(
+                    "적용",
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                       fontFamily: "NotoSansKR",
+                      color: Colors.green.shade300
                     ),
                   ),
                 ),
               ],
             ),
-            // 한줄 소개 편집
-            Padding(
-              padding: const EdgeInsets.only(left: 20.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Text(
-                    "한줄 소개",
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400,
-                      color: Colors.black,
-                      fontFamily: "NotoSansKR",
-                    ),
-                  ),
-                  IconButton(
-                    padding: EdgeInsets.all(4),
-                    alignment: Alignment.topLeft,
-                    iconSize: 15,
-                    onPressed: () {
-                      // 수정하기 모드로 변경
-                    },
-                    icon: Icon(
-                      Icons.edit,
-                    ),
-                  ),
-                ],
+            SizedBox(height: height * 0.03,),
+            TextField(
+              controller: accountEditController,
+              style : TextStyle(fontSize: 12, fontFamily: "NotoSansKR", fontWeight: FontWeight.w600),
+              keyboardType: TextInputType.name,
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: Color.fromRGBO(217, 217, 217, 0.19),
+                errorMaxLines: 2,
+                errorBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.red),
+                  borderRadius: BorderRadius.circular(25),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.grey, width: 1),
+                  borderRadius: BorderRadius.circular(25),
+                ),
+                border: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.grey, width: 1),
+                  borderRadius: BorderRadius.circular(25),
+                ),
+                hintStyle: TextStyle(
+                  fontFamily: "NotoSansKR",
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black,
+                ),
+                labelStyle: TextStyle(
+                  fontFamily: "NotoSansKR",
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.grey,
+                ),
+                labelText: "별칭 수정",
+                hintText: "",
               ),
+              onChanged: (String? val) {
+                profileViewModel.newAccount = val ?? "";
+              },
             ),
-            Padding(
-              padding: const EdgeInsets.only(left: 20.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Text(
-                    profileViewModel.intro.value,
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w400,
-                      color: Colors.black54,
-                      fontFamily: "NotoSansKR",
-                    ),
-                  ),
-                ],
+            SizedBox(height: height * 0.03,),
+            TextField(
+              controller: introEditController,
+              maxLines: 8,
+              style : TextStyle(fontSize: 12, fontFamily: "NotoSansKR", fontWeight: FontWeight.w600, ),
+              keyboardType: TextInputType.name,
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: Color.fromRGBO(217, 217, 217, 0.19),
+                errorMaxLines: 2,
+                errorBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.red),
+                  borderRadius: BorderRadius.circular(25),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.grey, width: 1),
+                  borderRadius: BorderRadius.circular(25),
+                ),
+                border: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.grey, width: 1),
+                  borderRadius: BorderRadius.circular(25),
+                ),
+                hintStyle: TextStyle(
+                  fontFamily: "NotoSansKR",
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black,
+                ),
+                labelStyle: TextStyle(
+                  fontFamily: "NotoSansKR",
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.grey,
+                ),
+                labelText: "한줄 소개 수정",
+                hintText: "",
               ),
+              onChanged: (String? val) {
+                profileViewModel.newIntro = val ?? "";
+              },
             ),
           ],
         ),

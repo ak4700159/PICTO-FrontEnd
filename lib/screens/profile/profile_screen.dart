@@ -56,31 +56,52 @@ class ProfileScreen extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        profileViewModel.accountName.value,
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black,
-                          fontFamily: "NotoSansKR",
+                Obx(() => Column(
+                      children: [
+                        Container(
+                          width: context.mediaQuery.size.width * 0.8,
+                          padding: EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Color.fromRGBO(179, 208, 250, 0.3),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  profileViewModel.accountName.value,
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.black,
+                                    fontFamily: "NotoSansKR",
+                                  ),
+                                ),
+                              ),
+                              Text(
+                                profileViewModel.email.value,
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                  color: Colors.grey,
+                                  fontFamily: "NotoSansKR",
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    ),
-                    Text(
-                      profileViewModel.email.value,
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
-                        color: Colors.grey,
-                        fontFamily: "NotoSansKR",
-                      ),
-                    ),
-                  ],
-                )
+                        Text(
+                          profileViewModel.intro.value,
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.grey,
+                            fontFamily: "NotoSansKR",
+                          ),
+                        ),
+                      ],
+                    ))
               ],
             ),
             SizedBox(
@@ -133,11 +154,7 @@ class ProfileScreen extends StatelessWidget {
                   color: Colors.white,
                   // borderRadius: BorderRadius.circular(100)
                   boxShadow: [
-                    BoxShadow(
-                        spreadRadius: 1,
-                        color: Colors.grey.shade100,
-                        blurRadius: 3,
-                        offset: Offset(0, 8)),
+                    BoxShadow(spreadRadius: 1, color: Colors.grey.shade100, blurRadius: 3, offset: Offset(0, 8)),
                   ]),
               child: PictoCalendar(),
             ),
@@ -185,8 +202,7 @@ class ProfileScreen extends StatelessWidget {
     }
 
     return FutureBuilder(
-      future: PhotoStoreApi()
-          .downloadPhoto(photoId: profileViewModel.profilePhotoId.value!, scale: 0.3),
+      future: PhotoStoreApi().downloadPhoto(photoId: profileViewModel.profilePhotoId.value!, scale: 0.3),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(child: CircularProgressIndicator());
@@ -354,8 +370,7 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
             Obx(() => Positioned(
-                  child: profileViewModel.selectedPictoMarker.value?.photo.photoId ==
-                          marker.photo.photoId
+                  child: profileViewModel.selectedPictoMarker.value?.photo.photoId == marker.photo.photoId
                       ? Icon(
                           Icons.check_box,
                           color: Colors.green,
@@ -375,9 +390,7 @@ class ProfileScreen extends StatelessWidget {
 
   Widget _getCalendarEventList() {
     return Obx(() => Column(
-          children: calendarViewModel.selectedEvents
-              .map((event) => CalendarEventTile(event: event))
-              .toList(),
+          children: calendarViewModel.selectedEvents.map((event) => CalendarEventTile(event: event)).toList(),
         ));
   }
 }

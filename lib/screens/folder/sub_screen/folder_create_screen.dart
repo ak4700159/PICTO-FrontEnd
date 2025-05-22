@@ -64,19 +64,81 @@ class FolderCreateScreen extends StatelessWidget {
                     padding: EdgeInsets.all(8),
                     width: context.mediaQuery.size.width * 0.9,
                     child: TextFormField(
+                      style: TextStyle(fontSize: 12, fontFamily: "NotoSansKR", fontWeight: FontWeight.w600),
                       validator: folderValidator,
                       onSaved: (val) => folderName = val,
-                      decoration: getCustomInputDecoration2(label: "폴더 제목"),
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Color.fromRGBO(217, 217, 217, 0.19),
+                        errorMaxLines: 2,
+                        errorBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.red),
+                          borderRadius: BorderRadius.circular(25),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.grey, width: 1),
+                          borderRadius: BorderRadius.circular(25),
+                        ),
+                        border: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.grey, width: 1),
+                          borderRadius: BorderRadius.circular(25),
+                        ),
+                        hintStyle: TextStyle(
+                          fontFamily: "NotoSansKR",
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black,
+                        ),
+                        labelStyle: TextStyle(
+                          fontFamily: "NotoSansKR",
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.grey,
+                        ),
+                        labelText: "폴더 제목",
+                        hintText: "",
+                      ),
                     ),
                   ),
                   Container(
                     padding: EdgeInsets.all(8),
                     width: context.mediaQuery.size.width * 0.9,
                     child: TextFormField(
+                      style: TextStyle(fontSize: 12, fontFamily: "NotoSansKR", fontWeight: FontWeight.w600),
                       validator: folderValidator,
                       onSaved: (val) => folderContent = val,
                       maxLines: 10,
-                      decoration: getCustomInputDecoration2(label: "폴더 내용"),
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Color.fromRGBO(217, 217, 217, 0.19),
+                        errorMaxLines: 2,
+                        errorBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.red),
+                          borderRadius: BorderRadius.circular(25),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.grey, width: 1),
+                          borderRadius: BorderRadius.circular(25),
+                        ),
+                        border: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.grey, width: 1),
+                          borderRadius: BorderRadius.circular(25),
+                        ),
+                        hintStyle: TextStyle(
+                          fontFamily: "NotoSansKR",
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black,
+                        ),
+                        labelStyle: TextStyle(
+                          fontFamily: "NotoSansKR",
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.grey,
+                        ),
+                        labelText: "폴더 내용",
+                        hintText: "",
+                      ),
                     ),
                   ),
                   Container(
