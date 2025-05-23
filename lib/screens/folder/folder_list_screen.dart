@@ -30,7 +30,7 @@ class FolderListScreen extends StatelessWidget {
           child: Container(
             padding: EdgeInsets.all(4),
             decoration: BoxDecoration(color: Colors.grey.shade200, borderRadius: BorderRadius.circular(10)),
-            child: Text(
+            child: Obx(() => Text(
               "${profileViewModel.accountName.value}의 폴더 목록",
               overflow: TextOverflow.ellipsis,
               maxLines: 2,
@@ -40,7 +40,7 @@ class FolderListScreen extends StatelessWidget {
                 fontWeight: FontWeight.w600,
                 color: Colors.black,
               ),
-            ),
+            )),
           ),
         ),
         automaticallyImplyLeading: false,

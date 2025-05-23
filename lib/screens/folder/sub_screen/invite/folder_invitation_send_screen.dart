@@ -123,6 +123,7 @@ class FolderInvitationSendScreen extends StatelessWidget {
                 children: [
                   SizedBox(
                     width: context.mediaQuery.size.width * 0.7,
+                    height: context.mediaQuery.size.height * 0.06,
                     child: FloatingActionButton(
                       onPressed: () {
                         viewModel.sendInvitation();
@@ -132,7 +133,7 @@ class FolderInvitationSendScreen extends StatelessWidget {
                         "전송하기",
                         style: TextStyle(
                           fontFamily: "NotoSansKR",
-                          fontSize: 20,
+                          fontSize: 18,
                           fontWeight: FontWeight.w600,
                           color: Colors.white,
                         ),

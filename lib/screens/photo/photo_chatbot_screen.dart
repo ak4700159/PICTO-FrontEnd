@@ -45,12 +45,7 @@ class PhotoChatbotScreen extends StatelessWidget {
             child: _getButton(),
           ),
           // 하단 정보 오버레이
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: _getInfoWidget(photo),
-          ),
+          Positioned(bottom: 0, left: 0, right: 0, child: _getInfoWidget(photo, context)),
         ],
       ),
     );
@@ -86,8 +81,9 @@ class PhotoChatbotScreen extends StatelessWidget {
     );
   }
 
-  Widget _getInfoWidget(Photo photo) {
+  Widget _getInfoWidget(Photo photo, BuildContext context) {
     return Container(
+      width: context.mediaQuery.size.width,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -103,15 +99,18 @@ class PhotoChatbotScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           // 유저 아이콘 (placeholder)
-          CircleAvatar(
-            radius: 20,
-            backgroundColor: Colors.white,
-            // 아이콘 다른 사용자
-            child: Icon(Icons.person, color: Colors.grey[800]),
+          Expanded(
+            flex: 1,
+            child: CircleAvatar(
+              radius: 20,
+              backgroundColor: Colors.white,
+              // 아이콘 다른 사용자
+              child: Icon(Icons.person, color: Colors.grey[800]),
+            ),
           ),
-          const SizedBox(width: 12),
           // 텍스트 정보
           Expanded(
+            flex: 5,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
@@ -120,54 +119,72 @@ class PhotoChatbotScreen extends StatelessWidget {
                 //     style: TextStyle(color: Colors.white, fontSize: 14)),
                 Row(
                   children: [
-                    Icon(
-                      Icons.tag_sharp,
-                      color: Colors.white70,
-                      size: 15,
-                    ),
-                    Text(
-                      '  ${photo.tag}',
-                      style: TextStyle(
-                        overflow: TextOverflow.ellipsis,
+                    Expanded(
+                      flex: 1,
+                      child: Icon(
+                        Icons.tag_sharp,
                         color: Colors.white70,
-                        fontFamily: "NotoSansKR",
-                        fontSize: 12,
+                        size: 15,
+                      ),
+                    ),
+                    Expanded(
+                      flex: 5,
+                      child: Text(
+                        '  ${photo.tag}',
+                        style: TextStyle(
+                          overflow: TextOverflow.ellipsis,
+                          color: Colors.white70,
+                          fontFamily: "NotoSansKR",
+                          fontSize: 12,
+                        ),
                       ),
                     ),
                   ],
                 ),
                 Row(
                   children: [
-                    Icon(
-                      Icons.location_on,
-                      color: Colors.white70,
-                      size: 15,
-                    ),
-                    Text(
-                      '  ${photo.location}',
-                      style: TextStyle(
-                        overflow: TextOverflow.ellipsis,
+                    Expanded(
+                      flex: 1,
+                      child: Icon(
+                        Icons.location_on,
                         color: Colors.white70,
-                        fontFamily: "NotoSansKR",
-                        fontSize: 12,
+                        size: 15,
+                      ),
+                    ),
+                    Expanded(
+                      flex: 5,
+                      child: Text(
+                        '  ${photo.location.split(' ').take(3).join(' ')}',
+                        style: TextStyle(
+                          overflow: TextOverflow.visible,
+                          color: Colors.white70,
+                          fontFamily: "NotoSansKR",
+                          fontSize: 12,
+                        ),
                       ),
                     ),
                   ],
                 ),
                 Row(
                   children: [
-                    Icon(
-                      Icons.date_range,
-                      color: Colors.white70,
-                      size: 15,
-                    ),
-                    Text(
-                      '  ${formatDate(photo.updateDatetime ?? 0)}',
-                      style: TextStyle(
-                        overflow: TextOverflow.ellipsis,
+                    Expanded(
+                      flex: 1,
+                      child: Icon(
+                        Icons.date_range,
                         color: Colors.white70,
-                        fontFamily: "NotoSansKR",
-                        fontSize: 12,
+                        size: 15,
+                      ),
+                    ),
+                    Expanded(
+                      flex: 5,
+                      child: Text(
+                        '  ${formatDateKorean(photo.updateDatetime ?? 0)}',
+                        style: TextStyle(
+                          overflow: TextOverflow.ellipsis,
+                          color: Colors.white70,
+                          fontFamily: "NotoSansKR",
+                          fontSize: 12,
+                        ),
                       ),
                     ),
                   ],
@@ -176,13 +193,16 @@ class PhotoChatbotScreen extends StatelessWidget {
             ),
           ),
           // 좋아요 하트
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(Icons.favorite, color: AppConfig.mainColor),
-              const SizedBox(height: 4),
-              Text('${photo.likes}', style: TextStyle(color: Colors.white)),
-            ],
+          Expanded(
+            flex: 1,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.favorite, color: AppConfig.mainColor),
+                const SizedBox(height: 4),
+                Text('${photo.likes}', style: TextStyle(color: Colors.white)),
+              ],
+            ),
           ),
         ],
       ),

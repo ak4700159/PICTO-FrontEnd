@@ -9,6 +9,7 @@ class ChatbotBubble extends StatelessWidget {
   final ChatbotMsg msg;
   final ChatbotMsg? preMsg;
   final chatbotViewModel = Get.find<ChatbotViewModel>();
+  final promptBetweenHeight = 35.0;
 
   ChatbotBubble({super.key, required this.msg, required this.preMsg});
 
@@ -22,7 +23,7 @@ class ChatbotBubble extends StatelessWidget {
       ChatbotStatus.sending => _getSendingWidget(context),
       ChatbotStatus.isMe => _getIsMeWidget(context),
       ChatbotStatus.analysis => _getAnalysisWidget(context),
-      ChatbotStatus.intro => _getIntroWidget(context),
+      ChatbotStatus.intro => _getIntroWidget(context, msg.content),
       ChatbotStatus.compare => _getCompareWidget(context),
       ChatbotStatus.recommend => _getRecommendWidget(context)
     };
@@ -51,20 +52,6 @@ class ChatbotBubble extends StatelessWidget {
                   ),
                 ],
               ),
-              // AnimatedTextKit(
-              //   repeatForever: true,
-              //   animatedTexts: [
-              //     FadeAnimatedText(
-              //       "1분에서 2분 정도 소요됩니다.",
-              //       textStyle: TextStyle(
-              //         fontSize: 12,
-              //         color: Colors.grey,
-              //         fontFamily: "NotoSansKR",
-              //         fontWeight: FontWeight.w300,
-              //       ),
-              //     ),
-              //   ],
-              // ),
             ],
           ),
         ),
@@ -94,7 +81,6 @@ class ChatbotBubble extends StatelessWidget {
                               borderRadius: BorderRadius.circular(16),
                               child: GestureDetector(
                                 onTap: () {
-                                  // 이게 문제 ... ?
                                   if (image.photoId != null) {
                                     chatbotViewModel.selectOtherPhoto(image.photoId!, image.data);
                                   }
@@ -153,11 +139,10 @@ class ChatbotBubble extends StatelessWidget {
   // 분석 프롬프트
   Widget _getAnalysisWidget(BuildContext context) {
     if (!msg.content.contains("=== 촬영 가이드라인 ===")) {
-      return Text("PROMPT ERROR...");
+      return _getIntroWidget(context, "프롬프트를 다시 작성해주세요");
     }
     String analysisMsg = msg.content.substring(0, msg.content.indexOf("=== 촬영 가이드라인 ===") - 2);
-    String guideMsg = msg.content
-        .substring(msg.content.indexOf("=== 촬영 가이드라인 ===") + "=== 촬영 가이드라인 ===".length + 1);
+    String guideMsg = msg.content.substring(msg.content.indexOf("=== 촬영 가이드라인 ===") + "=== 촬영 가이드라인 ===".length + 1);
     // 줄 단위로 나누고 상위 4줄 제거
     List<String> lines = guideMsg.split('\n');
     if (lines.length > 4) {
@@ -278,6 +263,7 @@ class ChatbotBubble extends StatelessWidget {
                   ),
                 ),
               ),
+              SizedBox(height: promptBetweenHeight),
             ],
           ),
         ),
@@ -286,7 +272,7 @@ class ChatbotBubble extends StatelessWidget {
   }
 
   // 기본 프롬프트
-  Widget _getIntroWidget(BuildContext context) {
+  Widget _getIntroWidget(BuildContext context, String prompt) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.start,
@@ -361,6 +347,7 @@ class ChatbotBubble extends StatelessWidget {
                   maxLines: 99,
                 ),
               ),
+              SizedBox(height: promptBetweenHeight),
             ],
           ),
         ),
@@ -372,9 +359,8 @@ class ChatbotBubble extends StatelessWidget {
   Widget _getCompareWidget(BuildContext context) {
     List<String> blocks = msg.content.split('\n\n');
     if (blocks.length < 3) {
-      return Text("ERROR PROMPT");
+      return _getIntroWidget(context, "프롬프트를 다시 작성해주세요");
     }
-    String result = _trimBlock(blocks[3]);
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.start,
@@ -401,16 +387,16 @@ class ChatbotBubble extends StatelessWidget {
                 margin: const EdgeInsets.symmetric(vertical: 2),
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: msg.isMe ? Colors.grey : AppConfig.mainColor,
+                  color: AppConfig.mainColor,
                   borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(5),
+                    topLeft: Radius.circular(30),
                     topRight: Radius.circular(30),
                     bottomLeft: Radius.circular(30),
                     bottomRight: Radius.circular(30),
                   ),
                 ),
                 child: Text(
-                  result,
+                  _trimBlock(blocks[2]),
                   style: TextStyle(
                     wordSpacing: 2,
                     letterSpacing: 0.5,
@@ -423,6 +409,7 @@ class ChatbotBubble extends StatelessWidget {
                   maxLines: 99,
                 ),
               ),
+              SizedBox(height: promptBetweenHeight),
             ],
           ),
         ),
@@ -473,6 +460,8 @@ class ChatbotBubble extends StatelessWidget {
                           ),
                         ),
                       ),
+                      SizedBox(height: promptBetweenHeight),
+
                     ],
                   ),
                 ))
@@ -496,8 +485,7 @@ class ChatbotBubble extends StatelessWidget {
         children: [
           Container(
             padding: const EdgeInsets.all(4.0),
-            decoration: BoxDecoration(
-                color: Colors.grey.shade100, borderRadius: BorderRadius.circular(100)),
+            decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(100)),
             child: Image.asset(
               'assets/images/pictory_color.png',
               scale: 5,
@@ -519,8 +507,8 @@ class ChatbotBubble extends StatelessWidget {
 
   List<Widget> _getCompareWidgetList(BuildContext context) {
     List<String> blocks = msg.content.split('\n\n');
-    String firstImage = _trimBlock(blocks[1]);
-    String secondImage = _trimBlock(blocks[2]);
+    String firstImage = _trimBlock(blocks[0]);
+    String secondImage = _trimBlock(blocks[1]);
     List<Widget> resultWidgets = preMsg!.images
         .map(
           (image) => Padding(
@@ -533,7 +521,13 @@ class ChatbotBubble extends StatelessWidget {
                     onTap: () {
                       chatbotViewModel.selectMyPhoto(image.data);
                     },
-                    child: SizedBox(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        boxShadow: [
+                          // BoxShadow(offset: Offset(3, 3), color: Colors.grey, blurRadius: 20, spreadRadius: 20),
+                        ],
+                      ),
                       width: context.mediaQuery.size.width * 0.6,
                       height: context.mediaQuery.size.width * 0.6,
                       child: Image.memory(
@@ -588,7 +582,8 @@ class ChatbotBubble extends StatelessWidget {
               ],
             ),
           ),
-        ).toList();
+        )
+        .toList();
     resultWidgets.insert(
         1,
         Padding(
@@ -596,7 +591,9 @@ class ChatbotBubble extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SizedBox(height: context.mediaQuery.size.width * 0.25,),
+              SizedBox(
+                height: context.mediaQuery.size.width * 0.25,
+              ),
               Text(
                 "   V  S  ",
                 style: TextStyle(

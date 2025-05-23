@@ -6,10 +6,8 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:picto_frontend/config/app_config.dart';
 import 'package:picto_frontend/screens/folder/folder_view_model.dart';
-import 'package:picto_frontend/screens/profile/calendar/calendar_view_model.dart';
 import 'package:picto_frontend/services/photo_store_service/photo_store_api.dart';
 import 'package:picto_frontend/services/user_manager_service/user_api.dart';
-import 'package:picto_frontend/utils/popup.dart';
 
 import '../../models/photo.dart';
 import '../../utils/functions.dart';
@@ -22,7 +20,6 @@ class PhotoMarkerScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Photo photo = Get.arguments["photo"];
-    Uint8List data = Get.arguments["data"];
     BoxFit fit = Get.arguments["fit"];
 
     return Scaffold(
@@ -91,7 +88,11 @@ class PhotoMarkerScreen extends StatelessWidget {
                           Icon(Icons.folder_delete),
                           const Text(
                             " 사진 삭제",
-                            style: TextStyle(fontWeight: FontWeight.w600, fontFamily: "NotoSansKR", fontSize: 12,),
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontFamily: "NotoSansKR",
+                              fontSize: 12,
+                            ),
                           ),
                         ],
                       ),
@@ -106,7 +107,11 @@ class PhotoMarkerScreen extends StatelessWidget {
                           Icon(Icons.drive_file_move),
                           Text(
                             " 사진 이동",
-                            style: TextStyle(fontWeight: FontWeight.w600, fontFamily: "NotoSansKR", fontSize: 12,),
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontFamily: "NotoSansKR",
+                              fontSize: 12,
+                            ),
                           ),
                         ],
                       ),
@@ -126,15 +131,16 @@ class PhotoMarkerScreen extends StatelessWidget {
             bottom: 0,
             left: 0,
             right: 0,
-            child: _getInfoWidget(photo),
+            child: _getInfoWidget(photo, context),
           ),
         ],
       ),
     );
   }
 
-  Widget _getInfoWidget(Photo photo) {
+  Widget _getInfoWidget(Photo photo, BuildContext context) {
     return Container(
+      width: context.mediaQuery.size.width,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -150,15 +156,18 @@ class PhotoMarkerScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           // 유저 아이콘 (placeholder)
-          CircleAvatar(
-            radius: 20,
-            backgroundColor: Colors.white,
-            // 아이콘 다른 사용자
-            child: Icon(Icons.person, color: Colors.grey[800]),
+          Expanded(
+            flex: 1,
+            child: CircleAvatar(
+              radius: 20,
+              backgroundColor: Colors.white,
+              // 아이콘 다른 사용자
+              child: Icon(Icons.person, color: Colors.grey[800]),
+            ),
           ),
-          const SizedBox(width: 12),
           // 텍스트 정보
           Expanded(
+            flex: 5,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
@@ -167,52 +176,74 @@ class PhotoMarkerScreen extends StatelessWidget {
                 //     style: TextStyle(color: Colors.white, fontSize: 14)),
                 Row(
                   children: [
-                    Icon(
-                      Icons.tag_sharp,
-                      color: Colors.white70,
-                      size: 15,
-                    ),
-                    Text(
-                      '  ${photo.tag}',
-                      style: TextStyle(
+                    Expanded(
+                      flex: 1,
+                      child: Icon(
+                        Icons.tag_sharp,
                         color: Colors.white70,
-                        fontFamily: "NotoSansKR",
-                        fontSize: 12,
+                        size: 15,
+                      ),
+                    ),
+                    Expanded(
+                      flex: 5,
+                      child: Text(
+                        '  ${photo.tag}',
+                        style: TextStyle(
+                          overflow: TextOverflow.ellipsis,
+                          color: Colors.white70,
+                          fontFamily: "NotoSansKR",
+                          fontSize: 12,
+                        ),
                       ),
                     ),
                   ],
                 ),
                 Row(
                   children: [
-                    Icon(
-                      Icons.location_on,
-                      color: Colors.white70,
-                      size: 15,
-                    ),
-                    Text(
-                      '  ${photo.location}',
-                      style: TextStyle(
-                        overflow: TextOverflow.ellipsis,
+                    Expanded(
+                      flex: 1,
+                      child: Icon(
+                        Icons.location_on,
                         color: Colors.white70,
-                        fontFamily: "NotoSansKR",
-                        fontSize: 12,
+                        size: 15,
+                      ),
+                    ),
+                    Expanded(
+                      flex: 5,
+                      child: Text(
+                        photo.userId == UserManagerApi().ownerId
+                            ? '  ${photo.location}'
+                            : '  ${photo.location.split(' ').take(3).join(' ')}',
+                        style: TextStyle(
+                          overflow: TextOverflow.visible,
+                          color: Colors.white70,
+                          fontFamily: "NotoSansKR",
+                          fontSize: 12,
+                        ),
                       ),
                     ),
                   ],
                 ),
                 Row(
                   children: [
-                    Icon(
-                      Icons.date_range,
-                      color: Colors.white70,
-                      size: 15,
-                    ),
-                    Text(
-                      '  ${formatDateKorean(photo.updateDatetime ?? 0)}',
-                      style: TextStyle(
-                        fontFamily: "NotoSansKR",
+                    Expanded(
+                      flex: 1,
+                      child: Icon(
+                        Icons.date_range,
                         color: Colors.white70,
-                        fontSize: 12,
+                        size: 15,
+                      ),
+                    ),
+                    Expanded(
+                      flex: 5,
+                      child: Text(
+                        '  ${formatDateKorean(photo.updateDatetime ?? 0)}',
+                        style: TextStyle(
+                          overflow: TextOverflow.ellipsis,
+                          color: Colors.white70,
+                          fontFamily: "NotoSansKR",
+                          fontSize: 12,
+                        ),
                       ),
                     ),
                   ],
@@ -221,13 +252,16 @@ class PhotoMarkerScreen extends StatelessWidget {
             ),
           ),
           // 좋아요 하트
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(Icons.favorite, color: AppConfig.mainColor),
-              const SizedBox(height: 4),
-              Text('${photo.likes}', style: TextStyle(color: Colors.white)),
-            ],
+          Expanded(
+            flex: 1,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.favorite, color: AppConfig.mainColor),
+                const SizedBox(height: 4),
+                Text('${photo.likes}', style: TextStyle(color: Colors.white)),
+              ],
+            ),
           ),
         ],
       ),
