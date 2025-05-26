@@ -56,19 +56,65 @@ class PhotoManagerApi {
     return <Photo>[];
   }
 
+  // 사진 조회
   Future<Photo?> getPhoto({required int photoId}) async {
     String hostUrl = "$baseUrl/photos";
     try {
-      final response = await dio.get(hostUrl, data: {
-        "senderId": UserManagerApi().ownerId,
-        "eventType": "photo",
-        "eventTypeId": photoId
-      });
+      final response = await dio
+          .get(hostUrl, data: {"senderId": UserManagerApi().ownerId, "eventType": "photo", "eventTypeId": photoId});
       List<dynamic> photo = response.data;
       return Photo.fromJson(photo[0]);
     } catch (e) {
       showErrorPopup(e.toString());
     }
     return null;
+  }
+
+  // 좋아요 누른 사진 전체 조회
+  Future<List<Photo>> getLikePhotos() async {
+    List<Photo> photos = [];
+    try {
+      final response = await dio.get("$baseUrl/photos/likes", queryParameters: {"userId": UserManagerApi().ownerId});
+      List<dynamic> data = response.data;
+      for (int photoId in data) {
+        Photo? photo = await getPhoto(photoId: photoId);
+        if (photo != null) {
+          photos.add(photo);
+        }
+      }
+    } catch (e) {
+      showErrorPopup(e.toString());
+      return [];
+    }
+    return photos;
+  }
+
+  // 좋아요
+  Future<bool> clickLike({required int photoId}) async {
+    try {
+      final result = await dio.post("$baseUrl/photos/like", data: {
+        "userId": UserManagerApi().ownerId,
+        "photoId": photoId,
+      });
+      return true;
+    } catch (e) {
+      showErrorPopup(e.toString());
+    }
+    return false;
+  }
+
+// 특정 사진 좋아요 여부 확인
+  Future<bool> checkPhotoLike({required int photoId}) async {
+    try {
+      final result = await dio.get("$baseUrl/photos/like", data: {
+        "userId": UserManagerApi().ownerId,
+        "photoId": photoId,
+      });
+      print("[INFO] photo is clicked : ${result.data}");
+      return result.data;
+    } catch (e) {
+      showErrorPopup(e.toString());
+    }
+    return false;
   }
 }

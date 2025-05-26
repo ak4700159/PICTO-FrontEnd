@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:picto_frontend/config/app_config.dart';
 import 'package:picto_frontend/screens/folder/folder_list_screen.dart';
@@ -7,6 +8,7 @@ import 'package:picto_frontend/screens/folder/folder_view_model.dart';
 import 'package:picto_frontend/screens/main_frame_view_model.dart';
 import 'package:picto_frontend/screens/profile/calendar/calendar_view_model.dart';
 import 'package:picto_frontend/screens/profile/profile_screen.dart';
+import 'package:picto_frontend/utils/popup.dart';
 import '../icon/picto_icons.dart';
 import '../test_screens/test_screen.dart';
 import 'bot/chatbot_rooms_screen.dart';
@@ -15,34 +17,56 @@ import 'comfyui/comfyui_view_model.dart';
 import 'map/google_map/google_map.dart';
 
 enum MapStatus { googleMap, folder, comfyUI, chatbot, setting }
+
 class MapScreen extends StatelessWidget {
   MapScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     final mapViewModel = Get.find<MapViewModel>();
-    return Scaffold(
-      extendBody: true,
-      resizeToAvoidBottomInset: false,
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: Obx(() => FloatingActionButton(
-            heroTag: "map",
-            backgroundColor: 2 == mapViewModel.navigationBarCurrentIndex.value ? AppConfig.mainColor : Colors.grey,
-            shape: CircleBorder(),
-            onPressed: () {
-              mapViewModel.changeNavigationBarIndex(2);
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        showSelectionDialog(
+            context: context,
+            positiveEvent: () {
+              SystemNavigator.pop();
             },
-            child: Icon(
-              Icons.location_on,
-              color: Colors.white,
-            ),
-          )),
-      bottomNavigationBar: _getBottomNavigationBar(context),
-      backgroundColor: Colors.transparent,
-      body: SafeArea(
-        top: false,
-        bottom: false,
-        child: Obx(() => _getMainFrame(context)),
+            negativeEvent: () {
+              Get.back();
+            },
+            positiveMsg: "네",
+            negativeMsg: "아니요",
+            content: "나가시겠습니까?");
+      },
+      child: Scaffold(
+        extendBody: true,
+        resizeToAvoidBottomInset: false,
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        floatingActionButton: Obx(() => SizedBox(
+              height: context.mediaQuery.size.width * 0.18,
+              width: context.mediaQuery.size.width * 0.18,
+              child: FloatingActionButton(
+                heroTag: "map",
+                backgroundColor: 2 == mapViewModel.navigationBarCurrentIndex.value ? AppConfig.mainColor : Colors.grey,
+                shape: CircleBorder(),
+                onPressed: () {
+                  mapViewModel.changeNavigationBarIndex(2);
+                },
+                child: Icon(
+                  Icons.location_on,
+                  color: Colors.white,
+                  size: 30,
+                ),
+              ),
+            )),
+        bottomNavigationBar: _getBottomNavigationBar(context),
+        backgroundColor: Colors.transparent,
+        body: SafeArea(
+          top: false,
+          bottom: false,
+          child: Obx(() => _getMainFrame(context)),
+        ),
       ),
     );
   }
@@ -54,9 +78,9 @@ class MapScreen extends StatelessWidget {
     final comfyuiViewModel = Get.find<ComfyuiViewModel>();
     final calendarViewModel = Get.find<CalendarViewModel>();
     final folderViewModel = Get.find<FolderViewModel>();
-    if(mapViewModel.navigationBarCurrentIndex.value == 4) {
+    if (mapViewModel.navigationBarCurrentIndex.value == 4) {
       // calendarViewModel.buildCalendarEventMap(folderViewModel.convertCalendarEvent());
-    } else if(mapViewModel.navigationBarCurrentIndex.value != 1) {
+    } else if (mapViewModel.navigationBarCurrentIndex.value != 1) {
       comfyuiViewModel.reset();
     }
     return switch (mapViewModel.navigationBarCurrentIndex.value) {
@@ -177,4 +201,3 @@ class MapScreen extends StatelessWidget {
     );
   }
 }
-

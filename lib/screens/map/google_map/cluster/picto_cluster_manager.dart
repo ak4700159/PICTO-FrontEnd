@@ -9,6 +9,8 @@ import 'package:picto_frontend/screens/map/google_map/cluster/picto_cluster_item
 import 'package:picto_frontend/screens/map/google_map/google_map_view_model.dart';
 import 'package:picto_frontend/services/photo_store_service/photo_store_api.dart';
 import '../../../../config/app_config.dart';
+import '../../../../models/user.dart';
+import '../../../../services/user_manager_service/user_api.dart';
 import '../../../../utils/functions.dart';
 import '../marker/picto_marker.dart';
 
@@ -94,9 +96,11 @@ class PictoClusterManager {
                 backgroundColor: AppConfig.mainColor,
                 onPressed: () async {
                   BoxFit fit = await determineFit(marker.imageData!);
+                  User? user = await UserManagerApi().getUserByUserId(userId: (marker.photo.userId!));
                   Get.toNamed("/photo", arguments: {
                     "photo": marker.photo,
                     "data": marker.imageData,
+                    "user" : user!,
                     "fit": fit,
                   });
                 },

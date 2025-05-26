@@ -116,10 +116,7 @@ class RegisterScreen extends StatelessWidget {
                               decoration: getCustomInputDecoration(
                                 label: "이메일",
                                 hintText: "your@eamil.com",
-                                borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(25),
-                                  bottomLeft: Radius.circular(25),
-                                ),
+                                borderRadius: BorderRadius.circular(20),
                               ),
                               validator: emailValidator,
                               onChanged: (value) => _registerController.email.value = value,
@@ -132,12 +129,10 @@ class RegisterScreen extends StatelessWidget {
                     Expanded(
                       flex: 3,
                       child: Container(
+                        margin: EdgeInsets.only(left: 8),
                         height: height * 0.06,
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.only(
-                            topRight: Radius.circular(25),
-                            bottomRight: Radius.circular(25),
-                          ),
+                          borderRadius: BorderRadius.circular(20),
                           color: AppConfig.mainColor,
                         ),
                         child: TextButton(

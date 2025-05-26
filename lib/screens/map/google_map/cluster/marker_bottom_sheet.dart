@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:picto_frontend/services/user_manager_service/user_api.dart';
 
+import '../../../../models/user.dart';
 import '../../../../services/photo_store_service/photo_store_api.dart';
 import '../../../../utils/functions.dart';
 import '../marker/animated_marker_widget.dart';
@@ -124,9 +126,11 @@ class _MarkerListBottomSheetState extends State<MarkerListBottomSheet> {
             child: GestureDetector(
               onTap: () async {
                 BoxFit fit = await determineFit(marker.imageData!);
+                User? user = await UserManagerApi().getUserByUserId(userId: (marker.photo.userId!));
                 Get.toNamed("/photo", arguments: {
                   "photo": marker.photo,
                   "data": marker.imageData,
+                  "user" : user!,
                   "fit": fit,
                 });
               },

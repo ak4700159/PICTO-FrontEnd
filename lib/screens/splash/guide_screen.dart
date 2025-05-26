@@ -39,7 +39,7 @@ class GuideScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 SizedBox(
-                  height: context.mediaQuery.size.height * 0.24,
+                  height: context.mediaQuery.size.height * 0.225,
                 ),
                 sliderIndicator(),
               ],

@@ -88,18 +88,19 @@ class ProfileScreen extends StatelessWidget {
                                   fontFamily: "NotoSansKR",
                                 ),
                               ),
+                              Text(
+                                profileViewModel.intro.value,
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.grey,
+                                  fontFamily: "NotoSansKR",
+                                ),
+                              ),
                             ],
                           ),
                         ),
-                        Text(
-                          profileViewModel.intro.value,
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.grey,
-                            fontFamily: "NotoSansKR",
-                          ),
-                        ),
+
                       ],
                     ))
               ],

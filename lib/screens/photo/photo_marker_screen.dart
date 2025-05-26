@@ -8,20 +8,24 @@ import 'package:picto_frontend/config/app_config.dart';
 import 'package:picto_frontend/screens/folder/folder_view_model.dart';
 import 'package:picto_frontend/services/photo_store_service/photo_store_api.dart';
 import 'package:picto_frontend/services/user_manager_service/user_api.dart';
+import 'package:picto_frontend/utils/get_widget.dart';
 
 import '../../models/photo.dart';
+import '../../models/user.dart';
 import '../../utils/functions.dart';
+import '../../widgets/like_button.dart';
 
 // 1. 마커 클러스터 화면에서 선택
 // 2. 폴더 사진에서 선택
 class PhotoMarkerScreen extends StatelessWidget {
-  const PhotoMarkerScreen({super.key});
+  PhotoMarkerScreen({super.key});
+
+  final Photo photo = Get.arguments["photo"];
+  final BoxFit fit = Get.arguments["fit"];
+  final User user = Get.arguments["user"];
 
   @override
   Widget build(BuildContext context) {
-    Photo photo = Get.arguments["photo"];
-    BoxFit fit = Get.arguments["fit"];
-
     return Scaffold(
       backgroundColor: Colors.black,
       body: Stack(
@@ -78,14 +82,17 @@ class PhotoMarkerScreen extends StatelessWidget {
                           folderViewModel.currentFolder.value!.markers
                               .removeWhere((m) => m.photo.photoId == photo.photoId);
                           folderViewModel.currentMarkers.removeWhere((m) => m.photo.photoId == photo.photoId);
-                          await folderViewModel.resetFolder(init : false);
+                          await folderViewModel.resetFolder(init: false);
                           // await calendarViewModel.buildCalendarEventMap(await folderViewModel.convertCalendarEvent());
                           Get.back();
                         }
                       },
                       child: Row(
                         children: [
-                          Icon(Icons.folder_delete, color: AppConfig.mainColor,),
+                          Icon(
+                            Icons.folder_delete,
+                            color: AppConfig.mainColor,
+                          ),
                           const Text(
                             " 사진 삭제",
                             style: TextStyle(
@@ -104,7 +111,10 @@ class PhotoMarkerScreen extends StatelessWidget {
                       }),
                       child: Row(
                         children: [
-                          Icon(Icons.drive_file_move, color: AppConfig.mainColor,),
+                          Icon(
+                            Icons.drive_file_move,
+                            color: AppConfig.mainColor,
+                          ),
                           Text(
                             " 사진 이동",
                             style: TextStyle(
@@ -123,7 +133,7 @@ class PhotoMarkerScreen extends StatelessWidget {
                 top: 30,
                 right: 20,
                 child: Icon(
-                  Icons.devices_other,
+                  Icons.adb,
                   size: 30,
                 )),
           // 하단 정보 오버레이
@@ -158,12 +168,13 @@ class PhotoMarkerScreen extends StatelessWidget {
           // 유저 아이콘 (placeholder)
           Expanded(
             flex: 1,
-            child: CircleAvatar(
-              radius: 20,
-              backgroundColor: Colors.white,
-              // 아이콘 다른 사용자
-              child: Icon(Icons.person, color: Colors.grey[800]),
-            ),
+            child: getUserProfile(user: user, context: context, size: 0.1, scale: 0.06),
+            // child: CircleAvatar(
+            //   radius: 20,
+            //   backgroundColor: Colors.white,
+            //   // 아이콘 다른 사용자
+            //   child: Icon(Icons.person, color: Colors.grey[800]),
+            // ),
           ),
           // 텍스트 정보
           Expanded(
@@ -257,9 +268,10 @@ class PhotoMarkerScreen extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.favorite, color: AppConfig.mainColor),
-                const SizedBox(height: 4),
-                Text('${photo.likes}', style: TextStyle(color: Colors.white)),
+                LikeButton(
+                  photoId: photo.photoId,
+                  likes: photo.likes,
+                )
               ],
             ),
           ),

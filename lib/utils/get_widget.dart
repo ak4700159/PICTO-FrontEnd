@@ -129,6 +129,7 @@ Widget getUserProfile({required User user, required BuildContext context, requir
                 height: context.mediaQuery.size.width * size / 2,
                 width: context.mediaQuery.size.width * size / 2,
                 child: CircularProgressIndicator(
+                  strokeWidth: 2,
                   color: Colors.grey,
                 )),
           ),
@@ -136,9 +137,15 @@ Widget getUserProfile({required User user, required BuildContext context, requir
       }
 
       if (snapshot.hasError) {
-        return Image.asset(
-          "/assets/images/picto_logo.png",
-          fit: BoxFit.cover,
+        return SizedBox(
+          height: context.mediaQuery.size.width * size,
+          width: context.mediaQuery.size.width * size,
+          child: CircleAvatar(
+            radius: 20,
+            backgroundColor: Colors.white,
+            // 아이콘 다른 사용자
+            child: Icon(Icons.person, color: Colors.grey[800]),
+          ),
         );
       }
 

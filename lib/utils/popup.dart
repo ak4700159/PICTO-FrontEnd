@@ -106,4 +106,105 @@ Future<void> showBlockingLoading(Duration duration) async {
   Get.back();
 }
 
-void exitPopup(String msg) {}
+Future<void> showSelectionDialog(
+    {required BuildContext context,
+    required Function positiveEvent,
+    required Function negativeEvent,
+    required String positiveMsg,
+    required String negativeMsg,
+    required String content}) async {
+  double width = context.mediaQuery.size.width;
+  double height = context.mediaQuery.size.height;
+  Get.dialog(
+    Dialog(
+      insetPadding: EdgeInsets.all(0),
+      child: Container(
+        width: width * 0.9,
+        height: height * 0.18,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          color: Colors.white,
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(4.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                content,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.black,
+                  fontFamily: "NotoSansKR",
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              SizedBox(
+                height: height * 0.02,
+              ),
+              SizedBox(
+                width: width * 0.7,
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(4.0),
+                        child: TextButton(
+                          style: TextButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              side: BorderSide(color: Colors.black, width: 1),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            backgroundColor: AppConfig.mainColor,
+                          ),
+                          child: Text(
+                            positiveMsg,
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.white,
+                              fontFamily: "NotoSansKR",
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                          onPressed: () async {
+                            positiveEvent();
+                          },
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(4.0),
+                        child: TextButton(
+                          style: TextButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              side: BorderSide(color: Colors.black, width: 1),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            backgroundColor: Colors.white,
+                          ),
+                          child: Text(
+                            negativeMsg,
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.black,
+                              fontFamily: "NotoSansKR",
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                          onPressed: () {
+                            negativeEvent();
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    ),
+  );
+}

@@ -5,6 +5,8 @@ import 'package:picto_frontend/models/folder.dart';
 import 'package:picto_frontend/screens/folder/folder_view_model.dart';
 import 'package:picto_frontend/screens/map/google_map/marker/picto_marker.dart';
 import '../../../../config/app_config.dart';
+import '../../../../models/user.dart';
+import '../../../../services/user_manager_service/user_api.dart';
 import '../../../../utils/functions.dart';
 
 class FolderPhotoScreen extends StatelessWidget {
@@ -97,10 +99,12 @@ class FolderPhotoScreen extends StatelessWidget {
           scale: value,
           child: GestureDetector(
             onTap: () async {
+              User? user = await UserManagerApi().getUserByUserId(userId: (marker.photo.userId!));
               BoxFit fit = await determineFit(marker.imageData!);
               Get.toNamed(
                 "/photo",
                 arguments: {
+                  "user" : user!,
                   "photo": marker.photo,
                   "data": marker.imageData,
                   "fit": fit,
