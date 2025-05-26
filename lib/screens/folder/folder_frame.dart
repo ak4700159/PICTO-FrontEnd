@@ -55,7 +55,9 @@ class FolderFrame extends StatelessWidget {
                 PopupMenuItem(
                   value: "delete",
                   padding: EdgeInsets.all(4),
-                  onTap: _showFolderDeleteCheck,
+                  onTap: () {
+                    _showFolderDeleteCheck(context);
+                  },
                   child: Row(
                     children: [
                       Icon(
@@ -77,7 +79,8 @@ class FolderFrame extends StatelessWidget {
                 PopupMenuItem(
                   value: "send",
                   padding: EdgeInsets.all(4),
-                  onTap: () => Get.toNamed('/folder/invite/send', arguments: {"folderId": folderId}),
+                  onTap: () =>
+                      Get.toNamed('/folder/invite/send', arguments: {"folderId": folderId}),
                   child: Row(
                     children: [
                       Icon(
@@ -99,7 +102,8 @@ class FolderFrame extends StatelessWidget {
                 PopupMenuItem(
                   value: "info",
                   padding: EdgeInsets.all(4),
-                  onTap: () => Get.toNamed('/folder/info', arguments: {"folder": folderViewModel.currentFolder.value}),
+                  onTap: () => Get.toNamed('/folder/info',
+                      arguments: {"folder": folderViewModel.currentFolder.value}),
                   child: Row(
                     children: [
                       Icon(
@@ -135,7 +139,8 @@ class FolderFrame extends StatelessWidget {
               fontSize: 16,
               fontWeight: FontWeight.w600,
               color: Colors.black,
-            ),            tabs: [
+            ),
+            tabs: [
               Tab(text: "저장된 사진"),
               Tab(text: "채팅"),
             ],
@@ -153,82 +158,116 @@ class FolderFrame extends StatelessWidget {
   }
 
   // 폴더 삭제 팝업
-  _showFolderDeleteCheck() {
+  _showFolderDeleteCheck(BuildContext context) {
     final int folderId = Get.arguments["folderId"];
+    final folderViewModel = Get.find<FolderViewModel>();
+    double width = context.mediaQuery.size.width;
+    double height = context.mediaQuery.size.height;
     Get.dialog(
-      AlertDialog(
-        backgroundColor: Colors.white,
-        title: Row(
-          children: [
-            Icon(
-              Icons.delete,
-              size: 30,
-              color: Colors.red,
+      Dialog(
+        insetPadding: EdgeInsets.all(0),
+        child: Container(
+          width: width * 0.9,
+          height: height * 0.18,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            color: Colors.white,
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  "폴더를 삭제하시겠습니까?",
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.black,
+                    fontFamily: "NotoSansKR",
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                SizedBox(
+                  height: height * 0.02,
+                ),
+                SizedBox(
+                  width: width * 0.7,
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: TextButton(
+                            style: TextButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                side: BorderSide(color: Colors.black, width: 1),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              backgroundColor: AppConfig.mainColor,
+                            ),
+                            child: const Text(
+                              "네",
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.white,
+                                fontFamily: "NotoSansKR",
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                            onPressed: () async {
+                              if (folderViewModel.getFolder(folderId: folderId)!.name ==
+                                  "default") {
+                                Get.back();
+                                showErrorPopup("기본 폴더는 삭제할 수 없습니다.");
+                                return;
+                              }
+                              bool isSuccess =
+                                  await FolderManagerApi().removeFolder(folderId: folderId);
+                              Get.back();
+                              Get.back();
+                              if (isSuccess) {
+                                Get.find<FolderViewModel>().resetFolder(init: false);
+                                showPositivePopup("폴더가 삭제되었습니다");
+                              } else {
+                                showErrorPopup("서버 오류 발생(삭제 실패)");
+                              }
+                            },
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: TextButton(
+                            style: TextButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                side: BorderSide(color: Colors.black, width: 1),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              backgroundColor: Colors.white,
+                            ),
+                            child: const Text(
+                              "아니요",
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.black,
+                                fontFamily: "NotoSansKR",
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                            onPressed: () {
+                              Get.back();
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
-            Text(
-              "폴더 삭제",
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.black,
-                fontFamily: "NotoSansKR",
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
-        ),
-        content: Text(
-          "폴더를 삭제하시겠습니까?",
-          style: TextStyle(
-            fontSize: 13,
-            color: Colors.black,
-            fontFamily: "NotoSansKR",
-            fontWeight: FontWeight.w600,
           ),
         ),
-        actions: [
-          TextButton(
-            onPressed: () async {
-              final folderViewModel = Get.find<FolderViewModel>();
-              if (folderViewModel.getFolder(folderId: folderId)!.name == "default") {
-                Get.back();
-                showErrorPopup("기본 폴더는 삭제할 수 없습니다.");
-                return;
-              }
-              bool isSuccess = await FolderManagerApi().removeFolder(folderId: folderId);
-              Get.back();
-              Get.back();
-              if (isSuccess) {
-                Get.find<FolderViewModel>().resetFolder();
-                showPositivePopup("폴더가 삭제되었습니다");
-              } else {
-                showErrorPopup("서버 오류 발생(삭제 실패)");
-              }
-            },
-            child: Text(
-              "네",
-              style: TextStyle(
-                fontSize: 12,
-                color: Colors.black,
-                fontFamily: "NotoSansKR",
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-          TextButton(
-            onPressed: () {
-              Get.back();
-            },
-            child: Text(
-              "아니요",
-              style: TextStyle(
-                fontSize: 12,
-                color: Colors.black,
-                fontFamily: "NotoSansKR",
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }

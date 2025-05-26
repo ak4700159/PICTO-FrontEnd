@@ -102,39 +102,38 @@ class ChatBubble extends StatelessWidget {
                   fontWeight: FontWeight.w300,
                 ),
               ),
-              Container(
-                margin: const EdgeInsets.symmetric(vertical: 2),
-                padding: const EdgeInsets.all(9),
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade200,
-                  borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(15),
-                    topLeft: Radius.circular(8),
-                    bottomLeft: Radius.circular(15),
-                    bottomRight: Radius.circular(15),
+              Row(
+                children: [
+                  Container(
+                    margin: const EdgeInsets.symmetric(vertical: 2),
+                    padding: const EdgeInsets.all(9),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade200,
+                      borderRadius: BorderRadius.only(
+                        topRight: Radius.circular(15),
+                        topLeft: Radius.circular(8),
+                        bottomLeft: Radius.circular(15),
+                        bottomRight: Radius.circular(15),
+                      ),
+                    ),
+                    child: Text(
+                      msg.content,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: AppConfig.mainColor,
+                        fontFamily: "NotoSansKR",
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
                   ),
-                ),
-                child: Text(
-                  msg.content,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: AppConfig.mainColor,
-                    fontFamily: "NotoSansKR",
-                    fontWeight: FontWeight.w400,
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      formatDate(msg.sendDatetime).substring("0000-00-00".length),
+                      style: TextStyle(fontSize: 10, color: Colors.grey, fontFamily: "NotoSansKR",),
+                    ),
                   ),
-                ),
-              ),
-            ],
-          ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  formatDate(msg.sendDatetime).substring("0000-00-00".length),
-                  style: TextStyle(fontSize: 10, color: Colors.grey, fontFamily: "NotoSansKR",),
-                ),
+                ],
               ),
             ],
           ),

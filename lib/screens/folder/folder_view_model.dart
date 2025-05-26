@@ -42,9 +42,9 @@ class FolderViewModel extends GetxController {
   }
 
   //  폴더 초기화 -> 새로운 폴더는 추가, 중복되는 폴더는 업데이트
-  Future<void> resetFolder() async {
+  Future<void> resetFolder({required bool init}) async {
     try {
-      List<Folder> search = await FolderManagerApi().getFoldersByOwnerId();
+      List<Folder> search = await FolderManagerApi().getFoldersByOwnerId(init : init);
       // showBlockingLoading(Duration(seconds: 1));
 
       // 제거
@@ -111,12 +111,14 @@ class FolderViewModel extends GetxController {
 
   // 폴더 화면 변화
   Future<void> changeFolder({required int folderId}) async {
+    currentFolder.value = folders[folderId];
     loadingComplete.value = false;
     currentMarkers.clear();
+    // 폴더 메타데이터 다운로드
     await folders[folderId]?.updateFolder();
     progress.value = 0.0;
-    currentFolder.value = folders[folderId];
     currentMarkers.addAll(folders[folderId]!.markers);
+    // 폴더 이미지 다운로드
     await downloadFolder();
     changeSocket();
     // 로딩 완료
@@ -235,6 +237,8 @@ class FolderViewModel extends GetxController {
   }
 
   Uint8List? getOtherProfilePhoto({required int userId}) {
+    // 여기서 오류가 발생
+    print("[DEBUG] userId : $userId / current folder users : ${currentFolder.value?.users.toString() ?? "current folder is null"}");
     User find = currentFolder.value!.users.firstWhere((u) => u.userId == userId);
     return find.userProfileData;
   }

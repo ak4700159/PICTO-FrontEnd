@@ -180,7 +180,7 @@ class FolderListScreen extends StatelessWidget {
         backgroundColor: Colors.white,
         color: AppConfig.mainColor,
         onRefresh: () async {
-          await folderViewModel.resetFolder();
+          await folderViewModel.resetFolder(init: false);
         },
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,

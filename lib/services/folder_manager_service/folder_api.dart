@@ -62,12 +62,12 @@ class FolderManagerApi {
   }
 
   // 폴더 목록 조회,
-  Future<List<Folder>> getFoldersByOwnerId() async {
+  Future<List<Folder>> getFoldersByOwnerId({required bool init}) async {
     try {
       // 기본 폴더도 같이 옴
       final response = await dio.get('$baseUrl/folders/shares/users/${UserManagerApi().ownerId}');
       List<dynamic> data = response.data;
-      return data.map((json) => Folder.fromJson(json, false)).toList();
+      return data.map((json) => Folder.fromJson(json, init)).toList();
     } on DioException catch (e) {
       showErrorPopup(e.toString());
     }

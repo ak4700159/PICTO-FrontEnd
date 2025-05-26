@@ -19,9 +19,11 @@ class FolderSelectionScreen extends StatelessWidget {
     viewModel.setSelectionMode();
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading : false,
         scrolledUnderElevation: 0,
         backgroundColor: Colors.white,
         title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
               Icons.folder_copy,
@@ -32,7 +34,7 @@ class FolderSelectionScreen extends StatelessWidget {
               style: TextStyle(
                 fontFamily: "NotoSansKR",
                 fontWeight: FontWeight.w500,
-                fontSize: 12,
+                fontSize: 16,
                 color: Colors.black,
               ),
             )
@@ -54,6 +56,7 @@ class FolderSelectionScreen extends StatelessWidget {
           TopBox(size: 0.05),
           SizedBox(
             width: context.mediaQuery.size.width * 0.8,
+            height: context.mediaQuery.size.height * 0.07,
             child: FloatingActionButton(
               onPressed: () {
                 viewModel.copyPhoto(photoId: Get.arguments["photoId"]);
@@ -71,7 +74,7 @@ class FolderSelectionScreen extends StatelessWidget {
                     style: TextStyle(
                       fontFamily: "NotoSansKR",
                       fontWeight: FontWeight.w500,
-                      fontSize: 18,
+                      fontSize: 16,
                       color: Colors.white,
                     ),
                   ),
@@ -112,21 +115,23 @@ class FolderSelectionScreen extends StatelessWidget {
     final folderSelectionViewModel = Get.find<FolderSelectionViewModel>();
     final folderViewModel = Get.find<FolderViewModel>();
     return Container(
+      margin: EdgeInsets.all(8),
       padding: EdgeInsets.all(8),
       decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(
             color: Colors.grey,
-            blurRadius: 8, // 흐림 정도
-            spreadRadius: 1, // 그림자 확산 정도
-            offset: Offset(2, 5), // 그림자 위치 조정
+            blurRadius: 1, // 흐림 정도
+            spreadRadius: 0, // 그림자 확산 정도
+            offset: Offset(0, 0), // 그림자 위치 조정
           )
         ],
         color: Colors.white,
       ),
       child: Obx(() => !folderViewModel.isPhotoInFolder(folderId: folder.folderId, photoId: selectedPhotoId)
           ? Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 IconButton(
                     onPressed: () {
@@ -198,7 +203,7 @@ class FolderSelectionScreen extends StatelessWidget {
                 //   color: AppConfig.mainColor,
                 // ),
                 Text(
-                  " ${folder.name} 에는 사진이 존재합니다.",
+                  " \"${folder.name}\" 폴더에는 사진이 존재합니다.",
                   style: TextStyle(
                     fontFamily: "NotoSansKR",
                     fontWeight: FontWeight.w500,

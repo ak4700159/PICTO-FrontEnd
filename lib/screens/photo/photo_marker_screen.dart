@@ -78,14 +78,14 @@ class PhotoMarkerScreen extends StatelessWidget {
                           folderViewModel.currentFolder.value!.markers
                               .removeWhere((m) => m.photo.photoId == photo.photoId);
                           folderViewModel.currentMarkers.removeWhere((m) => m.photo.photoId == photo.photoId);
-                          await folderViewModel.resetFolder();
+                          await folderViewModel.resetFolder(init : false);
                           // await calendarViewModel.buildCalendarEventMap(await folderViewModel.convertCalendarEvent());
                           Get.back();
                         }
                       },
                       child: Row(
                         children: [
-                          Icon(Icons.folder_delete),
+                          Icon(Icons.folder_delete, color: AppConfig.mainColor,),
                           const Text(
                             " 사진 삭제",
                             style: TextStyle(
@@ -104,7 +104,7 @@ class PhotoMarkerScreen extends StatelessWidget {
                       }),
                       child: Row(
                         children: [
-                          Icon(Icons.drive_file_move),
+                          Icon(Icons.drive_file_move, color: AppConfig.mainColor,),
                           Text(
                             " 사진 이동",
                             style: TextStyle(

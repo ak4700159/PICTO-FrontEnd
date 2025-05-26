@@ -27,7 +27,7 @@ class FolderInvitationScreen extends StatelessWidget {
         backgroundColor: Colors.white,
         automaticallyImplyLeading: false,
         title: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
               Icons.email,

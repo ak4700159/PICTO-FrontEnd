@@ -153,7 +153,7 @@ class FolderCreateScreen extends StatelessWidget {
                         Folder? newFolder =
                             await FolderManagerApi().createFolder(folderName: folderName!, content: folderContent!);
                         if (newFolder != null) {
-                          Get.find<FolderViewModel>().resetFolder();
+                          Get.find<FolderViewModel>().resetFolder(init: false);
                         }
                         Get.back();
                         Get.back();

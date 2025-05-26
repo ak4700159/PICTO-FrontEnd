@@ -339,7 +339,7 @@ class UserManagerApi {
     // 태그 적용
     Get.find<TagSelectionViewModel>().initTags(response.data["tags"]);
     // 폴더 적용
-    await Get.find<FolderViewModel>().resetFolder();
+    await Get.find<FolderViewModel>().resetFolder(init : true);
     // 캘릭더 적용
     List<CalendarEvent> calendarEvents = await Get.find<FolderViewModel>().convertCalendarEvent();
     Get.find<CalendarViewModel>().buildCalendarEventMap(calendarEvents);
