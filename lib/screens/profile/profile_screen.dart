@@ -11,7 +11,7 @@ import 'package:picto_frontend/services/photo_store_service/photo_store_api.dart
 import '../../utils/functions.dart';
 import '../calendar/calendar_event_tile.dart';
 import '../calendar/calendar_view_model.dart';
-import '../calendar/picto_calendar.dart';
+import 'latest_like_photos.dart';
 
 class ProfileScreen extends StatelessWidget {
   ProfileScreen({super.key});
@@ -99,7 +99,6 @@ class ProfileScreen extends StatelessWidget {
                             ],
                           ),
                         ),
-
                       ],
                     ))
               ],
@@ -158,29 +157,23 @@ class ProfileScreen extends StatelessWidget {
             SizedBox(
               height: context.mediaQuery.size.height * 0.05,
             ),
-            // 캘린더
-            Container(
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  // borderRadius: BorderRadius.circular(100)
-                  boxShadow: [
-                    BoxShadow(spreadRadius: 1, color: Colors.grey.shade100, blurRadius: 3, offset: Offset(0, 8)),
-                  ]),
-              child: PictoCalendar(),
-            ),
             // 캘린더 선택 날짜에 따른 리스트
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Text(
-                "선택한 날짜의 사진 목록",
-                style: TextStyle(
-                  fontSize: 14,
-                  fontFamily: "NotoSansKR",
-                  fontWeight: FontWeight.w300,
-                ),
-              ),
+            // Padding(
+            //   padding: const EdgeInsets.all(16.0),
+            //   child: Text(
+            //     "좋아요 누른 사진 조회",
+            //     style: TextStyle(
+            //       fontSize: 14,
+            //       fontFamily: "NotoSansKR",
+            //       fontWeight: FontWeight.w300,
+            //     ),
+            //   ),
+            // ),
+            SizedBox(
+              width: context.mediaQuery.size.width,
+              child: LatestLikePhotos(),
             ),
-            _getCalendarEventList(),
+            // _getCalendarEventList(),
             // 위로 올릴 수 있도록
             SizedBox(
               height: context.mediaQuery.size.height * 0.3,
@@ -304,6 +297,7 @@ class ProfileScreen extends StatelessWidget {
             ],
           );
         }
+
         if (snapshot.hasError) {
           return Center(
             child: Text(
@@ -316,6 +310,7 @@ class ProfileScreen extends StatelessWidget {
             ),
           );
         }
+
         return SizedBox(
           width: context.mediaQuery.size.width,
           height: context.mediaQuery.size.height * 0.45,

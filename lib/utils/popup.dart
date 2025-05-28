@@ -10,8 +10,8 @@ void showErrorPopup(String errorMsg) {
       titlePadding: EdgeInsets.all(20),
       contentPadding: EdgeInsets.only(
         bottom: 12,
-        left: 12,
-        right: 12,
+        left: 20,
+        right: 20,
       ),
       backgroundColor: Colors.white,
       title: Row(
@@ -23,7 +23,7 @@ void showErrorPopup(String errorMsg) {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: const Text(
-              'ERROR INFO',
+              '에러',
               style:
                   TextStyle(fontSize: 16, color: Colors.black, fontFamily: "NotoSansKR", fontWeight: FontWeight.w600),
             ),
@@ -45,7 +45,7 @@ void showPositivePopup(String msg) {
     AlertDialog(
       titlePadding: EdgeInsets.all(20),
       contentPadding: EdgeInsets.only(
-        bottom: 12,
+        bottom: 18,
         left: 12,
         right: 12,
       ),
@@ -59,7 +59,7 @@ void showPositivePopup(String msg) {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: const Text(
-              'INFO',
+              '정보',
               style:
                   TextStyle(fontSize: 16, color: Colors.black, fontFamily: "NotoSansKR", fontWeight: FontWeight.w600),
             ),

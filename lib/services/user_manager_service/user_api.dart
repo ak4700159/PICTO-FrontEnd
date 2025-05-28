@@ -96,7 +96,7 @@ class UserManagerApi {
       preferences.setString("access-token", accessToken!);
       preferences.setInt("owner-id", ownerId!);
     } on DioException catch (e) {
-      showErrorPopup(e.toString());
+      showErrorPopup("로그인에 실패하였습니다.");
       rethrow;
     }
   }
