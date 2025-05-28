@@ -66,7 +66,8 @@ class RegisterScreen extends StatelessWidget {
               child: SizedBox(
                 height: height * 0.06,
                 child: TextFormField(
-                  style : TextStyle(fontSize: 12, fontFamily: "NotoSansKR", fontWeight: FontWeight.w600),
+                  style: TextStyle(
+                      fontSize: 12, fontFamily: "NotoSansKR", fontWeight: FontWeight.w600),
                   keyboardType: TextInputType.name,
                   decoration: getCustomInputDecoration(
                     label: "이름",
@@ -84,7 +85,8 @@ class RegisterScreen extends StatelessWidget {
               child: SizedBox(
                 height: height * 0.06,
                 child: TextFormField(
-                  style : TextStyle(fontSize: 12, fontFamily: "NotoSansKR", fontWeight: FontWeight.w600),
+                  style: TextStyle(
+                      fontSize: 12, fontFamily: "NotoSansKR", fontWeight: FontWeight.w600),
                   keyboardType: TextInputType.name,
                   decoration: getCustomInputDecoration(
                     label: "계정명",
@@ -111,7 +113,10 @@ class RegisterScreen extends StatelessWidget {
                           SizedBox(
                             height: height * 0.06,
                             child: TextFormField(
-                              style : TextStyle(fontSize: 12, fontFamily: "NotoSansKR", fontWeight: FontWeight.w600),
+                              style: TextStyle(
+                                  fontSize: 12,
+                                  fontFamily: "NotoSansKR",
+                                  fontWeight: FontWeight.w600),
                               keyboardType: TextInputType.emailAddress,
                               decoration: getCustomInputDecoration(
                                 label: "이메일",
@@ -119,7 +124,10 @@ class RegisterScreen extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(20),
                               ),
                               validator: emailValidator,
-                              onChanged: (value) => _registerController.email.value = value,
+                              onChanged: (value) {
+                                _registerController.email.value = value;
+                                _registerController.emailDuplicatedMsg.value = "중복 검사";
+                              },
                               onSaved: (value) => _registerController.email.value = value!,
                             ),
                           ),
@@ -133,7 +141,9 @@ class RegisterScreen extends StatelessWidget {
                         height: height * 0.06,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20),
-                          color: AppConfig.mainColor,
+                          color: _registerController.emailDuplicatedMsg.value != "사용 가능"
+                              ? AppConfig.mainColor
+                              : Colors.green,
                         ),
                         child: TextButton(
                           onPressed: () {
@@ -152,6 +162,7 @@ class RegisterScreen extends StatelessWidget {
                               ),
                             ),
                           ),
+
                         ),
                       ),
                     )
@@ -166,7 +177,8 @@ class RegisterScreen extends StatelessWidget {
                 child: SizedBox(
                   height: height * 0.06,
                   child: TextFormField(
-                    style : TextStyle(fontSize: 12, fontFamily: "NotoSansKR", fontWeight: FontWeight.w600),
+                    style: TextStyle(
+                        fontSize: 12, fontFamily: "NotoSansKR", fontWeight: FontWeight.w600),
                     obscureText: _registerController.isPasswordVisible.value,
                     decoration: getCustomInputDecoration(
                       label: "비밀번호",
@@ -195,7 +207,8 @@ class RegisterScreen extends StatelessWidget {
                 child: SizedBox(
                   height: height * 0.06,
                   child: TextFormField(
-                    style : TextStyle(fontSize: 12, fontFamily: "NotoSansKR", fontWeight: FontWeight.w600),
+                    style: TextStyle(
+                        fontSize: 12, fontFamily: "NotoSansKR", fontWeight: FontWeight.w600),
                     obscureText: _registerController.isPasswordVisible.value,
                     decoration: getCustomInputDecoration(
                       label: "비밀번호 재입력",

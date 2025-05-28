@@ -1,8 +1,9 @@
 import 'dart:collection';
 import 'package:get/get.dart';
-import 'package:picto_frontend/screens/profile/calendar/calendar_event.dart';
-import 'package:picto_frontend/screens/profile/calendar/picto_calendar.dart';
+import 'package:picto_frontend/screens/calendar/picto_calendar.dart';
 import 'package:table_calendar/table_calendar.dart';
+
+import 'calendar_event.dart';
 
 class CalendarViewModel extends GetxController {
   // 캘린더에 필요한 전체 데이터셋

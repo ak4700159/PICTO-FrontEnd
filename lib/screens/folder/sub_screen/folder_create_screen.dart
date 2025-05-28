@@ -30,6 +30,7 @@ class FolderCreateScreen extends StatelessWidget {
           backgroundColor: Colors.white,
           automaticallyImplyLeading: false,
           title: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(
                 Icons.folder_rounded,
@@ -40,9 +41,9 @@ class FolderCreateScreen extends StatelessWidget {
                 "  폴더 생성",
                 style: TextStyle(
                   fontFamily: "NotoSansKR",
-                  fontSize: 20,
+                  fontSize: 16,
                   fontWeight: FontWeight.w600,
-                  color: AppConfig.mainColor,
+                  color: Colors.black,
                 ),
               ),
             ],

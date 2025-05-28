@@ -100,14 +100,14 @@ class SessionSocket extends GetxController {
   // 위치 정보 전송 -> 세션 스케줄러에서 반영
   Future<void> sendLocation(int senderId, double lat, double lng) async {
     print('[INFO] sending location - USER ID: $senderId, lat: $lat, lng: $lng');
-
     try {
       final message = LocationMsg(
           messageType: "LOCATION",
           senderId: senderId,
           lat: lat,
           lng: lng,
-          sendDatetime: DateTime.now().toUtc().millisecondsSinceEpoch);
+          sendDatetime: DateTime.now().toUtc().millisecondsSinceEpoch,
+      );
 
       final destination = '/send/session/location';
       final body = jsonEncode(message.toJson());

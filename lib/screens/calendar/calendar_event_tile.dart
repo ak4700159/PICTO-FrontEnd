@@ -3,12 +3,14 @@ import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_utils/get_utils.dart';
-import 'package:picto_frontend/screens/profile/calendar/calendar_view_model.dart';
+import 'package:picto_frontend/screens/folder/folder_view_model.dart';
 import 'package:picto_frontend/services/photo_store_service/photo_store_api.dart';
 import 'package:picto_frontend/utils/functions.dart';
 
+import '../../models/photo.dart';
+import '../../models/user.dart';
+import '../../services/user_manager_service/user_api.dart';
 import 'calendar_event.dart';
 
 class CalendarEventTile extends StatelessWidget {
@@ -112,31 +114,45 @@ class CalendarEventTile extends StatelessWidget {
       {required int photoId, required Uint8List? data, required BuildContext context}) {
     if (data == null) {
       return FutureBuilder(
-          future: PhotoStoreApi().downloadPhoto(photoId: photoId, scale: 0.08),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return SizedBox(
-                height: context.mediaQuery.size.width * 0.2,
-                width: context.mediaQuery.size.width * 0.2,
-                child: Center(
-                  child: SizedBox(
-                      height: context.mediaQuery.size.width * 0.05,
-                      width: context.mediaQuery.size.width * 0.05,
-                      child: CircularProgressIndicator(
-                        color: Colors.grey,
-                      )),
-                ),
-              );
-            }
+        future: PhotoStoreApi().downloadPhoto(photoId: photoId, scale: 0.08),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return SizedBox(
+              height: context.mediaQuery.size.width * 0.2,
+              width: context.mediaQuery.size.width * 0.2,
+              child: Center(
+                child: SizedBox(
+                    height: context.mediaQuery.size.width * 0.05,
+                    width: context.mediaQuery.size.width * 0.05,
+                    child: CircularProgressIndicator(
+                      color: Colors.grey,
+                    )),
+              ),
+            );
+          }
 
-            if (snapshot.hasError) {
-              return Image.asset(
-                "/assets/images/picto_logo.png",
-                fit: BoxFit.cover,
-              );
-            }
+          if (snapshot.hasError) {
+            return Image.asset(
+              "/assets/images/picto_logo.png",
+              fit: BoxFit.cover,
+            );
+          }
 
-            return ClipRRect(
+          return GestureDetector(
+            onTap: () async {
+              final folderViewModel = Get.find<FolderViewModel>();
+              User? user = await UserManagerApi().getUserByUserId(userId: (event.ownerId));
+              BoxFit fit = await determineFit(snapshot.data!);
+              Photo? photo = folderViewModel.getPhoto(photoId: event.photoId);
+              if (photo == null) return;
+              Get.toNamed("/photo", arguments: {
+                "user": user!,
+                "photo": photo,
+                "data": data,
+                "fit": fit,
+              });
+            },
+            child: ClipRRect(
               borderRadius: BorderRadius.circular(100),
               child: Image.memory(
                 snapshot.data!,
@@ -152,25 +168,42 @@ class CalendarEventTile extends StatelessWidget {
                   );
                 },
               ),
-            );
-          });
-    }
-
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(100),
-      child: Image.memory(
-        data,
-        fit: BoxFit.cover,
-        height: context.mediaQuery.size.width * 0.2,
-        width: context.mediaQuery.size.width * 0.2,
-        errorBuilder: (context, object, trace) {
-          return Image.asset(
-            "assets/images/picto_logo.png",
-            fit: BoxFit.cover,
-            height: context.mediaQuery.size.width * 0.2,
-            width: context.mediaQuery.size.width * 0.2,
+            ),
           );
         },
+      );
+    }
+
+    return GestureDetector(
+      onTap: () async {
+        final folderViewModel = Get.find<FolderViewModel>();
+        User? user = await UserManagerApi().getUserByUserId(userId: (event.ownerId));
+        BoxFit fit = await determineFit(data);
+        Photo? photo = folderViewModel.getPhoto(photoId: event.photoId);
+        if (photo == null) return;
+        Get.toNamed("/photo", arguments: {
+          "user": user!,
+          "photo": photo,
+          "data": data,
+          "fit": fit,
+        });
+      },
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(100),
+        child: Image.memory(
+          data,
+          fit: BoxFit.cover,
+          height: context.mediaQuery.size.width * 0.2,
+          width: context.mediaQuery.size.width * 0.2,
+          errorBuilder: (context, object, trace) {
+            return Image.asset(
+              "assets/images/picto_logo.png",
+              fit: BoxFit.cover,
+              height: context.mediaQuery.size.width * 0.2,
+              width: context.mediaQuery.size.width * 0.2,
+            );
+          },
+        ),
       ),
     );
   }

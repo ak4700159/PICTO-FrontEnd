@@ -6,12 +6,11 @@ import 'package:picto_frontend/config/app_config.dart';
 import 'package:picto_frontend/screens/folder/folder_list_screen.dart';
 import 'package:picto_frontend/screens/folder/folder_view_model.dart';
 import 'package:picto_frontend/screens/main_frame_view_model.dart';
-import 'package:picto_frontend/screens/profile/calendar/calendar_view_model.dart';
 import 'package:picto_frontend/screens/profile/profile_screen.dart';
 import 'package:picto_frontend/utils/popup.dart';
 import '../icon/picto_icons.dart';
-import '../test_screens/test_screen.dart';
 import 'bot/chatbot_rooms_screen.dart';
+import 'calendar/calendar_view_model.dart';
 import 'comfyui/comfyui_screen.dart';
 import 'comfyui/comfyui_view_model.dart';
 import 'map/google_map/google_map.dart';
@@ -44,20 +43,27 @@ class MapScreen extends StatelessWidget {
         resizeToAvoidBottomInset: false,
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         floatingActionButton: Obx(() => SizedBox(
-              height: context.mediaQuery.size.width * 0.18,
-              width: context.mediaQuery.size.width * 0.18,
-              child: FloatingActionButton(
-                heroTag: "map",
-                backgroundColor: 2 == mapViewModel.navigationBarCurrentIndex.value ? AppConfig.mainColor : Colors.grey,
-                shape: CircleBorder(),
-                onPressed: () {
-                  mapViewModel.changeNavigationBarIndex(2);
-                },
-                child: Icon(
-                  Icons.location_on,
-                  color: Colors.white,
-                  size: 30,
-                ),
+              height: context.mediaQuery.size.width * 0.2,
+              width: context.mediaQuery.size.width * 0.2,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  FloatingActionButton(
+                    heroTag: "map",
+                    backgroundColor: 2 == mapViewModel.navigationBarCurrentIndex.value
+                        ? AppConfig.mainColor
+                        : Colors.grey,
+                    shape: CircleBorder(),
+                    onPressed: () {
+                      mapViewModel.changeNavigationBarIndex(2);
+                    },
+                    child: Icon(
+                      Icons.location_on,
+                      color: Colors.white,
+                      size: 30,
+                    ),
+                  ),
+                ],
               ),
             )),
         bottomNavigationBar: _getBottomNavigationBar(context),

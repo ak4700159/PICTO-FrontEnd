@@ -4,8 +4,9 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:picto_frontend/config/app_config.dart';
 import 'package:picto_frontend/screens/folder/folder_view_model.dart';
-import 'package:picto_frontend/screens/profile/calendar/calendar_view_model.dart';
 import 'package:table_calendar/table_calendar.dart';
+
+import 'calendar_view_model.dart';
 
 class PictoCalendar extends StatelessWidget {
   PictoCalendar({super.key});
@@ -19,20 +20,26 @@ class PictoCalendar extends StatelessWidget {
         future: folderViewModel.convertCalendarEvent(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: CircularProgressIndicator(),
+            return Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Center(
+                child: CircularProgressIndicator(),
+              ),
             );
           }
 
           if (snapshot.hasError) {
             return Center(
-              child: Text(
-                "서버 오류",
-                style: TextStyle(
-                  fontWeight: FontWeight.w500,
-                  fontFamily: "NotoSansKR",
-                  fontSize: 16,
-                  color: Colors.red,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  "서버 오류 ${snapshot.error.toString()} / ${snapshot.stackTrace}",
+                  style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    fontFamily: "NotoSansKR",
+                    fontSize: 16,
+                    color: Colors.red,
+                  ),
                 ),
               ),
             );

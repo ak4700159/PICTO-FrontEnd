@@ -43,14 +43,19 @@ class _LikeButtonState extends State<LikeButton> {
         ? SizedBox(
             height: context.mediaQuery.size.width,
             width: context.mediaQuery.size.width,
-            child: Center(
-              child: SizedBox(
-                  height: context.mediaQuery.size.width / 5,
-                  width: context.mediaQuery.size.width / 5,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    color: Colors.grey,
-                  )),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Center(
+                  child: SizedBox(
+                      height: context.mediaQuery.size.width / 10,
+                      width: context.mediaQuery.size.width / 10,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.grey,
+                      )),
+                ),
+              ],
             ),
           )
         : SizedBox(

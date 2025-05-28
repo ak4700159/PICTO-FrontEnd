@@ -177,7 +177,8 @@ class CustomGoogleMap extends StatelessWidget {
             onPressed: () async {
               // 테스트 버튼 주입
               // googleMapViewModel.moveCurrentPos();
-              showErrorPopup("test");
+              // showErrorPopup("test");
+              Get.toNamed('/calendar');
             },
             backgroundColor: Colors.grey,
             heroTag: "test",

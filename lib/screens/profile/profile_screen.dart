@@ -1,18 +1,17 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hive/hive.dart';
 import 'package:picto_frontend/config/app_config.dart';
 import 'package:picto_frontend/screens/folder/folder_view_model.dart';
 import 'package:picto_frontend/screens/map/google_map/marker/picto_marker.dart';
-import 'package:picto_frontend/screens/profile/calendar/calendar_event_tile.dart';
-import 'package:picto_frontend/screens/profile/calendar/calendar_view_model.dart';
-import 'package:picto_frontend/screens/profile/calendar/picto_calendar.dart';
 import 'package:picto_frontend/screens/profile/profile_modify_dialog.dart';
 import 'package:picto_frontend/screens/profile/profile_view_model.dart';
 import 'package:picto_frontend/services/photo_store_service/photo_store_api.dart';
 
 import '../../utils/functions.dart';
+import '../calendar/calendar_event_tile.dart';
+import '../calendar/calendar_view_model.dart';
+import '../calendar/picto_calendar.dart';
 
 class ProfileScreen extends StatelessWidget {
   ProfileScreen({super.key});
@@ -126,15 +125,25 @@ class ProfileScreen extends StatelessWidget {
                     Positioned(
                       top: 1,
                       right: 1,
-                      child: IconButton(
-                        onPressed: () {
-                          // 프로필 사진 수정 및 선택  화면
-                          _showProfilePhotoBottomSheet(context);
-                        },
-                        icon: Icon(
-                          Icons.edit,
-                          size: 30,
-                          color: AppConfig.mainColor,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(color: Colors.grey, blurRadius: 1, spreadRadius: 0.5),
+                          ],
+                          borderRadius: BorderRadius.circular(100),
+                          // border: Border.all(color: Colors.grey, width: 3)
+                        ),
+                        child: IconButton(
+                          onPressed: () {
+                            // 프로필 사진 수정 및 선택  화면
+                            _showProfilePhotoBottomSheet(context);
+                          },
+                          icon: Icon(
+                            Icons.edit,
+                            size: 30,
+                            color: AppConfig.mainColor,
+                          ),
                         ),
                       ),
                     ),

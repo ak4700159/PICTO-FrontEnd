@@ -142,7 +142,8 @@ class ChatbotBubble extends StatelessWidget {
       return _getIntroWidget(context, "프롬프트를 다시 작성해주세요");
     }
     String analysisMsg = msg.content.substring(0, msg.content.indexOf("=== 촬영 가이드라인 ===") - 2);
-    String guideMsg = msg.content.substring(msg.content.indexOf("=== 촬영 가이드라인 ===") + "=== 촬영 가이드라인 ===".length + 1);
+    String guideMsg = msg.content
+        .substring(msg.content.indexOf("=== 촬영 가이드라인 ===") + "=== 촬영 가이드라인 ===".length + 1);
     // 줄 단위로 나누고 상위 4줄 제거
     List<String> lines = guideMsg.split('\n');
     if (lines.length > 4) {
@@ -419,53 +420,55 @@ class ChatbotBubble extends StatelessWidget {
 
   // 사진 추천 프롬프트
   Widget _getRecommendWidget(BuildContext context) {
+    List<Widget> result = [];
+    result.add(_getPictory());
+    result.addAll(msg.images
+        .map((image) => Padding(
+              padding: const EdgeInsets.only(left: 8.0, top: 8.0),
+              child: Column(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(16),
+                    child: GestureDetector(
+                      onTap: () {
+                        // 이게 문제
+                        if (image.photoId != null) {
+                          chatbotViewModel.selectOtherPhoto(image.photoId!, image.data);
+                        }
+                      },
+                      child: SizedBox(
+                        width: context.mediaQuery.size.width * 0.8,
+                        height: context.mediaQuery.size.width * 0.8,
+                        child: Image.memory(
+                          image.data,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: context.mediaQuery.size.width * 0.8,
+                    child: Text(
+                      image.content ?? "전달 안됨",
+                      maxLines: 2,
+                      style: TextStyle(
+                        fontFamily: "NotoSansKR",
+                        fontSize: 11,
+                        fontWeight: FontWeight.w300,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: promptBetweenHeight),
+                ],
+              ),
+            ))
+        .toList());
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
-        children: msg.images
-            .map((image) => Padding(
-                  padding: const EdgeInsets.only(left: 8.0, top: 8.0),
-                  child: Column(
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(16),
-                        child: GestureDetector(
-                          onTap: () {
-                            // 이게 문제
-                            if (image.photoId != null) {
-                              chatbotViewModel.selectOtherPhoto(image.photoId!, image.data);
-                            }
-                          },
-                          child: SizedBox(
-                            width: context.mediaQuery.size.width * 0.8,
-                            height: context.mediaQuery.size.width * 0.8,
-                            child: Image.memory(
-                              image.data,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        width: context.mediaQuery.size.width * 0.8,
-                        child: Text(
-                          image.content ?? "전달 안됨",
-                          maxLines: 2,
-                          style: TextStyle(
-                            fontFamily: "NotoSansKR",
-                            fontSize: 11,
-                            fontWeight: FontWeight.w300,
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: promptBetweenHeight),
-
-                    ],
-                  ),
-                ))
-            .toList(),
+        children: result,
       ),
     );
   }
@@ -485,7 +488,8 @@ class ChatbotBubble extends StatelessWidget {
         children: [
           Container(
             padding: const EdgeInsets.all(4.0),
-            decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(100)),
+            decoration: BoxDecoration(
+                color: Colors.grey.shade100, borderRadius: BorderRadius.circular(100)),
             child: Image.asset(
               'assets/images/pictory_color.png',
               scale: 5,
@@ -594,15 +598,20 @@ class ChatbotBubble extends StatelessWidget {
               SizedBox(
                 height: context.mediaQuery.size.width * 0.25,
               ),
-              Text(
-                "   V  S  ",
-                style: TextStyle(
-                  fontSize: 20,
-                  color: Colors.red,
-                  fontFamily: "NotoSansKR",
-                  fontWeight: FontWeight.w500,
-                ),
+              Icon(
+                Icons.compare_arrows,
+                color: Colors.red,
+                size: 40,
               ),
+              // Text(
+              //   "   V  S  ",
+              //   style: TextStyle(
+              //     fontSize: 20,
+              //     color: Colors.red,
+              //     fontFamily: "NotoSansKR",
+              //     fontWeight: FontWeight.w500,
+              //   ),
+              // ),
             ],
           ),
         ));

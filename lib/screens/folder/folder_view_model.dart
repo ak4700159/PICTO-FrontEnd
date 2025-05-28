@@ -6,14 +6,14 @@ import 'package:get/get.dart';
 import 'package:picto_frontend/models/chatting_msg.dart';
 import 'package:picto_frontend/models/folder.dart';
 import 'package:picto_frontend/screens/map/google_map/marker/picto_marker.dart';
-import 'package:picto_frontend/screens/profile/calendar/calendar_event.dart';
 import 'package:picto_frontend/services/chatting_scheduler_service/chatting_socket.dart';
 import 'package:picto_frontend/services/folder_manager_service/folder_api.dart';
 import 'package:picto_frontend/services/user_manager_service/user_api.dart';
+import '../../models/photo.dart';
 import '../../models/user.dart';
 import '../../services/photo_store_service/photo_store_api.dart';
 import '../../utils/functions.dart';
-import '../../utils/popup.dart';
+import '../calendar/calendar_event.dart';
 
 class FolderViewModel extends GetxController {
   // 각 폴더 안의 메시지
@@ -272,7 +272,7 @@ class FolderViewModel extends GetxController {
               folderNames: [folder.name],
               ownerId: photo.userId!,
               accountName: folder.getUser(photo.userId!)?.accountName ?? "unknown",
-              uploadTime: photo.updateDatetime!,
+              uploadTime: photo.updateDatetime ?? 00,
               location: photo.location,
             ),
           );
@@ -302,5 +302,18 @@ class FolderViewModel extends GetxController {
     );
 
     return partitioned;
+  }
+
+  // 퐇더 안에서 사진 조회
+  Photo? getPhoto({required int photoId}) {
+    for (Folder f in folders.values) {
+      for(Photo p in f.photos) {
+        if(p.photoId == photoId) {
+          return p;
+        }
+      }
+    }
+    print("[INFO] get photo : $photoId");
+    return null;
   }
 }

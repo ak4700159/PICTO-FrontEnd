@@ -38,7 +38,7 @@ class FolderInvitationScreen extends StatelessWidget {
               "  공유 폴더 초대 목록",
               style: TextStyle(
                 fontFamily: "NotoSansKR",
-                fontSize: 20,
+                fontSize: 16,
                 fontWeight: FontWeight.w600,
                 color: Colors.black,
               ),

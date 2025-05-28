@@ -17,8 +17,8 @@ import '../../widgets/like_button.dart';
 
 // 1. 마커 클러스터 화면에서 선택
 // 2. 폴더 사진에서 선택
-class PhotoMarkerScreen extends StatelessWidget {
-  PhotoMarkerScreen({super.key});
+class PhotoScreen extends StatelessWidget {
+  PhotoScreen({super.key});
 
   final Photo photo = Get.arguments["photo"];
   final BoxFit fit = Get.arguments["fit"];
@@ -44,9 +44,15 @@ class PhotoMarkerScreen extends StatelessWidget {
                       fit: BoxFit.cover,
                     );
                   }
-                  return Image.memory(
-                    snapshot.data!,
-                    fit: fit,
+                  return InteractiveViewer(
+                    // scaleEnabled : false,
+                    minScale: 0.1,
+                    maxScale: 3.6,
+                    // constrained: false,
+                    child: Image.memory(
+                      snapshot.data!,
+                      fit: fit,
+                    ),
                   );
                 }),
           ),

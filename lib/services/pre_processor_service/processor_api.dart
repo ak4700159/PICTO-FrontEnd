@@ -36,9 +36,10 @@ class PreProcessorApi {
       final fileName = request.file!.path.split('/').last;
       final mimeType = lookupMimeType(request.file!.path) ?? 'application/octet-stream';
       final formData = FormData.fromMap({
-        'file':
-            await MultipartFile.fromFile(request.file!.path, filename: fileName, contentType: MediaType.parse(mimeType)),
-        'request': MultipartFile.fromString(request.toJson(), contentType: MediaType('application', 'json')),
+        'file': await MultipartFile.fromFile(request.file!.path,
+            filename: fileName, contentType: MediaType.parse(mimeType)),
+        'request': MultipartFile.fromString(request.toJson(),
+            contentType: MediaType('application', 'json')),
       });
       final response = await dio.post('$baseUrl/validate', data: formData);
 
@@ -63,6 +64,8 @@ class PreProcessorApi {
             views: 0,
             location: data['location'],
             tag: data['tag'],
+            updateDatetime: DateTime.now().millisecondsSinceEpoch,
+            registerDatetime: DateTime.now().millisecondsSinceEpoch,
           ));
           return "기본폴더에 사진이 저장되었어요!!";
         }
