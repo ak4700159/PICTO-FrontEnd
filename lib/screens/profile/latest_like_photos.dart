@@ -18,7 +18,6 @@ class LatestLikePhotos extends StatefulWidget {
 
 class _LatestLikePhotosState extends State<LatestLikePhotos> {
   List<Photo> latestLikePhotos = [];
-  int displayCount = 6; // 처음엔 6개만 보여줌
 
   @override
   void initState() {
@@ -49,58 +48,26 @@ class _LatestLikePhotosState extends State<LatestLikePhotos> {
       );
     }
 
-    // 이거 고쳐야됨
-    // clamp(lower bound, upper bound
-    int safeDisplayCount = displayCount.clamp(0, latestLikePhotos.length);
-    int itemCount = latestLikePhotos.length > displayCount ? displayCount + 1 : displayCount;
-
-
     return SizedBox(
       width: context.mediaQuery.size.width,
       height: context.mediaQuery.size.height * 0.4,
       child: GridView.builder(
         scrollDirection: Axis.horizontal,
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
+          crossAxisCount: 3,
           childAspectRatio: 1,
         ),
-        itemCount: itemCount,
+        itemCount: latestLikePhotos.length,
         itemBuilder: (context, idx) {
-          if (idx >= displayCount) {
-            return _getMorePhotosButton();
-          } else {
-            return _getLikePhotoTile(context, idx);
-          }
+          return _getLikePhotoTile(context, idx);
         },
-      ),
-    );
-  }
-
-  Widget _getMorePhotosButton() {
-    return Padding(
-      padding: const EdgeInsets.all(4.0),
-      child: GestureDetector(
-        onTap: () {
-          setState(() {
-            displayCount = (displayCount + 6).clamp(0, latestLikePhotos.length);
-          });
-        },
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.grey[300],
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Center(
-            child: Icon(Icons.add, size: 40, color: Colors.black54),
-          ),
-        ),
       ),
     );
   }
 
   Widget _getLikePhotoTile(BuildContext context, int idx) {
     return FutureBuilder(
-      future: PhotoStoreApi().downloadPhoto(photoId: latestLikePhotos[idx].photoId, scale: 0.3),
+      future: PhotoStoreApi().downloadPhoto(photoId: latestLikePhotos[idx].photoId, scale: 0.1),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(child: CircularProgressIndicator());

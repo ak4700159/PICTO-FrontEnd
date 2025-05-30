@@ -1,12 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hive/hive.dart';
 import 'package:picto_frontend/config/app_config.dart';
 import 'package:picto_frontend/screens/folder/folder_view_model.dart';
 import 'package:picto_frontend/screens/map/google_map/marker/picto_marker.dart';
 import 'package:picto_frontend/screens/profile/profile_modify_dialog.dart';
 import 'package:picto_frontend/screens/profile/profile_view_model.dart';
 import 'package:picto_frontend/services/photo_store_service/photo_store_api.dart';
+import 'package:picto_frontend/utils/popup.dart';
+import 'package:restart_app/restart_app.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../utils/functions.dart';
 import '../calendar/calendar_event_tile.dart';
@@ -153,27 +157,75 @@ class ProfileScreen extends StatelessWidget {
             SizedBox(
               height: context.mediaQuery.size.height * 0.02,
             ),
-
-            SizedBox(
-              height: context.mediaQuery.size.height * 0.05,
+            Container(
+              margin: EdgeInsets.all(16),
+              padding: EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                  border: BorderDirectional(bottom: BorderSide(width: 1, color: Colors.grey))),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.favorite,
+                    color: AppConfig.mainColor,
+                  ),
+                  Text(
+                    "좋아요 누른 사진",
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontFamily: "NotoSansKR",
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
             ),
-            // 캘린더 선택 날짜에 따른 리스트
-            // Padding(
-            //   padding: const EdgeInsets.all(16.0),
-            //   child: Text(
-            //     "좋아요 누른 사진 조회",
-            //     style: TextStyle(
-            //       fontSize: 14,
-            //       fontFamily: "NotoSansKR",
-            //       fontWeight: FontWeight.w300,
-            //     ),
-            //   ),
-            // ),
             SizedBox(
               width: context.mediaQuery.size.width,
               child: LatestLikePhotos(),
             ),
-            // _getCalendarEventList(),
+
+            SizedBox(
+              height: context.mediaQuery.size.height * 0.02,
+            ),
+
+            // 어플리케이션 전체 설정  ?
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: SizedBox(
+                    height: context.mediaQuery.size.height * 0.07,
+                    width: context.mediaQuery.size.width * 0.2,
+                    child: FloatingActionButton(
+                      onPressed: () async {
+                        showSelectionDialog(
+                            context: context,
+                            positiveEvent: () async {
+                              final SharedPreferences preferences = await SharedPreferences.getInstance();
+                              await preferences.clear();
+                              Restart.restartApp();
+                            },
+                            negativeEvent: () {
+                              Get.back();
+                            },
+                            positiveMsg: "네",
+                            negativeMsg: "아니요",
+                            content: "로그아웃 하시겠습니까?");
+                      },
+                      backgroundColor: Colors.red,
+                      heroTag: "exit",
+                      child: Icon(
+                        Icons.exit_to_app,
+                        color: AppConfig.backgroundColor,
+                        size: 30,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+
             // 위로 올릴 수 있도록
             SizedBox(
               height: context.mediaQuery.size.height * 0.3,
@@ -205,7 +257,8 @@ class ProfileScreen extends StatelessWidget {
     }
 
     return FutureBuilder(
-      future: PhotoStoreApi().downloadPhoto(photoId: profileViewModel.profilePhotoId.value!, scale: 0.3),
+      future: PhotoStoreApi()
+          .downloadPhoto(photoId: profileViewModel.profilePhotoId.value!, scale: 0.3),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(child: CircularProgressIndicator());
@@ -375,7 +428,8 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
             Obx(() => Positioned(
-                  child: profileViewModel.selectedPictoMarker.value?.photo.photoId == marker.photo.photoId
+                  child: profileViewModel.selectedPictoMarker.value?.photo.photoId ==
+                          marker.photo.photoId
                       ? Icon(
                           Icons.check_box,
                           color: Colors.green,
@@ -395,7 +449,9 @@ class ProfileScreen extends StatelessWidget {
 
   Widget _getCalendarEventList() {
     return Obx(() => Column(
-          children: calendarViewModel.selectedEvents.map((event) => CalendarEventTile(event: event)).toList(),
+          children: calendarViewModel.selectedEvents
+              .map((event) => CalendarEventTile(event: event))
+              .toList(),
         ));
   }
 }

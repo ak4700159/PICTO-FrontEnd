@@ -39,7 +39,7 @@ class GuideScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 SizedBox(
-                  height: context.mediaQuery.size.height * 0.225,
+                  height: context.mediaQuery.size.height * 0.228,
                 ),
                 sliderIndicator(),
               ],
@@ -57,7 +57,7 @@ class GuideScreen extends StatelessWidget {
           return Builder(
             builder: (context) {
               return Container(
-                padding: EdgeInsets.all(20),
+                padding: EdgeInsets.all(25),
                 color: Colors.white,
                 child: Image.asset(
                   "assets/images/$name",

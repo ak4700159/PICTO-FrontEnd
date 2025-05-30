@@ -6,6 +6,7 @@ import '../config/app_config.dart';
 
 void showErrorPopup(String errorMsg) {
   Get.dialog(
+    barrierDismissible: false,
     AlertDialog(
       titlePadding: EdgeInsets.all(20),
       contentPadding: EdgeInsets.only(
@@ -24,8 +25,11 @@ void showErrorPopup(String errorMsg) {
             padding: const EdgeInsets.all(8.0),
             child: const Text(
               '에러',
-              style:
-                  TextStyle(fontSize: 16, color: Colors.black, fontFamily: "NotoSansKR", fontWeight: FontWeight.w600),
+              style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.black,
+                  fontFamily: "NotoSansKR",
+                  fontWeight: FontWeight.w600),
             ),
           ),
         ],
@@ -33,7 +37,11 @@ void showErrorPopup(String errorMsg) {
       content: SingleChildScrollView(
         child: Text(
           errorMsg,
-          style: TextStyle(fontSize: 14, color: Colors.red, fontFamily: "NotoSansKR", fontWeight: FontWeight.w400),
+          style: TextStyle(
+              fontSize: 14,
+              color: Colors.red,
+              fontFamily: "NotoSansKR",
+              fontWeight: FontWeight.w400),
         ),
       ),
     ),
@@ -60,8 +68,11 @@ void showPositivePopup(String msg) {
             padding: const EdgeInsets.all(8.0),
             child: const Text(
               '정보',
-              style:
-                  TextStyle(fontSize: 16, color: Colors.black, fontFamily: "NotoSansKR", fontWeight: FontWeight.w600),
+              style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.black,
+                  fontFamily: "NotoSansKR",
+                  fontWeight: FontWeight.w600),
             ),
           ),
         ],
@@ -69,8 +80,74 @@ void showPositivePopup(String msg) {
       content: SingleChildScrollView(
         child: Text(
           msg,
-          style: TextStyle(fontSize: 14, color: Colors.black, fontFamily: "NotoSansKR", fontWeight: FontWeight.w400),
+          style: TextStyle(
+            fontSize: 14,
+            color: Colors.black,
+            fontFamily: "NotoSansKR",
+            fontWeight: FontWeight.w400,
+          ),
         ),
+      ),
+    ),
+  );
+}
+
+void showMsgPopup({required String msg, required BuildContext context, required double space}) {
+  double width = context.mediaQuery.size.width;
+  double height = context.mediaQuery.size.height;
+  Get.dialog(
+    barrierColor: Colors.transparent,
+    Dialog(
+      backgroundColor: Colors.transparent,
+      insetPadding: EdgeInsets.all(50),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Container(
+            // width: width * 0.5,
+            // height: height * 0.1,
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              boxShadow: [
+                BoxShadow(
+                  blurRadius: 0.5,
+                  spreadRadius: 0.5,
+                  color: Colors.grey.shade400,
+                  offset: Offset(0, 5),
+                )
+              ],
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Expanded(
+                  flex: 2,
+                  child: Icon(
+                    Icons.info,
+                    size: 30,
+                    color: AppConfig.mainColor,
+                  ),
+                ),
+                Expanded(
+                  flex: 4,
+                  child: Text(
+                    msg,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.black,
+                      fontFamily: "NotoSansKR",
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(height: height * space,),
+        ],
       ),
     ),
   );
@@ -119,8 +196,8 @@ Future<void> showSelectionDialog(
     Dialog(
       insetPadding: EdgeInsets.all(0),
       child: Container(
-        width: width * 0.9,
-        height: height * 0.18,
+        width: width * 0.8,
+        height: height * 0.16,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
           color: Colors.white,
@@ -130,17 +207,20 @@ Future<void> showSelectionDialog(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
-                content,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.black,
-                  fontFamily: "NotoSansKR",
-                  fontWeight: FontWeight.w500,
+              Padding(
+                padding: const EdgeInsets.only(top : 12.0),
+                child: Text(
+                  content,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.black,
+                    fontFamily: "NotoSansKR",
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
               SizedBox(
-                height: height * 0.02,
+                height: height * 0.01,
               ),
               SizedBox(
                 width: width * 0.7,

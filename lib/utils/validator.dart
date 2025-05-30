@@ -14,6 +14,15 @@ String? emailValidator(String? value) {
   return null;
 }
 
+Future<String?> emailCodeValidator(String? value) async {
+  if (value?.isEmpty ?? true) {
+    return '이메일을 입력해주세요.';
+  } else {
+
+  }
+  return null;
+}
+
 String? passwdValidator(String? value) {
   if (value?.isEmpty ?? true) {
     return '비밀번호를 입력해주세요.';

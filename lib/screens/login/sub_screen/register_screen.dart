@@ -8,6 +8,7 @@ import 'package:hive/hive.dart';
 import 'package:picto_frontend/config/app_config.dart';
 import 'package:picto_frontend/screens/login/sub_screen/register_view_model.dart';
 import 'package:picto_frontend/screens/map/top_box.dart';
+import 'package:picto_frontend/utils/popup.dart';
 
 import '../../../utils/get_widget.dart';
 import '../../../utils/validator.dart';
@@ -34,14 +35,20 @@ class RegisterScreen extends StatelessWidget {
                 children: [
                   TopBox(size: 0.1),
                   // 픽토 로고
-                  Text('PICTO', style: TextStyle(fontSize: 30, color: Colors.grey)),
+                  Text('PICTO',
+                      style: TextStyle(
+                        fontSize: 28,
+                        color: AppConfig.mainColor,
+                        fontWeight: FontWeight.bold,
+                      )),
                   Image.asset("assets/images/picto_logo.png",
                       colorBlendMode: BlendMode.modulate,
-                      opacity: const AlwaysStoppedAnimation(0.5)),
-                  TopBox(size: 0.01),
+                      opacity: const AlwaysStoppedAnimation(0.4)),
+                  TopBox(size: 0.07),
                   _getFormFiled(context),
-                  TopBox(size: 0.08),
+                  TopBox(size: 0.07),
                   Obx(() => _getRegisterButton(context)),
+                  TopBox(size: 0.07),
                 ],
               ),
             ],
@@ -64,7 +71,7 @@ class RegisterScreen extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(4.0),
               child: SizedBox(
-                height: height * 0.06,
+                // height: height * 0.08,
                 child: TextFormField(
                   style: TextStyle(
                       fontSize: 12, fontFamily: "NotoSansKR", fontWeight: FontWeight.w600),
@@ -83,7 +90,7 @@ class RegisterScreen extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(4.0),
               child: SizedBox(
-                height: height * 0.06,
+                // height: height * 0.08,
                 child: TextFormField(
                   style: TextStyle(
                       fontSize: 12, fontFamily: "NotoSansKR", fontWeight: FontWeight.w600),
@@ -103,6 +110,7 @@ class RegisterScreen extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.all(4.0),
                 child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Expanded(
@@ -111,17 +119,18 @@ class RegisterScreen extends StatelessWidget {
                         mainAxisSize: MainAxisSize.max,
                         children: [
                           SizedBox(
-                            height: height * 0.06,
+                            // height: height * 0.08,
                             child: TextFormField(
                               style: TextStyle(
-                                  fontSize: 12,
-                                  fontFamily: "NotoSansKR",
-                                  fontWeight: FontWeight.w600),
+                                fontSize: 12,
+                                fontFamily: "NotoSansKR",
+                                fontWeight: FontWeight.w600,
+                              ),
                               keyboardType: TextInputType.emailAddress,
                               decoration: getCustomInputDecoration(
                                 label: "이메일",
                                 hintText: "your@eamil.com",
-                                borderRadius: BorderRadius.circular(20),
+                                borderRadius: BorderRadius.circular(25),
                               ),
                               validator: emailValidator,
                               onChanged: (value) {
@@ -138,17 +147,20 @@ class RegisterScreen extends StatelessWidget {
                       flex: 3,
                       child: Container(
                         margin: EdgeInsets.only(left: 8),
-                        height: height * 0.06,
+                        // height: height * 0.08,
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          color: _registerController.emailDuplicatedMsg.value != "사용 가능"
-                              ? AppConfig.mainColor
-                              : Colors.green,
+                          borderRadius: BorderRadius.circular(25),
+                          color: AppConfig.mainColor,
                         ),
                         child: TextButton(
                           onPressed: () {
-                            _registerController.validateEmail();
-                            // 이메일 중복 검사
+                            if (_registerController.email.value.isEmpty) {
+                              showMsgPopup(msg: "이메일 작성해주세요", context: context, space: 0.49);
+                            } else if (emailValidator(_registerController.email.value) != null) {
+                              showMsgPopup(msg: "이메일 형식이 아닙니다", context: context, space: 0.49);
+                            } else {
+                              _registerController.validateEmail();
+                            }
                           },
                           // style: TextButton.styleFrom(backgroundColor: AppConfig.mainColor),
                           child: Obx(
@@ -162,7 +174,6 @@ class RegisterScreen extends StatelessWidget {
                               ),
                             ),
                           ),
-
                         ),
                       ),
                     )
@@ -170,12 +181,19 @@ class RegisterScreen extends StatelessWidget {
                 ),
               ),
             ),
+
+            Obx(() => _registerController.emailDuplicatedMsg.value == "사용 가능"
+                ? _getEmailAuthWidget(context: context)
+                : SizedBox(
+                    height: 0,
+                  )),
+
             // 비밀번호 FormField
             Obx(
               () => Padding(
                 padding: const EdgeInsets.all(4.0),
                 child: SizedBox(
-                  height: height * 0.06,
+                  // height: height * 0.08,
                   child: TextFormField(
                     style: TextStyle(
                         fontSize: 12, fontFamily: "NotoSansKR", fontWeight: FontWeight.w600),
@@ -205,7 +223,7 @@ class RegisterScreen extends StatelessWidget {
               () => Padding(
                 padding: const EdgeInsets.all(4.0),
                 child: SizedBox(
-                  height: height * 0.06,
+                  // height: height * 0.08,
                   child: TextFormField(
                     style: TextStyle(
                         fontSize: 12, fontFamily: "NotoSansKR", fontWeight: FontWeight.w600),
@@ -252,26 +270,26 @@ class RegisterScreen extends StatelessWidget {
             if (_formKey.currentState?.validate() ?? false) {
               _formKey.currentState?.save();
             } else {
-              _registerController.registerMsg.value = "다시 작성해주세요.";
+              // _registerController.registerMsg.value = "다시 작성해주세요.";
               return;
             }
 
             // 2. 이메일 중복 검사 확인
             if (_registerController.emailDuplicatedMsg.value != "사용 가능") {
-              _registerController.registerMsg.value = "이메일 중복 검사 해주세요.";
+              // _registerController.registerMsg.value = "이메일 중복 검사 해주세요.";
               return;
             }
 
             // 3. 비밀번호 매칭 확인
             if (_registerController.passwd.value != _registerController.passwdCheck.value) {
-              _registerController.registerMsg.value = "비밀번호가 일치하지 않습니다..";
+              // _registerController.registerMsg.value = "비밀번호가 일치하지 않습니다..";
               return;
             }
 
             // 4. 회원가입 시도
             try {
               _registerController.signup();
-              _registerController.registerMsg.value = "회원가입 성공!";
+              // _registerController.registerMsg.value = "회원가입 성공!";
               await Future.delayed(Duration(seconds: AppConfig.stopScreenSec));
               Get.toNamed('/login');
             } on DioException catch (e) {
@@ -292,6 +310,76 @@ class RegisterScreen extends StatelessWidget {
               color: Colors.white,
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _getEmailAuthWidget({required BuildContext context}) {
+    return IntrinsicHeight(
+      child: Padding(
+        padding: const EdgeInsets.all(4.0),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Expanded(
+              flex: 2,
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  SizedBox(
+                    // height: height * 0.08,
+                    child: TextFormField(
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontFamily: "NotoSansKR",
+                        fontWeight: FontWeight.w600,
+                      ),
+                      keyboardType: TextInputType.emailAddress,
+                      decoration: getCustomInputDecoration(
+                        label: "인증코드",
+                        hintText: "XXXXXX",
+                        borderRadius: BorderRadius.circular(25),
+                      ),
+                      validator: emailValidator,
+                      onChanged: (value) {
+                        // _registerController.email.value = value;
+                        // _registerController.emailDuplicatedMsg.value = "중복 검사";
+                      },
+                      // onSaved: (value) => _registerController.email.value = value!,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              flex: 1,
+              child: Container(
+                margin: EdgeInsets.only(left: 8),
+                // height: height * 0.08,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(25),
+                  color: AppConfig.mainColor,
+                ),
+                child: TextButton(
+                  onPressed: () {
+                    // 인증코드 확인
+                  },
+                  child: Text(
+                    "인증 코드 전송",
+                    // _registerController.emailDuplicatedMsg.value,
+                    style: TextStyle(
+                      fontFamily: "NotoSansKR",
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            )
+          ],
         ),
       ),
     );

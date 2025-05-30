@@ -87,35 +87,7 @@ class CustomGoogleMap extends StatelessWidget {
   List<Widget> _getBottomRightFloatingButtons(BuildContext context) {
     return [
       // 로그아웃
-      Padding(
-        padding: const EdgeInsets.all(4.0),
-        child: SizedBox(
-          height: context.mediaQuery.size.height * 0.06,
-          child: FloatingActionButton(
-            onPressed: () async {
-              // 저장된 shared preferences 초기화 후 로그인 화면으로 이동
-              final SharedPreferences preferences = await SharedPreferences.getInstance();
-              await preferences.clear();
-              Restart.restartApp(
-                /// In Web Platform, Fill webOrigin only when your new origin is different than the app's origin
-                // webOrigin: 'http://example.com',
 
-                // Customizing the restart notification message (only needed on iOS)
-                // notificationTitle: 'Restarting App',
-                // notificationBody: 'Please tap here to open the app again.',
-              );
-              // Get.offNamed('/login');
-            },
-            backgroundColor: Colors.orange,
-            heroTag: "exit",
-            child: Icon(
-              Icons.exit_to_app,
-              color: AppConfig.backgroundColor,
-              size: 30,
-            ),
-          ),
-        ),
-      ),
       // 사진 공유
       Padding(
         padding: const EdgeInsets.all(4.0),
@@ -168,7 +140,7 @@ class CustomGoogleMap extends StatelessWidget {
           ),
         ),
       ),
-      // 예비 버튼
+      // 캘린더 이동
       Padding(
         padding: const EdgeInsets.all(4.0),
         child: SizedBox(
@@ -180,7 +152,7 @@ class CustomGoogleMap extends StatelessWidget {
               // showErrorPopup("test");
               Get.toNamed('/calendar');
             },
-            backgroundColor: Colors.grey,
+            backgroundColor: Colors.orange,
             heroTag: "test",
             child: Icon(
               Icons.newspaper_outlined,

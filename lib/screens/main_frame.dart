@@ -151,11 +151,11 @@ class MapScreen extends StatelessWidget {
           label: "폴더"),
       BottomNavigationBarItem(
           icon: Icon(
-            Icons.settings,
+            Icons.person,
             color: Colors.grey,
           ),
           activeIcon: Icon(
-            Icons.settings,
+            Icons.person,
             color: AppConfig.mainColor,
           ),
           label: "프로필"),

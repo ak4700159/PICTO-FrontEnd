@@ -25,13 +25,14 @@ class FolderListScreen extends StatelessWidget {
         titleSpacing: 1,
         backgroundColor: Colors.white,
         // 제목
+        centerTitle: true,
         title: Padding(
           padding: const EdgeInsets.only(left: 8.0),
           child: Container(
             padding: EdgeInsets.all(4),
-            decoration: BoxDecoration(color: Colors.grey.shade200, borderRadius: BorderRadius.circular(10)),
+            // decoration: BoxDecoration(color: Colors.grey.shade200, borderRadius: BorderRadius.circular(10)),
             child: Obx(() => Text(
-              "${profileViewModel.accountName.value}의 폴더 목록",
+              "${profileViewModel.accountName.value}의 폴더",
               overflow: TextOverflow.ellipsis,
               maxLines: 2,
               style: TextStyle(
@@ -120,6 +121,7 @@ class FolderListScreen extends StatelessWidget {
         borderRadius: BorderRadius.all(Radius.circular(10)),
       ),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           IconButton(
             onPressed: () async {

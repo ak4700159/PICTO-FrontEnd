@@ -94,6 +94,7 @@ class _MarkerListBottomSheetState extends State<MarkerListBottomSheet> {
             ),
             const SizedBox(height: 20),
             LinearProgressIndicator(
+              borderRadius: BorderRadius.circular(30),
               value: progress,
               color: Colors.white,
               minHeight: 20,
