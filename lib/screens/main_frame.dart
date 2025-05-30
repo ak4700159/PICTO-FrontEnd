@@ -82,8 +82,8 @@ class MapScreen extends StatelessWidget {
     print("[INFO] main frame rebuild!");
     final mapViewModel = Get.find<MapViewModel>();
     final comfyuiViewModel = Get.find<ComfyuiViewModel>();
-    final calendarViewModel = Get.find<CalendarViewModel>();
-    final folderViewModel = Get.find<FolderViewModel>();
+    // final calendarViewModel = Get.find<CalendarViewModel>();
+    // final folderViewModel = Get.find<FolderViewModel>();
     if (mapViewModel.navigationBarCurrentIndex.value == 4) {
       // calendarViewModel.buildCalendarEventMap(folderViewModel.convertCalendarEvent());
     } else if (mapViewModel.navigationBarCurrentIndex.value != 1) {

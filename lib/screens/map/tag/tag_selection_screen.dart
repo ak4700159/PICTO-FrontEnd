@@ -98,6 +98,7 @@ class TagSelectionScreen extends StatelessWidget {
               ),
               TopBox(size: 0.03),
               Container(
+                height: context.mediaQuery.size.height * 0.105,
                 margin: EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   color: Colors.grey.shade100,

@@ -60,8 +60,11 @@ class PhotoManagerApi {
   Future<Photo?> getPhoto({required int photoId}) async {
     String hostUrl = "$baseUrl/photos";
     try {
-      final response = await dio
-          .get(hostUrl, data: {"senderId": UserManagerApi().ownerId, "eventType": "photo", "eventTypeId": photoId});
+      final response = await dio.get(hostUrl, data: {
+        "senderId": UserManagerApi().ownerId,
+        "eventType": "photo",
+        "eventTypeId": photoId
+      });
       List<dynamic> photo = response.data;
       return Photo.fromJson(photo[0]);
     } catch (e) {
@@ -74,7 +77,8 @@ class PhotoManagerApi {
   Future<List<Photo>> getLikePhotos() async {
     List<Photo> photos = [];
     try {
-      final response = await dio.get("$baseUrl/photos/likes", queryParameters: {"userId": UserManagerApi().ownerId});
+      final response = await dio
+          .get("$baseUrl/photos/likes", queryParameters: {"userId": UserManagerApi().ownerId});
       List<dynamic> data = response.data;
       for (int photoId in data) {
         Photo? photo = await getPhoto(photoId: photoId);
@@ -116,5 +120,15 @@ class PhotoManagerApi {
       showErrorPopup(e.toString());
     }
     return false;
+  }
+
+  // a
+  Future<List<Photo>> getRandomPhotosByLocation(
+      {required String locationName,
+      required String locationType,
+      required int count,
+      required String eventType}) async {
+
+    return [];
   }
 }
