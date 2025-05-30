@@ -324,10 +324,11 @@ class GoogleMapViewModel extends GetxController {
       _loadFolder(currentStep);
       currentMarkers.add(userMarker);
     }
-    // 위에서는 currentPictoMarkers 가 전부 동작
+    // 위의 작업은 화면 정보(Zoom, 지도를 바라보고 있는 시점)를 바탕으로 마커 클스터링
     pictoCluster.manager.setItems(currentPictoMarkers.map((p) => PictoItem(pictoMarker: p)).toList());
   }
 
+  // 보여지는 마커 필터에 따라 변경
   Future<void> updateAllMarkersByPeriod(String period) async {
     // 기준 시간 계산
     final now = DateTime.now();

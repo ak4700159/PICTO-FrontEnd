@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:google_maps_cluster_manager_2/google_maps_cluster_manager_2.dart' as cluster;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:hive/hive.dart';
 import 'package:picto_frontend/screens/map/google_map/cluster/marker_bottom_sheet.dart';
 import 'package:picto_frontend/screens/map/google_map/cluster/picto_cluster_item.dart';
 import 'package:picto_frontend/screens/map/google_map/google_map_view_model.dart';
@@ -43,8 +44,7 @@ class PictoClusterManager {
     print("[DEBUG] cluster count: ${cluster.items.length}, isMultiple: ${cluster.isMultiple}");
     // 가장 좋아요를 많이 맏은 사진
     List<PictoMarker> markers = {
-      for (var pictoItem in cluster.items)
-        pictoItem.pictoMarker.photo.photoId: pictoItem.pictoMarker
+      for (var pictoItem in cluster.items) pictoItem.pictoMarker.photo.photoId: pictoItem.pictoMarker
     }.values.toList();
     final mostLiked = markers.toList().reduce((a, b) => a.photo.likes > b.photo.likes ? a : b);
     mostLiked.onTap = () {
@@ -71,16 +71,28 @@ class PictoClusterManager {
     }
   }
 
-  // Future<void> _downloadAllImages(List<PictoMarker> markers) async {
-  //   await Future.wait(markers.map((marker) async {
-  //     marker.imageData ??= await PhotoStoreApi().downloadPhoto(marker.photo.photoId);
-  //   }));
-  // }
-
   void _openClusterBottomSheet(List<PictoMarker> markers) {
     Get.bottomSheet(
-      MarkerListBottomSheet(markers: markers),
-      shape: BeveledRectangleBorder(),
+      Builder(
+        builder: (context) {
+          return Container(
+            padding: EdgeInsets.only(top: 10),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(12),
+                topRight: Radius.circular(12),
+              ),
+            ),
+            height: context.mediaQuery.size.height * 0.8,
+            width: context.mediaQuery.size.width,
+            child: MarkerListBottomSheet(
+              markers: markers,
+            ),
+          );
+        },
+      ),
+      isScrollControlled : true,
     );
   }
 
@@ -97,12 +109,15 @@ class PictoClusterManager {
                 onPressed: () async {
                   BoxFit fit = await determineFit(marker.imageData!);
                   User? user = await UserManagerApi().getUserByUserId(userId: (marker.photo.userId!));
-                  Get.toNamed("/photo", arguments: {
-                    "photo": marker.photo,
-                    "data": marker.imageData,
-                    "user" : user!,
-                    "fit": fit,
-                  });
+                  Get.toNamed(
+                    "/photo",
+                    arguments: {
+                      "photo": marker.photo,
+                      "data": marker.imageData,
+                      "user": user!,
+                      "fit": fit,
+                    },
+                  );
                 },
                 child: Text(
                   "상세 보기",

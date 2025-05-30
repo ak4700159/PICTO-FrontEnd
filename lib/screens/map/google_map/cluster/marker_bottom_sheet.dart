@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:picto_frontend/services/user_manager_service/user_api.dart';
 
+import '../../../../config/app_config.dart';
 import '../../../../models/user.dart';
 import '../../../../services/photo_store_service/photo_store_api.dart';
 import '../../../../utils/functions.dart';
@@ -30,6 +31,7 @@ class _MarkerListBottomSheetState extends State<MarkerListBottomSheet> {
   Future<void> _startDownloadAllImages() async {
     int completed = 0;
     int total = widget.markers.where((m) => m.imageData == null).length;
+    // 추천 이미지 추가 -> 주변 사진
 
     if (total == 0) {
       setState(() {
@@ -104,7 +106,7 @@ class _MarkerListBottomSheetState extends State<MarkerListBottomSheet> {
               "${(progress * 100).toStringAsFixed(1)}%",
               style: TextStyle(
                 fontFamily: "NotoSansKR",
-                fontSize: 20,
+                fontSize: 15,
                 fontWeight: FontWeight.w700,
                 color: Colors.grey,
               ),
@@ -114,35 +116,169 @@ class _MarkerListBottomSheetState extends State<MarkerListBottomSheet> {
       );
     }
 
-    return ListView.builder(
-      scrollDirection: Axis.horizontal,
-      itemCount: widget.markers.length,
-      itemBuilder: (context, index) {
-        final marker = widget.markers[index];
-        return Align(
-          alignment: Alignment.topCenter,
-          child: SizedBox(
-            width: MediaQuery.of(context).size.width * 0.5,
-            height: MediaQuery.of(context).size.height * 0.3,
-            child: GestureDetector(
-              onTap: () async {
-                BoxFit fit = await determineFit(marker.imageData!);
-                User? user = await UserManagerApi().getUserByUserId(userId: (marker.photo.userId!));
-                Get.toNamed("/photo", arguments: {
-                  "photo": marker.photo,
-                  "data": marker.imageData,
-                  "user" : user!,
-                  "fit": fit,
-                });
-              },
-              child: AnimatedMarkerWidget(
-                type: marker.type,
-                imageData: marker.imageData,
-              ),
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          Container(
+            margin: EdgeInsets.all(16),
+            padding: EdgeInsets.all(8),
+            decoration: BoxDecoration(
+                border: BorderDirectional(bottom: BorderSide(width: 2, color: Colors.grey))),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.favorite,
+                  color: Colors.red,
+                ),
+                Text(
+                  "  대표 사진",
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontFamily: "NotoSansKR",
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
             ),
           ),
-        );
-      },
+          SizedBox(
+            height: context.mediaQuery.size.height * 0.35,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: widget.markers.length,
+              itemBuilder: (context, index) {
+                final marker = widget.markers[index];
+                return Align(
+                  alignment: Alignment.topCenter,
+                  child: GestureDetector(
+                    onTap: () async {
+                      BoxFit fit = await determineFit(marker.imageData!);
+                      User? user = await UserManagerApi().getUserByUserId(userId: (marker.photo.userId!));
+                      Get.toNamed("/photo", arguments: {
+                        "photo": marker.photo,
+                        "data": marker.imageData,
+                        "user": user!,
+                        "fit": fit,
+                      });
+                    },
+                    child: SizedBox(
+                      width: context.mediaQuery.size.height * 0.3,
+                      height: context.mediaQuery.size.height * 0.5,
+                      child: Column(
+                        children: [
+                          SizedBox(
+                            width: context.mediaQuery.size.height * 0.3,
+                            height: context.mediaQuery.size.height * 0.3,
+                            child: AnimatedMarkerWidget(
+                              type: marker.type,
+                              imageData: marker.imageData,
+                            ),
+                          ),
+                          Text(
+                            marker.photo.location.split(' ').take(3).join(' '),
+                            style: TextStyle(
+                              fontFamily: "NotoSansKR",
+                              fontSize: 11,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                          Text(
+                            formatDateKorean(marker.photo.updateDatetime ?? 0).substring(0, "0000년 00월 00일".length),
+                            style: TextStyle(
+                              fontFamily: "NotoSansKR",
+                              fontSize: 10,
+                              fontWeight: FontWeight.w300,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.all(16),
+            padding: EdgeInsets.all(8),
+            decoration: BoxDecoration(
+                border: BorderDirectional(bottom: BorderSide(width: 2, color: Colors.grey))),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.favorite,
+                  color: Colors.blue,
+                ),
+                Text(
+                  "   주변 사진",
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontFamily: "NotoSansKR",
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(
+            height: context.mediaQuery.size.height * 0.35,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: widget.markers.length,
+              itemBuilder: (context, index) {
+                final marker = widget.markers[index];
+                return Align(
+                  alignment: Alignment.topCenter,
+                  child: GestureDetector(
+                    onTap: () async {
+                      BoxFit fit = await determineFit(marker.imageData!);
+                      User? user = await UserManagerApi().getUserByUserId(userId: (marker.photo.userId!));
+                      Get.toNamed("/photo", arguments: {
+                        "photo": marker.photo,
+                        "data": marker.imageData,
+                        "user": user!,
+                        "fit": fit,
+                      });
+                    },
+                    child: SizedBox(
+                      width: context.mediaQuery.size.height * 0.3,
+                      height: context.mediaQuery.size.height * 0.5,
+                      child: Column(
+                        children: [
+                          SizedBox(
+                            width: context.mediaQuery.size.height * 0.3,
+                            height: context.mediaQuery.size.height * 0.3,
+                            child: AnimatedMarkerWidget(
+                              type: marker.type,
+                              imageData: marker.imageData,
+                            ),
+                          ),
+                          Text(
+                            marker.photo.location.split(' ').take(3).join(' '),
+                            style: TextStyle(
+                              fontFamily: "NotoSansKR",
+                              fontSize: 11,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                          Text(
+                            formatDateKorean(marker.photo.updateDatetime ?? 0).substring(0, "0000년 00월 00일".length),
+                            style: TextStyle(
+                              fontFamily: "NotoSansKR",
+                              fontSize: 10,
+                              fontWeight: FontWeight.w300,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

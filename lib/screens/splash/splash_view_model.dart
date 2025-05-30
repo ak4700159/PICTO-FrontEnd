@@ -26,35 +26,18 @@ class SplashViewModel extends GetxController {
   }
 
   Future<void> logging() async {
-    // print("[INFO] logging start");
-    // step1. 위치 권환 획득
     final googleMapController = Get.find<GoogleMapViewModel>();
-    // print("[INFO] requesting location permission");
     await googleMapController.getPermission();
-    // print("[INFO] location permission granted");
-
-    // step2. 첫번째 접속 확인
     if (await _checkNullLoginData()) {
-      // print("[INFO] first connection");
       Get.offNamed('/guide');
       return;
     }
-
-    // step3. 토큰 이용해 사용자 api 호출 -> 사용자 정보 초기화
     await UserManagerApi().setUserAllInfo();
-    // Get.find<FolderViewModel>().initFolder();
   }
-
-  // 현재 가장 큰 문제 : 해당 로직 작동 X
-  // 에러를 처리하는 것이 아니라 정상 반환을 통해 처리하는 것이 맞아보임
-  // -> 엑세스 토큰 만료시 리프레쉬 토큰으로 복구가 안됨
-
-
-  // return true = 처음 접속
-  // return false = 이전에 로그인한 적이 있음
+  // true = 처음 접속
+  // false = 이전에 로그인한 적이 있음
   Future<bool> _checkNullLoginData() async {
     try {
-      // print("[INFO] login info null check");
       await UserManagerApi().init();
     } catch (e) {
       statusMsg.value = "안녕하세요! 처음 접속하시네요 반가워요!";
