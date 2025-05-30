@@ -60,6 +60,7 @@ class PictoMarker {
       icon: await MarkerWidget(
         imageData: imageData,
         type: type,
+        photo : photo,
       ).toBitmapDescriptor(
         // 실제 마커에 띄워질 이미지는 imageSize 파라미터에 좌지우지 된다.
         logicalSize: const Size(150, 150),

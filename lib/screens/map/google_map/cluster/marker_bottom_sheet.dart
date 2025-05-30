@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hive/hive.dart';
+import 'package:picto_frontend/screens/map/google_map/google_map_view_model.dart';
+import 'package:picto_frontend/services/photo_manager_service/photo_manager_api.dart';
 import 'package:picto_frontend/services/user_manager_service/user_api.dart';
 
 import '../../../../config/app_config.dart';
+import '../../../../models/photo.dart';
 import '../../../../models/user.dart';
 import '../../../../services/photo_store_service/photo_store_api.dart';
 import '../../../../utils/functions.dart';
@@ -21,6 +25,7 @@ class MarkerListBottomSheet extends StatefulWidget {
 class _MarkerListBottomSheetState extends State<MarkerListBottomSheet> {
   double progress = 0.0;
   bool loadingComplete = false;
+  List<PictoMarker> aroundPhotos = [];
 
   @override
   void initState() {
@@ -29,10 +34,32 @@ class _MarkerListBottomSheetState extends State<MarkerListBottomSheet> {
   }
 
   Future<void> _startDownloadAllImages() async {
-    int completed = 0;
-    int total = widget.markers.where((m) => m.imageData == null).length;
-    // 추천 이미지 추가 -> 주변 사진
+    Set<String> locationNames = {};
 
+    // 추천 이미지 추가 -> 대표 사진 주변 사진 추가하기
+    final googleMapViewModel = Get.find<GoogleMapViewModel>();
+    for(PictoMarker marker in widget.markers) {
+      if(googleMapViewModel.currentStep == "large") {
+        locationNames.add(marker.photo.location.split(' ')[0]);
+      } else if(googleMapViewModel.currentStep == "middle") {
+        locationNames.add(marker.photo.location.split(' ')[1]);
+      } else {
+        locationNames.add(marker.photo.location.split(' ')[2]);
+      }
+    }
+
+    // 대표 사진 지역 주변으로 주변 사진 검색
+    for(String locationName in locationNames) {
+      List<Photo> temp = await PhotoManagerApi().getRandomPhotosByLocation(locationName: locationName, count: 10, eventType: "random");
+      aroundPhotos.addAll(temp.map((p) => PictoMarker(photo: p, type: PictoMarkerType.aroundPhoto)).toList());
+    }
+
+    // 중복 요소 제거
+    aroundPhotos.removeWhere((aroundPhoto) =>
+        widget.markers.any((p) => p.photo.photoId == aroundPhoto.photo.photoId));
+
+    int completed = 0;
+    int total = widget.markers.where((m) => m.imageData == null).length + aroundPhotos.length;
     if (total == 0) {
       setState(() {
         progress = 1.0;
@@ -42,7 +69,6 @@ class _MarkerListBottomSheetState extends State<MarkerListBottomSheet> {
     }
 
     final tasks = <Future<void>>[];
-
     for (int i = 0; i < widget.markers.length; i++) {
       final marker = widget.markers[i];
       if (marker.imageData == null) {
@@ -55,6 +81,30 @@ class _MarkerListBottomSheetState extends State<MarkerListBottomSheet> {
             marker.imageData = data;
           } catch (e) {
             print("[ERROR] Failed to download image for photoId ${marker.photo.photoId}");
+          }
+
+          completed++;
+          // UI 갱신은 메인 스레드에서
+          if (mounted) {
+            setState(() {
+              progress = completed / total;
+            });
+          }
+        }());
+      }
+    }
+
+    if(aroundPhotos.isNotEmpty) {
+      for(int i = 0 ;i < aroundPhotos.length; i++) {
+        tasks.add(() async {
+          try {
+            final data = await PhotoStoreApi().downloadPhoto(
+              photoId: aroundPhotos[i].photo.photoId,
+              scale: 0.5,
+            );
+            aroundPhotos[i].imageData = data;
+          } catch (e) {
+            print("[ERROR] Failed to download image for photoId ${aroundPhotos[i].photo.photoId}");
           }
 
           completed++;
@@ -221,12 +271,18 @@ class _MarkerListBottomSheetState extends State<MarkerListBottomSheet> {
             ),
           ),
           SizedBox(
-            height: context.mediaQuery.size.height * 0.35,
-            child: ListView.builder(
+            height: context.mediaQuery.size.height * 0.4,
+            child: GridView.builder(
               scrollDirection: Axis.horizontal,
-              itemCount: widget.markers.length,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2, // 2행
+                // mainAxisSpacing: 2,
+                // crossAxisSpacing: 2,
+                childAspectRatio: 1.1,
+              ),
+              itemCount: aroundPhotos.length,
               itemBuilder: (context, index) {
-                final marker = widget.markers[index];
+                final marker = aroundPhotos[index];
                 return Align(
                   alignment: Alignment.topCenter,
                   child: GestureDetector(
@@ -240,14 +296,21 @@ class _MarkerListBottomSheetState extends State<MarkerListBottomSheet> {
                         "fit": fit,
                       });
                     },
-                    child: SizedBox(
-                      width: context.mediaQuery.size.height * 0.3,
-                      height: context.mediaQuery.size.height * 0.5,
+                    child: Container(
+                      margin: EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(color: Colors.grey, blurRadius: 1, spreadRadius: 0.5)
+                          ]
+                      ),
+                      width: context.mediaQuery.size.width * 0.8,
+                      // height: context.mediaQuery.size.width * 0.9,
                       child: Column(
                         children: [
                           SizedBox(
-                            width: context.mediaQuery.size.height * 0.3,
-                            height: context.mediaQuery.size.height * 0.3,
+                            width: context.mediaQuery.size.height * 0.17,
+                            height: context.mediaQuery.size.height * 0.17,
                             child: AnimatedMarkerWidget(
                               type: marker.type,
                               imageData: marker.imageData,
@@ -255,20 +318,15 @@ class _MarkerListBottomSheetState extends State<MarkerListBottomSheet> {
                           ),
                           Text(
                             marker.photo.location.split(' ').take(3).join(' '),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                               fontFamily: "NotoSansKR",
-                              fontSize: 11,
+                              fontSize: 9,
                               fontWeight: FontWeight.w400,
                             ),
                           ),
-                          Text(
-                            formatDateKorean(marker.photo.updateDatetime ?? 0).substring(0, "0000년 00월 00일".length),
-                            style: TextStyle(
-                              fontFamily: "NotoSansKR",
-                              fontSize: 10,
-                              fontWeight: FontWeight.w300,
-                            ),
-                          ),
+
                         ],
                       ),
                     ),
@@ -277,6 +335,7 @@ class _MarkerListBottomSheetState extends State<MarkerListBottomSheet> {
               },
             ),
           ),
+          SizedBox(height: 20,)
         ],
       ),
     );

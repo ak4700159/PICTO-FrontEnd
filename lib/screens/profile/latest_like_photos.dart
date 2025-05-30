@@ -50,11 +50,11 @@ class _LatestLikePhotosState extends State<LatestLikePhotos> {
 
     return SizedBox(
       width: context.mediaQuery.size.width,
-      height: context.mediaQuery.size.height * 0.4,
+      height: context.mediaQuery.size.height * 0.25,
       child: GridView.builder(
         scrollDirection: Axis.horizontal,
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
+          crossAxisCount: 2,
           childAspectRatio: 1,
         ),
         itemCount: latestLikePhotos.length,

@@ -196,7 +196,7 @@ class ProfileScreen extends StatelessWidget {
                   padding: const EdgeInsets.all(4.0),
                   child: SizedBox(
                     height: context.mediaQuery.size.height * 0.07,
-                    width: context.mediaQuery.size.width * 0.2,
+                    width: context.mediaQuery.size.width * 0.15,
                     child: FloatingActionButton(
                       onPressed: () async {
                         showSelectionDialog(
@@ -213,7 +213,7 @@ class ProfileScreen extends StatelessWidget {
                             negativeMsg: "아니요",
                             content: "로그아웃 하시겠습니까?");
                       },
-                      backgroundColor: Colors.red,
+                      backgroundColor: Colors.red.shade300,
                       heroTag: "exit",
                       child: Icon(
                         Icons.exit_to_app,

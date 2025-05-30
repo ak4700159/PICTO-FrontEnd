@@ -37,10 +37,10 @@ class SelectionBarViewModel extends GetxController {
     }
   }
 
-  void changePeriod(period) {
+  void changePeriod(period) async {
     currentSelectedPeriod?.value = period ?? "하루";
     try{
-      UserManagerApi().modifiedFilter(currentSelectedSort!.value, currentSelectedPeriod!.value);
+      await UserManagerApi().modifiedFilter(currentSelectedSort!.value, currentSelectedPeriod!.value);
       Get.find<GoogleMapViewModel>().updateAllMarkersByPeriod(period);
     } catch(e) {
       showErrorPopup(e.toString());

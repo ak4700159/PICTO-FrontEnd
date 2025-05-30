@@ -51,7 +51,7 @@ class PhotoScreen extends StatelessWidget {
                     // constrained: false,
                     child: Image.memory(
                       snapshot.data!,
-                      fit: fit,
+                      fit:  BoxFit.contain,
                     ),
                   );
                 }),

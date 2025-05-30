@@ -20,6 +20,7 @@ class TagSelectionScreen extends StatelessWidget {
       },
       child: Scaffold(
         appBar: AppBar(
+          scrolledUnderElevation: 0,
           automaticallyImplyLeading: false,
           actions: [
             Obx(() => Column(

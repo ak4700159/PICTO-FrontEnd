@@ -2,15 +2,17 @@ import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:picto_frontend/config/app_config.dart';
 import 'package:picto_frontend/screens/map/google_map/marker/picto_marker.dart';
+
+import '../../../../models/photo.dart';
 
 // 실제 화면에 보여질 위젯
 class MarkerWidget extends StatelessWidget {
   final Uint8List? imageData;
   final PictoMarkerType type;
+  final Photo photo;
 
-  const MarkerWidget({super.key, this.imageData, required this.type});
+  const MarkerWidget({super.key, this.imageData, required this.type, required this.photo});
 
   @override
   Widget build(BuildContext context) {
@@ -24,16 +26,14 @@ class MarkerWidget extends StatelessWidget {
 
     BoxDecoration decoration = type == PictoMarkerType.userPos
         ? BoxDecoration(
-      color: _borderColor,
-      borderRadius: BorderRadius.circular(100),
-      boxShadow: [
-        BoxShadow(color: Color.fromRGBO(0, 0, 0, 0.57), blurRadius: 5)
-      ],
-    )
+            color: _borderColor,
+            borderRadius: BorderRadius.circular(100),
+            boxShadow: [BoxShadow(color: Color.fromRGBO(0, 0, 0, 0.57), blurRadius: 5)],
+          )
         : BoxDecoration(
-      border: Border.all(color: _borderColor, width: 4),
-      borderRadius: BorderRadius.circular(20),
-    );
+            border: Border.all(color: _borderColor, width: 4),
+            borderRadius: BorderRadius.circular(20),
+          );
 
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -45,27 +45,30 @@ class MarkerWidget extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           child: imageData != null
               ? Image.memory(
-            imageData!,
-            fit: BoxFit.cover,
-            errorBuilder: (context, object, trace) {
-              return Image.asset(
-                'assets/images/picto_logo.png',
-                fit: BoxFit.cover,
-              );
-            },
-          )
+                  imageData!,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, object, trace) {
+                    // 에러 시 다시 복구
+                    return Container(
+                        color: Colors.white,
+                        child: Image.asset(
+                          'assets/images/picto_logo.png',
+                          fit: BoxFit.cover,
+                        ));
+                  },
+                )
               : type == PictoMarkerType.userPos
-              ? null
-              : Center(
-            child: Text(
-              'No image data',
-              style: TextStyle(
-                fontSize: 30,
-                color: Colors.red,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
+                  ? null
+                  : Center(
+                      child: Text(
+                        'No image data',
+                        style: TextStyle(
+                          fontSize: 30,
+                          color: Colors.red,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
         ),
       ),
     );

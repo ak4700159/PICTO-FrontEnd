@@ -330,32 +330,9 @@ class GoogleMapViewModel extends GetxController {
 
   // 보여지는 마커 필터에 따라 변경
   Future<void> updateAllMarkersByPeriod(String period) async {
-    // 기준 시간 계산
-    final now = DateTime.now();
-    DateTime periodThreshold;
-
-    switch (period) {
-      case "일년":
-        periodThreshold = now.subtract(Duration(days: 365));
-        break;
-      case "한달":
-        periodThreshold = now.subtract(Duration(days: 30));
-        break;
-      case "일주일":
-        periodThreshold = now.subtract(Duration(days: 7));
-        break;
-      case "하루":
-        periodThreshold = now.subtract(Duration(days: 1));
-        break;
-      default:
-        periodThreshold = DateTime.fromMillisecondsSinceEpoch(0); // 전체 포함
-    }
-
-    currentPictoMarkers.removeWhere((marker) => !withinPeriod(marker, periodThreshold));
-    aroundPhotos.removeWhere((marker) => !withinPeriod(marker, periodThreshold));
-    representativePhotos["large"]!.removeWhere((marker) => !withinPeriod(marker, periodThreshold));
-    representativePhotos["middle"]!.removeWhere((marker) => !withinPeriod(marker, periodThreshold));
-    representativePhotos["small"]!.removeWhere((marker) => !withinPeriod(marker, periodThreshold));
+    representativePhotos["large"]!.clear();
+    representativePhotos["middle"]!.clear();
+    representativePhotos["small"]!.clear();
     _updateAllMarker();
   }
 

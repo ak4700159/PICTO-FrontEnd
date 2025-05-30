@@ -24,16 +24,14 @@ class AnimatedMarkerWidget extends StatelessWidget {
 
     BoxDecoration decoration = type == PictoMarkerType.userPos
         ? BoxDecoration(
-      color: borderColor,
-      borderRadius: BorderRadius.circular(100),
-      boxShadow: [
-        BoxShadow(color: Color.fromRGBO(0, 0, 0, 0.57), blurRadius: 5)
-      ],
-    )
+            color: borderColor,
+            borderRadius: BorderRadius.circular(100),
+            boxShadow: [BoxShadow(color: Color.fromRGBO(0, 0, 0, 0.57), blurRadius: 5)],
+          )
         : BoxDecoration(
-      border: Border.all(color: borderColor, width: 4),
-      borderRadius: BorderRadius.circular(20),
-    );
+            border: Border.all(color: borderColor, width: 2),
+            borderRadius: BorderRadius.circular(20),
+          );
 
     return TweenAnimationBuilder<double>(
       tween: Tween<double>(begin: 0.0, end: 1.0),
@@ -52,27 +50,27 @@ class AnimatedMarkerWidget extends StatelessWidget {
                 borderRadius: BorderRadius.circular(16),
                 child: imageData != null
                     ? Image.memory(
-                  imageData!,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, object, trace) {
-                    return Image.asset(
-                      'assets/images/picto_logo.png',
-                      fit: BoxFit.cover,
-                    );
-                  },
-                )
+                        imageData!,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, object, trace) {
+                          return Image.asset(
+                            'assets/images/picto_logo.png',
+                            fit: BoxFit.cover,
+                          );
+                        },
+                      )
                     : type == PictoMarkerType.userPos
-                    ? null
-                    : Center(
-                  child: Text(
-                    'No image data',
-                    style: TextStyle(
-                      fontSize: 30,
-                      color: Colors.red,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
+                        ? null
+                        : Center(
+                            child: Text(
+                              'No image data',
+                              style: TextStyle(
+                                fontSize: 30,
+                                color: Colors.red,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
               ),
             ),
           ),
