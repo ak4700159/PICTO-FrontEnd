@@ -433,4 +433,16 @@ class GoogleMapViewModel extends GetxController {
         bounds.southwest.longitude <= point.longitude &&
         bounds.northeast.longitude >= point.longitude;
   }
+
+  // 이미지 다시 다운로드 하기위함
+  void resetMarker() {
+    aroundPhotos.clear();
+    representativePhotos["small"]?.clear();
+    representativePhotos["middle"]?.clear();
+    representativePhotos["large"]?.clear();
+    myPhotos.clear();
+    folderPhotos.clear();
+    currentMarkers.clear();
+    currentPictoMarkers.clear();
+  }
 }

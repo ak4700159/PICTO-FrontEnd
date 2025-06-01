@@ -153,9 +153,29 @@ class CustomGoogleMap extends StatelessWidget {
               Get.toNamed('/calendar');
             },
             backgroundColor: Colors.orange,
-            heroTag: "test",
+            heroTag: "calendar",
             child: Icon(
               Icons.newspaper_outlined,
+              color: AppConfig.backgroundColor,
+              size: 30,
+            ),
+          ),
+        ),
+      ),
+      // 이미지 재로딩 -> 마커 리셋
+      Padding(
+        padding: const EdgeInsets.all(4.0),
+        child: SizedBox(
+          height: context.mediaQuery.size.height * 0.06,
+          child: FloatingActionButton(
+            onPressed: ()  {
+              final googleMapViewModel = Get.find<GoogleMapViewModel>();
+              googleMapViewModel.resetMarker();
+            },
+            backgroundColor: AppConfig.mainColor,
+            heroTag: "reload",
+            child: Icon(
+              Icons.restart_alt,
               color: AppConfig.backgroundColor,
               size: 30,
             ),
