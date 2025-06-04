@@ -1,4 +1,7 @@
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:picto_frontend/screens/login/sub_screen/register_view_model.dart';
 
 String? emailValidator(String? value) {
   if (value?.isEmpty ?? true) {
@@ -14,11 +17,12 @@ String? emailValidator(String? value) {
   return null;
 }
 
-Future<String?> emailCodeValidator(String? value) async {
+String? emailCodeValidator(String? value) {
+  final registerViewModel = Get.find<RegisterViewModel>();
   if (value?.isEmpty ?? true) {
-    return '이메일을 입력해주세요.';
-  } else {
-
+    return '인증코드를 작성해주세요.';
+  } else if(!registerViewModel.isEmailCodeAuth.value) {
+    return '인증코드를 확인 버튼을 눌러주세요';
   }
   return null;
 }

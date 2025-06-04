@@ -28,7 +28,7 @@ class MapViewModel extends GetxController {
       );
       await PhotoStoreApi().uploadPhoto(request);
       Get.back();
-      showPositivePopup("현재 위치로 저장에 성공하였습니다!");
+      showMsgPopup(msg: "현재 위치로 저장에 성공하였습니다!", space: 0.4);
     } catch(e) {
       print("[ERROR] ${e.toString()}");
       Get.back();

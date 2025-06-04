@@ -53,9 +53,9 @@ class FolderInvitationViewModel extends GetxController {
     if (isSuccess) {
       // Get.find<FolderViewModel>().resetFolder();
       if(isAccept) {
-        showPositivePopup("공유 폴더를 추가하였습니다.");
+        showMsgPopup(msg: "공유 폴더를 추가하였습니다.", space: 0.4);
       } else {
-        showPositivePopup("공유 폴더를 거절하였습니다.");
+        showMsgPopup(msg: "공유 폴더를 거절하였습니다.", space: 0.4);
       }
     }
     notices.removeWhere((n) => n.noticeId == target.noticeId);
@@ -72,7 +72,7 @@ class FolderInvitationViewModel extends GetxController {
       isSuccess.add(success);
     }
     if (!isSuccess.contains(false)) {
-      showPositivePopup("공유 초대하였습니다.");
+      showMsgPopup(msg: "공유 초대하였습니다.", space: 0.4);
     }
     selectedUsers.clear();
     selectedEmail.clear();

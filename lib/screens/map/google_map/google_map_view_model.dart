@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math';
 import 'package:custom_info_window/custom_info_window.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,16 +7,14 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:picto_frontend/config/app_config.dart';
-import 'package:picto_frontend/models/photo.dart';
+import 'package:picto_frontend/config/user_config.dart';
 import 'package:picto_frontend/screens/folder/folder_view_model.dart';
 import 'package:picto_frontend/screens/map/google_map/cluster/picto_cluster_item.dart';
 import 'package:picto_frontend/services/session_scheduler_service/session_socket.dart';
-import 'package:picto_frontend/services/user_manager_service/user_api.dart';
 import 'package:widget_to_marker/widget_to_marker.dart';
 
 import '../../../models/folder.dart';
 import '../../../utils/distance.dart';
-import '../../../utils/functions.dart';
 import 'cluster/picto_cluster_manager.dart';
 import 'marker/marker_converter.dart';
 import 'marker/animated_marker_widget.dart';
@@ -75,6 +72,7 @@ class GoogleMapViewModel extends GetxController {
   // 클러스터 매니저
   PictoClusterManager pictoCluster = PictoClusterManager();
 
+
   @override
   void onInit() async {
     // 지도 양식 로딩
@@ -110,10 +108,8 @@ class GoogleMapViewModel extends GetxController {
     // 화면 중앙 정보 로딩
     try {
       screenBounds = await _googleMapController!.getVisibleRegion();
-      currentScreenCenterLat.value =
-          (screenBounds.northeast.latitude + screenBounds.southwest.latitude) / 2;
-      currentScreenCenterLng.value =
-          (screenBounds.northeast.longitude + screenBounds.southwest.longitude) / 2;
+      currentScreenCenterLat.value = (screenBounds.northeast.latitude + screenBounds.southwest.latitude) / 2;
+      currentScreenCenterLng.value = (screenBounds.northeast.longitude + screenBounds.southwest.longitude) / 2;
       final newLatLng = LatLng(currentScreenCenterLat.value, currentScreenCenterLng.value);
       final currentPos = LatLng(currentLat.value, currentLng.value);
 
@@ -170,8 +166,7 @@ class GoogleMapViewModel extends GetxController {
       currentScreenCenterLat.value = (bounds.northeast.latitude + bounds.southwest.latitude) / 2;
       currentScreenCenterLng.value = (bounds.northeast.longitude + bounds.southwest.longitude) / 2;
       pictoCluster.manager.setMapId(controller.mapId);
-      pictoCluster.manager
-          .setItems(currentPictoMarkers.map((p) => PictoItem(pictoMarker: p)).toList());
+      pictoCluster.manager.setItems(currentPictoMarkers.map((p) => PictoItem(pictoMarker: p)).toList());
       Get.find<SessionSocket>().connectWebSocket();
     } catch (e) {
       print("[ERROR] : controller comfyui error");
@@ -207,8 +202,7 @@ class GoogleMapViewModel extends GetxController {
 
     // print("[INFO] check!");
     // 최초 카메라 설정
-    Position position = await Geolocator.getCurrentPosition(
-    );
+    Position position = await Geolocator.getCurrentPosition();
     // print("[INFO] check2!");
     currentLat.value = position.latitude;
     currentLng.value = position.longitude;
@@ -229,55 +223,6 @@ class GoogleMapViewModel extends GetxController {
         print("[INFO] get current pos -> lat : ${currentLat.value} / lng : ${currentLng.value}");
       },
     );
-  }
-
-  // 로그인 후 내 사진과 공유 폴더 사진, 지역 대표 사진 마커 변환
-  void initPhotos(List<dynamic> photos) async {
-    print("[INFO] init photo ====================");
-    List<Photo> initPhotos = photos
-        .map((photo) => Photo(
-            photoId: photo["photoId"],
-            folderId: photo["folderId"],
-            userId: photo["userId"],
-            photoPath: photo["photoPath"],
-            registerDatetime: photo["registerDatetime"],
-            updateDatetime: photo["updateDatetime"],
-            lat: photo["lat"],
-            lng: photo["lng"],
-            likes: photo["likes"],
-            views: photo["views"],
-            location: photo["location"],
-            tag: photo["tag"]))
-        .toList();
-
-    // 초기 화면에 필요한 사진 로드 (내 사진, 공유 폴더 사진, 주변 사진)
-    myPhotos = _converter.convertToPictoMarker(
-        initPhotos.where((photo) => photo.folderId == null).toList(), PictoMarkerType.userPhoto);
-    folderPhotos = _converter.convertToPictoMarker(
-        initPhotos.where((photo) => photo.folderId != null).toList(), PictoMarkerType.folderPhoto);
-    aroundPhotos = await _converter.getAroundPhotos();
-    for (PictoMarker photo in myPhotos) {
-      currentPictoMarkers.add(photo);
-    }
-    for (PictoMarker photo in folderPhotos) {
-      currentPictoMarkers.add(photo);
-    }
-    _converter.downloadPhotos(aroundPhotos);
-    for (PictoMarker photo in aroundPhotos) {
-      currentPictoMarkers.add(photo);
-    }
-    currentMarkers.add(userMarker);
-
-    circles.add(Circle(
-      circleId: CircleId("user_area"),
-      center: LatLng(currentLat.value, currentLng.value),
-      // 사용자 현재 위치
-      radius: 5000,
-      // 5km == 5000m
-      fillColor: Colors.transparent,
-      strokeColor: AppConfig.mainColor,
-      strokeWidth: 1,
-    ));
   }
 
   // 사용자 위치 + 원  변경
@@ -385,42 +330,49 @@ class GoogleMapViewModel extends GetxController {
   }
 
   Future<void> _loadRepresentative(String downloadType) async {
+    final userConfig = Get.find<UserConfig>();
+    List<PictoMarkerType> types = userConfig.getMarkerFilter();
     Set<PictoMarker> newMarkers = await _converter.getRepresentativePhotos(1, downloadType);
     representativePhotos[downloadType]?.addAll(newMarkers);
     for (PictoMarker pictoMarker in representativePhotos[downloadType]!) {
-      if (_isPointInsideBounds(
-          LatLng(pictoMarker.photo.lat, pictoMarker.photo.lng), screenBounds)) {
-        currentPictoMarkers.add(pictoMarker);
+      if (_isPointInsideBounds(LatLng(pictoMarker.photo.lat, pictoMarker.photo.lng), screenBounds)) {
+        if (types.contains(pictoMarker.type)) {
+          currentPictoMarkers.add(pictoMarker);
+        }
       }
       if (currentStep != downloadType) return;
     }
   }
 
   Future<void> _loadAround(String downloadType) async {
+    final userConfig = Get.find<UserConfig>();
+    List<PictoMarkerType> types = userConfig.getMarkerFilter();
     Set<PictoMarker> newMarkers = await _converter.getAroundPhotos();
     aroundPhotos.addAll(newMarkers);
     for (PictoMarker pictoMarker in aroundPhotos) {
-      if (_isPointInsideBounds(
-          LatLng(pictoMarker.photo.lat, pictoMarker.photo.lng), screenBounds)) {
-        currentPictoMarkers.add(pictoMarker);
+      if (_isPointInsideBounds(LatLng(pictoMarker.photo.lat, pictoMarker.photo.lng), screenBounds)) {
+        if (types.contains(pictoMarker.type)) {
+          currentPictoMarkers.add(pictoMarker);
+        }
       }
       if (currentStep != downloadType) return;
     }
   }
 
-  // 폴더 안에 있는 사진 로딩
-  // 수정 필요 계쏙 로딩됨
   Future<void> _loadFolder(String downloadType) async {
+    final userConfig = Get.find<UserConfig>();
+    List<PictoMarkerType> types = userConfig.getMarkerFilter();
     final folderViewModel = Get.find<FolderViewModel>();
     final newMarkers = <PictoMarker>{};
     for (Folder folder in folderViewModel.folders.values) {
       newMarkers.addAll(folder.markers);
     }
     folderPhotos.addAll(newMarkers);
-    for (PictoMarker marker in newMarkers) {
-      if (_isPointInsideBounds(
-          LatLng(marker.photo.lat, marker.photo.lng), screenBounds)) {
-        currentPictoMarkers.add(marker);
+    for (PictoMarker pictoMarker in newMarkers) {
+      if (_isPointInsideBounds(LatLng(pictoMarker.photo.lat, pictoMarker.photo.lng), screenBounds)) {
+        if (types.contains(pictoMarker.type)) {
+          currentPictoMarkers.add(pictoMarker);
+        }
       }
       if (currentStep != downloadType) return;
     }

@@ -70,9 +70,9 @@ class FolderFrame extends StatelessWidget {
                         Get.back();
                         if (isSuccess) {
                           Get.find<FolderViewModel>().resetFolder(init: false);
-                          showPositivePopup("폴더가 삭제되었습니다");
+                          showMsgPopup(msg: "폴더가 삭제되었습니다", space: 0.4);
                         } else {
-                          showErrorPopup("서버 오류 발생(삭제 실패)");
+                          showMsgPopup(msg: "서버 오류 발생(삭제 실패)", space: 0.4);
                         }
                       },
                       negativeEvent: () {

@@ -8,32 +8,8 @@ void showErrorPopup(String errorMsg) {
   Get.dialog(
     barrierDismissible: false,
     AlertDialog(
-      titlePadding: EdgeInsets.all(20),
-      contentPadding: EdgeInsets.only(
-        bottom: 12,
-        left: 20,
-        right: 20,
-      ),
+      contentPadding: EdgeInsets.all(20),
       backgroundColor: Colors.white,
-      title: Row(
-        children: [
-          const Icon(
-            Icons.error,
-            color: Colors.red,
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: const Text(
-              '에러',
-              style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.black,
-                  fontFamily: "NotoSansKR",
-                  fontWeight: FontWeight.w600),
-            ),
-          ),
-        ],
-      ),
       content: SingleChildScrollView(
         child: Text(
           errorMsg,
@@ -92,62 +68,67 @@ void showPositivePopup(String msg) {
   );
 }
 
-void showMsgPopup({required String msg, required BuildContext context, required double space}) {
-  double width = context.mediaQuery.size.width;
-  double height = context.mediaQuery.size.height;
+void showMsgPopup({required String msg, required double space}) {
   Get.dialog(
     barrierColor: Colors.transparent,
     Dialog(
       backgroundColor: Colors.transparent,
       insetPadding: EdgeInsets.all(50),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          Container(
-            // width: width * 0.5,
-            // height: height * 0.1,
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              boxShadow: [
-                BoxShadow(
-                  blurRadius: 0.5,
-                  spreadRadius: 0.5,
-                  color: Colors.grey.shade400,
-                  offset: Offset(0, 5),
-                )
-              ],
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+      child: Builder(
+        builder: (BuildContext context) {
+          return SingleChildScrollView(
+            child: Column(
               mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Expanded(
-                  flex: 2,
-                  child: Icon(
-                    Icons.info,
-                    size: 30,
-                    color: AppConfig.mainColor,
+                Container(
+                  // width: width * 0.5,
+                  // height: height * 0.1,
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    boxShadow: [
+                      BoxShadow(
+                        blurRadius: 0.5,
+                        spreadRadius: 0.5,
+                        color: Colors.grey.shade400,
+                        offset: Offset(0, 5),
+                      )
+                    ],
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Expanded(
+                        flex: 2,
+                        child: Icon(
+                          Icons.info,
+                          size: 30,
+                          color: AppConfig.mainColor,
+                        ),
+                      ),
+                      Expanded(
+                        flex: 4,
+                        child: Text(
+                          msg,
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.black,
+                            fontFamily: "NotoSansKR",
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                Expanded(
-                  flex: 4,
-                  child: Text(
-                    msg,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.black,
-                      fontFamily: "NotoSansKR",
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                ),
+                SizedBox(height: context.mediaQuery.size.height * space,),
               ],
             ),
-          ),
-          SizedBox(height: height * space,),
-        ],
+          );
+        },
       ),
     ),
   );
@@ -215,7 +196,7 @@ Future<void> showSelectionDialog(
                     fontSize: 16,
                     color: Colors.black,
                     fontFamily: "NotoSansKR",
-                    fontWeight: FontWeight.w500,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ),

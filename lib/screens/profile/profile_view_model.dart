@@ -55,7 +55,7 @@ class ProfileViewModel extends GetxController {
     if (await UserManagerApi().updateUserProfilePhoto(photoId: selectedPictoMarker.value!.photo.photoId)) {
       profilePhotoId.value = selectedPictoMarker.value!.photo.photoId;
       profilePhoto = selectedPictoMarker.value!.imageData!;
-      showPositivePopup("대표 사진이 업데이트되었습니다.");
+      showMsgPopup(msg: "대표 사진이 업데이트되었습니다.", space: 0.4);
     } else {
       showErrorPopup("대표 사진을 업데이트하지 못했습니다.");
     }

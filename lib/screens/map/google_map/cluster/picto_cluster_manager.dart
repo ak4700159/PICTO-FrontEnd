@@ -5,6 +5,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:google_maps_cluster_manager_2/google_maps_cluster_manager_2.dart' as cluster;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hive/hive.dart';
+import 'package:picto_frontend/config/user_config.dart';
 import 'package:picto_frontend/screens/map/google_map/cluster/marker_bottom_sheet.dart';
 import 'package:picto_frontend/screens/map/google_map/cluster/picto_cluster_item.dart';
 import 'package:picto_frontend/screens/map/google_map/google_map_view_model.dart';
@@ -41,7 +42,8 @@ class PictoClusterManager {
 
   // 클러스터 매니저에서 생성하는 마커
   Future<Marker> _markerBuilder(cluster.Cluster<PictoItem> cluster) async {
-    print("[DEBUG] cluster count: ${cluster.items.length}, isMultiple: ${cluster.isMultiple}");
+    print("[DEBUG] previous filter : cluster count: ${cluster.items.length}, isMultiple: ${cluster.isMultiple}");
+    // List<PictoItem> buildMarkers = filterByUserConfig(target: cluster.items.toList());
     // 가장 좋아요를 많이 맏은 사진
     List<PictoMarker> markers = {
       for (var pictoItem in cluster.items) pictoItem.pictoMarker.photo.photoId: pictoItem.pictoMarker
@@ -66,7 +68,6 @@ class PictoClusterManager {
     print('[INFO] cluster marker update markers length : ${markers.length}');
     final googleViewModel = Get.find<GoogleMapViewModel>();
     for (final marker in markers) {
-      await Future.delayed(Duration(milliseconds: 70)); // 애니메이션 간격
       googleViewModel.currentMarkers.add(marker);
     }
   }
@@ -128,5 +129,11 @@ class PictoClusterManager {
           ],
         ),
         LatLng(marker.photo.lat, marker.photo.lng));
+  }
+
+  List<PictoItem> filterByUserConfig({required List<PictoItem> target}) {
+    final userConfig = Get.find<UserConfig>();
+    target.removeWhere((p) => userConfig.getMarkerFilter().contains(p.pictoMarker.type));
+    return target;
   }
 }

@@ -41,9 +41,9 @@ class UserManagerApi {
   int? ownerId;
   Dio dio = Dio(
     BaseOptions(
-        connectTimeout: const Duration(milliseconds: 1000),
+        connectTimeout: const Duration(milliseconds: 5000),
         contentType: Headers.jsonContentType,
-        receiveTimeout: const Duration(milliseconds: 3000)),
+        receiveTimeout: const Duration(seconds: 10)),
   )..interceptors.add(CustomInterceptor());
 
   Future<void> init() async {
@@ -61,14 +61,17 @@ class UserManagerApi {
   Future<void> signup({required User newUser, required double lat, required double lng}) async {
     String hostUrl = "$baseUrl/signup";
     try {
-      final response = await dio.post(hostUrl, data: {
-        'email': newUser.email,
-        'password': newUser.password,
-        'accountName': newUser.accountName,
-        'name': newUser.name,
-        'lat': lat,
-        'lng': lng,
-      });
+      final response = await dio.post(
+        hostUrl,
+        data: {
+          'email': newUser.email,
+          'password': newUser.password,
+          'accountName': newUser.accountName,
+          'name': newUser.name,
+          'lat': lat,
+          'lng': lng,
+        },
+      );
     } on DioException catch (e) {
       showErrorPopup(e.toString());
       rethrow;
@@ -231,7 +234,7 @@ class UserManagerApi {
       });
       profileViewModel.accountName.value = profileViewModel.newAccount;
       profileViewModel.intro.value = profileViewModel.newIntro;
-      showPositivePopup("사용자 프로필을 수정하였습니다");
+      showMsgPopup(msg: "사용자 프로필을 수정하였습니다", space: 0.4);
       return true;
     } catch (e) {
       showErrorPopup("사용자 프로필 수정에 실패했습니다.");
@@ -324,27 +327,67 @@ class UserManagerApi {
     return null;
   }
 
+  // 이메일 인증코드 이메일에 전송
+  Future<bool> sendEmailCode({required String email}) async {
+    try {
+      final response = await dio.post('$baseUrl/send-verify-email/$email');
+      return true;
+    } on DioException catch (e) {
+      showErrorPopup(e.toString());
+    }
+    return false;
+  }
+
+  // 이메일 인증코드 인증
+  Future<bool> verifyEmailCode({required String email, required String code}) async {
+    try {
+      final response = await dio.post(
+        '$baseUrl/verify-email',
+        queryParameters: {
+          "email": email,
+          "code": code,
+        },
+      );
+      return true;
+    } on DioException catch (e) {
+      showErrorPopup(e.toString());
+    }
+    return false;
+  }
+
+  // 이메일 인증 확인 API
+  Future<bool> checkEmailCode({required String email}) async {
+    try {
+      final response = await dio.get('$baseUrl/is-verified-email/$email');
+      return true;
+    } on DioException catch (e) {
+      showErrorPopup(e.toString());
+    }
+    return false;
+  }
+
   Future<void> _sendInitValueToViewModel(response) async {
-    Get.find<SplashViewModel>().statusMsg.value = "데이터 초기화 중 ... ";
-    // 필터값 적용
-    Get.find<SelectionBarViewModel>().convertFromJson(response.data["filter"]);
-    // 프로필 적용
-    int? photoId = await UserManagerApi().getUserProfilePhoto(userId: ownerId!);
-    Get.find<ProfileViewModel>().convertFromJson(response.data["user"], photoId);
-    // 사용자 세팅값 적용
-    Get.find<UserConfig>().convertFromJson(response.data["userSetting"]);
-    // Get.find<GoogleMapViewModel>().initPhotos(response.data["folderPhotos"]);
-    // 태그 적용
-    Get.find<TagSelectionViewModel>().initTags(response.data["tags"]);
-    // 폴더 적용
-    await Get.find<FolderViewModel>().resetFolder(init : true);
-    // 캘릭더 적용
-    List<CalendarEvent> calendarEvents = await Get.find<FolderViewModel>().convertCalendarEvent();
-    Get.find<CalendarViewModel>().buildCalendarEventMap(calendarEvents);
-    // 위치 소켓 적용
-    final socketInterceptor = SocketFunctionController();
-    socketInterceptor.callSession(connected: true);
-    Get.offNamed('/map');
+    try {
+      Get.find<SplashViewModel>().statusMsg.value = "데이터 초기화 중 ... ";
+      // 필터값 적용
+      Get.find<SelectionBarViewModel>().convertFromJson(response.data["filter"]);
+      // 프로필 적용
+      int? photoId = await UserManagerApi().getUserProfilePhoto(userId: ownerId!);
+      Get.find<ProfileViewModel>().convertFromJson(response.data["user"], photoId);
+      // 사용자 세팅값 적용
+      Get.find<UserConfig>().convertFromJson(response.data["userSetting"]);
+      // 태그 적용
+      Get.find<TagSelectionViewModel>().initTags(response.data["tags"]);
+      // 폴더 적용
+      await Get.find<FolderViewModel>().resetFolder(init: true);
+      // 위치 소켓 적용
+      final socketInterceptor = SocketFunctionController();
+      socketInterceptor.callSession(connected: true);
+      Get.find<LoginViewModel>().loginStatus.value = "not";
+      Get.offNamed('/map');
+    } catch(e) {
+      Get.find<LoginViewModel>().loginStatus.value = "fail";
+    }
   }
 
   Options _authOptions() => Options(

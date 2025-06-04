@@ -74,7 +74,7 @@ class UploadViewModel extends GetxController {
       // 사진 저장 성공 시 팝업창?
       result.value = "사진 저장에 성공했습니다! \n $data";
       Get.back();
-      showPositivePopup("사진 저장에 성공했습니다!");
+      showMsgPopup(msg: "사진 저장에 성공했습니다!", space: 0.4);
     } on DioException catch (e) {
       result.value = e.response?.data["error"].toString() ?? "서버 오류 발생";
       Get.back();

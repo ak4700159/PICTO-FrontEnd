@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import 'package:picto_frontend/config/app_config.dart';
+import 'package:picto_frontend/config/user_config.dart';
 import 'package:picto_frontend/screens/folder/folder_view_model.dart';
 import 'package:picto_frontend/screens/map/google_map/marker/picto_marker.dart';
 import 'package:picto_frontend/screens/profile/profile_modify_dialog.dart';
@@ -23,6 +24,7 @@ class ProfileScreen extends StatelessWidget {
   final profileViewModel = Get.find<ProfileViewModel>();
   final folderViewModel = Get.find<FolderViewModel>();
   final calendarViewModel = Get.find<CalendarViewModel>();
+  final userConfig = Get.find<UserConfig>();
 
   @override
   Widget build(BuildContext context) {
@@ -160,8 +162,7 @@ class ProfileScreen extends StatelessWidget {
             Container(
               margin: EdgeInsets.all(16),
               padding: EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                  border: BorderDirectional(bottom: BorderSide(width: 1, color: Colors.grey))),
+              decoration: BoxDecoration(border: BorderDirectional(bottom: BorderSide(width: 1, color: Colors.grey))),
               child: Row(
                 children: [
                   Icon(
@@ -169,7 +170,7 @@ class ProfileScreen extends StatelessWidget {
                     color: AppConfig.mainColor,
                   ),
                   Text(
-                    "좋아요 누른 사진",
+                    "  좋아요 누른 사진",
                     style: TextStyle(
                       fontSize: 14,
                       fontFamily: "NotoSansKR",
@@ -188,44 +189,125 @@ class ProfileScreen extends StatelessWidget {
               height: context.mediaQuery.size.height * 0.02,
             ),
 
-            // 어플리케이션 전체 설정  ?
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(4.0),
-                  child: SizedBox(
-                    height: context.mediaQuery.size.height * 0.07,
-                    width: context.mediaQuery.size.width * 0.15,
-                    child: FloatingActionButton(
-                      onPressed: () async {
-                        showSelectionDialog(
-                            context: context,
-                            positiveEvent: () async {
-                              final SharedPreferences preferences = await SharedPreferences.getInstance();
-                              await preferences.clear();
-                              Restart.restartApp();
-                            },
-                            negativeEvent: () {
-                              Get.back();
-                            },
-                            positiveMsg: "네",
-                            negativeMsg: "아니요",
-                            content: "로그아웃 하시겠습니까?");
-                      },
-                      backgroundColor: Colors.red.shade300,
-                      heroTag: "exit",
-                      child: Icon(
-                        Icons.exit_to_app,
-                        color: AppConfig.backgroundColor,
-                        size: 30,
-                      ),
+            // 어플리케이션 전체 설정 + 로그아웃
+            Container(
+              margin: EdgeInsets.all(16),
+              padding: EdgeInsets.all(8),
+              decoration: BoxDecoration(border: BorderDirectional(bottom: BorderSide(width: 1, color: Colors.grey))),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.settings,
+                    color: AppConfig.mainColor,
+                  ),
+                  Text(
+                    "  기타 옵션",
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontFamily: "NotoSansKR",
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
+                ],
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  margin: EdgeInsets.all(8),
+                  padding: EdgeInsets.all(8),
+                  decoration: BoxDecoration(color: Colors.grey.shade200, borderRadius: BorderRadius.circular(20)),
+                  child: Column(
+                    children: [
+                      Container(
+                        margin: EdgeInsets.all(8),
+                        padding: EdgeInsets.all(8),
+                        decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(30)),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.house,
+                              color: Colors.blue,
+                            ),
+                            Text(
+                              "  마커 설정",
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontFamily: "NotoSansKR",
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Row(
+                        children: [
+                          _getCheckBoxSetting1(context),
+                          _getCheckBoxSetting2(context),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                Spacer(),
+                Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(4.0),
+                      child: SizedBox(
+                        height: context.mediaQuery.size.height * 0.07,
+                        width: context.mediaQuery.size.width * 0.15,
+                        child: FloatingActionButton(
+                          onPressed: () async {
+                            showSelectionDialog(
+                                context: context,
+                                positiveEvent: () async {
+                                  final SharedPreferences preferences = await SharedPreferences.getInstance();
+                                  await preferences.clear();
+                                  Restart.restartApp();
+                                },
+                                negativeEvent: () {
+                                  Get.back();
+                                },
+                                positiveMsg: "네",
+                                negativeMsg: "아니요",
+                                content: "로그아웃 하시겠습니까?");
+                          },
+                          backgroundColor: Colors.red.shade300,
+                          heroTag: "exit",
+                          child: Icon(
+                            Icons.exit_to_app,
+                            color: AppConfig.backgroundColor,
+                            size: 30,
+                          ),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(4.0),
+                      child: SizedBox(
+                        height: context.mediaQuery.size.height * 0.07,
+                        width: context.mediaQuery.size.width * 0.15,
+                        child: FloatingActionButton(
+                          onPressed: () async {
+                            showErrorPopup("테스트테스트테스트테스트테스트테스트테스트테스트테스트테스트테스트테스트테스트테스트테스트테스트테스트테스트테스트테스트");
+                          },
+                          backgroundColor: Colors.blue.shade300,
+                          heroTag: "test",
+                          child: Icon(
+                            Icons.shower,
+                            color: AppConfig.backgroundColor,
+                            size: 30,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
-
             // 위로 올릴 수 있도록
             SizedBox(
               height: context.mediaQuery.size.height * 0.3,
@@ -257,8 +339,7 @@ class ProfileScreen extends StatelessWidget {
     }
 
     return FutureBuilder(
-      future: PhotoStoreApi()
-          .downloadPhoto(photoId: profileViewModel.profilePhotoId.value!, scale: 0.3),
+      future: PhotoStoreApi().downloadPhoto(photoId: profileViewModel.profilePhotoId.value!, scale: 0.3),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(child: CircularProgressIndicator());
@@ -428,8 +509,7 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
             Obx(() => Positioned(
-                  child: profileViewModel.selectedPictoMarker.value?.photo.photoId ==
-                          marker.photo.photoId
+                  child: profileViewModel.selectedPictoMarker.value?.photo.photoId == marker.photo.photoId
                       ? Icon(
                           Icons.check_box,
                           color: Colors.green,
@@ -447,11 +527,149 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _getCalendarEventList() {
-    return Obx(() => Column(
-          children: calendarViewModel.selectedEvents
-              .map((event) => CalendarEventTile(event: event))
-              .toList(),
-        ));
+  Widget _getCheckBoxSetting1(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          width: context.mediaQuery.size.width * 0.32,
+          child: Row(
+            children: [
+              Expanded(
+                flex: 1,
+                child: Text(
+                  "내 사진",
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontFamily: "NotoSansKR",
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+              Expanded(
+                flex: 1,
+                child: Obx(() => Checkbox(
+                      value: userConfig.showMyPhotos.value,
+                      onChanged: (checkValue) {
+                        userConfig.toggleShowMyPhotos();
+                      },
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      side: const BorderSide(
+                        color: Colors.grey,
+                        width: 1,
+                      ),
+                    )),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(
+          width: context.mediaQuery.size.width * 0.32,
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  "주변 사진",
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontFamily: "NotoSansKR",
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Obx(() => Checkbox(
+                      value: userConfig.showAroundPhotos.value,
+                      onChanged: (checkValue) {
+                        userConfig.toggleShowAroundPhotos();
+                      },
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      side: const BorderSide(
+                        color: Colors.grey,
+                        width: 1,
+                      ),
+                    )),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _getCheckBoxSetting2(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          width: context.mediaQuery.size.width * 0.32,
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  "폴더 사진",
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontFamily: "NotoSansKR",
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Obx(() => Checkbox(
+                      value: userConfig.showFolderPhotos.value,
+                      onChanged: (checkValue) {
+                        userConfig.toggleShowFolderPhotos();
+                      },
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      side: const BorderSide(
+                        color: Colors.grey,
+                        width: 1,
+                      ),
+                    )),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(
+          width: context.mediaQuery.size.width * 0.32,
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  "대표 사진",
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontFamily: "NotoSansKR",
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Obx(() => Checkbox(
+                      value: userConfig.showRepresentativePhotos.value,
+                      onChanged: (checkValue) {
+                        userConfig.toggleShowRepresentativePhotos();
+                      },
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      side: const BorderSide(
+                        color: Colors.grey,
+                        width: 1,
+                      ),
+                    )),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
   }
 }

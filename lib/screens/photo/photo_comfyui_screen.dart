@@ -42,7 +42,7 @@ class PhotoComfyuiScreen extends StatelessWidget {
                       quality: 100,
                       name: "flutter_image_${DateTime.now().millisecondsSinceEpoch}",
                     );
-                    showPositivePopup("최근 항목에 사진이 저장되었습니다!");
+                    showMsgPopup(msg: "최근 항목에 사진이 저장되었습니다!", space: 0.4);
                   },
                   icon: Icon(
                     Icons.download,

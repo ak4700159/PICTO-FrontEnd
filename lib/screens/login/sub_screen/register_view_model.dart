@@ -16,10 +16,17 @@ class RegisterViewModel extends GetxController {
   RxString emailDuplicatedMsg = "중복 검사".obs;
   RxBool isPasswordVisible = true.obs;
 
+  // 인증 코드
+  RxString emailCode = "".obs;
+  // 인증 코드 인증 완료 여부
+  RxBool isEmailCodeAuth = false.obs;
+  // 인증 코드 전송 여부
+  RxBool isEmailCodeSend = false.obs;
+
   void validateEmail() async {
     try {
       await UserManagerApi().duplicatedEmail(email.value);
-      showPositivePopup("사용 가능한 메일입니다.");
+      showMsgPopup(msg: "사용 가능한 메일입니다.", space: 0.4);
       emailDuplicatedMsg.value = "사용 가능";
     } on DioException catch (e) {
       print("[ERROR]duplicate error");
@@ -51,5 +58,20 @@ class RegisterViewModel extends GetxController {
         print("[ERROR]${e.message}");
       }
     }
+  }
+
+  void resetController() {
+    email.value = "";
+    name.value = "";
+    accountName.value = "";
+    passwd.value = "";
+    passwdCheck.value = "";
+    registerMsg.value = "회원 가입";
+    emailDuplicatedMsg.value = "중복 검사";
+    isPasswordVisible.value = true;
+    isEmailCodeAuth.value = false;
+    isEmailCodeSend.value = false;
+    emailCode.value = "";
+    print("[INFO] 초기화");
   }
 }
