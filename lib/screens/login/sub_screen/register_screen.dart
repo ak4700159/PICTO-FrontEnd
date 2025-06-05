@@ -366,13 +366,14 @@ class RegisterScreen extends StatelessWidget {
                 ),
                 child:  !_registerController.isEmailCodeAuth.value ? TextButton(
                   onPressed: () async {
-                    // 인증코드 확인
                     if (!_registerController.isEmailCodeSend.value) {
                       if(await UserManagerApi().sendEmailCode(email: _registerController.email.value)) {
+                        showMsgPopup(msg: "인증코드를 전송하였습니다.", space: 0.4);
                         _registerController.isEmailCodeSend.value = !_registerController.isEmailCodeSend.value;
                       }
                     } else {
                       if(await UserManagerApi().verifyEmailCode(email: _registerController.email.value, code: _registerController.emailCode.value)) {
+                        showMsgPopup(msg: "인증코드 확인되었습니다!", space: 0.4);
                         _registerController.isEmailCodeAuth.value = true;
                       }
                     }

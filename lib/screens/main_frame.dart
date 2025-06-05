@@ -18,10 +18,12 @@ import 'map/google_map/google_map.dart';
 enum MapStatus { googleMap, folder, comfyUI, chatbot, setting }
 
 class MapScreen extends StatelessWidget {
-  MapScreen({super.key});
+  const MapScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final height = MediaQuery.of(context).size.height;
+    final width = MediaQuery.of(context).size.width;
     final mapViewModel = Get.find<MapViewModel>();
     return PopScope(
       canPop: false,
@@ -43,8 +45,8 @@ class MapScreen extends StatelessWidget {
         resizeToAvoidBottomInset: false,
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         floatingActionButton: Obx(() => SizedBox(
-              height: context.mediaQuery.size.width * 0.2,
-              width: context.mediaQuery.size.width * 0.2,
+              height: width * 0.2,
+              width: width * 0.2,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [

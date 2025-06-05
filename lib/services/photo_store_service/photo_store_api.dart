@@ -10,7 +10,6 @@ import 'package:picto_frontend/utils/popup.dart';
 
 import '../../config/app_config.dart';
 import '../../models/photo.dart';
-import '../../utils/functions.dart';
 import '../http_interceptor.dart';
 
 class PhotoStoreApi {
@@ -62,26 +61,6 @@ class PhotoStoreApi {
     }
     return Uint8List(0);
   }
-
-  // 리사이징된 사진 조회
-  // Future<Uint8List> downloadResizedPhoto(
-  //     {required int photoId, required int height, required int width}) async {
-  //   final hostUrl = "$baseUrl/photos/resize/$photoId";
-  //   try {
-  //     final response = await dio.get(
-  //       hostUrl,
-  //       queryParameters: {
-  //         "width": width,
-  //         "height": height,
-  //       },
-  //       options: Options(responseType: ResponseType.bytes), // 🔥 핵심 포인트
-  //     );
-  //     return response.data;
-  //   } on DioException catch (e) {
-  //     print("[ERROR]photo download error : ${e.message}");
-  //   }
-  //   return Uint8List(0);
-  // }
 
   // 1. 갤러리에서 이미지 선택(XFile 객체, 추상화된 객체) =>  image_picker 패키지 사용
   // 2. XFile 객체의 이미지 경로 추출 후 File 객체로 생성(실제 로컬 파일 객체)

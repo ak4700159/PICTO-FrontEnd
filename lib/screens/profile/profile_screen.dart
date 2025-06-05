@@ -28,6 +28,7 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
@@ -64,7 +65,7 @@ class ProfileScreen extends StatelessWidget {
                 Obx(() => Column(
                       children: [
                         Container(
-                          width: context.mediaQuery.size.width * 0.8,
+                          width: MediaQuery.of(context).size.width * 0.8,
                           padding: EdgeInsets.all(8),
                           decoration: BoxDecoration(
                             color: Color.fromRGBO(179, 208, 250, 0.3),
@@ -110,7 +111,7 @@ class ProfileScreen extends StatelessWidget {
               ],
             ),
             SizedBox(
-              height: context.mediaQuery.size.height * 0.05,
+              height: MediaQuery.of(context).size.height * 0.05,
             ),
             // 사용자 프로필
             Row(
@@ -119,8 +120,8 @@ class ProfileScreen extends StatelessWidget {
                 Stack(
                   children: [
                     Container(
-                      width: context.mediaQuery.size.width * 0.4,
-                      height: context.mediaQuery.size.width * 0.4,
+                      width: MediaQuery.of(context).size.width * 0.4,
+                      height: MediaQuery.of(context).size.width * 0.4,
                       decoration: BoxDecoration(
                         border: Border.all(color: Colors.grey.shade300, width: 0.5),
                         borderRadius: BorderRadius.circular(100),
@@ -157,7 +158,7 @@ class ProfileScreen extends StatelessWidget {
               ],
             ),
             SizedBox(
-              height: context.mediaQuery.size.height * 0.02,
+              height: MediaQuery.of(context).size.height * 0.02,
             ),
             Container(
               margin: EdgeInsets.all(16),
@@ -181,27 +182,27 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
             SizedBox(
-              width: context.mediaQuery.size.width,
+              width: MediaQuery.of(context).size.width,
               child: LatestLikePhotos(),
             ),
 
             SizedBox(
-              height: context.mediaQuery.size.height * 0.02,
+              height: MediaQuery.of(context).size.height * 0.02,
             ),
 
-            // 어플리케이션 전체 설정 + 로그아웃
+            // 마커 설정
             Container(
-              margin: EdgeInsets.all(16),
+              margin: EdgeInsets.only(top: 16, left: 16, right: 16),
               padding: EdgeInsets.all(8),
               decoration: BoxDecoration(border: BorderDirectional(bottom: BorderSide(width: 1, color: Colors.grey))),
               child: Row(
                 children: [
                   Icon(
-                    Icons.settings,
+                    Icons.map,
                     color: AppConfig.mainColor,
                   ),
                   Text(
-                    "  기타 옵션",
+                    "  마커 노출 옵션",
                     style: TextStyle(
                       fontSize: 14,
                       fontFamily: "NotoSansKR",
@@ -211,107 +212,103 @@ class ProfileScreen extends StatelessWidget {
                 ],
               ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  margin: EdgeInsets.all(8),
-                  padding: EdgeInsets.all(8),
-                  decoration: BoxDecoration(color: Colors.grey.shade200, borderRadius: BorderRadius.circular(20)),
-                  child: Column(
+            Container(
+              width: MediaQuery.of(context).size.width,
+              margin: EdgeInsets.only(bottom: 8, left: 8, right: 8),
+              padding: EdgeInsets.all(8),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Container(
-                        margin: EdgeInsets.all(8),
-                        padding: EdgeInsets.all(8),
-                        decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(30)),
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.house,
-                              color: Colors.blue,
-                            ),
-                            Text(
-                              "  마커 설정",
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontFamily: "NotoSansKR",
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Row(
-                        children: [
-                          _getCheckBoxSetting1(context),
-                          _getCheckBoxSetting2(context),
-                        ],
-                      ),
+                      _getCheckBoxSetting1(context),
+                      _getCheckBoxSetting2(context),
                     ],
                   ),
-                ),
-                Spacer(),
-                Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: SizedBox(
-                        height: context.mediaQuery.size.height * 0.07,
-                        width: context.mediaQuery.size.width * 0.15,
-                        child: FloatingActionButton(
-                          onPressed: () async {
-                            showSelectionDialog(
-                                context: context,
-                                positiveEvent: () async {
-                                  final SharedPreferences preferences = await SharedPreferences.getInstance();
-                                  await preferences.clear();
-                                  Restart.restartApp();
-                                },
-                                negativeEvent: () {
-                                  Get.back();
-                                },
-                                positiveMsg: "네",
-                                negativeMsg: "아니요",
-                                content: "로그아웃 하시겠습니까?");
-                          },
-                          backgroundColor: Colors.red.shade300,
-                          heroTag: "exit",
-                          child: Icon(
-                            Icons.exit_to_app,
-                            color: AppConfig.backgroundColor,
-                            size: 30,
-                          ),
-                        ),
-                      ),
+                ],
+              ),
+            ),
+
+            Container(
+              margin: EdgeInsets.only(top: 16, left: 16, right: 16),
+              padding: EdgeInsets.all(8),
+              decoration: BoxDecoration(border: BorderDirectional(bottom: BorderSide(width: 1, color: Colors.grey))),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.settings,
+                    color: AppConfig.mainColor,
+                  ),
+                  Text(
+                    " 기타 옵션",
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontFamily: "NotoSansKR",
+                      fontWeight: FontWeight.w500,
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: SizedBox(
-                        height: context.mediaQuery.size.height * 0.07,
-                        width: context.mediaQuery.size.width * 0.15,
-                        child: FloatingActionButton(
-                          onPressed: () async {
-                            showErrorPopup("테스트테스트테스트테스트테스트테스트테스트테스트테스트테스트테스트테스트테스트테스트테스트테스트테스트테스트테스트테스트");
-                          },
-                          backgroundColor: Colors.blue.shade300,
-                          heroTag: "test",
-                          child: Icon(
-                            Icons.shower,
-                            color: AppConfig.backgroundColor,
-                            size: 30,
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.all(4),
+              child: Row(
+                children: [
+                  TextButton(
+                      onPressed: () {
+                        showPasswordReset();
+                      },
+                      child: Row(
+                        children: [
+                          Icon(Icons.lock_reset),
+                          Text(
+                            "  비밀번호 재설정",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 14,
+                              fontFamily: "NotoSansKR",
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+                        ],
+                      )),
+                  TextButton(
+                      onPressed: () {
+                        showSelectionDialog(
+                            context: context,
+                            positiveEvent: () async {
+                              final SharedPreferences preferences = await SharedPreferences.getInstance();
+                              await preferences.clear();
+                              Restart.restartApp();
+                            },
+                            negativeEvent: () {
+                              Get.back();
+                            },
+                            positiveMsg: "네",
+                            negativeMsg: "아니요",
+                            content: "로그아웃 하시겠습니까?");
+                      },
+                      child: Row(
+                        children: [
+                          Icon(Icons.exit_to_app),
+                          Text(
+                            "  로그아웃",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 14,
+                              fontFamily: "NotoSansKR",
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      )),
+                ],
+              ),
             ),
             // 위로 올릴 수 있도록
             SizedBox(
-              height: context.mediaQuery.size.height * 0.3,
-            )
+              height: MediaQuery.of(context).size.height * 0.3,
+            ),
           ],
         ),
       ),
@@ -365,8 +362,8 @@ class ProfileScreen extends StatelessWidget {
   void _showProfilePhotoBottomSheet(BuildContext context) {
     Get.bottomSheet(
       Container(
-        height: context.mediaQuery.size.height * 0.8,
-        width: context.mediaQuery.size.width,
+        height: MediaQuery.of(context).size.height * 0.8,
+        width: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.only(
@@ -379,7 +376,7 @@ class ProfileScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 SizedBox(
-                  height: context.mediaQuery.size.height * 0.1,
+                  height: MediaQuery.of(context).size.height * 0.1,
                   child: Obx(
                     () => profileViewModel.selectedPictoMarker.value != null
                         ? TextButton(
@@ -446,8 +443,8 @@ class ProfileScreen extends StatelessWidget {
         }
 
         return SizedBox(
-          width: context.mediaQuery.size.width,
-          height: context.mediaQuery.size.height * 0.45,
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height * 0.45,
           child: GridView.builder(
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2, // 1개의 행에 항목을 3개씩
@@ -481,8 +478,8 @@ class ProfileScreen extends StatelessWidget {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(8),
                     child: Image.memory(
-                      width: context.mediaQuery.size.width * 0.5,
-                      height: context.mediaQuery.size.width * 0.5,
+                      width: MediaQuery.of(context).size.width * 0.5,
+                      height: MediaQuery.of(context).size.width * 0.5,
                       marker.imageData!,
                       fit: BoxFit.cover,
                     ),
@@ -529,10 +526,17 @@ class ProfileScreen extends StatelessWidget {
 
   Widget _getCheckBoxSetting1(BuildContext context) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(
-          width: context.mediaQuery.size.width * 0.32,
+        Container(
+          padding: EdgeInsets.only(top: 5, left: 8),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.only(topLeft: Radius.circular(25)),
+            border: BorderDirectional(
+              end: BorderSide(color: Colors.grey, width: 0.5),
+              bottom: BorderSide(color: Colors.grey, width: 0.5),
+            ),
+          ),
+          width: MediaQuery.of(context).size.width * 0.4,
           child: Row(
             children: [
               Expanded(
@@ -565,8 +569,16 @@ class ProfileScreen extends StatelessWidget {
             ],
           ),
         ),
-        SizedBox(
-          width: context.mediaQuery.size.width * 0.32,
+        Container(
+          padding: EdgeInsets.only(bottom: 5, left: 8),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.only(bottomLeft: Radius.circular(25)),
+            border: BorderDirectional(
+              end: BorderSide(color: Colors.grey, width: 0.5),
+              top: BorderSide(color: Colors.grey, width: 0.5),
+            ),
+          ),
+          width: MediaQuery.of(context).size.width * 0.4,
           child: Row(
             children: [
               Expanded(
@@ -603,10 +615,18 @@ class ProfileScreen extends StatelessWidget {
 
   Widget _getCheckBoxSetting2(BuildContext context) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        SizedBox(
-          width: context.mediaQuery.size.width * 0.32,
+        Container(
+          padding: EdgeInsets.only(top: 5, left: 8),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.only(topRight: Radius.circular(25)),
+            border: BorderDirectional(
+              start: BorderSide(color: Colors.grey, width: 0.5),
+              bottom: BorderSide(color: Colors.grey, width: 0.5),
+            ),
+          ),
+          width: MediaQuery.of(context).size.width * 0.4,
           child: Row(
             children: [
               Expanded(
@@ -637,8 +657,16 @@ class ProfileScreen extends StatelessWidget {
             ],
           ),
         ),
-        SizedBox(
-          width: context.mediaQuery.size.width * 0.32,
+        Container(
+          padding: EdgeInsets.only(bottom: 5, left: 8),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.only(bottomRight: Radius.circular(25)),
+            border: BorderDirectional(
+              start: BorderSide(color: Colors.grey, width: 0.5),
+              top: BorderSide(color: Colors.grey, width: 0.5),
+            ),
+          ),
+          width: MediaQuery.of(context).size.width * 0.4,
           child: Row(
             children: [
               Expanded(

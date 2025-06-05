@@ -7,6 +7,8 @@ import 'package:picto_frontend/utils/get_widget.dart';
 import 'package:picto_frontend/utils/validator.dart';
 import 'package:picto_frontend/widgets/picto_logo.dart';
 
+import '../../utils/popup.dart';
+
 class LoginScreen extends StatelessWidget {
   LoginScreen({super.key});
 
@@ -43,15 +45,14 @@ class LoginScreen extends StatelessWidget {
                   SizedBox(height: widgetHeight * 0.02),
                   // 이메일 입력칸
                   Container(
-                    decoration: BoxDecoration(
-                        border: Border(bottom: BorderSide(width: 1, color: Colors.grey.shade300))),
+                    decoration:
+                        BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: Colors.grey.shade300))),
                     child: TextFormField(
                       keyboardType: TextInputType.emailAddress,
                       decoration: getCustomInputDecoration(
                           label: "이메일",
                           hintText: "your@eamil.com",
-                          borderRadius: BorderRadius.only(
-                              topRight: Radius.circular(25), topLeft: Radius.circular(25))),
+                          borderRadius: BorderRadius.only(topRight: Radius.circular(25), topLeft: Radius.circular(25))),
                       validator: emailValidator,
                       onSaved: (value) => _loginController.email.value = value!,
                     ),
@@ -64,16 +65,14 @@ class LoginScreen extends StatelessWidget {
                           label: "비밀번호",
                           suffixIcon: IconButton(
                             icon: Icon(
-                              !_loginController.isPasswordVisible.value
-                                  ? Icons.visibility
-                                  : Icons.visibility_off,
+                              !_loginController.isPasswordVisible.value ? Icons.visibility : Icons.visibility_off,
                             ),
                             onPressed: () {
                               _loginController.togglePasswordVisible();
                             },
                           ),
-                          borderRadius: BorderRadius.only(
-                              bottomRight: Radius.circular(25), bottomLeft: Radius.circular(25))),
+                          borderRadius:
+                              BorderRadius.only(bottomRight: Radius.circular(25), bottomLeft: Radius.circular(25))),
                       validator: passwdValidator,
                       onSaved: (value) => _loginController.passwd.value = value!,
                     ),
@@ -92,21 +91,26 @@ class LoginScreen extends StatelessWidget {
                       child: Obx(() => _loggingText()),
                     ),
                   ),
-                  SizedBox(height: widgetHeight * 0.01),
-                  // 회원가입 버튼
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      // TextButton(
-                      //   onPressed: () {
-                      //     // 비밀번호 새로 등록 화면 이동
-                      //     Get.toNamed('/passwd_setting');
-                      //   },
-                      //   child: Text(
-                      //     '비밀번호를 잊으셨나요?',
-                      //     style: TextStyle(fontSize: 14, color: Colors.black),
-                      //   ),
-                      // ),
+                      // 비밀번호 찾기
+                      TextButton(
+                        onPressed: () {
+                          // 임시 비밀번호 등록 팝업
+                          showTemporaryPasswordSettingPopup();
+                        },
+                        child: Text(
+                          '비밀번호 찾기',
+                          style: TextStyle(
+                            fontFamily: "NotoSansKR",
+                            fontSize: 13,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.grey.shade500,
+                          ),
+                        ),
+                      ),
+                      // 회원가입 버튼
                       TextButton(
                         onPressed: () {
                           // 회원가입 페이지 이동
@@ -243,8 +247,7 @@ class LoginScreen extends StatelessWidget {
               margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.white.withOpacity(
-                    Get.find<LoginViewModel>().sliderIdx.value == entry.key ? 0.9 : 0.4),
+                color: Colors.white.withOpacity(Get.find<LoginViewModel>().sliderIdx.value == entry.key ? 0.9 : 0.4),
               ),
             ),
           );

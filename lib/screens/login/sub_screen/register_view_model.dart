@@ -26,11 +26,10 @@ class RegisterViewModel extends GetxController {
   void validateEmail() async {
     try {
       await UserManagerApi().duplicatedEmail(email.value);
-      showMsgPopup(msg: "사용 가능한 메일입니다.", space: 0.4);
+      showMsgPopup(msg: "사용 가능한 이메일입니다.", space: 0.4);
       emailDuplicatedMsg.value = "사용 가능";
     } on DioException catch (e) {
-      print("[ERROR]duplicate error");
-      showErrorPopup("다시 중복 검사해주세요");
+      showErrorPopup("이미 가입한 이메일입니다");
       // emailDuplicatedMsg.value = "재검사";
     }
   }
