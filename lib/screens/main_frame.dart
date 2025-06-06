@@ -22,8 +22,9 @@ class MapScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final height = MediaQuery.of(context).size.height;
-    final width = MediaQuery.of(context).size.width;
+    print("main frame build");
+    final height = MediaQuery.sizeOf(context).height;
+    final width = MediaQuery.sizeOf(context).width;
     final mapViewModel = Get.find<MapViewModel>();
     return PopScope(
       canPop: false,
@@ -81,7 +82,6 @@ class MapScreen extends StatelessWidget {
 
   // 하단 네비게이션바 호출마다 실행되는 함수
   Widget _getMainFrame(BuildContext context) {
-    print("[INFO] main frame rebuild!");
     final mapViewModel = Get.find<MapViewModel>();
     final comfyuiViewModel = Get.find<ComfyuiViewModel>();
     // final calendarViewModel = Get.find<CalendarViewModel>();
@@ -171,7 +171,7 @@ class MapScreen extends StatelessWidget {
       child: BottomAppBar(
         padding: EdgeInsets.all(0),
         shadowColor: Colors.grey,
-        height: context.mediaQuery.size.height * 0.08,
+        height: MediaQuery.sizeOf(context).height * 0.08,
         color: Colors.grey.shade100,
         elevation: 0,
         notchMargin: 8,
@@ -188,21 +188,18 @@ class MapScreen extends StatelessWidget {
           StadiumBorder(side: BorderSide(width: 10)),
         ),
         child: Obx(
-          () => MediaQuery(
-            data: MediaQuery.of(context).removePadding(removeBottom: true, removeTop: true),
-            child: BottomNavigationBar(
-              // 그림자 없애기
-              elevation: 0,
-              onTap: mapViewModel.changeNavigationBarIndex,
-              showSelectedLabels: false,
-              showUnselectedLabels: false,
-              currentIndex: mapViewModel.navigationBarCurrentIndex.value,
-              iconSize: 30,
-              selectedFontSize: 0,
-              items: bottomNavigationBarItems,
-              backgroundColor: Colors.grey.shade100,
-              type: BottomNavigationBarType.fixed,
-            ),
+          () => BottomNavigationBar(
+            // 그림자 없애기
+            elevation: 0,
+            onTap: mapViewModel.changeNavigationBarIndex,
+            showSelectedLabels: false,
+            showUnselectedLabels: false,
+            currentIndex: mapViewModel.navigationBarCurrentIndex.value,
+            iconSize: 30,
+            selectedFontSize: 0,
+            items: bottomNavigationBarItems,
+            backgroundColor: Colors.grey.shade100,
+            type: BottomNavigationBarType.fixed,
           ),
         ),
       ),

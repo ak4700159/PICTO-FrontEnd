@@ -153,12 +153,6 @@ class FolderViewModel extends GetxController {
       folders.remove(folderId);
     }
   }
-
-  // 폴더 생성
-  void createFolder({required String folderName, required String content}) async {
-    Folder? newFolder = await FolderManagerApi().createFolder(folderName: folderName, content: content);
-  }
-
   // 현재 연결된 소켓에 채팅 전송
   void sendChatMsg({required String content, required String accountName}) async {
     int userId = UserManagerApi().ownerId as int;

@@ -128,8 +128,12 @@ class PhotoStoreApi {
       });
       final response = await dio.patch('$baseUrl/photos/frame/$photoId', data: formData);
       return true;
-    } catch (e) {
-      showErrorPopup(e.toString());
+    } on DioException catch (e) {
+      if(e.response?.statusCode == 500) {
+        showErrorPopup("위치 저장은 5개까지 가능합니다.");
+      } else {
+        showErrorPopup(e.toString());
+      }
     }
     return false;
   }

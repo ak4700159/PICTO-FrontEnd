@@ -19,8 +19,8 @@ void showLocationBottomSheet(BuildContext context) {
     builder: (context) {
       return Container(
         padding: EdgeInsets.all(8),
-        height: context.mediaQuery.size.height * 0.23,
-        width: context.mediaQuery.size.width * 0.8,
+        height: MediaQuery.sizeOf(context).height * 0.23,
+        width: MediaQuery.sizeOf(context).width * 0.8,
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.only(
@@ -116,7 +116,7 @@ void showLocationBottomSheet(BuildContext context) {
                         "현재 위치 저장",
                         style: TextStyle(
                           fontSize: 15,
-                          color: Colors.orangeAccent,
+                          color: AppConfig.mainColor,
                           fontFamily: "NotoSansKR",
                           fontWeight: FontWeight.w700,
                         ),

@@ -63,12 +63,10 @@ class ChatbotViewModel extends GetxController {
     final random = Random();
 
     for (int i = 0; i < 10; i++) {
-      final randomDaysAgo = random.nextInt(365); // 0~364일 전
+      final randomDaysAgo = random.nextInt(60); // 0~364일 전
       final created = now.subtract(Duration(days: randomDaysAgo));
       final createdMillis = created.millisecondsSinceEpoch;
       final dummyRoom = ChatbotRoom(createdDatetime: createdMillis);
-
-      // await box.put(createdMillis.toString(), dummyRoom);
       data.add(dummyRoom);
     }
 

@@ -256,7 +256,7 @@ class GoogleMapViewModel extends GetxController {
     } else if (currentStep == "middle") {
       // 지역 대표 사진 + 내 위치 + 폴더 사진 + 내 사진
       await _loadRepresentative(currentStep);
-      _loadFolder(currentStep);
+      await _loadFolder(currentStep);
       currentMarkers.add(userMarker);
       // 확인해야됨
     } else {
@@ -266,7 +266,7 @@ class GoogleMapViewModel extends GetxController {
       } else {
         await _loadRepresentative(currentStep);
       }
-      _loadFolder(currentStep);
+      await _loadFolder(currentStep);
       currentMarkers.add(userMarker);
     }
     // 위의 작업은 화면 정보(Zoom, 지도를 바라보고 있는 시점)를 바탕으로 마커 클스터링

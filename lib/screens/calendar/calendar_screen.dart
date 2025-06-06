@@ -44,7 +44,7 @@ class CalendarScreen extends StatelessWidget {
         child: Column(
           children: [
             SizedBox(
-              height: context.mediaQuery.size.height * 0.05,
+              height: MediaQuery.sizeOf(context).height * 0.025,
             ),
             // 캘린더
             Container(
@@ -75,7 +75,7 @@ class CalendarScreen extends StatelessWidget {
             _getCalendarEventList(),
             // 위로 올릴 수 있도록
             SizedBox(
-              height: context.mediaQuery.size.height * 0.3,
+              height: MediaQuery.sizeOf(context).height * 0.3,
             )
           ],
         ),
@@ -85,6 +85,7 @@ class CalendarScreen extends StatelessWidget {
 
   Widget _getCalendarEventList() {
     return Obx(() => Column(
+      mainAxisAlignment: MainAxisAlignment.center,
           children: calendarViewModel.selectedEvents
               .map((event) => CalendarEventTile(event: event))
               .toList(),

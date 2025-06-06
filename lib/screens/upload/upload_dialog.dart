@@ -8,8 +8,8 @@ import '../../config/app_config.dart';
 
 void showSharePopup(BuildContext context) {
   final uploadViewModel = Get.find<UploadViewModel>();
-  double width = context.mediaQuery.size.width;
-  double height = context.mediaQuery.size.height;
+  double width = MediaQuery.sizeOf(context).width;
+  double height = MediaQuery.sizeOf(context).height;
   Get.dialog(
     Dialog(
       insetPadding: EdgeInsets.all(0),
@@ -38,73 +38,74 @@ void showSharePopup(BuildContext context) {
                 height: height * 0.02,
               ),
               Obx(
-                    () => uploadViewModel.isLoading.value
+                () => uploadViewModel.isLoading.value
                     ? SizedBox(
-                      height: width * 0.05,
-                      width: width * 0.05,
-                      child: Center(
-                                        child: CircularProgressIndicator(color: AppConfig.mainColor, strokeWidth: 3),
-                                      ),
-                    )
+                        height: width * 0.05,
+                        width: width * 0.05,
+                        child: Center(
+                          child:
+                              CircularProgressIndicator(color: AppConfig.mainColor, strokeWidth: 3),
+                        ),
+                      )
                     : SizedBox(
-                  width: width * 0.8,
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.all(4.0),
-                          child: TextButton(
-                            style: TextButton.styleFrom(
-                              shape: RoundedRectangleBorder(
-                                side: BorderSide(color: Colors.black, width: 1),
-                                borderRadius: BorderRadius.circular(10),
+                        width: width * 0.8,
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.all(4.0),
+                                child: TextButton(
+                                  style: TextButton.styleFrom(
+                                    shape: RoundedRectangleBorder(
+                                      side: BorderSide(color: Colors.black, width: 1),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    backgroundColor: AppConfig.mainColor,
+                                  ),
+                                  child: const Text(
+                                    "공유하고 저장",
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.white,
+                                      fontFamily: "NotoSansKR",
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    uploadViewModel.savePhoto(isShared: true);
+                                  },
+                                ),
                               ),
-                              backgroundColor: AppConfig.mainColor,
                             ),
-                            child: const Text(
-                              "공유하고 저장",
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.white,
-                                fontFamily: "NotoSansKR",
-                                fontWeight: FontWeight.w400,
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.all(4.0),
+                                child: TextButton(
+                                  style: TextButton.styleFrom(
+                                    shape: RoundedRectangleBorder(
+                                      side: BorderSide(color: Colors.black, width: 1),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    backgroundColor: Colors.white,
+                                  ),
+                                  child: const Text(
+                                    "공유하지 않고 저장",
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.black,
+                                      fontFamily: "NotoSansKR",
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    uploadViewModel.savePhoto(isShared: false);
+                                  },
+                                ),
                               ),
                             ),
-                            onPressed: () {
-                              uploadViewModel.savePhoto(isShared: true);
-                            },
-                          ),
+                          ],
                         ),
                       ),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.all(4.0),
-                          child: TextButton(
-                            style: TextButton.styleFrom(
-                              shape: RoundedRectangleBorder(
-                                side: BorderSide(color: Colors.black, width: 1),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              backgroundColor: Colors.white,
-                            ),
-                            child: const Text(
-                              "공유하지 않고 저장",
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.black,
-                                fontFamily: "NotoSansKR",
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-                            onPressed: () {
-                              uploadViewModel.savePhoto(isShared: false);
-                            },
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
               ),
             ],
           ),
@@ -113,9 +114,3 @@ void showSharePopup(BuildContext context) {
     ),
   );
 }
-
-void showValidateFailMsg(BuildContext context, String error) {
-
-}
-
-

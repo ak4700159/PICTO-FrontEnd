@@ -25,8 +25,8 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double widgetHeight = context.mediaQuery.size.height;
-    double widgetWidth = context.mediaQuery.size.width;
+    double widgetHeight = MediaQuery.sizeOf(context).height;
+    double widgetWidth = MediaQuery.sizeOf(context).width;
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus(); // 외부 터치 시 키보드 내림
@@ -40,7 +40,7 @@ class LoginScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  SizedBox(height: context.mediaQuery.size.height * 0.05),
+                  SizedBox(height: MediaQuery.sizeOf(context).height * 0.05),
                   PictoLogo(scale: 1.2, fontSize: 30),
                   SizedBox(height: widgetHeight * 0.02),
                   // 이메일 입력칸
@@ -106,7 +106,7 @@ class LoginScreen extends StatelessWidget {
                             fontFamily: "NotoSansKR",
                             fontSize: 13,
                             fontWeight: FontWeight.w500,
-                            color: Colors.grey.shade500,
+                            color: Colors.black,
                           ),
                         ),
                       ),
@@ -133,8 +133,8 @@ class LoginScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(30),
                       child: Container(
                         color: Colors.blue,
-                        width: context.mediaQuery.size.width,
-                        height: context.mediaQuery.size.height * 0.2,
+                        width: MediaQuery.sizeOf(context).width,
+                        height: MediaQuery.sizeOf(context).height * 0.2,
                         child: Stack(
                           children: [
                             sliderWidget(context),

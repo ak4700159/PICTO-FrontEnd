@@ -101,8 +101,8 @@ class UploadScreen extends StatelessWidget {
   }
 
   Widget _getPhotoFrame(BuildContext context) {
-    final width = context.mediaQuery.size.width;
-    final height = context.mediaQuery.size.height;
+    final width = MediaQuery.sizeOf(context).width;
+    final height = MediaQuery.sizeOf(context).height;
     final uploadViewModel = Get.find<UploadViewModel>();
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -230,7 +230,7 @@ class UploadScreen extends StatelessWidget {
                 color: AppConfig.mainColor,
               ),
               Text(
-                "등록된 위치",
+                "등록된 위치 ",
                 style: TextStyle(
                   fontFamily: "NotoSansKR",
                   fontSize: 14,
@@ -241,7 +241,6 @@ class UploadScreen extends StatelessWidget {
             ],
           ),
           TopBox(size: 0.02),
-
           // 액자 리스트
           SizedBox(
             height: height * 0.3,
@@ -251,7 +250,6 @@ class UploadScreen extends StatelessWidget {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(child: CircularProgressIndicator());
                 }
-
                 if (snapshot.hasError) {
                   return Text(
                     "등록된 위치를 불러오기 실패",
@@ -276,35 +274,6 @@ class UploadScreen extends StatelessWidget {
               },
             ),
           ),
-
-          // 전송 결과 확인
-          // Container(
-          //   width: width,
-          //   height: height * 0.1,
-          //   decoration: BoxDecoration(
-          //     color: Colors.white,
-          //     border: Border.all(width: 1, color: Colors.grey),
-          //     borderRadius: BorderRadius.circular(20),
-          //   ),
-          //   child: SingleChildScrollView(
-          //     child: Padding(
-          //       padding: const EdgeInsets.all(8.0),
-          //       child: Obx(
-          //         () => Text(
-          //           uploadViewModel.result.value,
-          //             style: TextStyle(
-          //               fontFamily: "NotoSansKR",
-          //               fontSize: 14,
-          //               fontWeight: FontWeight.w700,
-          //               color: Colors.black,
-          //             ),
-          //           maxLines: 10,
-          //           overflow: TextOverflow.visible,
-          //         ),
-          //       ),
-          //     ),
-          //   ),
-          // ),
         ],
       ),
     );

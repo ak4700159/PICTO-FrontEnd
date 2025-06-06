@@ -75,8 +75,8 @@ class ChatBubble extends StatelessWidget {
                         child: Image.memory(
                           profile,
                           fit: BoxFit.cover,
-                          height: context.mediaQuery.size.width * 0.1,
-                          width: context.mediaQuery.size.width * 0.1,
+                          height: MediaQuery.sizeOf(context).width * 0.1,
+                          width: MediaQuery.sizeOf(context).width * 0.1,
                         ),
                       ),
                     )

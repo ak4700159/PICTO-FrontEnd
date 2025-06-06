@@ -92,7 +92,7 @@ Widget getTestConnectionFloatBtn(BuildContext context) {
     children: [
       Obx(() => Text('/map/${sessionHandler.connected.value}')),
       SizedBox(
-        width: context.mediaQuery.size.width * 0.5,
+        width: MediaQuery.sizeOf(context).width * 0.5,
         child: FloatingActionButton(
           backgroundColor: AppConfig.mainColor,
           onPressed: () {
@@ -122,12 +122,12 @@ Widget getUserProfile({required User user, required BuildContext context, requir
     builder: (context, snapshot) {
       if (snapshot.connectionState == ConnectionState.waiting) {
         return SizedBox(
-          height: context.mediaQuery.size.width * size,
-          width: context.mediaQuery.size.width * size,
+          height: MediaQuery.sizeOf(context).width * size,
+          width: MediaQuery.sizeOf(context).width * size,
           child: Center(
             child: SizedBox(
-                height: context.mediaQuery.size.width * size / 2,
-                width: context.mediaQuery.size.width * size / 2,
+                height: MediaQuery.sizeOf(context).width * size / 2,
+                width: MediaQuery.sizeOf(context).width * size / 2,
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
                   color: Colors.grey,
@@ -138,8 +138,8 @@ Widget getUserProfile({required User user, required BuildContext context, requir
 
       if (snapshot.hasError) {
         return SizedBox(
-          height: context.mediaQuery.size.width * size,
-          width: context.mediaQuery.size.width * size,
+          height: MediaQuery.sizeOf(context).width * size,
+          width: MediaQuery.sizeOf(context).width * size,
           child: CircleAvatar(
             radius: 20,
             backgroundColor: Colors.white,
@@ -154,14 +154,14 @@ Widget getUserProfile({required User user, required BuildContext context, requir
         child: Image.memory(
           snapshot.data!,
           fit: BoxFit.cover,
-          height: context.mediaQuery.size.width * size,
-          width: context.mediaQuery.size.width * size,
+          height: MediaQuery.sizeOf(context).width * size,
+          width: MediaQuery.sizeOf(context).width * size,
           errorBuilder: (context, object, trace) {
             return Image.asset(
               "assets/images/picto_logo.png",
               fit: BoxFit.cover,
-              height: context.mediaQuery.size.width * size,
-              width: context.mediaQuery.size.width * size,
+              height: MediaQuery.sizeOf(context).width * size,
+              width: MediaQuery.sizeOf(context).width * size,
             );
           },
         ),

@@ -192,7 +192,7 @@ class _MarkerListBottomSheetState extends State<MarkerListBottomSheet> {
             ),
           ),
           SizedBox(
-            height: context.mediaQuery.size.height * 0.35,
+            height: MediaQuery.sizeOf(context).height * 0.35,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               itemCount: widget.markers.length,
@@ -212,13 +212,13 @@ class _MarkerListBottomSheetState extends State<MarkerListBottomSheet> {
                       });
                     },
                     child: SizedBox(
-                      width: context.mediaQuery.size.height * 0.3,
-                      height: context.mediaQuery.size.height * 0.5,
+                      width: MediaQuery.sizeOf(context).height * 0.3,
+                      height: MediaQuery.sizeOf(context).height * 0.5,
                       child: Column(
                         children: [
                           SizedBox(
-                            width: context.mediaQuery.size.height * 0.3,
-                            height: context.mediaQuery.size.height * 0.3,
+                            width: MediaQuery.sizeOf(context).height * 0.3,
+                            height: MediaQuery.sizeOf(context).height * 0.3,
                             child: AnimatedMarkerWidget(
                               type: marker.type,
                               imageData: marker.imageData,
@@ -271,7 +271,7 @@ class _MarkerListBottomSheetState extends State<MarkerListBottomSheet> {
             ),
           ),
           SizedBox(
-            height: context.mediaQuery.size.height * 0.4,
+            height: MediaQuery.sizeOf(context).height * 0.4,
             child: GridView.builder(
               scrollDirection: Axis.horizontal,
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -304,13 +304,13 @@ class _MarkerListBottomSheetState extends State<MarkerListBottomSheet> {
                             BoxShadow(color: Colors.grey, blurRadius: 1, spreadRadius: 0.5)
                           ]
                       ),
-                      width: context.mediaQuery.size.width * 0.8,
-                      // height: context.mediaQuery.size.width * 0.9,
+                      width: MediaQuery.sizeOf(context).width * 0.8,
+                      // height: MediaQuery.sizeOf(context).width * 0.9,
                       child: Column(
                         children: [
                           SizedBox(
-                            width: context.mediaQuery.size.height * 0.17,
-                            height: context.mediaQuery.size.height * 0.17,
+                            width: MediaQuery.sizeOf(context).height * 0.17,
+                            height: MediaQuery.sizeOf(context).height * 0.17,
                             child: AnimatedMarkerWidget(
                               type: marker.type,
                               imageData: marker.imageData,

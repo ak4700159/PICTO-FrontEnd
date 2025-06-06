@@ -32,10 +32,33 @@ class RemoveScreen extends StatelessWidget {
                 Obx(() => _getPhoto(context)),
                 // 아이콘 버튼
                 SizedBox(
-                  width: context.mediaQuery.size.width,
+                  width: MediaQuery.sizeOf(context).width,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
+                      Container(
+                        padding: EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          // 흐음
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(30),
+                          boxShadow: [
+                            BoxShadow(offset: Offset(0, 0), blurRadius: 1, color: Colors.grey),
+                          ],
+                        ),
+                        child: Obx(
+                              () => Text(
+                            comfyuiViewModel.currentPrompt.value == ""
+                                ? "입력한 카테고리"
+                                : "입력한 카테고리 : ${comfyuiViewModel.currentPrompt.value}",
+                            style: TextStyle(
+                              fontFamily: "NotoSansKR",
+                              fontSize: 12,
+                              fontWeight: FontWeight.w300,
+                            ),
+                          ),
+                        ),
+                      ),
                       // 사진 바꾸기
                       IconButton(
                         onPressed: () {
@@ -62,31 +85,6 @@ class RemoveScreen extends StatelessWidget {
                     ],
                   ),
                 ),
-
-                Container(
-                  padding: EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    // 흐음
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(30),
-                    boxShadow: [
-                      BoxShadow(offset: Offset(0, 0), blurRadius: 1, color: Colors.grey),
-                    ],
-                  ),
-                  child: Obx(
-                    () => Text(
-                      comfyuiViewModel.currentPrompt.value == ""
-                          ? "입력한 카테고리"
-                          : "입력한 카테고리 : ${comfyuiViewModel.currentPrompt.value}",
-                      style: TextStyle(
-                        fontFamily: "NotoSansKR",
-                        fontSize: 12,
-                        fontWeight: FontWeight.w300,
-                      ),
-                    ),
-                  ),
-                ),
-
                 // 텍스트 필드
                 Obx(() => _getBottom(context)),
               ],
@@ -112,15 +110,15 @@ class RemoveScreen extends StatelessWidget {
       return Column(
         children: [
           SizedBox(
-            height: context.mediaQuery.size.height * 0.2,
+            height: MediaQuery.sizeOf(context).height * 0.2,
           )
         ],
       );
     }
     return Container(
       padding: EdgeInsets.all(8),
-      height: context.mediaQuery.size.height * 0.2,
-      width: context.mediaQuery.size.width,
+      height: MediaQuery.sizeOf(context).height * 0.2,
+      width: MediaQuery.sizeOf(context).width * 0.8,
       child: TextFormField(
         minLines: 1,
         maxLines: 1,
@@ -156,8 +154,8 @@ class RemoveScreen extends StatelessWidget {
       borderRadius: BorderRadius.circular(20),
       child: Image.file(
         File(comfyuiViewModel.currentRemoveSelectedPhoto.value!.path),
-        width: context.mediaQuery.size.width * 0.9,
-        height: context.mediaQuery.size.width * 0.9,
+        width: MediaQuery.sizeOf(context).width * 0.9,
+        height: MediaQuery.sizeOf(context).width * 0.9,
         fit: BoxFit.cover,
       ),
     );
@@ -166,8 +164,8 @@ class RemoveScreen extends StatelessWidget {
   // 갤러리에서 사진 선택 화면
   Widget _getSelection(BuildContext context) {
     return Container(
-      width: context.mediaQuery.size.width * 0.9,
-      height: context.mediaQuery.size.width * 0.9,
+      width: MediaQuery.sizeOf(context).width * 0.9,
+      height: MediaQuery.sizeOf(context).width * 0.9,
       decoration:
           BoxDecoration(borderRadius: BorderRadius.circular(15), color: Colors.grey.shade100),
       child: IconButton(
@@ -190,8 +188,8 @@ class RemoveScreen extends StatelessWidget {
     });
 
     return Container(
-      width: context.mediaQuery.size.width * 0.9,
-      height: context.mediaQuery.size.width * 0.9,
+      width: MediaQuery.sizeOf(context).width * 0.9,
+      height: MediaQuery.sizeOf(context).width * 0.9,
       decoration:
           BoxDecoration(borderRadius: BorderRadius.circular(15), color: Colors.grey.shade100),
       child: FutureBuilder(

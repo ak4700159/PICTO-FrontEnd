@@ -173,8 +173,8 @@ class FolderListScreen extends StatelessWidget {
     Map<String, List<Folder>> notOrderedFolders = folderViewModel.getPartitionedFolders();
     List<Folder> myFolders = notOrderedFolders["my"]!;
     List<Folder> sharedFolders = notOrderedFolders["shared"]!;
-    double height = context.mediaQuery.size.height;
-    double width = context.mediaQuery.size.width;
+    double height = MediaQuery.sizeOf(context).height;
+    double width = MediaQuery.sizeOf(context).width;
 
     return SingleChildScrollView(
       child: RefreshIndicator(

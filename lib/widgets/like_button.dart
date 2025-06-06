@@ -41,15 +41,15 @@ class _LikeButtonState extends State<LikeButton> {
     int photoId = widget.photoId;
     return isInit == null
         ? SizedBox(
-            height: context.mediaQuery.size.width,
-            width: context.mediaQuery.size.width,
+            height: MediaQuery.sizeOf(context).width,
+            width: MediaQuery.sizeOf(context).width,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 Center(
                   child: SizedBox(
-                      height: context.mediaQuery.size.width / 10,
-                      width: context.mediaQuery.size.width / 10,
+                      height: MediaQuery.sizeOf(context).width / 10,
+                      width: MediaQuery.sizeOf(context).width / 10,
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
                         color: Colors.grey,
@@ -60,8 +60,8 @@ class _LikeButtonState extends State<LikeButton> {
           )
         : SizedBox(
             // color: Colors.red,
-            height: context.mediaQuery.size.width / 5,
-            width: context.mediaQuery.size.width / 5,
+            height: MediaQuery.sizeOf(context).width / 5,
+            width: MediaQuery.sizeOf(context).width / 5,
             child: Column(
               children: [
                 IconButton(

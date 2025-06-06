@@ -11,28 +11,44 @@ class TestScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print("rebuild");
     Get.put<TestViewModel>(TestViewModel());
     final testViewModel = TestViewModel.to;
+    final height = MediaQuery.sizeOf(context).height;
     return Scaffold(
-      body: Column(
-        children: [
-          Obx(() => Text(testViewModel.testObject.value?.data ?? "value error")),
-          TextFormField(
-            controller: textController,
-            onSaved: (val) {
-              testViewModel.updateTestObject(update: val ?? "");
-              textController.clear();
-            },
-          ),
-
-          Obx(() => Text(testViewModel.testObject.value?.subObject.subData ?? "value error")),
-          TextFormField(
-            controller: textController,
-            onSaved: (val) {
-              testViewModel.updateTestSubObject(update: val ?? "");
-            },
-          ),
-        ],
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            SizedBox(height: height * 0.2,),
+            Container(
+              height: height * 0.2,
+              decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Colors.grey)),
+              child: Obx(
+                () => Center(child: Text(testViewModel.testObject.value?.data ?? "value error")),
+              ),
+            ),
+            TextFormField(
+              controller: textController,
+              onSaved: (val) {
+                testViewModel.updateTestObject(update: val ?? "");
+                textController.clear();
+              },
+            ),
+            Container(
+              height: height * 0.2,
+              decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Colors.grey)),
+              child: Obx(
+                () => Center(child: Text(testViewModel.testObject.value?.subObject.subData ?? "value error")),
+              ),
+            ),
+            TextFormField(
+              controller: textController,
+              onSaved: (val) {
+                testViewModel.updateTestSubObject(update: val ?? "");
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -1,28 +1,9 @@
 [
   {
     "featureType": "all",
-    "elementType": "geometry.fill",
     "stylers": [
       {
-        "color": "#F8ECFF"
-      }
-    ]
-  },
-  {
-    "featureType": "landscape.natural",
-    "elementType": "geometry.fill",
-    "stylers": [
-      {
-        "color": "#FFD5EC"
-      }
-    ]
-  },
-  {
-    "featureType": "poi.park",
-    "elementType": "geometry.fill",
-    "stylers": [
-      {
-        "color": "#E0FFC8"
+        "color": "#C0C0C0"
       }
     ]
   },
@@ -31,7 +12,7 @@
     "elementType": "geometry.fill",
     "stylers": [
       {
-        "color": "#D8CCFF"
+        "color": "#DFECFF"
       }
     ]
   },
@@ -40,49 +21,52 @@
     "elementType": "geometry.fill",
     "stylers": [
       {
-        "color": "#F5D7FF"
+        "color": "#DBDBDB"
       }
     ]
   },
   {
     "featureType": "road",
-    "elementType": "geometry.stroke",
+    "elementType": "labels",
     "stylers": [
       {
-        "color": "#F1C2FF"
-      },
-      {
-        "weight": 1
+        "visibility": "off"
       }
     ]
   },
   {
-    "featureType": "road.highway",
+    "featureType": "landscape",
     "elementType": "geometry.fill",
     "stylers": [
       {
-        "color": "#FBCFFF"
+        "color": "#f7f7f7"
       }
     ]
   },
   {
-    "featureType": "road.highway",
-    "elementType": "geometry.stroke",
+    "featureType": "poi",
+    "elementType": "geometry.fill",
     "stylers": [
       {
-        "color": "#F7B8FF"
-      },
-      {
-        "weight": 1
+        "color": "#EEEEEE"
       }
     ]
   },
   {
-    "featureType": "all",
+    "featureType": "poi",
+    "elementType": "labels.icon",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "administrative",
     "elementType": "labels.text.fill",
     "stylers": [
       {
-        "color": "#6A1B9A"
+        "color": "#444444"
       }
     ]
   },
@@ -91,7 +75,28 @@
     "elementType": "labels.text.stroke",
     "stylers": [
       {
-        "color": "#FFFFFF"
+        "color": "#ffffff"
+      },
+      {
+        "weight": 1
+      }
+    ]
+  },
+  {
+    "featureType": "transit",
+    "elementType": "labels.icon",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "transit",
+    "elementType": "geometry.fill",
+    "stylers": [
+      {
+        "color": "#EEEEEE"
       }
     ]
   }

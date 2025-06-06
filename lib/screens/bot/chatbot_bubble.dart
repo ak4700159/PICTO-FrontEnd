@@ -4,6 +4,9 @@ import 'package:get/get.dart';
 import 'package:picto_frontend/config/app_config.dart';
 import 'package:picto_frontend/models/chatbot_msg.dart';
 import 'package:picto_frontend/screens/bot/chatbot_view_model.dart';
+import 'package:picto_frontend/utils/functions.dart';
+
+import '../../utils/popup.dart';
 
 class ChatbotBubble extends StatelessWidget {
   final ChatbotMsg msg;
@@ -31,11 +34,12 @@ class ChatbotBubble extends StatelessWidget {
 
   // 텍스트 전송중일 때
   Widget _getSendingWidget(BuildContext context) {
+    final height = MediaQuery.sizeOf(context).height;
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(12.0),
         child: SizedBox(
-          height: context.mediaQuery.size.height * 0.1,
+          height: height * 0.1,
           child: Column(
             children: [
               AnimatedTextKit(
@@ -61,6 +65,9 @@ class ChatbotBubble extends StatelessWidget {
 
   // 내가 보낸 채팅
   Widget _getIsMeWidget(BuildContext context) {
+    final height = MediaQuery.sizeOf(context).height;
+    final width = MediaQuery.sizeOf(context).width;
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       mainAxisSize: MainAxisSize.min,
@@ -104,7 +111,7 @@ class ChatbotBubble extends StatelessWidget {
               children: [
                 Container(
                   constraints: BoxConstraints(
-                    maxWidth: MediaQuery.of(context).size.width * 0.7, // 최대 너비 제한
+                    maxWidth: width * 0.7, // 최대 너비 제한
                   ),
                   margin: const EdgeInsets.all(2),
                   padding: const EdgeInsets.all(12.0),
@@ -142,17 +149,20 @@ class ChatbotBubble extends StatelessWidget {
       return _getIntroWidget(context, "프롬프트를 다시 작성해주세요");
     }
     String analysisMsg = msg.content.substring(0, msg.content.indexOf("=== 촬영 가이드라인 ===") - 2);
+    analysisMsg = analysisMsg.split('\n').sublist(2).join('\n');
+    analysisMsg = convertNaturalKorean(analysisMsg);
     String guideMsg = msg.content
         .substring(msg.content.indexOf("=== 촬영 가이드라인 ===") + "=== 촬영 가이드라인 ===".length + 1);
-    // 줄 단위로 나누고 상위 4줄 제거
-    List<String> lines = guideMsg.split('\n');
-    if (lines.length > 4) {
-      lines = lines.sublist(4); // 상위 4줄 제거
-    } else {
-      lines = []; // 전체가 4줄 이하라면 빈 리스트
-    }
-    // 다시 문자열로 합치기
-    String trimmedGuideMsg = lines.join('\n');
+    // // 줄 단위로 나누고 상위 4줄 제거
+    // List<String> lines = guideMsg.split('\n');
+    // if (lines.length > 4) {
+    //   lines = lines.sublist(2); // 상위 4줄 제거
+    // } else {
+    //   lines = []; // 전체가 4줄 이하라면 빈 리스트
+    // }
+    // // 다시 문자열로 합치기
+    // String trimmedGuideMsg = lines.join('\n');
+    String trimmedGuideMsg = convertNaturalKorean(guideMsg);
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -181,19 +191,7 @@ class ChatbotBubble extends StatelessWidget {
                 ),
                 child: Column(
                   children: [
-                    Text(
-                      analysisMsg,
-                      style: TextStyle(
-                        wordSpacing: 2,
-                        letterSpacing: 0.5,
-                        fontSize: 12,
-                        color: Colors.white,
-                        fontFamily: "NotoSansKR",
-                        fontWeight: FontWeight.w300,
-                      ),
-                      overflow: TextOverflow.visible,
-                      maxLines: 99,
-                    ),
+                    _buildStyledTextByStructure(analysisMsg),
                   ],
                 ),
               ),
@@ -201,49 +199,7 @@ class ChatbotBubble extends StatelessWidget {
                 padding: const EdgeInsets.only(top: 4.0, bottom: 16.0),
                 child: TextButton(
                   onPressed: () {
-                    Get.dialog(
-                      AlertDialog(
-                        titlePadding: EdgeInsets.all(10),
-                        contentPadding: EdgeInsets.only(
-                          bottom: 25,
-                          left: 18,
-                          right: 18,
-                        ),
-                        backgroundColor: Colors.white,
-                        title: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Icon(Icons.photo_album),
-                            const Text(
-                              '가이드라인',
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontFamily: "NotoSansKR",
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                            IconButton(
-                                onPressed: () {
-                                  Get.back();
-                                },
-                                icon: Icon(Icons.cancel_outlined)),
-                          ],
-                        ),
-                        content: SingleChildScrollView(
-                          child: Text(
-                            trimmedGuideMsg,
-                            style: TextStyle(
-                              wordSpacing: 2,
-                              letterSpacing: 0.5,
-                              fontSize: 12,
-                              color: Colors.black,
-                              fontFamily: "NotoSansKR",
-                              fontWeight: FontWeight.w300,
-                            ),
-                          ),
-                        ),
-                      ),
-                    );
+                    showGuidePopup(trimmedGuideMsg);
                   },
                   style: TextButton.styleFrom(
                     shadowColor: Colors.grey,
@@ -302,7 +258,6 @@ class ChatbotBubble extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(16),
                                 child: GestureDetector(
                                   onTap: () {
-                                    // 이게 문제
                                     if (image.photoId != null) {
                                       chatbotViewModel.selectOtherPhoto(image.photoId!, image.data);
                                     }
@@ -390,14 +345,14 @@ class ChatbotBubble extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: AppConfig.mainColor,
                   borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(30),
+                    topLeft: Radius.circular(5),
                     topRight: Radius.circular(30),
                     bottomLeft: Radius.circular(30),
                     bottomRight: Radius.circular(30),
                   ),
                 ),
                 child: Text(
-                  _trimBlock(blocks[2]),
+                  convertNaturalKorean(_trimBlock(blocks[2])),
                   style: TextStyle(
                     wordSpacing: 2,
                     letterSpacing: 0.5,
@@ -437,8 +392,8 @@ class ChatbotBubble extends StatelessWidget {
                         }
                       },
                       child: SizedBox(
-                        width: context.mediaQuery.size.width * 0.8,
-                        height: context.mediaQuery.size.width * 0.8,
+                        width: MediaQuery.sizeOf(context).width * 0.8,
+                        height: MediaQuery.sizeOf(context).width * 0.8,
                         child: Image.memory(
                           image.data,
                           fit: BoxFit.cover,
@@ -447,7 +402,7 @@ class ChatbotBubble extends StatelessWidget {
                     ),
                   ),
                   SizedBox(
-                    width: context.mediaQuery.size.width * 0.8,
+                    width: MediaQuery.sizeOf(context).width * 0.8,
                     child: Text(
                       image.content ?? "전달 안됨",
                       maxLines: 2,
@@ -532,8 +487,8 @@ class ChatbotBubble extends StatelessWidget {
                           // BoxShadow(offset: Offset(3, 3), color: Colors.grey, blurRadius: 20, spreadRadius: 20),
                         ],
                       ),
-                      width: context.mediaQuery.size.width * 0.6,
-                      height: context.mediaQuery.size.width * 0.6,
+                      width: MediaQuery.sizeOf(context).width * 0.6,
+                      height: MediaQuery.sizeOf(context).width * 0.6,
                       child: Image.memory(
                         image.data,
                         fit: BoxFit.cover,
@@ -543,13 +498,13 @@ class ChatbotBubble extends StatelessWidget {
                 ),
                 if (preMsg!.images.indexOf(image) == 0)
                   SizedBox(
-                    width: context.mediaQuery.size.width * 0.6,
+                    width: MediaQuery.sizeOf(context).width * 0.6,
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
                         child: Text(
-                          firstImage,
+                          convertNaturalKorean(secondImage),
                           style: TextStyle(
                             wordSpacing: 2,
                             letterSpacing: 0.5,
@@ -564,13 +519,13 @@ class ChatbotBubble extends StatelessWidget {
                   ),
                 if (preMsg!.images.indexOf(image) == 1)
                   SizedBox(
-                    width: context.mediaQuery.size.width * 0.6,
+                    width: MediaQuery.sizeOf(context).width * 0.6,
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
                         child: Text(
-                          secondImage,
+                          convertNaturalKorean(secondImage),
                           style: TextStyle(
                             wordSpacing: 2,
                             letterSpacing: 0.5,
@@ -588,33 +543,41 @@ class ChatbotBubble extends StatelessWidget {
           ),
         )
         .toList();
-    resultWidgets.insert(
-        1,
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(
-                height: context.mediaQuery.size.width * 0.25,
-              ),
-              Icon(
-                Icons.compare_arrows,
-                color: Colors.red,
-                size: 40,
-              ),
-              // Text(
-              //   "   V  S  ",
-              //   style: TextStyle(
-              //     fontSize: 20,
-              //     color: Colors.red,
-              //     fontFamily: "NotoSansKR",
-              //     fontWeight: FontWeight.w500,
-              //   ),
-              // ),
-            ],
-          ),
-        ));
     return resultWidgets;
+  }
+
+  RichText _buildStyledTextByStructure(String guideMsg) {
+    final List<String> lines = guideMsg.split('\n');
+    final List<InlineSpan> spans = [];
+
+    bool nextLineBold = false;
+
+    for (int i = 0; i < lines.length; i++) {
+      final currentLine = lines[i].trim();
+
+      // 이전 줄과 현재 줄이 모두 비어있으면 다음 줄을 강조 대상으로 지정
+      if (i > 0 && lines[i - 1].trim().isEmpty && currentLine.isNotEmpty || i == 0) {
+        nextLineBold = true;
+      }
+
+      // 줄 스타일 결정
+      final TextStyle style = TextStyle(
+        fontSize: nextLineBold ?  lines.length - 1 == i ? 13 : 14 : 12,
+        fontWeight: nextLineBold ? FontWeight.w500 : FontWeight.w300,
+        color: Colors.white,
+        fontFamily: "NotoSansKR",
+      );
+
+      String addNull = lines.length - 1 == i ? "" : "\n";
+      spans.add(TextSpan(text: currentLine + addNull, style: style));
+
+      // 강조는 단 한 줄만, 이후에는 false로 초기화
+      nextLineBold = false;
+    }
+
+    return RichText(
+      text: TextSpan(children: spans),
+      textAlign: TextAlign.start,
+    );
   }
 }

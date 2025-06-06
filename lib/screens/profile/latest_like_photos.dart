@@ -35,7 +35,7 @@ class _LatestLikePhotosState extends State<LatestLikePhotos> {
         child: Container(
           decoration: BoxDecoration(
             color: Colors.white,
-            boxShadow: [BoxShadow(blurRadius: 1, spreadRadius: 0.5, color: Colors.grey)],
+            // boxShadow: [BoxShadow(blurRadius: 1, spreadRadius: 0.5, color: Colors.grey)],
           ),
           child: Padding(
             padding: const EdgeInsets.all(8.0),
@@ -48,19 +48,22 @@ class _LatestLikePhotosState extends State<LatestLikePhotos> {
       );
     }
 
-    return SizedBox(
-      width: context.mediaQuery.size.width,
-      height: context.mediaQuery.size.height * 0.25,
-      child: GridView.builder(
-        scrollDirection: Axis.horizontal,
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          childAspectRatio: 1,
+    return Padding(
+      padding: const EdgeInsets.only(left : 8.0),
+      child: SizedBox(
+        width: MediaQuery.sizeOf(context).width,
+        height: MediaQuery.sizeOf(context).height * 0.25,
+        child: GridView.builder(
+          scrollDirection: Axis.horizontal,
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            childAspectRatio: 1,
+          ),
+          itemCount: latestLikePhotos.length,
+          itemBuilder: (context, idx) {
+            return _getLikePhotoTile(context, idx);
+          },
         ),
-        itemCount: latestLikePhotos.length,
-        itemBuilder: (context, idx) {
-          return _getLikePhotoTile(context, idx);
-        },
       ),
     );
   }

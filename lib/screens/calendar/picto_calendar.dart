@@ -100,6 +100,22 @@ class PictoCalendar extends StatelessWidget {
 
   CalendarStyle _getCalendarStyle() {
     return CalendarStyle(
+      selectedDecoration: BoxDecoration(
+        color: AppConfig.mainColor,
+        shape: BoxShape.circle,
+      ),
+      rangeStartDecoration: BoxDecoration(
+        color: AppConfig.mainColor,
+        shape: BoxShape.circle,
+      ),
+      rangeEndDecoration: BoxDecoration(
+        color: AppConfig.mainColor,
+        shape: BoxShape.circle,
+      ),
+      rangeHighlightColor :Color.fromRGBO(238, 227, 253, 0.8),
+      // withinRangeDecoration: const BoxDecoration(
+      //   color: AppConfig.mainColor,
+      // ),
       tableBorder: TableBorder(
         horizontalInside: BorderSide(
           color: Colors.grey.shade200,
@@ -108,7 +124,7 @@ class PictoCalendar extends StatelessWidget {
           color: Colors.grey.shade200,
         ),
       ),
-      cellMargin: const EdgeInsets.all(15.0),
+      cellMargin: const EdgeInsets.all(13.0),
       markerDecoration: BoxDecoration(color: AppConfig.mainColor),
     );
   }
@@ -134,13 +150,14 @@ class PictoCalendar extends StatelessWidget {
               margin: EdgeInsets.all(4),
               padding: EdgeInsets.all(2),
               decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20), border: Border.all(color: Colors.grey, width: 0.5)),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: Colors.grey, width: 0.5)),
               child: Text("${events.length}",
                   style: TextStyle(
                     color: color,
                     fontWeight: fontWeight,
                     fontFamily: "NotoSansKR",
-                    fontSize: 8,
+                    fontSize: 9,
                   )),
             ),
           ],
@@ -187,14 +204,16 @@ class PictoCalendar extends StatelessWidget {
             return Center(
               child: Text(
                 '토',
-                style: TextStyle(fontFamily: "NotoSansKR", fontWeight: FontWeight.w500, color: Colors.blue),
+                style: TextStyle(
+                    fontFamily: "NotoSansKR", fontWeight: FontWeight.w500, color: Colors.blue),
               ),
             );
           case 7:
             return Center(
               child: Text(
                 '일',
-                style: TextStyle(fontFamily: "NotoSansKR", fontWeight: FontWeight.w500, color: Colors.red),
+                style: TextStyle(
+                    fontFamily: "NotoSansKR", fontWeight: FontWeight.w500, color: Colors.red),
               ),
             );
         }

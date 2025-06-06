@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_utils/get_utils.dart';
+import 'package:picto_frontend/config/app_config.dart';
 import 'package:picto_frontend/screens/folder/folder_view_model.dart';
 import 'package:picto_frontend/services/photo_store_service/photo_store_api.dart';
 import 'package:picto_frontend/utils/functions.dart';
@@ -21,12 +22,14 @@ class CalendarEventTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(8),
+      padding: const EdgeInsets.all(8),
+      margin: const EdgeInsets.only(left: 8, right: 8),
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(
-            width: 1,
-            color: Colors.grey,
+            // strokeAlign: BorderSide.strokeAlignCenter,
+            width: 2,
+            color: Colors.grey.shade400,
           ),
         ),
       ),
@@ -42,7 +45,7 @@ class CalendarEventTile extends StatelessWidget {
                 "  장소 ",
                 style: TextStyle(
                     fontFamily: 'NotoSansKR',
-                    color: Color.fromRGBO(61, 87, 255, 1),
+                    color: AppConfig.mainColor,
                     fontWeight: FontWeight.w800, // Bold
                     fontSize: 12),
               ),
@@ -50,7 +53,7 @@ class CalendarEventTile extends StatelessWidget {
                 "  공유시간 ",
                 style: TextStyle(
                     fontFamily: 'NotoSansKR',
-                    color: Color.fromRGBO(61, 87, 255, 1),
+                    color: AppConfig.mainColor,
                     fontWeight: FontWeight.w800, // Bold
                     fontSize: 12),
               ),
@@ -58,7 +61,7 @@ class CalendarEventTile extends StatelessWidget {
                 "  공유자 ",
                 style: TextStyle(
                     fontFamily: 'NotoSansKR',
-                    color: Color.fromRGBO(61, 87, 255, 1),
+                    color: AppConfig.mainColor,
                     fontWeight: FontWeight.w800, // Bold
                     fontSize: 12),
               ),
@@ -66,7 +69,7 @@ class CalendarEventTile extends StatelessWidget {
                 "  저장된 폴더 ",
                 style: TextStyle(
                     fontFamily: 'NotoSansKR',
-                    color: Color.fromRGBO(61, 87, 255, 1),
+                    color: AppConfig.mainColor,
                     fontWeight: FontWeight.w800, // Bold
                     fontSize: 12),
               ),
@@ -118,12 +121,12 @@ class CalendarEventTile extends StatelessWidget {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return SizedBox(
-              height: context.mediaQuery.size.width * 0.2,
-              width: context.mediaQuery.size.width * 0.2,
+              height: MediaQuery.sizeOf(context).width * 0.2,
+              width: MediaQuery.sizeOf(context).width * 0.2,
               child: Center(
                 child: SizedBox(
-                    height: context.mediaQuery.size.width * 0.05,
-                    width: context.mediaQuery.size.width * 0.05,
+                    height: MediaQuery.sizeOf(context).width * 0.05,
+                    width: MediaQuery.sizeOf(context).width * 0.05,
                     child: CircularProgressIndicator(
                       color: Colors.grey,
                     )),
@@ -157,14 +160,14 @@ class CalendarEventTile extends StatelessWidget {
               child: Image.memory(
                 snapshot.data!,
                 fit: BoxFit.cover,
-                height: context.mediaQuery.size.width * 0.2,
-                width: context.mediaQuery.size.width * 0.2,
+                height: MediaQuery.sizeOf(context).width * 0.2,
+                width: MediaQuery.sizeOf(context).width * 0.2,
                 errorBuilder: (context, object, trace) {
                   return Image.asset(
                     "assets/images/picto_logo.png",
                     fit: BoxFit.cover,
-                    height: context.mediaQuery.size.width * 0.2,
-                    width: context.mediaQuery.size.width * 0.2,
+                    height: MediaQuery.sizeOf(context).width * 0.2,
+                    width: MediaQuery.sizeOf(context).width * 0.2,
                   );
                 },
               ),
@@ -193,14 +196,14 @@ class CalendarEventTile extends StatelessWidget {
         child: Image.memory(
           data,
           fit: BoxFit.cover,
-          height: context.mediaQuery.size.width * 0.2,
-          width: context.mediaQuery.size.width * 0.2,
+          height: MediaQuery.sizeOf(context).width * 0.2,
+          width: MediaQuery.sizeOf(context).width * 0.2,
           errorBuilder: (context, object, trace) {
             return Image.asset(
               "assets/images/picto_logo.png",
               fit: BoxFit.cover,
-              height: context.mediaQuery.size.width * 0.2,
-              width: context.mediaQuery.size.width * 0.2,
+              height: MediaQuery.sizeOf(context).width * 0.2,
+              width: MediaQuery.sizeOf(context).width * 0.2,
             );
           },
         ),

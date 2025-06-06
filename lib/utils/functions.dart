@@ -81,3 +81,20 @@ String getKoreanWeekday(int weekday) {
   const weekdays = ['월', '화', '수', '목', '금', '토', '일'];
   return weekdays[(weekday - 1) % 7]; // DateTime.weekday는 1(월) ~ 7(일)
 }
+
+String convertNaturalKorean(String target) {
+  final RegExp emoji = RegExp(
+      r'(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])');
+  String fullText = '';
+  List<String> words = target.split(' ');
+  for (var i = 0; i < words.length; i++) {
+    String word = words[i];
+    // *, # 제거
+    word = word.replaceAll('*', '').replaceAll('#', '').replaceAll(':', '  ');
+    fullText += emoji.hasMatch(word)
+        ? word
+        : word.replaceAllMapped(RegExp(r'(\S)(?=\S)'), (m) => '${m[1]}\u200D');
+    if (i < words.length - 1) fullText += ' ';
+  }
+  return fullText;
+}

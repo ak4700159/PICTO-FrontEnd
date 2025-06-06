@@ -64,10 +64,10 @@ class RegisterScreen extends StatelessWidget {
   }
 
   SizedBox _getFormFiled(BuildContext context) {
-    double width = context.mediaQuery.size.width;
-    double height = context.mediaQuery.size.height;
+    double width = MediaQuery.sizeOf(context).width;
+    double height = MediaQuery.sizeOf(context).height;
     return SizedBox(
-      width: context.mediaQuery.size.width * 0.9,
+      width: MediaQuery.sizeOf(context).width * 0.9,
       child: Form(
         key: _formKey,
         child: Column(
@@ -261,8 +261,8 @@ class RegisterScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(25),
         color: AppConfig.mainColor,
       ),
-      width: context.mediaQuery.size.width * 0.7,
-      height: context.mediaQuery.size.height * 0.06,
+      width: MediaQuery.sizeOf(context).width * 0.7,
+      height: MediaQuery.sizeOf(context).height * 0.06,
       child: Padding(
         padding: const EdgeInsets.all(2.0),
         child: TextButton(

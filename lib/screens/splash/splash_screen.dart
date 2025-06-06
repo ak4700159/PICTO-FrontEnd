@@ -24,8 +24,8 @@ class SplashScreen extends StatelessWidget {
                 fontSize: 30,
               ),
               SizedBox(
-                width: context.mediaQuery.size.width,
-                height: context.mediaQuery.size.height * 0.03,
+                width: MediaQuery.sizeOf(context).width,
+                height: MediaQuery.sizeOf(context).height * 0.03,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

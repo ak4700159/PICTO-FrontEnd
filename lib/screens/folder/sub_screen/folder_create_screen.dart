@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:picto_frontend/screens/folder/folder_view_model.dart';
 import 'package:picto_frontend/screens/map/top_box.dart';
 import 'package:picto_frontend/services/folder_manager_service/folder_api.dart';
+import 'package:picto_frontend/utils/popup.dart';
 import 'package:picto_frontend/widgets/picto_logo.dart';
 
 import '../../../config/app_config.dart';
@@ -63,7 +64,7 @@ class FolderCreateScreen extends StatelessWidget {
                   ),
                   Container(
                     padding: EdgeInsets.all(8),
-                    width: context.mediaQuery.size.width * 0.9,
+                    width: MediaQuery.sizeOf(context).width * 0.9,
                     child: TextFormField(
                       style: TextStyle(fontSize: 12, fontFamily: "NotoSansKR", fontWeight: FontWeight.w600),
                       validator: folderValidator,
@@ -103,7 +104,7 @@ class FolderCreateScreen extends StatelessWidget {
                   ),
                   Container(
                     padding: EdgeInsets.all(8),
-                    width: context.mediaQuery.size.width * 0.9,
+                    width: MediaQuery.sizeOf(context).width * 0.9,
                     child: TextFormField(
                       style: TextStyle(fontSize: 12, fontFamily: "NotoSansKR", fontWeight: FontWeight.w600),
                       validator: folderValidator,
@@ -144,7 +145,7 @@ class FolderCreateScreen extends StatelessWidget {
                   ),
                   Container(
                     padding: EdgeInsets.all(8),
-                    width: context.mediaQuery.size.width * 0.9,
+                    width: MediaQuery.sizeOf(context).width * 0.9,
                     child: FloatingActionButton(
                       backgroundColor: AppConfig.mainColor,
                       onPressed: () async {
@@ -157,7 +158,7 @@ class FolderCreateScreen extends StatelessWidget {
                           Get.find<FolderViewModel>().resetFolder(init: false);
                         }
                         Get.back();
-                        Get.back();
+                        showMsgPopup(msg: "새로운 폴더가 생성되었습니다.", space: 0.4);
                       },
                       child: Text(
                         "폴더 생성하기",

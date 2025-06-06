@@ -94,7 +94,7 @@ class ChatbotScreen extends StatelessWidget {
                             // 사진 선택창
                             if (chatbotViewModel.isUp.value)
                               SizedBox(
-                                height: context.mediaQuery.size.height * 0.18,
+                                height: MediaQuery.sizeOf(context).height * 0.18,
                                 child: MultiImagePickerView(
                                   controller: chatbotViewModel.imagePickerController,
                                   builder: (BuildContext context, ImageFile imageFile) {
@@ -102,7 +102,6 @@ class ChatbotScreen extends StatelessWidget {
                                     chatbotViewModel.currentSelectedImages.clear();
                                     chatbotViewModel.currentSelectedImages
                                         .addAll(chatbotViewModel.imagePickerController.images);
-                                    // print("[INFO] select ${chatbotViewModel.currentSelectedImages.length}");
                                     return DefaultDraggableItemWidget(
                                       imageFile: imageFile,
                                       boxDecoration: BoxDecoration(borderRadius: BorderRadius.circular(20)),
@@ -117,8 +116,8 @@ class ChatbotScreen extends StatelessWidget {
                                   },
                                   // 아무 사진도 선택되지 않았을 때 사진
                                   initialWidget: DefaultInitialWidget(
-                                    height: context.mediaQuery.size.height * 0.15,
-                                    width: context.mediaQuery.size.width * 0.9,
+                                    height: MediaQuery.sizeOf(context).height * 0.15,
+                                    width: MediaQuery.sizeOf(context).width * 0.9,
                                     centerWidget: Icon(Icons.image_search_outlined),
                                     backgroundColor: Theme.of(context).colorScheme.secondary.withOpacity(0.05),
                                     margin: EdgeInsets.zero,
@@ -149,7 +148,7 @@ class ChatbotScreen extends StatelessWidget {
                                 ),
                                 Expanded(
                                   child: SizedBox(
-                                    // height: context.mediaQuery.size.height * 0.05,
+                                    // height: MediaQuery.sizeOf(context).height * 0.05,
                                     child: TextField(
                                       minLines: 1,
                                       maxLines: 5,

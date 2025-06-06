@@ -8,8 +8,8 @@ void showProfileModifyDialog(BuildContext context) {
   final profileViewModel = Get.find<ProfileViewModel>();
   final accountEditController = TextEditingController();
   final introEditController = TextEditingController();
-  double width = context.mediaQuery.size.width;
-  double height = context.mediaQuery.size.height;
+  double width = MediaQuery.sizeOf(context).width;
+  double height = MediaQuery.sizeOf(context).height;
   Get.dialog(
     barrierDismissible: false,
     Dialog(

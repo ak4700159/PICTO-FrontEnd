@@ -41,6 +41,7 @@ class ComfyuiViewModel extends GetxController {
 
   // 선택된 사진 리셋
   void reset() {
+
     currentUpscalingSelectedPhoto.value = null;
     currentRemoveSelectedPhoto.value = null;
     determinedRmovePhoto.value = null;

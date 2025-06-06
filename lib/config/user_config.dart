@@ -40,17 +40,17 @@ class UserConfig extends GetxController{
   }
   void toggleShowAroundPhotos() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setBool("showFolderPhotos", !showAroundPhotos.value);
+    prefs.setBool("showAroundPhotos", !showAroundPhotos.value);
     showAroundPhotos.value = !showAroundPhotos.value;
   }
   void toggleShowMyPhotos() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setBool("showFolderPhotos", !showMyPhotos.value);
+    prefs.setBool("showMyPhotos", !showMyPhotos.value);
     showMyPhotos.value = !showMyPhotos.value;
   }
   void toggleShowRepresentativePhotos() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setBool("showFolderPhotos", !showRepresentativePhotos.value);
+    prefs.setBool("showRepresentativePhotos", !showRepresentativePhotos.value);
     showRepresentativePhotos.value = !showRepresentativePhotos.value;
   }
 

@@ -156,7 +156,7 @@ class PhotoScreen extends StatelessWidget {
 
   Widget _getInfoWidget(Photo photo, BuildContext context) {
     return Container(
-      width: context.mediaQuery.size.width,
+      width: MediaQuery.sizeOf(context).width,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
         gradient: LinearGradient(

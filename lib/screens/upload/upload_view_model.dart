@@ -11,6 +11,7 @@ import 'package:picto_frontend/services/user_manager_service/user_api.dart';
 import 'package:picto_frontend/utils/popup.dart';
 
 import '../../models/photo.dart';
+import '../../utils/functions.dart';
 
 class UploadViewModel extends GetxController {
   final ImagePicker _picker = ImagePicker();
@@ -43,6 +44,7 @@ class UploadViewModel extends GetxController {
 
   void savePhoto({required bool isShared}) async {
     final googleViewModel = Get.find<GoogleMapViewModel>();
+    final uploadViewModel = Get.find<UploadViewModel>();
     UploadRequest request;
     try {
       isLoading.value = true;
@@ -74,11 +76,13 @@ class UploadViewModel extends GetxController {
       // 사진 저장 성공 시 팝업창?
       result.value = "사진 저장에 성공했습니다! \n $data";
       Get.back();
-      showMsgPopup(msg: "사진 저장에 성공했습니다!", space: 0.4);
+      uploadViewModel.removeSelectedPhoto();
+      showMsgPopup(msg: "사진 저장에 성공했습니다!", space: 0.3);
     } on DioException catch (e) {
       result.value = e.response?.data["error"].toString() ?? "서버 오류 발생";
       Get.back();
-      showErrorPopup("사진 저장에 실패하였습니다... \n${result.value}");
+      uploadViewModel.removeSelectedPhoto();
+      showMsgPopup(msg: convertNaturalKorean("PICTO에서는 ${result.value}을 업로드할 수 없어요."), space: 0.3);
       // 유효성 검사 실패 시 팝업창
     }
     isLoading.value = false;
@@ -108,7 +112,7 @@ class UploadViewModel extends GetxController {
 
   void removeFrame(int photoId) async {
     if (await PhotoStoreApi().deletePhoto(photoId)) {
-      if (photoId == selectedFrame.value!.photoId) selectedFrame.value = null;
+      if (photoId == selectedFrame.value?.photoId) selectedFrame.value = null;
       frames.removeWhere((photo) => photo.photoId == photoId);
     }
   }

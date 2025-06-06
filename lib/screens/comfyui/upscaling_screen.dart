@@ -44,8 +44,8 @@ class UpscalingScreen extends StatelessWidget {
   // 갤러리에서 사진 선택 화면
   Widget _getSelection(BuildContext context) {
     return Container(
-      width: context.mediaQuery.size.width * 0.9,
-      height: context.mediaQuery.size.width * 0.9,
+      width: MediaQuery.sizeOf(context).width * 0.9,
+      height: MediaQuery.sizeOf(context).width * 0.9,
       decoration:
           BoxDecoration(borderRadius: BorderRadius.circular(15), color: Colors.grey.shade100),
       child: IconButton(
@@ -63,58 +63,59 @@ class UpscalingScreen extends StatelessWidget {
   // 사진 선택시 -> 로딩 -> 애니메이션 -> 결과 확인
   Widget _getAnimationPhoto(BuildContext context) {
     return Container(
-      width: context.mediaQuery.size.width * 0.9,
-      height: context.mediaQuery.size.width * 0.9,
+      width: MediaQuery.sizeOf(context).width * 0.9,
+      height: MediaQuery.sizeOf(context).width * 0.9,
       decoration:
           BoxDecoration(borderRadius: BorderRadius.circular(15), color: Colors.grey.shade300),
       child: FutureBuilder(
-          future: ComfyuiAPI()
-              .upscalingPhoto(original: comfyuiViewModel.currentUpscalingSelectedPhoto.value!),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(
-                  child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CircularProgressIndicator(
-                    color: AppConfig.mainColor,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Text(
-                      "1~2분 정도 소요됩니다. 잠시만 기다려주세요!",
-                      style: TextStyle(
-                          fontSize: 13,
-                          color: Colors.black,
-                          fontFamily: "NotoSansKR",
-                          fontWeight: FontWeight.w700),
-                    ),
-                  )
-                ],
-              ));
-            }
-
-            if (snapshot.hasError) {
-              return Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
+        future: ComfyuiAPI()
+            .upscalingPhoto(original: comfyuiViewModel.currentUpscalingSelectedPhoto.value!),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+                child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CircularProgressIndicator(
+                  color: AppConfig.mainColor,
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
                   child: Text(
-                    "업스케일링에 실패했습니다.",
+                    "1~2분 정도 소요됩니다. 잠시만 기다려주세요!",
                     style: TextStyle(
                         fontSize: 13,
                         color: Colors.black,
                         fontFamily: "NotoSansKR",
                         fontWeight: FontWeight.w700),
                   ),
-                ),
-              );
-            }
+                )
+              ],
+            ));
+          }
 
-            return ComfyuiResult(
-              originalImage: snapshot.data!.original,
-              upscaledImage: snapshot.data!.result,
+          if (snapshot.hasError) {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  "업스케일링에 실패했습니다.",
+                  style: TextStyle(
+                      fontSize: 13,
+                      color: Colors.black,
+                      fontFamily: "NotoSansKR",
+                      fontWeight: FontWeight.w700),
+                ),
+              ),
             );
-          }),
+          }
+
+          return ComfyuiResult(
+            originalImage: snapshot.data!.original,
+            upscaledImage: snapshot.data!.result,
+          );
+        },
+      ),
     );
   }
 }

@@ -37,7 +37,7 @@ class CustomGoogleMap extends StatelessWidget {
             mapType: MapType.normal,
             initialCameraPosition: googleMapViewModel.currentCameraPos,
             onMapCreated: googleMapViewModel.setController,
-            // style: googleMapViewModel.mapStyleString,
+            style: googleMapViewModel.mapStyleString,
             // 카메라 움직일 때마다 실행되는 콜백 함수
             onCameraMove: googleMapViewModel.onCameraMove,
             // 카메라 이동이 멈출 때 실행되는 콜백 함수
@@ -45,7 +45,7 @@ class CustomGoogleMap extends StatelessWidget {
             // small[2~7], middle[7~12], large[12~17]
             // 배율에 따라 마커를 동적으로 변환해야됨
             markers: Set<Marker>.of(googleMapViewModel.currentMarkers),
-            minMaxZoomPreference: MinMaxZoomPreference(2, 17),
+            minMaxZoomPreference: MinMaxZoomPreference(2, 20),
             // 3D 건물 표현
             buildingsEnabled: false,
             onTap: googleMapViewModel.onTap,
@@ -70,10 +70,10 @@ class CustomGoogleMap extends StatelessWidget {
         ),
         // 하단 Floating buttons
         Positioned(
-          bottom: context.mediaQuery.size.height * 0.1,
-          left: context.mediaQuery.size.width * 0.85,
+          bottom: MediaQuery.sizeOf(context).height * 0.1,
+          left: MediaQuery.sizeOf(context).width * 0.85,
           child: SizedBox(
-            width: context.mediaQuery.size.width * 0.15,
+            width: MediaQuery.sizeOf(context).width * 0.15,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.end,
               children: _getBottomRightFloatingButtons(context),
@@ -86,13 +86,31 @@ class CustomGoogleMap extends StatelessWidget {
 
   List<Widget> _getBottomRightFloatingButtons(BuildContext context) {
     return [
-      // 로그아웃
-
+      // 이미지 재로딩 -> 마커 리셋
+      Padding(
+        padding: const EdgeInsets.all(4.0),
+        child: SizedBox(
+          height: MediaQuery.sizeOf(context).height * 0.06,
+          child: FloatingActionButton(
+            onPressed: ()  {
+              final googleMapViewModel = Get.find<GoogleMapViewModel>();
+              googleMapViewModel.resetMarker();
+            },
+            backgroundColor: AppConfig.mainColor,
+            heroTag: "reload",
+            child: Icon(
+              Icons.restart_alt,
+              color: AppConfig.backgroundColor,
+              size: 30,
+            ),
+          ),
+        ),
+      ),
       // 사진 공유
       Padding(
         padding: const EdgeInsets.all(4.0),
         child: SizedBox(
-          height: context.mediaQuery.size.height * 0.06,
+          height: MediaQuery.sizeOf(context).height * 0.06,
           child: FloatingActionButton(
             onPressed: () {},
             backgroundColor: Colors.blueAccent,
@@ -144,7 +162,7 @@ class CustomGoogleMap extends StatelessWidget {
       Padding(
         padding: const EdgeInsets.all(4.0),
         child: SizedBox(
-          height: context.mediaQuery.size.height * 0.06,
+          height: MediaQuery.sizeOf(context).height * 0.06,
           child: FloatingActionButton(
             onPressed: () async {
               // 테스트 버튼 주입
@@ -152,30 +170,10 @@ class CustomGoogleMap extends StatelessWidget {
               // showErrorPopup("test");
               Get.toNamed('/calendar');
             },
-            backgroundColor: Colors.orange,
+            backgroundColor: Colors.teal,
             heroTag: "calendar",
             child: Icon(
               Icons.newspaper_outlined,
-              color: AppConfig.backgroundColor,
-              size: 30,
-            ),
-          ),
-        ),
-      ),
-      // 이미지 재로딩 -> 마커 리셋
-      Padding(
-        padding: const EdgeInsets.all(4.0),
-        child: SizedBox(
-          height: context.mediaQuery.size.height * 0.06,
-          child: FloatingActionButton(
-            onPressed: ()  {
-              final googleMapViewModel = Get.find<GoogleMapViewModel>();
-              googleMapViewModel.resetMarker();
-            },
-            backgroundColor: AppConfig.mainColor,
-            heroTag: "reload",
-            child: Icon(
-              Icons.restart_alt,
               color: AppConfig.backgroundColor,
               size: 30,
             ),

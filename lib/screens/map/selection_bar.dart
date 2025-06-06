@@ -13,8 +13,8 @@ class SelectionBar extends StatelessWidget {
   Widget build(BuildContext context) {
     // TODO: implement build
     return Container(
-      width: context.mediaQuery.size.width,
-      height: context.mediaQuery.size.height * 0.08,
+      width: MediaQuery.sizeOf(context).width,
+      height: MediaQuery.sizeOf(context).height * 0.08,
       color: Colors.transparent,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -23,15 +23,15 @@ class SelectionBar extends StatelessWidget {
           children: [
             PictoTextLogo(),
             SizedBox(
-              width: context.mediaQuery.size.width * 0.3,
+              width: MediaQuery.sizeOf(context).width * 0.3,
             ),
             Padding(
               padding: const EdgeInsets.all(3.0),
               child: Obx(() => _getDropDownButton("period", context)),
             ),
             SizedBox(
-              height: context.mediaQuery.size.height * 0.04,
-              width: context.mediaQuery.size.height * 0.04,
+              height: MediaQuery.sizeOf(context).height * 0.04,
+              width: MediaQuery.sizeOf(context).height * 0.04,
               child: _getTagFloatingButton(),
             ),
           ],
@@ -50,13 +50,15 @@ class SelectionBar extends StatelessWidget {
         items: (field == "sort" ? selectionViewModel.sorts : selectionViewModel.periods)
             .map((sort) => DropdownMenuItem(
                   value: sort,
-                  child: Text(
-                    sort,
-                    style: TextStyle(
-                      fontFamily: "NotoSansKR",
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black,
+                  child: Center(
+                    child: Text(
+                      sort,
+                      style: TextStyle(
+                        fontFamily: "NotoSansKR",
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black,
+                      ),
                     ),
                   ),
                 ))
@@ -69,7 +71,7 @@ class SelectionBar extends StatelessWidget {
             : selectionViewModel.currentSelectedPeriod?.value,
         // 버튼 스타일
         buttonStyleData: ButtonStyleData(
-          height: context.mediaQuery.size.height * 0.05,
+          height: MediaQuery.sizeOf(context).height * 0.05,
           decoration: BoxDecoration(
             // border: Border.all(width: 1),
             color: AppConfig.backgroundColor,

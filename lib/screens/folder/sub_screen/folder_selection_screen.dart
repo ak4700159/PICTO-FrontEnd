@@ -46,7 +46,7 @@ class FolderSelectionScreen extends StatelessWidget {
           // 컬럼 안에 컬럼이 있는 이유는 그러게
           TopBox(size: 0.05),
           SizedBox(
-            height: context.mediaQuery.size.height * 0.65,
+            height: MediaQuery.sizeOf(context).height * 0.65,
             child: SingleChildScrollView(
               child: Column(
                 children: _getFolderList(context),
@@ -55,8 +55,8 @@ class FolderSelectionScreen extends StatelessWidget {
           ),
           TopBox(size: 0.05),
           SizedBox(
-            width: context.mediaQuery.size.width * 0.8,
-            height: context.mediaQuery.size.height * 0.07,
+            width: MediaQuery.sizeOf(context).width * 0.8,
+            height: MediaQuery.sizeOf(context).height * 0.07,
             child: FloatingActionButton(
               onPressed: () {
                 viewModel.copyPhoto(photoId: Get.arguments["photoId"]);

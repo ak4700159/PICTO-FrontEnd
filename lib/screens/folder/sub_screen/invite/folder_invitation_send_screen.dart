@@ -54,7 +54,7 @@ class FolderInvitationSendScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   SizedBox(
-                    width: context.mediaQuery.size.width * 0.8,
+                    width: MediaQuery.sizeOf(context).width * 0.8,
                     child: Form(
                       key: viewModel.formKey,
                       child: TextFormField(
@@ -107,7 +107,7 @@ class FolderInvitationSendScreen extends StatelessWidget {
               ),
               TopBox(size: 0.02),
               SizedBox(
-                height: context.mediaQuery.size.height * 0.5,
+                height: MediaQuery.sizeOf(context).height * 0.5,
                 child: Obx(
                   () => ListView.builder(
                     itemCount: viewModel.selectedUsers.length,
@@ -122,8 +122,8 @@ class FolderInvitationSendScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   SizedBox(
-                    width: context.mediaQuery.size.width * 0.7,
-                    height: context.mediaQuery.size.height * 0.06,
+                    width: MediaQuery.sizeOf(context).width * 0.7,
+                    height: MediaQuery.sizeOf(context).height * 0.06,
                     child: FloatingActionButton(
                       onPressed: () {
                         viewModel.sendInvitation();

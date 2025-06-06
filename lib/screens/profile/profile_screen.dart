@@ -28,7 +28,7 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
+    print("profile screen build");
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
@@ -50,7 +50,7 @@ class ProfileScreen extends StatelessWidget {
                       style: TextStyle(
                         fontWeight: FontWeight.w500,
                         fontSize: 14,
-                        color: Colors.green,
+                        color: AppConfig.mainColor,
                         fontFamily: "NotoSansKR",
                       ),
                     ),
@@ -65,8 +65,10 @@ class ProfileScreen extends StatelessWidget {
                 Obx(() => Column(
                       children: [
                         Container(
-                          width: MediaQuery.of(context).size.width * 0.8,
-                          padding: EdgeInsets.all(8),
+                          width: MediaQuery.sizeOf(context).width * 0.8,
+                          padding: EdgeInsets.only(
+                            bottom: 8,
+                          ),
                           decoration: BoxDecoration(
                             color: Color.fromRGBO(179, 208, 250, 0.3),
                             borderRadius: BorderRadius.circular(20),
@@ -111,7 +113,7 @@ class ProfileScreen extends StatelessWidget {
               ],
             ),
             SizedBox(
-              height: MediaQuery.of(context).size.height * 0.05,
+              height: MediaQuery.sizeOf(context).height * 0.05,
             ),
             // 사용자 프로필
             Row(
@@ -120,8 +122,8 @@ class ProfileScreen extends StatelessWidget {
                 Stack(
                   children: [
                     Container(
-                      width: MediaQuery.of(context).size.width * 0.4,
-                      height: MediaQuery.of(context).size.width * 0.4,
+                      width: MediaQuery.sizeOf(context).width * 0.4,
+                      height: MediaQuery.sizeOf(context).width * 0.4,
                       decoration: BoxDecoration(
                         border: Border.all(color: Colors.grey.shade300, width: 0.5),
                         borderRadius: BorderRadius.circular(100),
@@ -158,12 +160,13 @@ class ProfileScreen extends StatelessWidget {
               ],
             ),
             SizedBox(
-              height: MediaQuery.of(context).size.height * 0.02,
+              height: MediaQuery.sizeOf(context).height * 0.02,
             ),
             Container(
               margin: EdgeInsets.all(16),
               padding: EdgeInsets.all(8),
-              decoration: BoxDecoration(border: BorderDirectional(bottom: BorderSide(width: 1, color: Colors.grey))),
+              decoration: BoxDecoration(
+                  border: BorderDirectional(bottom: BorderSide(width: 1, color: Colors.grey))),
               child: Row(
                 children: [
                   Icon(
@@ -182,19 +185,20 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
             SizedBox(
-              width: MediaQuery.of(context).size.width,
+              width: MediaQuery.sizeOf(context).width,
               child: LatestLikePhotos(),
             ),
 
             SizedBox(
-              height: MediaQuery.of(context).size.height * 0.02,
+              height: MediaQuery.sizeOf(context).height * 0.02,
             ),
 
             // 마커 설정
             Container(
               margin: EdgeInsets.only(top: 16, left: 16, right: 16),
               padding: EdgeInsets.all(8),
-              decoration: BoxDecoration(border: BorderDirectional(bottom: BorderSide(width: 1, color: Colors.grey))),
+              decoration: BoxDecoration(
+                  border: BorderDirectional(bottom: BorderSide(width: 1, color: Colors.grey))),
               child: Row(
                 children: [
                   Icon(
@@ -213,7 +217,7 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
             Container(
-              width: MediaQuery.of(context).size.width,
+              width: MediaQuery.sizeOf(context).width,
               margin: EdgeInsets.only(bottom: 8, left: 8, right: 8),
               padding: EdgeInsets.all(8),
               child: Column(
@@ -232,7 +236,8 @@ class ProfileScreen extends StatelessWidget {
             Container(
               margin: EdgeInsets.only(top: 16, left: 16, right: 16),
               padding: EdgeInsets.all(8),
-              decoration: BoxDecoration(border: BorderDirectional(bottom: BorderSide(width: 1, color: Colors.grey))),
+              decoration: BoxDecoration(
+                  border: BorderDirectional(bottom: BorderSide(width: 1, color: Colors.grey))),
               child: Row(
                 children: [
                   Icon(
@@ -256,7 +261,7 @@ class ProfileScreen extends StatelessWidget {
                 children: [
                   TextButton(
                       onPressed: () {
-                        showPasswordReset();
+                        showPasswordResetPopup();
                       },
                       child: Row(
                         children: [
@@ -277,7 +282,8 @@ class ProfileScreen extends StatelessWidget {
                         showSelectionDialog(
                             context: context,
                             positiveEvent: () async {
-                              final SharedPreferences preferences = await SharedPreferences.getInstance();
+                              final SharedPreferences preferences =
+                                  await SharedPreferences.getInstance();
                               await preferences.clear();
                               Restart.restartApp();
                             },
@@ -307,7 +313,7 @@ class ProfileScreen extends StatelessWidget {
             ),
             // 위로 올릴 수 있도록
             SizedBox(
-              height: MediaQuery.of(context).size.height * 0.3,
+              height: MediaQuery.sizeOf(context).height * 0.2,
             ),
           ],
         ),
@@ -336,7 +342,8 @@ class ProfileScreen extends StatelessWidget {
     }
 
     return FutureBuilder(
-      future: PhotoStoreApi().downloadPhoto(photoId: profileViewModel.profilePhotoId.value!, scale: 0.3),
+      future: PhotoStoreApi()
+          .downloadPhoto(photoId: profileViewModel.profilePhotoId.value!, scale: 0.3),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(child: CircularProgressIndicator());
@@ -362,8 +369,8 @@ class ProfileScreen extends StatelessWidget {
   void _showProfilePhotoBottomSheet(BuildContext context) {
     Get.bottomSheet(
       Container(
-        height: MediaQuery.of(context).size.height * 0.8,
-        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.sizeOf(context).height * 0.8,
+        width: MediaQuery.sizeOf(context).width,
         decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.only(
@@ -376,7 +383,7 @@ class ProfileScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.1,
+                  height: MediaQuery.sizeOf(context).height * 0.1,
                   child: Obx(
                     () => profileViewModel.selectedPictoMarker.value != null
                         ? TextButton(
@@ -443,8 +450,8 @@ class ProfileScreen extends StatelessWidget {
         }
 
         return SizedBox(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height * 0.45,
+          width: MediaQuery.sizeOf(context).width,
+          height: MediaQuery.sizeOf(context).height * 0.45,
           child: GridView.builder(
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2, // 1개의 행에 항목을 3개씩
@@ -478,8 +485,8 @@ class ProfileScreen extends StatelessWidget {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(8),
                     child: Image.memory(
-                      width: MediaQuery.of(context).size.width * 0.5,
-                      height: MediaQuery.of(context).size.width * 0.5,
+                      width: MediaQuery.sizeOf(context).width * 0.5,
+                      height: MediaQuery.sizeOf(context).width * 0.5,
                       marker.imageData!,
                       fit: BoxFit.cover,
                     ),
@@ -506,7 +513,8 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
             Obx(() => Positioned(
-                  child: profileViewModel.selectedPictoMarker.value?.photo.photoId == marker.photo.photoId
+                  child: profileViewModel.selectedPictoMarker.value?.photo.photoId ==
+                          marker.photo.photoId
                       ? Icon(
                           Icons.check_box,
                           color: Colors.green,
@@ -536,7 +544,7 @@ class ProfileScreen extends StatelessWidget {
               bottom: BorderSide(color: Colors.grey, width: 0.5),
             ),
           ),
-          width: MediaQuery.of(context).size.width * 0.4,
+          width: MediaQuery.sizeOf(context).width * 0.4,
           child: Row(
             children: [
               Expanded(
@@ -553,6 +561,7 @@ class ProfileScreen extends StatelessWidget {
               Expanded(
                 flex: 1,
                 child: Obx(() => Checkbox(
+                      activeColor: AppConfig.mainColor,
                       value: userConfig.showMyPhotos.value,
                       onChanged: (checkValue) {
                         userConfig.toggleShowMyPhotos();
@@ -578,7 +587,7 @@ class ProfileScreen extends StatelessWidget {
               top: BorderSide(color: Colors.grey, width: 0.5),
             ),
           ),
-          width: MediaQuery.of(context).size.width * 0.4,
+          width: MediaQuery.sizeOf(context).width * 0.4,
           child: Row(
             children: [
               Expanded(
@@ -593,6 +602,7 @@ class ProfileScreen extends StatelessWidget {
               ),
               Expanded(
                 child: Obx(() => Checkbox(
+                      activeColor: AppConfig.mainColor,
                       value: userConfig.showAroundPhotos.value,
                       onChanged: (checkValue) {
                         userConfig.toggleShowAroundPhotos();
@@ -626,7 +636,7 @@ class ProfileScreen extends StatelessWidget {
               bottom: BorderSide(color: Colors.grey, width: 0.5),
             ),
           ),
-          width: MediaQuery.of(context).size.width * 0.4,
+          width: MediaQuery.sizeOf(context).width * 0.4,
           child: Row(
             children: [
               Expanded(
@@ -641,6 +651,7 @@ class ProfileScreen extends StatelessWidget {
               ),
               Expanded(
                 child: Obx(() => Checkbox(
+                      activeColor: AppConfig.mainColor,
                       value: userConfig.showFolderPhotos.value,
                       onChanged: (checkValue) {
                         userConfig.toggleShowFolderPhotos();
@@ -666,7 +677,7 @@ class ProfileScreen extends StatelessWidget {
               top: BorderSide(color: Colors.grey, width: 0.5),
             ),
           ),
-          width: MediaQuery.of(context).size.width * 0.4,
+          width: MediaQuery.sizeOf(context).width * 0.4,
           child: Row(
             children: [
               Expanded(
@@ -681,6 +692,7 @@ class ProfileScreen extends StatelessWidget {
               ),
               Expanded(
                 child: Obx(() => Checkbox(
+                      activeColor: AppConfig.mainColor,
                       value: userConfig.showRepresentativePhotos.value,
                       onChanged: (checkValue) {
                         userConfig.toggleShowRepresentativePhotos();

@@ -36,8 +36,8 @@ class ChatbotListScreen extends StatelessWidget {
         body: Obx(() => chatbotViewModel.chatbotRooms.isEmpty
             ? _getFirstScreen(context)
             : SizedBox(
-                width: context.mediaQuery.size.width,
-                // height: context.mediaQuery.size.height * 0.6,
+                width: MediaQuery.sizeOf(context).width,
+                // height: MediaQuery.sizeOf(context).height * 0.6,
                 child: SingleChildScrollView(
                   child: Obx(() => Column(
                         children: _getChatRoomTileList(),
@@ -46,10 +46,10 @@ class ChatbotListScreen extends StatelessWidget {
               )),
       ),
       Positioned(
-        bottom: context.mediaQuery.size.height * 0.1,
-        left: context.mediaQuery.size.width * 0.85,
+        bottom: MediaQuery.sizeOf(context).height * 0.1,
+        left: MediaQuery.sizeOf(context).width * 0.85,
         child: SizedBox(
-          width: context.mediaQuery.size.width * 0.15,
+          width: MediaQuery.sizeOf(context).width * 0.15,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.end,
             children: _getBottomRightFloatingButtons(context),
@@ -66,7 +66,7 @@ class ChatbotListScreen extends StatelessWidget {
         TopBox(size: 0.2),
         Center(
           child: SizedBox(
-            width: context.mediaQuery.size.width * 0.7,
+            width: MediaQuery.sizeOf(context).width * 0.7,
             child: FloatingActionButton(
               backgroundColor: AppConfig.mainColor,
               onPressed: () {
@@ -106,7 +106,7 @@ class ChatbotListScreen extends StatelessWidget {
       Padding(
         padding: const EdgeInsets.all(4.0),
         child: SizedBox(
-          height: context.mediaQuery.size.height * 0.06,
+          height: MediaQuery.sizeOf(context).height * 0.06,
           child: FloatingActionButton(
             onPressed: () {
               final chatbotViewModel = Get.find<ChatbotViewModel>();

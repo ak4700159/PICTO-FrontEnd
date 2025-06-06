@@ -81,6 +81,7 @@ class CalendarViewModel extends GetxController {
 
   // 특정 날만 선택(캘린더 이벤트)
   void onDaySelected(DateTime newSelectedDay, DateTime newFocusedDay) {
+    print("select day");
     if (isSameDay(selectedDay.value, newSelectedDay)) {
       // 이미 선택된 날짜를 다시 누르면 해제
       // selectedDay.value = null;
@@ -97,11 +98,16 @@ class CalendarViewModel extends GetxController {
 
   // 범위로 날짜 선택(캘린더 이벤트)
   void onRangeSelected(DateTime? start, DateTime? end, DateTime focusedNewDay) {
+    print("select range");
     focusedDay.value = focusedNewDay;
     rangeStart.value = start;
     rangeEnd.value = end;
     selectedDays.clear();
-    rangeSelectionMode.value = RangeSelectionMode.toggledOn;
+    if(rangeSelectionMode.value == RangeSelectionMode.toggledOn) {
+      rangeSelectionMode.value = RangeSelectionMode.toggledOff;
+    } else {
+      rangeSelectionMode.value = RangeSelectionMode.toggledOn;
+    }
 
     if (start != null && end != null) {
       selectedEvents.value = _getEventsForRange(start, end);

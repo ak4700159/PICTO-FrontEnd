@@ -29,7 +29,7 @@ class GuideScreen extends StatelessWidget {
                 child: Column(
               children: [
                 Container(
-                  // height: context.mediaQuery.size.height * 0.03,
+                  // height: MediaQuery.sizeOf(context).height * 0.03,
                   color: Colors.white,
                 ),
                 sliderWidget(context),
@@ -39,7 +39,7 @@ class GuideScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 SizedBox(
-                  height: context.mediaQuery.size.height * 0.228,
+                  height: MediaQuery.sizeOf(context).height * 0.228,
                 ),
                 sliderIndicator(),
               ],
@@ -113,8 +113,8 @@ class GuideScreen extends StatelessWidget {
       children: [
         Center(
           child: SizedBox(
-            width: context.mediaQuery.size.width * 0.8,
-            height: context.mediaQuery.size.height * 0.07,
+            width: MediaQuery.sizeOf(context).width * 0.8,
+            height: MediaQuery.sizeOf(context).height * 0.07,
             child: FloatingActionButton(
               backgroundColor: AppConfig.mainColor,
               onPressed: () {
@@ -133,7 +133,7 @@ class GuideScreen extends StatelessWidget {
           ),
         ),
         SizedBox(
-          height: context.mediaQuery.size.height * 0.04,
+          height: MediaQuery.sizeOf(context).height * 0.04,
         ),
       ],
     );

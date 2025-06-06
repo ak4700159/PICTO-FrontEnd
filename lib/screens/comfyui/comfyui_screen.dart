@@ -9,10 +9,30 @@ import 'package:picto_frontend/screens/comfyui/upscaling_screen.dart';
 
 import '../folder/folder_view_model.dart';
 
-class ComfyuiScreen extends StatelessWidget {
+class ComfyuiScreen extends StatefulWidget {
   ComfyuiScreen({super.key});
 
+  @override
+  State<ComfyuiScreen> createState() => _ComfyuiScreenState();
+}
+
+class _ComfyuiScreenState extends State<ComfyuiScreen> with SingleTickerProviderStateMixin{
   final comfyuiViewModel = Get.find<ComfyuiViewModel>();
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _tabController = TabController(
+      length: 2,
+      vsync: this,
+    );
+    _tabController.addListener(() {
+      comfyuiViewModel.reset();
+      print('my index is${_tabController.index}');
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,9 +76,13 @@ class ComfyuiScreen extends StatelessWidget {
                 Tab(text: "업스케일링"),
                 Tab(text: "불필요한 영역 제거"),
               ],
-              onTap: (idx) {},
+              // onTap: (idx) {
+              //   print("change screen");
+              //   comfyuiViewModel.reset();
+              // },
             )),
         body: TabBarView(
+          controller: _tabController,
           children: [
             UpscalingScreen(),
             RemoveScreen(),

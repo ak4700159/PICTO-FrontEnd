@@ -7,6 +7,7 @@ import 'package:picto_frontend/utils/functions.dart';
 
 class ChatbotRoomTile extends StatelessWidget {
   ChatbotRoomTile({required this.chatbotList, required this.isTitle, super.key, this.date});
+
   final bool isTitle;
   final String? date;
   final ChatbotRoom chatbotList;
@@ -33,7 +34,7 @@ class ChatbotRoomTile extends StatelessWidget {
             duration: Duration(milliseconds: 400),
             opacity: chatbotViewModel.opacity.value,
             child: Container(
-              height: context.mediaQuery.size.height * 0.08,
+              height: MediaQuery.sizeOf(context).height * 0.08,
               padding: EdgeInsets.all(4),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
@@ -58,7 +59,8 @@ class ChatbotRoomTile extends StatelessWidget {
                         chatbotList.listName ??
                             formatDateKorean(chatbotList.messages.first.sendDatetime)
                                 .substring("0000년 00월".length, "0000년 00월 00일".length),
-                        style: TextStyle(fontFamily: "NotoSansKR", fontWeight: FontWeight.w600, fontSize: 12),
+                        style: TextStyle(
+                            fontFamily: "NotoSansKR", fontWeight: FontWeight.w600, fontSize: 12),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -67,8 +69,11 @@ class ChatbotRoomTile extends StatelessWidget {
                   Expanded(
                     flex: 7,
                     child: Text(
-                      chatbotList.messages.isEmpty ? "  아직 채팅 내용이 없습니다" : chatbotList.messages.last.content,
-                      style: TextStyle(fontFamily: "NotoSansKR", fontWeight: FontWeight.w300, fontSize: 13),
+                      chatbotList.messages.isEmpty
+                          ? "  아직 채팅 내용이 없습니다"
+                          : chatbotList.messages.last.content.split('\n').sublist(2).join('\n'),
+                      style: TextStyle(
+                          fontFamily: "NotoSansKR", fontWeight: FontWeight.w300, fontSize: 13),
                       maxLines: 2,
                     ),
                   ),
@@ -113,15 +118,15 @@ class ChatbotRoomTile extends StatelessWidget {
       children: [
         Container(
           padding: EdgeInsets.only(top: 12),
-          width: context.mediaQuery.size.width * 0.95,
+          width: MediaQuery.sizeOf(context).width * 0.95,
           decoration: BoxDecoration(
-            // border: BorderDirectional(
-            //   bottom: BorderSide(
-            //     width: 2,
-            //     color: Colors.grey,
-            //   ),
-            // ),
-          ),
+              // border: BorderDirectional(
+              //   bottom: BorderSide(
+              //     width: 2,
+              //     color: Colors.grey,
+              //   ),
+              // ),
+              ),
           child: Row(
             children: [
               // Icon(

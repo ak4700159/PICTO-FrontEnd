@@ -4,11 +4,13 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:picto_frontend/config/app_config.dart';
 import 'package:picto_frontend/models/location_msg.dart';
+import 'package:picto_frontend/screens/map/google_map/google_map_view_model.dart';
 import 'package:picto_frontend/services/user_manager_service/user_api.dart';
 import 'package:picto_frontend/utils/popup.dart';
 import 'package:stomp_dart_client/stomp_dart_client.dart';
 
 import '../../models/photo.dart';
+import '../../screens/main_frame_view_model.dart';
 import '../../screens/map/google_map/marker/marker_converter.dart';
 
 // _stompClient.connected 의 네트워크 지연 때문에 값이 늦게 들어올 수 있다
@@ -52,7 +54,10 @@ class SessionSocket extends GetxController {
       Timer.periodic(Duration(seconds: AppConfig.locationSendPeriod), (timer) async {
         _timer = timer;
         Position position = await Geolocator.getCurrentPosition();
-        sendLocation(UserManagerApi().ownerId!, position.latitude, position.longitude);
+        final mapViewModel = Get.find<MapViewModel>();
+        if(mapViewModel.navigationBarCurrentIndex.value == 2) {
+          sendLocation(UserManagerApi().ownerId!, position.latitude, position.longitude);
+        }
       });
       print("[INFO] web socket activate\n");
       connected.value = true;

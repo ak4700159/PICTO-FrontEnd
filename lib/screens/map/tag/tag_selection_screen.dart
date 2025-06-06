@@ -20,6 +20,25 @@ class TagSelectionScreen extends StatelessWidget {
       },
       child: Scaffold(
         appBar: AppBar(
+          title: Row(
+            children: [
+              Text(
+                "태그 선택  ",
+                style: TextStyle(
+                  fontFamily: "NotoSansKR",
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black,
+                ),
+              ),
+              Icon(
+                Icons.tag,
+                size: 30,
+                color: AppConfig.mainColor,
+              ),
+            ],
+          ),
+          centerTitle: true,
           scrolledUnderElevation: 0,
           automaticallyImplyLeading: false,
           actions: [
@@ -33,43 +52,20 @@ class TagSelectionScreen extends StatelessWidget {
                           Get.back();
                         },
                         icon: !tagSelectionViewModel.isChanged.value
-                            ? Icon(
-                                Icons.not_interested,
-                                color: Colors.grey,
-                                size: 35,
-                              )
+                            ? SizedBox()
                             : Icon(
                                 Icons.check,
                                 color: AppConfig.mainColor,
-                                size: 35,
+                                size: 30,
                                 // fill: 5,
                               ),
                         color: Colors.white,
                       ),
                     ),
-                    // !tagSelectionViewModel.isChanged.value
-                    //     ? Text(
-                    //         "변경사항 없음",
-                    //         style: TextStyle(
-                    //           fontFamily: "NotoSansKR",
-                    //           fontSize: 11,
-                    //           fontWeight: FontWeight.w500,
-                    //           color: Colors.black,
-                    //         ),
-                    //       )
-                    //     : Text(
-                    //         "변경사항 저장",
-                    //         style: TextStyle(
-                    //           fontFamily: "NotoSansKR",
-                    //           fontSize: 11,
-                    //           fontWeight: FontWeight.w500,
-                    //           color: Colors.green,
-                    //         ),
-                    //       ),
                   ],
                 )),
             SizedBox(
-              width: context.mediaQuery.size.width * 0.05,
+              width: MediaQuery.sizeOf(context).width * 0.05,
             ),
           ],
           backgroundColor: Colors.white,
@@ -79,27 +75,9 @@ class TagSelectionScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               TopBox(size: 0.03),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    "태그 선택  ",
-                    style: TextStyle(
-                      fontFamily: "NotoSansKR",
-                      fontSize: 21,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black,
-                    ),
-                  ),
-                  Icon(
-                    Icons.search_rounded,
-                    color: AppConfig.mainColor,
-                  ),
-                ],
-              ),
               TopBox(size: 0.03),
               Container(
-                height: context.mediaQuery.size.height * 0.105,
+                height: MediaQuery.sizeOf(context).height * 0.105,
                 margin: EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   color: Colors.grey.shade100,
@@ -132,8 +110,8 @@ class TagSelectionScreen extends StatelessWidget {
               ),
               Container(
                 margin: EdgeInsets.all(8),
-                width: context.mediaQuery.size.width,
-                height: context.mediaQuery.size.height * 0.5,
+                width: MediaQuery.sizeOf(context).width,
+                height: MediaQuery.sizeOf(context).height * 0.5,
                 decoration: BoxDecoration(
                   // color: Colors.grey.shade100,
                   borderRadius: BorderRadius.circular(20),

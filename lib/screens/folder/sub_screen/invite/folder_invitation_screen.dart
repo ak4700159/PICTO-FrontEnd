@@ -56,7 +56,7 @@ class FolderInvitationScreen extends StatelessWidget {
             ],
           ),
           SizedBox(
-            height: context.mediaQuery.size.height * 0.5,
+            height: MediaQuery.sizeOf(context).height * 0.5,
             child: Obx(
               () => ListView.builder(
                 itemCount: viewModel.notices.length,
@@ -97,7 +97,7 @@ class FolderInvitationScreen extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Container(
-        width: context.mediaQuery.size.width,
+        width: MediaQuery.sizeOf(context).width,
         decoration: BoxDecoration(
             color: Colors.white,
             border: Border(bottom: BorderSide(width: 0.5, color: Colors.grey)),
@@ -119,7 +119,7 @@ class FolderInvitationScreen extends StatelessWidget {
               child: getUserProfile(user: sender, context: context, size: 0.1, scale : 0.08),
             ),
             SizedBox(
-              width: context.mediaQuery.size.width * 0.45,
+              width: MediaQuery.sizeOf(context).width * 0.45,
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Column(

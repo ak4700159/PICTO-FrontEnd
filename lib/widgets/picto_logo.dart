@@ -24,7 +24,7 @@ class PictoLogo extends StatelessWidget {
           ),
         ),
         SizedBox(
-          height: context.mediaQuery.size.height * 0.03,
+          height: MediaQuery.sizeOf(context).height * 0.03,
         ),
         Text(
           "PICTO",

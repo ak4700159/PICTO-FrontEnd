@@ -65,7 +65,7 @@ class FolderInfoScreen extends StatelessWidget {
             ),
             // 공유 인원
             Container(
-              width: context.mediaQuery.size.width,
+              width: MediaQuery.sizeOf(context).width,
               padding: EdgeInsets.all(8),
               decoration: BoxDecoration(
                 boxShadow: [
@@ -109,8 +109,8 @@ class FolderInfoScreen extends StatelessWidget {
               // mainAxisSize: MainAxisSize.max,
               children: [
                 Container(
-                  width: context.mediaQuery.size.width,
-                  height: context.mediaQuery.size.height * 0.1,
+                  width: MediaQuery.sizeOf(context).width,
+                  height: MediaQuery.sizeOf(context).height * 0.1,
                   padding: EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     boxShadow: [
@@ -157,7 +157,7 @@ class FolderInfoScreen extends StatelessWidget {
               ),
             ),
             Container(
-              width: context.mediaQuery.size.width,
+              width: MediaQuery.sizeOf(context).width,
               padding: EdgeInsets.all(8),
               decoration: BoxDecoration(
                 boxShadow: [
