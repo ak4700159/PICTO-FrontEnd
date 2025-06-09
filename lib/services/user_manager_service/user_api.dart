@@ -348,7 +348,11 @@ class UserManagerApi {
           "code": code,
         },
       );
-      return true;
+      if (response.data["success"]) {
+        return true;
+      } else {
+        showErrorPopup(response.data["message"]);
+      }
     } on DioException catch (e) {
       showErrorPopup(e.toString());
     }
@@ -359,6 +363,51 @@ class UserManagerApi {
   Future<bool> checkEmailCode({required String email}) async {
     try {
       final response = await dio.get('$baseUrl/is-verified-email/$email');
+      if (response.data["success"]) {
+        return true;
+      } else {
+        showErrorPopup(response.data["message"]);
+      }
+    } on DioException catch (e) {
+      showErrorPopup(e.toString());
+    }
+    return false;
+  }
+
+  // 임시 비밀번호 전송
+  Future<bool> sendTemporaryPassword({required String email}) async {
+    try {
+      final response = await dio.post('$baseUrl/send-temporary-password/$email');
+      return true;
+    } on DioException catch (e) {
+      showErrorPopup(e.toString());
+    }
+    return false;
+  }
+
+  // 사용자 비밀번호 변경
+  Future<bool> changePassword({required String email, required String oldPassword, required String newPassword}) async {
+    try {
+      final response = await dio.patch('$baseUrl/password', data: {
+        "email": email,
+        "password": oldPassword,
+        "newPassword": newPassword,
+      });
+      return true;
+    } on DioException catch (e) {
+      showErrorPopup(e.toString());
+    }
+    return false;
+  }
+
+  // 회원 탈퇴
+  Future<bool> withdraw({required String email, required String accountName, required String password}) async {
+    try {
+      final response = await dio.delete('$baseUrl/user', data: {
+        "email": email,
+        "password": password,
+        "accountName": accountName,
+      });
       return true;
     } on DioException catch (e) {
       showErrorPopup(e.toString());
@@ -385,7 +434,7 @@ class UserManagerApi {
       socketInterceptor.callSession(connected: true);
       Get.find<LoginViewModel>().loginStatus.value = "not";
       Get.offNamed('/map');
-    } catch(e) {
+    } catch (e) {
       Get.find<LoginViewModel>().loginStatus.value = "fail";
     }
   }

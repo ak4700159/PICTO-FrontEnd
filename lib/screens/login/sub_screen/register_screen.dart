@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -23,8 +24,21 @@ class RegisterScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PopScope(
+      canPop: false,
       onPopInvokedWithResult: (didPop, result) {
-        _registerController.resetController();
+        showSelectionDialog(
+          context: context,
+          content: "작성하신 내용이 삭제됩니다.",
+          positiveEvent: () {
+            _registerController.resetController();
+            Get.offNamed('/login');
+          },
+          positiveMsg: "네",
+          negativeEvent: () {
+            Get.back();
+          },
+          negativeMsg: "아니요",
+        );
       },
       child: GestureDetector(
         onTap: () {
@@ -109,84 +123,101 @@ class RegisterScreen extends StatelessWidget {
               ),
             ),
             // 이메일 FormField + 중복 검사 버튼
-            IntrinsicHeight(
-              child: Padding(
-                padding: const EdgeInsets.all(4.0),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      flex: 6,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          SizedBox(
-                            // height: height * 0.08,
-                            child: TextFormField(
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontFamily: "NotoSansKR",
-                                fontWeight: FontWeight.w600,
+            Obx(() => IntrinsicHeight(
+                  child: Padding(
+                    padding: const EdgeInsets.all(4.0),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          flex: 6,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              SizedBox(
+                                // height: height * 0.08,
+                                child: TextFormField(
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontFamily: "NotoSansKR",
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                  keyboardType: TextInputType.emailAddress,
+                                  decoration: getCustomInputDecoration(
+                                    label: "이메일",
+                                    hintText: "your@eamil.com",
+                                    borderRadius: BorderRadius.circular(25),
+                                  ),
+                                  validator: emailValidator,
+                                  onChanged: (value) {
+                                    _registerController.email.value = value;
+                                    _registerController.emailDuplicatedMsg.value = "중복 검사";
+                                    _registerController.isEmailCodeAuth.value = false;
+                                    _registerController.isEmailCodeSend.value = false;
+                                    _registerController.emailCode.value = "";
+                                  },
+                                  onSaved: (value) => _registerController.email.value = value!,
+                                  readOnly: _registerController.emailDuplicatedMsg.value == "사용 가능",
+                                ),
                               ),
-                              keyboardType: TextInputType.emailAddress,
-                              decoration: getCustomInputDecoration(
-                                label: "이메일",
-                                hintText: "your@eamil.com",
-                                borderRadius: BorderRadius.circular(25),
-                              ),
-                              validator: emailValidator,
-                              onChanged: (value) {
-                                _registerController.email.value = value;
-                                _registerController.emailDuplicatedMsg.value = "중복 검사";
-                                _registerController.isEmailCodeAuth.value = false;
-                                _registerController.isEmailCodeSend.value = false;
-                                _registerController.emailCode.value = "";
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                          flex: 3,
+                          child: Container(
+                            margin: EdgeInsets.only(left: 8),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(25),
+                              color: AppConfig.mainColor,
+                            ),
+                            child: TextButton(
+                              onPressed: () {
+                                if (_registerController.emailDuplicatedMsg.value == "사용 가능") return;
+                                if (_registerController.email.value.isEmpty) {
+                                  showMsgPopup(msg: "이메일 작성해주세요", space: 0.22);
+                                } else if (emailValidator(_registerController.email.value) != null) {
+                                  showMsgPopup(msg: "이메일 형식이 아닙니다", space: 0.22);
+                                } else {
+                                  _registerController.validateEmail();
+                                }
                               },
-                              onSaved: (value) => _registerController.email.value = value!,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      flex: 3,
-                      child: Container(
-                        margin: EdgeInsets.only(left: 8),
-                        // height: height * 0.08,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(25),
-                          color: AppConfig.mainColor,
-                        ),
-                        child: TextButton(
-                          onPressed: () {
-                            if (_registerController.email.value.isEmpty) {
-                              showMsgPopup(msg: "이메일 작성해주세요", space: 0.22);
-                            } else if (emailValidator(_registerController.email.value) != null) {
-                              showMsgPopup(msg: "이메일 형식이 아닙니다", space: 0.22);
-                            } else {
-                              _registerController.validateEmail();
-                            }
-                          },
-                          // style: TextButton.styleFrom(backgroundColor: AppConfig.mainColor),
-                          child: Obx(
-                            () => Text(
-                              _registerController.emailDuplicatedMsg.value,
-                              style: TextStyle(
-                                fontFamily: "NotoSansKR",
-                                fontSize: 13,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.white,
+                              child: Obx(
+                                () => _registerController.emailDuplicatedLoading.value
+                                    ? AnimatedTextKit(
+                                        animatedTexts: [
+                                          FadeAnimatedText(
+                                            "처리중",
+                                            duration: Duration(seconds: 1),
+                                            textStyle: TextStyle(
+                                              fontFamily: "NotoSansKR",
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.w600,
+                                              color: Colors.white,
+                                            ),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        ],
+                                        repeatForever: true,
+                                      )
+                                    : Text(
+                                        _registerController.emailDuplicatedMsg.value,
+                                        style: TextStyle(
+                                          fontFamily: "NotoSansKR",
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.white,
+                                        ),
+                                      ),
                               ),
                             ),
                           ),
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-            ),
+                        )
+                      ],
+                    ),
+                  ),
+                )),
 
             // 이메일 중복 검사 이후 인증코드 전송 가능.
             Obx(() => _registerController.emailDuplicatedMsg.value == "사용 가능"
@@ -243,7 +274,7 @@ class RegisterScreen extends StatelessWidget {
                       ),
                       borderRadius: BorderRadius.circular(25),
                     ),
-                    // validator: passwdValidator,
+                    validator: passwdValidator,
                     onSaved: (value) => _registerController.passwdCheck.value = value!,
                   ),
                 ),
@@ -287,7 +318,7 @@ class RegisterScreen extends StatelessWidget {
               return;
             }
 
-            if(!_registerController.isEmailCodeAuth.value) {
+            if (!_registerController.isEmailCodeAuth.value) {
               return;
             }
 
@@ -319,6 +350,8 @@ class RegisterScreen extends StatelessWidget {
   }
 
   Widget _getEmailAuthWidget({required BuildContext context}) {
+    double width = MediaQuery.sizeOf(context).width;
+    double height = MediaQuery.sizeOf(context).height;
     return IntrinsicHeight(
       child: Padding(
         padding: const EdgeInsets.all(4.0),
@@ -326,81 +359,116 @@ class RegisterScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            _registerController.isEmailCodeSend.value ? Expanded(
-              flex: 1,
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  SizedBox(
-                    // height: height * 0.08,
-                    child: TextFormField(
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontFamily: "NotoSansKR",
-                        fontWeight: FontWeight.w600,
-                      ),
-                      keyboardType: TextInputType.emailAddress,
-                      decoration: getCustomInputDecoration(
-                        label: "인증코드",
-                        hintText: "XXXXXX",
-                        borderRadius: BorderRadius.circular(25),
-                      ),
-                      validator: emailCodeValidator,
-                      onChanged: (value) {
-                        _registerController.emailCode.value = value;
-                      },
-                      onSaved: (value) => _registerController.emailCode.value = value!,
+            _registerController.isEmailCodeSend.value
+                ? Expanded(
+                    flex: 1,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        SizedBox(
+                          // height: height * 0.08,
+                          child: TextFormField(
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontFamily: "NotoSansKR",
+                              fontWeight: FontWeight.w600,
+                            ),
+                            keyboardType: TextInputType.emailAddress,
+                            decoration: getCustomInputDecoration(
+                              label: "인증코드",
+                              hintText: "XXXXXX",
+                              borderRadius: BorderRadius.circular(25),
+                            ),
+                            validator: emailCodeValidator,
+                            onChanged: (value) {
+                              _registerController.emailCode.value = value;
+                            },
+                            onSaved: (value) => _registerController.emailCode.value = value!,
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
-              ),
-            ) : SizedBox(),
+                  )
+                : SizedBox(),
             Expanded(
               flex: 1,
               child: Container(
                 margin: EdgeInsets.only(left: 8),
-                // height: height * 0.08,
+                height: height * 0.067,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(25),
                   color: AppConfig.mainColor,
                 ),
-                child:  !_registerController.isEmailCodeAuth.value ? TextButton(
-                  onPressed: () async {
-                    if (!_registerController.isEmailCodeSend.value) {
-                      if(await UserManagerApi().sendEmailCode(email: _registerController.email.value)) {
-                        showMsgPopup(msg: "인증코드를 전송하였습니다.", space: 0.4);
-                        _registerController.isEmailCodeSend.value = !_registerController.isEmailCodeSend.value;
-                      }
-                    } else {
-                      if(await UserManagerApi().verifyEmailCode(email: _registerController.email.value, code: _registerController.emailCode.value)) {
-                        showMsgPopup(msg: "인증코드 확인되었습니다!", space: 0.4);
-                        _registerController.isEmailCodeAuth.value = true;
-                      }
-                    }
-                  },
-                  child: Text(
-                    _registerController.isEmailCodeSend.value ? "인증 코드 확인" : "인증 코드 전송",
-                    style: TextStyle(
-                      fontFamily: "NotoSansKR",
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
-                    ),
-                  ),
-                ) : Padding(
-                  padding: const EdgeInsets.all(6.0),
-                  child: Center(
-                    child: Text(
-                      "이메일 인증 성공",
-                      style: TextStyle(
-                        fontFamily: "NotoSansKR",
-                        fontSize: 12,
-                        fontWeight: FontWeight.w800,
-                        color: Colors.white,
+                child: !_registerController.isEmailCodeAuth.value
+                    ? _registerController.emailAuthVerifyLoading.value || _registerController.emailAuthSendLoading.value
+                        ? Center(
+                            child: AnimatedTextKit(
+                              animatedTexts: [
+                                FadeAnimatedText(
+                                  _registerController.emailAuthSendLoading.value ? "인증 코드 전송 중" : "인증 코드 확인 중",
+                                  duration: Duration(seconds: 1),
+                                  textStyle: TextStyle(
+                                    fontFamily: "NotoSansKR",
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.white,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
+                              repeatForever: true,
+                            ),
+                          )
+                        : TextButton(
+                            onPressed: () async {
+                              // 이미 인증이 완료되었다면.
+                              if (_registerController.isEmailCodeAuth.value) return;
+
+                              if (!_registerController.isEmailCodeSend.value) {
+                                // 인증코드 전송
+                                _registerController.emailAuthSendLoading.value = true;
+                                if (await UserManagerApi().sendEmailCode(email: _registerController.email.value)) {
+                                  showMsgPopup(msg: "인증코드를 전송하였습니다.", space: 0.4);
+                                  _registerController.isEmailCodeSend.value =
+                                      !_registerController.isEmailCodeSend.value;
+                                }
+                                _registerController.emailAuthSendLoading.value = false;
+                              } else {
+                                // 인증코드 검증
+                                _registerController.emailAuthVerifyLoading.value = true;
+                                if (await UserManagerApi().verifyEmailCode(
+                                    email: _registerController.email.value,
+                                    code: _registerController.emailCode.value)) {
+                                  showMsgPopup(msg: "인증코드 확인되었습니다!", space: 0.4);
+                                  _registerController.isEmailCodeAuth.value = true;
+                                }
+                                _registerController.emailAuthVerifyLoading.value = false;
+                              }
+                            },
+                            child: Text(
+                              _registerController.isEmailCodeSend.value ? "인증 코드 확인" : "인증 코드 전송",
+                              style: TextStyle(
+                                fontFamily: "NotoSansKR",
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                              ),
+                            ),
+                          )
+                    : Padding(
+                        padding: const EdgeInsets.all(6.0),
+                        child: Center(
+                          child: Text(
+                            "이메일 인증 성공",
+                            style: TextStyle(
+                              fontFamily: "NotoSansKR",
+                              fontSize: 12,
+                              fontWeight: FontWeight.w800,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                ),
               ),
             )
           ],

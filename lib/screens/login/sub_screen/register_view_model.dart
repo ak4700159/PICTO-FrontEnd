@@ -15,6 +15,12 @@ class RegisterViewModel extends GetxController {
   RxString registerMsg = "회원 가입".obs;
   RxString emailDuplicatedMsg = "중복 검사".obs;
   RxBool isPasswordVisible = true.obs;
+  // 중복 검사 시
+  RxBool emailDuplicatedLoading = false.obs;
+  // 이메일 인증 코드 인증 시
+  RxBool emailAuthVerifyLoading = false.obs;
+  // 이메일 인증 코드 전송 시
+  RxBool emailAuthSendLoading = false.obs;
 
   // 인증 코드
   RxString emailCode = "".obs;
@@ -25,6 +31,7 @@ class RegisterViewModel extends GetxController {
 
   void validateEmail() async {
     try {
+      emailDuplicatedLoading.value = true;
       await UserManagerApi().duplicatedEmail(email.value);
       showMsgPopup(msg: "사용 가능한 이메일입니다.", space: 0.4);
       emailDuplicatedMsg.value = "사용 가능";
@@ -32,6 +39,7 @@ class RegisterViewModel extends GetxController {
       showErrorPopup("이미 가입한 이메일입니다");
       // emailDuplicatedMsg.value = "재검사";
     }
+    emailDuplicatedLoading.value = false;
   }
 
   void togglePasswordVisible() {
@@ -71,6 +79,10 @@ class RegisterViewModel extends GetxController {
     isEmailCodeAuth.value = false;
     isEmailCodeSend.value = false;
     emailCode.value = "";
+
+    emailAuthVerifyLoading.value = false;
+    emailAuthSendLoading.value = false;
+    emailDuplicatedLoading.value = false;
     print("[INFO] 초기화");
   }
 }

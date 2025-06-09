@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:hive/hive.dart';
+import 'package:picto_frontend/services/user_manager_service/user_api.dart';
 import 'package:picto_frontend/utils/functions.dart';
 
 import '../config/app_config.dart';
@@ -48,70 +49,75 @@ void showErrorPopup(String errorMsg) {
 void showMsgPopup({required String msg, required double space}) {
   Get.dialog(
     barrierColor: Colors.transparent,
-    Dialog(
-      backgroundColor: Colors.transparent,
-      insetPadding: EdgeInsets.all(50),
-      child: Builder(
-        builder: (BuildContext context) {
-          return SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Container(
-                  // width: width * 0.5,
-                  // height: height * 0.1,
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    boxShadow: [
-                      BoxShadow(
-                        blurRadius: 0.5,
-                        spreadRadius: 0.5,
-                        color: Colors.grey.shade400,
-                        offset: Offset(0, 5),
-                      )
-                    ],
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Expanded(
-                        flex: 1,
-                        child: Icon(
-                          Icons.info,
-                          size: 30,
-                          color: AppConfig.mainColor,
+    GestureDetector(
+      onTap: () {
+        Get.back();
+      },
+      child: Dialog(
+        backgroundColor: Colors.transparent,
+        insetPadding: EdgeInsets.all(50),
+        child: Builder(
+          builder: (BuildContext context) {
+            return SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Container(
+                    // width: width * 0.5,
+                    // height: height * 0.1,
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      boxShadow: [
+                        BoxShadow(
+                          blurRadius: 0.5,
+                          spreadRadius: 0.5,
+                          color: Colors.grey.shade400,
+                          offset: Offset(0, 5),
+                        )
+                      ],
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Expanded(
+                          flex: 1,
+                          child: Icon(
+                            Icons.info,
+                            size: 30,
+                            color: AppConfig.mainColor,
+                          ),
                         ),
-                      ),
-                      Expanded(
-                        flex: 3,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            convertNaturalKorean(msg),
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.black,
-                              fontFamily: "NotoSansKR",
-                              fontWeight: FontWeight.w400,
+                        Expanded(
+                          flex: 3,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              convertNaturalKorean(msg),
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.black,
+                                fontFamily: "NotoSansKR",
+                                fontWeight: FontWeight.w400,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-                SizedBox(
-                  height: MediaQuery.sizeOf(context).height * space,
-                ),
-              ],
-            ),
-          );
-        },
+                  SizedBox(
+                    height: MediaQuery.sizeOf(context).height * space,
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
       ),
     ),
   );
@@ -262,6 +268,7 @@ Future<void> showTemporaryPasswordSettingPopup() async {
         final height = MediaQuery.of(context).size.height;
         final width = MediaQuery.of(context).size.width;
         TextEditingController emailController = TextEditingController();
+        bool sending = false;
         final formKey = GlobalKey<FormState>();
         return Container(
           height: height * 0.21,
@@ -301,9 +308,15 @@ Future<void> showTemporaryPasswordSettingPopup() async {
                         margin: const EdgeInsets.all(8),
                         padding: const EdgeInsets.all(8),
                         child: FloatingActionButton(
-                          onPressed: () {
-                            if (formKey.currentState?.validate() ?? true) {
-                              showErrorPopup("다시 작성해주세요");
+                          onPressed: () async {
+                            if(sending) return;
+                            if (formKey.currentState?.validate() ?? false) {
+                              sending = true;
+                              if(await UserManagerApi().sendTemporaryPassword(email: emailController.text)) {
+                                Get.back();
+                                showMsgPopup(msg: "작성하신 이메일로 임시 비밀번호가 전송되었습니다.", space: 0.4);
+                              }
+                              sending = false;
                             }
                           },
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
