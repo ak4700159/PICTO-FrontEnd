@@ -420,6 +420,7 @@ Future<void> showPasswordResetPopup() async {
                             margin: const EdgeInsets.all(8),
                             padding: const EdgeInsets.only(left: 16, top: 8, bottom: 8),
                             child: FloatingActionButton(
+                              heroTag: "adapt",
                               onPressed: () {
                                 if (formKey.currentState?.validate() ?? true) {
                                   showErrorPopup("다시 작성해주세요");
@@ -445,6 +446,7 @@ Future<void> showPasswordResetPopup() async {
                             margin: const EdgeInsets.all(8),
                             padding: const EdgeInsets.only(right: 16, top: 8, bottom: 8),
                             child: FloatingActionButton(
+                              heroTag: "back",
                               onPressed: () {
                                 Get.back();
                               },

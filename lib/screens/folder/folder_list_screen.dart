@@ -171,7 +171,11 @@ class FolderListScreen extends StatelessWidget {
 
   Widget _getFolderList(BuildContext context) {
     Map<String, List<Folder>> notOrderedFolders = folderViewModel.getPartitionedFolders();
-    List<Folder> myFolders = notOrderedFolders["my"]!;
+    List<Folder> myFolders = notOrderedFolders["my"]!..sort((a, b) {
+      if (a.name == "default") return -1;
+      if (b.name == "default") return 1;
+      return a.sharedDatetime.compareTo(b.sharedDatetime);
+    });
     List<Folder> sharedFolders = notOrderedFolders["shared"]!;
     double height = MediaQuery.sizeOf(context).height;
     double width = MediaQuery.sizeOf(context).width;
@@ -198,15 +202,10 @@ class FolderListScreen extends StatelessWidget {
                 ),
                 itemCount: myFolders.length,
                 itemBuilder: (context, index) {
-                  // List<Folder> folders = folderViewModel.folders.values.toList();
-                  myFolders.sort((a, b) => a.sharedDatetime.compareTo(b.sharedDatetime));
                   return _getFolderWidget(myFolders[index]);
                 },
               ),
             ),
-            // SizedBox(
-            //   height: height * 0.05,
-            // ),
             Container(
               padding: EdgeInsets.all(20),
               height: 3.0,

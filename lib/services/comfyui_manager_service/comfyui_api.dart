@@ -35,6 +35,7 @@ class ComfyuiAPI {
     final comfyuiViewModel = Get.find<ComfyuiViewModel>();
     Uint8List result = Uint8List(0);
     try {
+
       final fileName = original.path.split('/').last;
       final mimeType = lookupMimeType(original.path) ?? 'application/octet-stream';
       final formData = FormData.fromMap({
@@ -46,6 +47,8 @@ class ComfyuiAPI {
         'categories':
             MultipartFile.fromString(prompt, contentType: MediaType('application', 'json')),
       });
+      final CancelToken cancelToken = CancelToken();
+      comfyuiViewModel.cancelToken = cancelToken;
       final response = await dio.post("$baseUrl/upload/inpaint", data: formData);
       if (response.data["success"] == true) {
         result = await downloadImageBytes("$baseUrl/static/results/${response.data["result"]}");
@@ -65,20 +68,27 @@ class ComfyuiAPI {
 
   Future<ComfyuiResponse> upscalingPhoto({required XFile original}) async {
     final originalData = await original.readAsBytes();
+    final comfyuiViewModel = Get.find<ComfyuiViewModel>();
     Uint8List result = Uint8List(0);
     try {
       final fileName = original.path.split('/').last;
       final mimeType = lookupMimeType(original.path) ?? 'application/octet-stream';
+      final CancelToken cancelToken = CancelToken();
+      comfyuiViewModel.cancelToken = cancelToken;
       final formData = FormData.fromMap({
         'file': await MultipartFile.fromFile(original.path,
             filename: fileName, contentType: MediaType.parse(mimeType)),
       });
-      final response = await dio.post("$baseUrl/upload/upscale", data: formData);
+      final response = await dio.post("$baseUrl/upload/upscale", data: formData, cancelToken: cancelToken);
       if (response.data["success"] == true) {
         result = await downloadImageBytes("$baseUrl/static/results/${response.data["result"]}");
       }
-    } catch (e) {
-      showErrorPopup(e.toString());
+    } on DioException catch (e) {
+      if (CancelToken.isCancel(e)) {
+        showErrorPopup("사용자에 의해 요청이 취소되었습니다.");
+      } else {
+        showErrorPopup(e.toString());
+      }
       rethrow;
     }
     return ComfyuiResponse(result: result, original: originalData);

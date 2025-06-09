@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -11,6 +12,7 @@ class ComfyuiViewModel extends GetxController {
   RxString currentPrompt = "".obs;
   final textController = TextEditingController();
   final ImagePicker _picker = ImagePicker();
+  CancelToken? cancelToken;
 
   // 갤러리에서 이미지 선택
   void selectPhoto({required bool isFirstScreen}) async {
@@ -41,11 +43,12 @@ class ComfyuiViewModel extends GetxController {
 
   // 선택된 사진 리셋
   void reset() {
-
     currentUpscalingSelectedPhoto.value = null;
     currentRemoveSelectedPhoto.value = null;
     determinedRmovePhoto.value = null;
     currentPrompt.value = "";
+    cancelToken?.cancel();
+    print("[INFO]] comfyUI screen init");
   }
 
   // 카테고리 저장

@@ -18,6 +18,10 @@ class ComfyuiScreen extends StatefulWidget {
 
 class _ComfyuiScreenState extends State<ComfyuiScreen> with SingleTickerProviderStateMixin{
   final comfyuiViewModel = Get.find<ComfyuiViewModel>();
+  final tabBars = [
+    Tab(text: "업스케일링"),
+    Tab(text: "불필요한 영역 제거"),
+  ];
   late TabController _tabController;
 
   @override
@@ -25,7 +29,7 @@ class _ComfyuiScreenState extends State<ComfyuiScreen> with SingleTickerProvider
     // TODO: implement initState
     super.initState();
     _tabController = TabController(
-      length: 2,
+      length: tabBars.length,
       vsync: this,
     );
     _tabController.addListener(() {
@@ -55,13 +59,11 @@ class _ComfyuiScreenState extends State<ComfyuiScreen> with SingleTickerProvider
             automaticallyImplyLeading: false,
             centerTitle: true,
             bottom: TabBar(
+              controller: _tabController,
               indicatorSize: TabBarIndicatorSize.tab,
               dividerColor: Colors.grey,
-              // labelPadding: EdgeInsets.all(8),
-              // indicatorPadding: EdgeInsets.all(8),
               indicator: BoxDecoration(
                 color: AppConfig.mainColor,
-                // borderRadius: BorderRadius.all(Radius.circular(20)),
               ),
               indicatorColor: Colors.white,
               labelColor: Colors.white,
@@ -72,14 +74,7 @@ class _ComfyuiScreenState extends State<ComfyuiScreen> with SingleTickerProvider
                 fontWeight: FontWeight.w600,
                 color: Colors.black,
               ),
-              tabs: [
-                Tab(text: "업스케일링"),
-                Tab(text: "불필요한 영역 제거"),
-              ],
-              // onTap: (idx) {
-              //   print("change screen");
-              //   comfyuiViewModel.reset();
-              // },
+              tabs: tabBars,
             )),
         body: TabBarView(
           controller: _tabController,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hive/hive.dart';
 
 import '../config/app_config.dart';
 import '../models/user.dart';
@@ -108,12 +109,16 @@ Widget getTestConnectionFloatBtn(BuildContext context) {
   );
 }
 
-Widget getUserProfile({required User user, required BuildContext context, required double size, required double scale}) {
-  if(size > 1.0 || size < 0) {
+Widget getUserProfile(
+    {required User user,
+    required BuildContext context,
+    required double size,
+    required double scale}) {
+  if (size > 1.0 || size < 0) {
     throw Exception("사이즈 오류");
   }
 
-  if(scale > 1.0 || scale < 0) {
+  if (scale > 1.0 || scale < 0) {
     throw Exception("스케일 오류");
   }
 
@@ -137,12 +142,16 @@ Widget getUserProfile({required User user, required BuildContext context, requir
       }
 
       if (snapshot.hasError) {
-        return SizedBox(
+        return Container(
+          decoration: BoxDecoration(
+            // border: Border.all(color: Colors.grey, width: 1,),
+            // borderRadius: BorderRadius.circular(100),
+          ),
           height: MediaQuery.sizeOf(context).width * size,
           width: MediaQuery.sizeOf(context).width * size,
           child: CircleAvatar(
             radius: 20,
-            backgroundColor: Colors.white,
+            backgroundColor: Colors.grey.shade50,
             // 아이콘 다른 사용자
             child: Icon(Icons.person, color: Colors.grey[800]),
           ),

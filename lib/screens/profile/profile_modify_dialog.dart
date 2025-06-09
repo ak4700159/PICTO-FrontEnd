@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 import 'package:picto_frontend/screens/profile/profile_view_model.dart';
 import 'package:picto_frontend/services/user_manager_service/user_api.dart';
 
+import '../../config/app_config.dart';
+
 void showProfileModifyDialog(BuildContext context) {
   final profileViewModel = Get.find<ProfileViewModel>();
   final accountEditController = TextEditingController();
@@ -24,41 +26,6 @@ void showProfileModifyDialog(BuildContext context) {
         height: height * 0.5,
         child: Column(
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                TextButton(
-                  onPressed: () {
-                    Get.back();
-                  },
-                  child: Text(
-                    "닫기",
-                    style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        fontFamily: "NotoSansKR",
-                        color: Colors.grey
-                    ),
-                  ),
-                ),
-                TextButton(
-                  onPressed: () {
-                    // 변경 사항 적용
-                    UserManagerApi().modifyUserInfo();
-                  },
-                  child: Text(
-                    "적용",
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      fontFamily: "NotoSansKR",
-                      color: Colors.green.shade300
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: height * 0.03,),
             TextField(
               controller: accountEditController,
               style : TextStyle(fontSize: 12, fontFamily: "NotoSansKR", fontWeight: FontWeight.w600),
@@ -138,6 +105,59 @@ void showProfileModifyDialog(BuildContext context) {
               onChanged: (String? val) {
                 profileViewModel.newIntro = val ?? "";
               },
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: Container(
+                    height: height * 0.08,
+                    margin: const EdgeInsets.all(8),
+                    padding: const EdgeInsets.only(left: 16, top: 8, bottom: 8),
+                    child: FloatingActionButton(
+                      heroTag: "adapt",
+                      onPressed: () {
+                                UserManagerApi().modifyUserInfo();
+                      },
+                      shape:
+                      RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+                      backgroundColor: AppConfig.mainColor,
+                      child: Text(
+                        "적용",
+                        style: TextStyle(
+                            fontSize: 12,
+                            fontFamily: "NotoSansKR",
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    height: height * 0.08,
+                    margin: const EdgeInsets.all(8),
+                    padding: const EdgeInsets.only(right: 16, top: 8, bottom: 8),
+                    child: FloatingActionButton(
+                      heroTag: "back",
+                      onPressed: () {
+                        Get.back();
+                      },
+                      shape:
+                      RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+                      backgroundColor: Colors.red,
+                      child: Text(
+                        "취소",
+                        style: TextStyle(
+                            fontSize: 12,
+                            fontFamily: "NotoSansKR",
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
         ),

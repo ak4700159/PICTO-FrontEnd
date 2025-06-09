@@ -38,8 +38,8 @@ class MarkerWidget extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(
-        width: type == PictoMarkerType.userPos ? 30 : 85,
-        height: type == PictoMarkerType.userPos ? 30 : 85,
+        width: type == PictoMarkerType.userPos ? 30 : 100,
+        height: type == PictoMarkerType.userPos ? 30 : 100,
         decoration: decoration,
         child: ClipRRect(
           borderRadius: BorderRadius.circular(16),

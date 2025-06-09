@@ -44,7 +44,7 @@ class PictoMarker {
         type: type,
       ).toBitmapDescriptor(
         // 실제 마커에 띄워질 이미지는 imageSize 파라미터에 좌지우지 된다.
-        logicalSize: const Size(300, 300),
+        logicalSize: const Size(400, 400),
         imageSize: const Size(500, 500),
       ),
       consumeTapEvents: true,
@@ -63,8 +63,8 @@ class PictoMarker {
         photo : photo,
       ).toBitmapDescriptor(
         // 실제 마커에 띄워질 이미지는 imageSize 파라미터에 좌지우지 된다.
-        logicalSize: const Size(150, 150),
-        imageSize: const Size(250, 250),
+        logicalSize: const Size(300, 300),
+        imageSize: const Size(500, 500),
       ),
       consumeTapEvents: true,
       onTap: most ? onTap : null,

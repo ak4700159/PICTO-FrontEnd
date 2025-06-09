@@ -6,6 +6,7 @@ import 'package:picto_frontend/config/app_config.dart';
 import 'package:picto_frontend/screens/folder/folder_list_screen.dart';
 import 'package:picto_frontend/screens/folder/folder_view_model.dart';
 import 'package:picto_frontend/screens/main_frame_view_model.dart';
+import 'package:picto_frontend/screens/map/google_map/google_map_view_model.dart';
 import 'package:picto_frontend/screens/profile/profile_screen.dart';
 import 'package:picto_frontend/utils/popup.dart';
 import '../icon/picto_icons.dart';
@@ -58,7 +59,12 @@ class MapScreen extends StatelessWidget {
                         : Colors.grey,
                     shape: CircleBorder(),
                     onPressed: () {
-                      mapViewModel.changeNavigationBarIndex(2);
+                      if(mapViewModel.navigationBarCurrentIndex.value == 2) {
+                        final googleMApViewModel = Get.find<GoogleMapViewModel>();
+                        googleMApViewModel.moveCurrentPos();
+                      } else {
+                        mapViewModel.changeNavigationBarIndex(2);
+                      }
                     },
                     child: Icon(
                       Icons.location_on,

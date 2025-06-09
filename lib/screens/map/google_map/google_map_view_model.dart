@@ -72,7 +72,6 @@ class GoogleMapViewModel extends GetxController {
   // 클러스터 매니저
   PictoClusterManager pictoCluster = PictoClusterManager();
 
-
   @override
   void onInit() async {
     // 지도 양식 로딩
@@ -108,8 +107,10 @@ class GoogleMapViewModel extends GetxController {
     // 화면 중앙 정보 로딩
     try {
       screenBounds = await _googleMapController!.getVisibleRegion();
-      currentScreenCenterLat.value = (screenBounds.northeast.latitude + screenBounds.southwest.latitude) / 2;
-      currentScreenCenterLng.value = (screenBounds.northeast.longitude + screenBounds.southwest.longitude) / 2;
+      currentScreenCenterLat.value =
+          (screenBounds.northeast.latitude + screenBounds.southwest.latitude) / 2;
+      currentScreenCenterLng.value =
+          (screenBounds.northeast.longitude + screenBounds.southwest.longitude) / 2;
       final newLatLng = LatLng(currentScreenCenterLat.value, currentScreenCenterLng.value);
       final currentPos = LatLng(currentLat.value, currentLng.value);
 
@@ -166,7 +167,8 @@ class GoogleMapViewModel extends GetxController {
       currentScreenCenterLat.value = (bounds.northeast.latitude + bounds.southwest.latitude) / 2;
       currentScreenCenterLng.value = (bounds.northeast.longitude + bounds.southwest.longitude) / 2;
       pictoCluster.manager.setMapId(controller.mapId);
-      pictoCluster.manager.setItems(currentPictoMarkers.map((p) => PictoItem(pictoMarker: p)).toList());
+      pictoCluster.manager
+          .setItems(currentPictoMarkers.map((p) => PictoItem(pictoMarker: p)).toList());
       Get.find<SessionSocket>().connectWebSocket();
     } catch (e) {
       print("[ERROR] : controller comfyui error");
@@ -240,7 +242,7 @@ class GoogleMapViewModel extends GetxController {
       radius: 5000,
       fillColor: Colors.transparent,
       strokeColor: AppConfig.mainColor,
-      strokeWidth: 2,
+      strokeWidth: 1,
     ));
   }
 
@@ -256,21 +258,20 @@ class GoogleMapViewModel extends GetxController {
     } else if (currentStep == "middle") {
       // 지역 대표 사진 + 내 위치 + 폴더 사진 + 내 사진
       await _loadRepresentative(currentStep);
-      await _loadFolder(currentStep);
-      currentMarkers.add(userMarker);
       // 확인해야됨
     } else {
       // (지역 대표 사진 OR 주변 사진) + 내 위치 + 폴더 사진 + 내 사진
-      if (isCurrentPosInScreen.value) {
+      if (distance(currentScreenCenterLatLng, LatLng(currentLat.value, currentLng.value)) < 5000) {
         await _loadAround(currentStep);
       } else {
         await _loadRepresentative(currentStep);
       }
-      await _loadFolder(currentStep);
-      currentMarkers.add(userMarker);
     }
+    currentMarkers.add(userMarker);
+    await _loadFolder(currentStep);
     // 위의 작업은 화면 정보(Zoom, 지도를 바라보고 있는 시점)를 바탕으로 마커 클스터링
-    pictoCluster.manager.setItems(currentPictoMarkers.map((p) => PictoItem(pictoMarker: p)).toList());
+    pictoCluster.manager
+        .setItems(currentPictoMarkers.map((p) => PictoItem(pictoMarker: p)).toList());
   }
 
   // 보여지는 마커 필터에 따라 변경
@@ -335,7 +336,8 @@ class GoogleMapViewModel extends GetxController {
     Set<PictoMarker> newMarkers = await _converter.getRepresentativePhotos(1, downloadType);
     representativePhotos[downloadType]?.addAll(newMarkers);
     for (PictoMarker pictoMarker in representativePhotos[downloadType]!) {
-      if (_isPointInsideBounds(LatLng(pictoMarker.photo.lat, pictoMarker.photo.lng), screenBounds)) {
+      if (_isPointInsideBounds(
+          LatLng(pictoMarker.photo.lat, pictoMarker.photo.lng), screenBounds)) {
         if (types.contains(pictoMarker.type)) {
           currentPictoMarkers.add(pictoMarker);
         }
@@ -350,7 +352,8 @@ class GoogleMapViewModel extends GetxController {
     Set<PictoMarker> newMarkers = await _converter.getAroundPhotos();
     aroundPhotos.addAll(newMarkers);
     for (PictoMarker pictoMarker in aroundPhotos) {
-      if (_isPointInsideBounds(LatLng(pictoMarker.photo.lat, pictoMarker.photo.lng), screenBounds)) {
+      if (_isPointInsideBounds(
+          LatLng(pictoMarker.photo.lat, pictoMarker.photo.lng), screenBounds)) {
         if (types.contains(pictoMarker.type)) {
           currentPictoMarkers.add(pictoMarker);
         }
@@ -369,7 +372,8 @@ class GoogleMapViewModel extends GetxController {
     }
     folderPhotos.addAll(newMarkers);
     for (PictoMarker pictoMarker in newMarkers) {
-      if (_isPointInsideBounds(LatLng(pictoMarker.photo.lat, pictoMarker.photo.lng), screenBounds)) {
+      if (_isPointInsideBounds(
+          LatLng(pictoMarker.photo.lat, pictoMarker.photo.lng), screenBounds)) {
         if (types.contains(pictoMarker.type)) {
           currentPictoMarkers.add(pictoMarker);
         }

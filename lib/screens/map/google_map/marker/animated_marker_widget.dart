@@ -15,8 +15,8 @@ class AnimatedMarkerWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Color borderColor = switch (type) {
-      PictoMarkerType.userPhoto => Colors.white,
-      PictoMarkerType.folderPhoto => Colors.grey,
+      PictoMarkerType.userPhoto => AppConfig.mainColor,
+      PictoMarkerType.folderPhoto => AppConfig.mainColor,
       PictoMarkerType.representativePhoto => Colors.white,
       PictoMarkerType.aroundPhoto => Colors.blueAccent,
       PictoMarkerType.userPos => Colors.blue,
@@ -43,8 +43,8 @@ class AnimatedMarkerWidget extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Container(
-              width: type == PictoMarkerType.userPos ? 30 : 100,
-              height: type == PictoMarkerType.userPos ? 30 : 100,
+              width: type == PictoMarkerType.userPos ? 30 : 130,
+              height: type == PictoMarkerType.userPos ? 30 : 130,
               decoration: decoration,
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(16),

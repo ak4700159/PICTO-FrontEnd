@@ -33,10 +33,10 @@ class PictoClusterManager {
     manager = cluster.ClusterManager<PictoItem>(
       googleMapViewModel.currentPictoMarkers.map((p) => PictoItem(pictoMarker: p)).toList(),
       _updateMarkers, // 마커가 업데이트될 때 마다 호출됨
-      levels: [1, 4.25, 6.75, 8.25, 11.5, 14.5, 16.5], // 클러스터 해상도 단계 지정
+      levels: [1, 4.25, 6.75, 8.25, 11.5, 14.5, 16.5, 20.0], // 클러스터 해상도 단계 지정
       markerBuilder: _markerBuilder,
-      stopClusteringZoom: 16, //
-      extraPercent: 0.1, // 외곽 추가 거리 비율
+      stopClusteringZoom: 15, //
+      extraPercent: 0.05, // 외곽 추가 거리 비율
     );
   }
 
