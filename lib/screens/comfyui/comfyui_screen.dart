@@ -77,6 +77,7 @@ class _ComfyuiScreenState extends State<ComfyuiScreen> with SingleTickerProvider
               tabs: tabBars,
             )),
         body: TabBarView(
+          physics: const NeverScrollableScrollPhysics(),
           controller: _tabController,
           children: [
             UpscalingScreen(),

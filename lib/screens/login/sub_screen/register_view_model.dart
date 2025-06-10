@@ -21,6 +21,8 @@ class RegisterViewModel extends GetxController {
   RxBool emailAuthVerifyLoading = false.obs;
   // 이메일 인증 코드 전송 시
   RxBool emailAuthSendLoading = false.obs;
+  // 회원 가입 요청 시
+  RxBool registerLoading = false.obs;
 
   // 인증 코드
   RxString emailCode = "".obs;

@@ -88,9 +88,15 @@ class PhotoScreen extends StatelessWidget {
                           folderViewModel.currentFolder.value!.markers
                               .removeWhere((m) => m.photo.photoId == photo.photoId);
                           folderViewModel.currentMarkers.removeWhere((m) => m.photo.photoId == photo.photoId);
-                          await folderViewModel.resetFolder(init: false);
-                          // await calendarViewModel.buildCalendarEventMap(await folderViewModel.convertCalendarEvent());
-                          Get.back();
+                          if(folderViewModel.currentMarkers.isEmpty && folderViewModel.currentFolder.value?.name == "default") {
+                            Get.back();
+                            Get.back();
+                            folderViewModel.folders.remove(folderViewModel.currentFolder.value!.folderId);
+                            await folderViewModel.resetFolder(init: false);
+                          } else {
+                            await folderViewModel.resetFolder(init: false);
+                            Get.back();
+                          }
                         }
                       },
                       child: Row(

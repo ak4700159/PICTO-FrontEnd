@@ -386,22 +386,28 @@ class UserManagerApi {
   }
 
   // 사용자 비밀번호 변경
-  Future<bool> changePassword({required String email, required String oldPassword, required String newPassword}) async {
+  Future<bool> changePassword(
+      {required String email, required String oldPassword, required String newPassword}) async {
     try {
-      final response = await dio.patch('$baseUrl/password', data: {
-        "email": email,
-        "password": oldPassword,
-        "newPassword": newPassword,
-      });
+      final response = await dio.patch(
+        '$baseUrl/password',
+        data: {
+          "email": email,
+          "password": oldPassword,
+          "newPassword": newPassword,
+        },
+        options: _authOptions(),
+      );
       return true;
     } on DioException catch (e) {
-      showErrorPopup(e.toString());
+      showErrorPopup("사용자 비밀번호 변경 실패");
     }
     return false;
   }
 
   // 회원 탈퇴
-  Future<bool> withdraw({required String email, required String accountName, required String password}) async {
+  Future<bool> withdraw(
+      {required String email, required String accountName, required String password}) async {
     try {
       final response = await dio.delete('$baseUrl/user', data: {
         "email": email,

@@ -23,9 +23,9 @@ class ChatbotAPI {
   final String baseUrl = "${AppConfig.httpUrl}:8089";
   Dio dio = Dio(
     BaseOptions(
-        connectTimeout: const Duration(seconds: 40),
+        connectTimeout: const Duration(seconds: 80),
         contentType: Headers.jsonContentType,
-        receiveTimeout: const Duration(seconds: 40)),
+        receiveTimeout: const Duration(seconds: 80)),
   )..interceptors.add(CustomInterceptor());
 
   // 프롬프트 전달
@@ -53,7 +53,7 @@ class ChatbotAPI {
       Map<String, dynamic> data = response.data;
       return PromptResponse.fromJson(data);
     } catch (e) {
-      showErrorPopup(e.toString());
+      showErrorPopup("프롬프트 오류 발생");
       rethrow;
     }
   }

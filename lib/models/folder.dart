@@ -72,7 +72,7 @@ class Folder {
 
   // 폴더 업데이트
   // !! 기존 데이터에서 새로운 데이터와 비교하여 추가하고 삭제할 부분을 반영 !!
-  Future<void> updateFolder() async {
+  Future<Folder> updateFolder() async {
     if (generatorId == UserManagerApi().ownerId && name == "default") {
       final profileViewModel = Get.find<ProfileViewModel>();
       users = [
@@ -90,6 +90,7 @@ class Folder {
     await updatePhoto();
     updateMarker();
     await updateMessage();
+    return this;
   }
 
   // 폴더에 명시되어 있는 사진 다운로드

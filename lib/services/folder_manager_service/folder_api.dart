@@ -30,7 +30,6 @@ class FolderManagerApi {
   // 폴더 생성
   Future<Folder?> createFolder({required String folderName, required String content}) async {
     try {
-      // print("[INFO] create folder : generatorId/${UserManagerApi().ownerId}");
       final response = await dio.post(
         '$baseUrl/folders',
         data: {
@@ -42,7 +41,7 @@ class FolderManagerApi {
       Map<String, dynamic> data = response.data;
       return Folder.fromJson(data, false);
     } on DioException catch (e) {
-      showErrorPopup(e.toString());
+      showErrorPopup("오류 발생 : 폴더 셍성");
     }
     return null;
   }
@@ -56,7 +55,7 @@ class FolderManagerApi {
       );
       return true;
     } on DioException catch (e) {
-      showErrorPopup(e.toString());
+      showErrorPopup("오류 발생 : 폴더 식제");
     }
     return false;
   }
@@ -69,7 +68,7 @@ class FolderManagerApi {
       List<dynamic> data = response.data;
       return data.map((json) => Folder.fromJson(json, init)).toList();
     } on DioException catch (e) {
-      showErrorPopup(e.toString());
+      showErrorPopup("오류 발생 : 폴더 목록 죄회");
     }
     return [];
   }
@@ -90,7 +89,7 @@ class FolderManagerApi {
       }
       return users;
     } on DioException catch (e) {
-      showErrorPopup(e.toString());
+      showErrorPopup("오류 발생 : 공유 폴더 사용자 조회");
     }
     return <User>[];
   }
@@ -104,7 +103,7 @@ class FolderManagerApi {
       List<dynamic> data = response.data;
       return data.map((json) => Photo.fromJson(json)).toList();
     } on DioException catch (e) {
-      showErrorPopup(e.toString());
+      showErrorPopup("오류 발생 : 폴더 안 전체 사진 조회");
     }
     return [];
   }

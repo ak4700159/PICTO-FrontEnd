@@ -61,7 +61,8 @@ class RegisterScreen extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                         )),
                     Image.asset("assets/images/picto_logo.png",
-                        colorBlendMode: BlendMode.modulate, opacity: const AlwaysStoppedAnimation(0.4)),
+                        colorBlendMode: BlendMode.modulate,
+                        opacity: const AlwaysStoppedAnimation(0.4)),
                     TopBox(size: 0.07),
                     _getFormFiled(context),
                     TopBox(size: 0.07),
@@ -92,7 +93,8 @@ class RegisterScreen extends StatelessWidget {
               child: SizedBox(
                 // height: height * 0.08,
                 child: TextFormField(
-                  style: TextStyle(fontSize: 12, fontFamily: "NotoSansKR", fontWeight: FontWeight.w600),
+                  style: TextStyle(
+                      fontSize: 12, fontFamily: "NotoSansKR", fontWeight: FontWeight.w600),
                   keyboardType: TextInputType.name,
                   decoration: getCustomInputDecoration(
                     label: "이름",
@@ -110,7 +112,8 @@ class RegisterScreen extends StatelessWidget {
               child: SizedBox(
                 // height: height * 0.08,
                 child: TextFormField(
-                  style: TextStyle(fontSize: 12, fontFamily: "NotoSansKR", fontWeight: FontWeight.w600),
+                  style: TextStyle(
+                      fontSize: 12, fontFamily: "NotoSansKR", fontWeight: FontWeight.w600),
                   keyboardType: TextInputType.name,
                   decoration: getCustomInputDecoration(
                     label: "계정명",
@@ -177,7 +180,8 @@ class RegisterScreen extends StatelessWidget {
                                 if (_registerController.emailDuplicatedMsg.value == "사용 가능") return;
                                 if (_registerController.email.value.isEmpty) {
                                   showMsgPopup(msg: "이메일 작성해주세요", space: 0.22);
-                                } else if (emailValidator(_registerController.email.value) != null) {
+                                } else if (emailValidator(_registerController.email.value) !=
+                                    null) {
                                   showMsgPopup(msg: "이메일 형식이 아닙니다", space: 0.22);
                                 } else {
                                   _registerController.validateEmail();
@@ -233,13 +237,16 @@ class RegisterScreen extends StatelessWidget {
                 child: SizedBox(
                   // height: height * 0.08,
                   child: TextFormField(
-                    style: TextStyle(fontSize: 12, fontFamily: "NotoSansKR", fontWeight: FontWeight.w600),
+                    style: TextStyle(
+                        fontSize: 12, fontFamily: "NotoSansKR", fontWeight: FontWeight.w600),
                     obscureText: _registerController.isPasswordVisible.value,
                     decoration: getCustomInputDecoration(
                       label: "비밀번호",
                       suffixIcon: IconButton(
                         icon: Icon(
-                          !_registerController.isPasswordVisible.value ? Icons.visibility : Icons.visibility_off,
+                          !_registerController.isPasswordVisible.value
+                              ? Icons.visibility
+                              : Icons.visibility_off,
                         ),
                         onPressed: () {
                           _registerController.togglePasswordVisible();
@@ -260,13 +267,16 @@ class RegisterScreen extends StatelessWidget {
                 child: SizedBox(
                   // height: height * 0.08,
                   child: TextFormField(
-                    style: TextStyle(fontSize: 12, fontFamily: "NotoSansKR", fontWeight: FontWeight.w600),
+                    style: TextStyle(
+                        fontSize: 12, fontFamily: "NotoSansKR", fontWeight: FontWeight.w600),
                     obscureText: _registerController.isPasswordVisible.value,
                     decoration: getCustomInputDecoration(
                       label: "비밀번호 재입력",
                       suffixIcon: IconButton(
                         icon: Icon(
-                          !_registerController.isPasswordVisible.value ? Icons.visibility : Icons.visibility_off,
+                          !_registerController.isPasswordVisible.value
+                              ? Icons.visibility
+                              : Icons.visibility_off,
                         ),
                         onPressed: () {
                           _registerController.togglePasswordVisible();
@@ -296,55 +306,61 @@ class RegisterScreen extends StatelessWidget {
       height: MediaQuery.sizeOf(context).height * 0.06,
       child: Padding(
         padding: const EdgeInsets.all(2.0),
-        child: TextButton(
-          onPressed: () async {
-            // 1. 이름, 이메일, 비밀번호, 비밀번호 재입력 Form필드 검사
-            if (_formKey.currentState?.validate() ?? false) {
-              _formKey.currentState?.save();
-            } else {
-              // _registerController.registerMsg.value = "다시 작성해주세요.";
-              return;
-            }
+        child: _registerController.registerLoading.value
+            ? Center(
+                child: CircularProgressIndicator(
+                  color: Colors.white,
+                ),
+              )
+            : TextButton(
+                onPressed: () async {
+                  // 1. 이름, 이메일, 비밀번호, 비밀번호 재입력 Form필드 검사
+                  if (_formKey.currentState?.validate() ?? false) {
+                    _formKey.currentState?.save();
+                  } else {
+                    // _registerController.registerMsg.value = "다시 작성해주세요.";
+                    return;
+                  }
 
-            // 2. 이메일 중복 검사 확인
-            if (_registerController.emailDuplicatedMsg.value != "사용 가능") {
-              // _registerController.registerMsg.value = "이메일 중복 검사 해주세요.";
-              return;
-            }
+                  // 2. 이메일 중복 검사 확인
+                  if (_registerController.emailDuplicatedMsg.value != "사용 가능") {
+                    // _registerController.registerMsg.value = "이메일 중복 검사 해주세요.";
+                    return;
+                  }
 
-            // 3. 비밀번호 매칭 확인
-            if (_registerController.passwd.value != _registerController.passwdCheck.value) {
-              // _registerController.registerMsg.value = "비밀번호가 일치하지 않습니다..";
-              return;
-            }
+                  // 3. 비밀번호 매칭 확인
+                  if (_registerController.passwd.value != _registerController.passwdCheck.value) {
+                    // _registerController.registerMsg.value = "비밀번호가 일치하지 않습니다..";
+                    return;
+                  }
 
-            if (!_registerController.isEmailCodeAuth.value) {
-              return;
-            }
+                  if (!_registerController.isEmailCodeAuth.value) {
+                    return;
+                  }
 
-            // 4. 회원가입 시도
-            try {
-              _registerController.signup();
-              // _registerController.registerMsg.value = "회원가입 성공!";
-              await Future.delayed(Duration(seconds: AppConfig.stopScreenSec));
-              Get.toNamed('/login');
-            } on DioException catch (e) {
-              _registerController.registerMsg.value = "네트워크 오류";
-              print("[ERROR]signup failed");
-            }
-          },
+                  // 4. 회원가입 시도
+                  try {
+                    _registerController.signup();
+                    // _registerController.registerMsg.value = "회원가입 성공!";
+                    await Future.delayed(Duration(seconds: AppConfig.stopScreenSec));
+                    Get.toNamed('/login');
+                  } on DioException catch (e) {
+                    _registerController.registerMsg.value = "네트워크 오류";
+                    print("[ERROR]signup failed");
+                  }
+                },
 
-          // 상태 메시지에 따라 버튼 UI 변경은 나중에.
-          child: Text(
-            _registerController.registerMsg.value,
-            style: TextStyle(
-              fontFamily: "NotoSansKR",
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: Colors.white,
-            ),
-          ),
-        ),
+                // 상태 메시지에 따라 버튼 UI 변경은 나중에.
+                child: Text(
+                  _registerController.registerMsg.value,
+                  style: TextStyle(
+                    fontFamily: "NotoSansKR",
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
       ),
     );
   }
@@ -400,12 +416,15 @@ class RegisterScreen extends StatelessWidget {
                   color: AppConfig.mainColor,
                 ),
                 child: !_registerController.isEmailCodeAuth.value
-                    ? _registerController.emailAuthVerifyLoading.value || _registerController.emailAuthSendLoading.value
+                    ? _registerController.emailAuthVerifyLoading.value ||
+                            _registerController.emailAuthSendLoading.value
                         ? Center(
                             child: AnimatedTextKit(
                               animatedTexts: [
                                 FadeAnimatedText(
-                                  _registerController.emailAuthSendLoading.value ? "인증 코드 전송 중" : "인증 코드 확인 중",
+                                  _registerController.emailAuthSendLoading.value
+                                      ? "인증 코드 전송 중"
+                                      : "인증 코드 확인 중",
                                   duration: Duration(seconds: 1),
                                   textStyle: TextStyle(
                                     fontFamily: "NotoSansKR",
@@ -427,7 +446,8 @@ class RegisterScreen extends StatelessWidget {
                               if (!_registerController.isEmailCodeSend.value) {
                                 // 인증코드 전송
                                 _registerController.emailAuthSendLoading.value = true;
-                                if (await UserManagerApi().sendEmailCode(email: _registerController.email.value)) {
+                                if (await UserManagerApi()
+                                    .sendEmailCode(email: _registerController.email.value)) {
                                   showMsgPopup(msg: "인증코드를 전송하였습니다.", space: 0.4);
                                   _registerController.isEmailCodeSend.value =
                                       !_registerController.isEmailCodeSend.value;

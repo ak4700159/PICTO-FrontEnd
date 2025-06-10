@@ -173,12 +173,12 @@ class _MarkerListBottomSheetState extends State<MarkerListBottomSheet> {
         Expanded(
           flex: 1,
           child: Container(
-            margin: EdgeInsets.only(left: 100, right: 100, bottom: 10),
+            margin: EdgeInsets.only(left: 100, right: 100, bottom: 13),
             decoration: BoxDecoration(
               boxShadow: [
-                BoxShadow(color: Colors.grey.shade100, blurRadius: 1, spreadRadius: 1)
+                // BoxShadow(color: Colors.grey.shade100, blurRadius: 1, spreadRadius: 1)
               ],
-              color: Colors.grey.shade300,
+              color: Colors.black,
               borderRadius: BorderRadius.circular(30),
             ),
           ),
@@ -192,12 +192,12 @@ class _MarkerListBottomSheetState extends State<MarkerListBottomSheet> {
                   margin: EdgeInsets.all(16),
                   padding: EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                      border: BorderDirectional(bottom: BorderSide(width: 2, color: Colors.grey))),
+                      border: BorderDirectional(bottom: BorderSide(width: 2, color: Colors.grey.shade300))),
                   child: Row(
                     children: [
                       Icon(
                         Icons.favorite,
-                        color: Colors.red,
+                        color: AppConfig.mainColor,
                       ),
                       Text(
                         "  대표 사진",
@@ -273,7 +273,7 @@ class _MarkerListBottomSheetState extends State<MarkerListBottomSheet> {
                   margin: EdgeInsets.all(16),
                   padding: EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                      border: BorderDirectional(bottom: BorderSide(width: 2, color: Colors.grey))),
+                      border: BorderDirectional(bottom: BorderSide(width: 2, color: Colors.grey.shade300))),
                   child: Row(
                     children: [
                       Icon(

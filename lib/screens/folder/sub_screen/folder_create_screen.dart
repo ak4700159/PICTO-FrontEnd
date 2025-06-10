@@ -66,7 +66,8 @@ class FolderCreateScreen extends StatelessWidget {
                     padding: EdgeInsets.all(8),
                     width: MediaQuery.sizeOf(context).width * 0.9,
                     child: TextFormField(
-                      style: TextStyle(fontSize: 12, fontFamily: "NotoSansKR", fontWeight: FontWeight.w600),
+                      style: TextStyle(
+                          fontSize: 12, fontFamily: "NotoSansKR", fontWeight: FontWeight.w600),
                       validator: folderValidator,
                       onSaved: (val) => folderName = val,
                       decoration: InputDecoration(
@@ -106,7 +107,8 @@ class FolderCreateScreen extends StatelessWidget {
                     padding: EdgeInsets.all(8),
                     width: MediaQuery.sizeOf(context).width * 0.9,
                     child: TextFormField(
-                      style: TextStyle(fontSize: 12, fontFamily: "NotoSansKR", fontWeight: FontWeight.w600),
+                      style: TextStyle(
+                          fontSize: 12, fontFamily: "NotoSansKR", fontWeight: FontWeight.w600),
                       validator: folderValidator,
                       onSaved: (val) => folderContent = val,
                       maxLines: 10,
@@ -151,14 +153,18 @@ class FolderCreateScreen extends StatelessWidget {
                       onPressed: () async {
                         if (formKey.currentState?.validate() ?? false) {
                           formKey.currentState?.save();
+                          if (folderName == "default") {
+                            showErrorPopup("기폰 폴더는 생성할 수 없습니다");
+                          } else {
+                            Folder? newFolder = await FolderManagerApi()
+                                .createFolder(folderName: folderName!, content: folderContent!);
+                            if (newFolder != null) {
+                              Get.find<FolderViewModel>().resetFolder(init: false);
+                              Get.back();
+                              showMsgPopup(msg: "새로운 폴더가 생성되었습니다.", space: 0.4);
+                            }
+                          }
                         }
-                        Folder? newFolder =
-                            await FolderManagerApi().createFolder(folderName: folderName!, content: folderContent!);
-                        if (newFolder != null) {
-                          Get.find<FolderViewModel>().resetFolder(init: false);
-                        }
-                        Get.back();
-                        showMsgPopup(msg: "새로운 폴더가 생성되었습니다.", space: 0.4);
                       },
                       child: Text(
                         "폴더 생성하기",

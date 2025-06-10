@@ -44,9 +44,8 @@ class FolderViewModel extends GetxController {
   //  폴더 초기화 -> 새로운 폴더는 추가, 중복되는 폴더는 업데이트
   Future<void> resetFolder({required bool init}) async {
     try {
-      List<Folder> search = await FolderManagerApi().getFoldersByOwnerId(init : init);
-      // showBlockingLoading(Duration(seconds: 1));
-
+      await Future.delayed(Duration(seconds: 1));
+      List<Folder> search = await FolderManagerApi().getFoldersByOwnerId(init: true);
       // 제거
       final existFolderKeys = folders.keys;
       for (int oldKey in existFolderKeys) {
@@ -58,12 +57,12 @@ class FolderViewModel extends GetxController {
       // 기존에 있었던 폴더는 업데이트. 없었으면 추가
       for (Folder newFolder in search) {
         if (folders.keys.contains(newFolder.folderId)) {
-          folders[newFolder.folderId]?.updateFolder();
+          folders[newFolder.folderId] = await folders[newFolder.folderId]!.updateFolder();
         } else {
           folders[newFolder.folderId] = newFolder;
         }
       }
-    } catch(e) {
+    } catch (e) {
       print("[ERROR] ${e.toString()}");
     }
   }
@@ -82,13 +81,15 @@ class FolderViewModel extends GetxController {
       final capturedUser = user; // 🔑 클로저 캡처 방지
       firstTasks.add(() async {
         // print("[DEBUG] downloading profile for userId: ${capturedUser.userId}");
-        capturedUser.userProfileId = await UserManagerApi().getUserProfilePhoto(userId: capturedUser.userId!);
+        capturedUser.userProfileId =
+            await UserManagerApi().getUserProfilePhoto(userId: capturedUser.userId!);
         if (capturedUser.userProfileId != null) {
           capturedUser.userProfileData = await PhotoStoreApi().downloadPhoto(
             photoId: capturedUser.userProfileId!,
             scale: 0.08,
           );
-          currentFolder.value!.users[currentFolder.value!.users.indexOf(capturedUser)] = capturedUser;
+          currentFolder.value!.users[currentFolder.value!.users.indexOf(capturedUser)] =
+              capturedUser;
         }
       }());
     }
@@ -98,7 +99,7 @@ class FolderViewModel extends GetxController {
       tasks.add(() async {
         Uint8List? data = await PhotoStoreApi().downloadPhoto(
           photoId: marker.photo.photoId,
-          scale: 0.3,
+          scale: 0.5,
         );
         marker.imageData = data;
         currentMarkers[currentMarkers.indexOf(marker)] = marker;
@@ -116,11 +117,11 @@ class FolderViewModel extends GetxController {
     currentMarkers.clear();
     // 폴더 메타데이터 다운로드
     await folders[folderId]?.updateFolder();
-    progress.value = 0.0;
     currentMarkers.addAll(folders[folderId]!.markers);
     // 폴더 이미지 다운로드
     await downloadFolder();
     changeSocket();
+    print("[INFO] messages length : ${currentMsgList.length}");
     // 로딩 완료
     loadingComplete.value = true;
   }
@@ -131,10 +132,14 @@ class FolderViewModel extends GetxController {
     // print("[INFO] chatting socket change try...");
     currentSocket.value = ChattingSocket(
       folderId: currentFolder.value!.folderId,
-      receive: (frame) {
+      receive: (frame) async {
         final data = jsonDecode(frame.body ?? "");
         if (data["userId"] == UserManagerApi().ownerId) return;
-        currentMsgList.add(ChatMsg.fromJson(data));
+        ChatMsg newMsg = ChatMsg.fromJson(data);
+        // if (!currentFolder.value!.users.map((u) => u.userId).toList().contains(newMsg.userId)) {
+        //   await currentFolder.value!.updateFolder();
+        // }
+        currentMsgList.add(newMsg);
       },
     );
     currentSocket.value?.connectWebSocket();
@@ -153,6 +158,7 @@ class FolderViewModel extends GetxController {
       folders.remove(folderId);
     }
   }
+
   // 현재 연결된 소켓에 채팅 전송
   void sendChatMsg({required String content, required String accountName}) async {
     int userId = UserManagerApi().ownerId as int;
@@ -232,7 +238,8 @@ class FolderViewModel extends GetxController {
 
   Uint8List? getOtherProfilePhoto({required int userId}) {
     // 여기서 오류가 발생
-    print("[DEBUG] userId : $userId / current folder users : ${currentFolder.value?.users.toString() ?? "current folder is null"}");
+    print(
+        "[DEBUG] userId : $userId / current folder users : ${currentFolder.value?.users.toString() ?? "current folder is null"}");
     User find = currentFolder.value!.users.firstWhere((u) => u.userId == userId);
     return find.userProfileData;
   }
@@ -279,21 +286,19 @@ class FolderViewModel extends GetxController {
   // 사용자폴더와 공유팔더 나누니기
   Map<String, List<Folder>> getPartitionedFolders() {
     final ownerId = UserManagerApi().ownerId;
-    final partitioned = folders.entries.fold<Map<String, List<Folder>>>(
-      {
-        'my': [],
-        'shared': [],
-      },
-          (acc, entry) {
-        final folder = entry.value;
-        if (folder.generatorId == ownerId) {
-          acc['my']!.add(folder);
-        } else {
-          acc['shared']!.add(folder);
-        }
-        return acc;
-      },
-    );
+    final partitioned = {
+      'my': <Folder>[],
+      'shared': <Folder>[],
+    };
+
+    for (final folder in folders.values) {
+      // 사용자 목록이 1명이고, 그 유저의 ID가 ownerId일 경우 -> 'my'
+      if ((folder.users.length <= 1) || (folder.name == "default")) {
+        partitioned['my']!.add(folder);
+      } else {
+        partitioned['shared']!.add(folder);
+      }
+    }
 
     return partitioned;
   }
@@ -301,8 +306,8 @@ class FolderViewModel extends GetxController {
   // 퐇더 안에서 사진 조회
   Photo? getPhoto({required int photoId}) {
     for (Folder f in folders.values) {
-      for(Photo p in f.photos) {
-        if(p.photoId == photoId) {
+      for (Photo p in f.photos) {
+        if (p.photoId == photoId) {
           return p;
         }
       }

@@ -16,12 +16,9 @@ class FolderListScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // if (!folderViewModel.isUpdate.value) {
-    // folderViewModel.resetFolder();
-    //   folderViewModel.isUpdate.value = true;
-    // }
     return Scaffold(
       appBar: AppBar(
+        scrolledUnderElevation: 0,
         titleSpacing: 1,
         backgroundColor: Colors.white,
         // 제목
@@ -30,18 +27,17 @@ class FolderListScreen extends StatelessWidget {
           padding: const EdgeInsets.only(left: 8.0),
           child: Container(
             padding: EdgeInsets.all(4),
-            // decoration: BoxDecoration(color: Colors.grey.shade200, borderRadius: BorderRadius.circular(10)),
             child: Obx(() => Text(
-              "${profileViewModel.accountName.value}의 폴더",
-              overflow: TextOverflow.ellipsis,
-              maxLines: 2,
-              style: TextStyle(
-                fontFamily: "NotoSansKR",
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-                color: Colors.black,
-              ),
-            )),
+                  "${profileViewModel.accountName.value}의 폴더",
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2,
+                  style: TextStyle(
+                    fontFamily: "NotoSansKR",
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black,
+                  ),
+                )),
           ),
         ),
         automaticallyImplyLeading: false,
@@ -127,14 +123,20 @@ class FolderListScreen extends StatelessWidget {
             onPressed: () async {
               // 폴더 사진 화면 이동
               final folderViewModel = Get.find<FolderViewModel>();
-              folderViewModel.changeFolder(folderId: folder.folderId);
+              if (folderViewModel.currentFolder.value?.folderId != folder.folderId) {
+                folderViewModel.changeFolder(folderId: folder.folderId);
+              }
               Get.toNamed('/folder', arguments: {
                 "folderId": folder.folderId,
               });
             },
             icon: Icon(
               _getFolderIcon(folder.generatorId, folder.name),
-              color: _getFolderColor(folder.generatorId, folder.name),
+              color: folder.name == "default"
+                  ? Colors.black
+                  : folder.users.length <= 1
+                      ? AppConfig.mainColor
+                      : Colors.blue,
               weight: 1,
               size: 60,
             ),
@@ -171,11 +173,12 @@ class FolderListScreen extends StatelessWidget {
 
   Widget _getFolderList(BuildContext context) {
     Map<String, List<Folder>> notOrderedFolders = folderViewModel.getPartitionedFolders();
-    List<Folder> myFolders = notOrderedFolders["my"]!..sort((a, b) {
-      if (a.name == "default") return -1;
-      if (b.name == "default") return 1;
-      return a.sharedDatetime.compareTo(b.sharedDatetime);
-    });
+    List<Folder> myFolders = notOrderedFolders["my"]!
+      ..sort((a, b) {
+        if (a.name == "default") return -1;
+        if (b.name == "default") return 1;
+        return a.sharedDatetime.compareTo(b.sharedDatetime);
+      });
     List<Folder> sharedFolders = notOrderedFolders["shared"]!;
     double height = MediaQuery.sizeOf(context).height;
     double width = MediaQuery.sizeOf(context).width;
@@ -206,11 +209,34 @@ class FolderListScreen extends StatelessWidget {
                 },
               ),
             ),
-            Container(
-              padding: EdgeInsets.all(20),
-              height: 3.0,
-              width: width * 0.8,
-              color: Colors.grey.shade200,
+            Column(
+              children: [
+                Text(
+                  "내 폴더",
+                  style: TextStyle(
+                    fontWeight: FontWeight.w400,
+                    fontFamily: "NotoSansKR",
+                    color: Colors.grey,
+                    fontSize: 13,
+                  ),
+                ),
+                Container(
+                  margin:  EdgeInsets.all(4),
+                  padding: EdgeInsets.all(20),
+                  height: 3.0,
+                  width: width * 0.8,
+                  color: Colors.grey.shade200,
+                ),
+                Text(
+                  "공유 폴더",
+                  style: TextStyle(
+                    fontWeight: FontWeight.w400,
+                    fontFamily: "NotoSansKR",
+                    color: Colors.grey,
+                    fontSize: 13,
+                  ),
+                ),
+              ],
             ),
             SizedBox(
               height: height * 0.4,

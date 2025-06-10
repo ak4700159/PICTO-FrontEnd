@@ -17,6 +17,7 @@ void showErrorPopup(String errorMsg) {
       content: SingleChildScrollView(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: [
             Expanded(
@@ -29,13 +30,16 @@ void showErrorPopup(String errorMsg) {
             ),
             Expanded(
               flex: 3,
-              child: Text(
-                errorMsg,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.red,
-                  fontFamily: "NotoSansKR",
-                  fontWeight: FontWeight.w400,
+              child: Padding(
+                padding: const EdgeInsets.only(right: 8.0),
+                child: Text(
+                  convertNaturalKorean(errorMsg),
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.red,
+                    fontFamily: "NotoSansKR",
+                    fontWeight: FontWeight.w400,
+                  ),
                 ),
               ),
             ),
@@ -260,15 +264,15 @@ Future<void> showSelectionDialog(
 }
 
 Future<void> showTemporaryPasswordSettingPopup() async {
+  bool sending = false;
   Get.dialog(
     barrierDismissible: false,
     Dialog(
       insetPadding: EdgeInsets.all(0),
-      child: Builder(builder: (context) {
+      child: StatefulBuilder(builder: (context, setState) {
         final height = MediaQuery.of(context).size.height;
         final width = MediaQuery.of(context).size.width;
         TextEditingController emailController = TextEditingController();
-        bool sending = false;
         final formKey = GlobalKey<FormState>();
         return Container(
           height: height * 0.21,
@@ -309,26 +313,41 @@ Future<void> showTemporaryPasswordSettingPopup() async {
                         padding: const EdgeInsets.all(8),
                         child: FloatingActionButton(
                           onPressed: () async {
-                            if(sending) return;
+                            if (sending) return;
                             if (formKey.currentState?.validate() ?? false) {
                               sending = true;
-                              if(await UserManagerApi().sendTemporaryPassword(email: emailController.text)) {
+                              setState(() {});
+                              if (await UserManagerApi()
+                                  .sendTemporaryPassword(email: emailController.text)) {
                                 Get.back();
                                 showMsgPopup(msg: "작성하신 이메일로 임시 비밀번호가 전송되었습니다.", space: 0.4);
                               }
                               sending = false;
+                              setState(() {});
                             }
                           },
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
                           backgroundColor: AppConfig.mainColor,
-                          child: Text(
-                            "임시 비밀번호 전송하기",
-                            style: TextStyle(
-                                fontSize: 12,
-                                fontFamily: "NotoSansKR",
-                                fontWeight: FontWeight.w600,
-                                color: Colors.white),
-                          ),
+                          child: sending == true
+                              ? Center(
+                                  child: Container(
+                                    height: height * 0.04,
+                                    width: height * 0.04,
+                                    padding: const EdgeInsets.all(4.0),
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 1,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                )
+                              : Text(
+                                  "임시 비밀번호 전송하기",
+                                  style: TextStyle(
+                                      fontSize: 12,
+                                      fontFamily: "NotoSansKR",
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.white),
+                                ),
                         ),
                       ),
                     ],
@@ -362,17 +381,18 @@ Future<void> showTemporaryPasswordSettingPopup() async {
   );
 }
 
-Future<void> showPasswordResetPopup() async {
+Future<void> showPasswordResetPopup(String email) async {
+  bool sending = false;
   Get.dialog(
     barrierDismissible: false,
     Dialog(
       insetPadding: EdgeInsets.all(0),
-      child: Builder(
-        builder: (context) {
+      child: StatefulBuilder(
+        builder: (context, setState) {
           final height = MediaQuery.sizeOf(context).height;
           final width = MediaQuery.sizeOf(context).width;
-          final passwdController = TextEditingController();
-          final passwdReController = TextEditingController();
+          final passwdOldController = TextEditingController();
+          final passwdNewController = TextEditingController();
           final formKey = GlobalKey<FormState>();
           return Form(
             key: formKey,
@@ -390,15 +410,15 @@ Future<void> showPasswordResetPopup() async {
                     Padding(
                       padding: const EdgeInsets.all(5.0),
                       child: TextFormField(
-                        controller: passwdController,
+                        controller: passwdOldController,
                         style: TextStyle(
                             fontSize: 12, fontFamily: "NotoSansKR", fontWeight: FontWeight.w600),
                         decoration: getCustomInputDecoration(
-                          label: "새로운 비밀번호",
+                          label: "사용중인 비밀번호",
                           borderRadius: BorderRadius.circular(25),
                         ),
                         validator: (String? val) {
-                          if (passwdController.text.isEmpty) {
+                          if (passwdOldController.text.isEmpty) {
                             return "비밀번호를 입력해주세요.";
                           }
                           return null;
@@ -409,16 +429,16 @@ Future<void> showPasswordResetPopup() async {
                       padding: const EdgeInsets.all(5.0),
                       child: TextFormField(
                         keyboardType: TextInputType.emailAddress,
-                        controller: passwdReController,
+                        controller: passwdNewController,
                         style: TextStyle(
                             fontSize: 12, fontFamily: "NotoSansKR", fontWeight: FontWeight.w600),
                         decoration: getCustomInputDecoration(
-                          label: "새로운 비밀번호 재작성",
+                          label: "새로운 비밀번호 작성",
                           borderRadius: BorderRadius.circular(25),
                         ),
                         validator: (String? val) {
-                          if (passwdReController.text.isEmpty) {
-                            return "비밀번호를 다시 입력해주세요.";
+                          if (passwdNewController.text.isEmpty) {
+                            return "비밀번호를 입력해주세요.";
                           }
                           return null;
                         },
@@ -434,22 +454,42 @@ Future<void> showPasswordResetPopup() async {
                             padding: const EdgeInsets.only(left: 16, top: 8, bottom: 8),
                             child: FloatingActionButton(
                               heroTag: "adapt",
-                              onPressed: () {
-                                if (formKey.currentState?.validate() ?? true) {
-                                  showErrorPopup("다시 작성해주세요");
+                              onPressed: () async {
+                                if (sending) return;
+                                if (formKey.currentState?.validate() ?? false) {
+                                  sending = true;
+                                  setState(() {});
+                                  print("old : ${passwdOldController.text} / new : ${passwdNewController.text} / email : $email");
+                                  if(await UserManagerApi().changePassword(email: email, oldPassword: passwdOldController.text, newPassword: passwdNewController.text)) {
+                                    Get.back();
+                                    showMsgPopup(msg: "비밀번호 변경에 성공하였습니다!", space: 0.4);
+                                  }
+                                  sending = false;
+                                  setState(() {});
                                 }
                               },
                               shape:
                                   RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
                               backgroundColor: AppConfig.mainColor,
-                              child: Text(
-                                "비밀번호 적용",
-                                style: TextStyle(
-                                    fontSize: 12,
-                                    fontFamily: "NotoSansKR",
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.white),
-                              ),
+                              child: sending
+                                  ? Center(
+                                      child: SizedBox(
+                                        height: height * 0.04,
+                                        width: height * 0.04,
+                                        child: CircularProgressIndicator(
+                                          color: Colors.white,
+                                          strokeWidth: 1,
+                                        ),
+                                      ),
+                                    )
+                                  : Text(
+                                      "비밀번호 적용",
+                                      style: TextStyle(
+                                          fontSize: 12,
+                                          fontFamily: "NotoSansKR",
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.white),
+                                    ),
                             ),
                           ),
                         ),
@@ -575,4 +615,111 @@ void showGuidePopup(String msg) {
       ),
     ),
   );
+}
+
+Future<bool> showSelectionDialog2(
+    {required BuildContext context,
+      required Function positiveEvent,
+      required Function negativeEvent,
+      required String positiveMsg,
+      required String negativeMsg,
+      required String content}) async {
+  double width = MediaQuery.sizeOf(context).width;
+  double height = MediaQuery.sizeOf(context).height;
+  bool accept = await Get.dialog(
+    Dialog(
+      insetPadding: EdgeInsets.all(0),
+      child: Container(
+        width: width * 0.8,
+        height: height * 0.16,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          color: Colors.white,
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(4.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 12.0),
+                child: Text(
+                  content,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.black,
+                    fontFamily: "NotoSansKR",
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: height * 0.01,
+              ),
+              SizedBox(
+                width: width * 0.7,
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(4.0),
+                        child: TextButton(
+                          style: TextButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              side: BorderSide(color: Colors.black, width: 1),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            backgroundColor: AppConfig.mainColor,
+                          ),
+                          child: Text(
+                            positiveMsg,
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.white,
+                              fontFamily: "NotoSansKR",
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                          onPressed: () async {
+                            positiveEvent();
+                          },
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(4.0),
+                        child: TextButton(
+                          style: TextButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              side: BorderSide(color: Colors.black, width: 1),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            backgroundColor: Colors.white,
+                          ),
+                          child: Text(
+                            negativeMsg,
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.black,
+                              fontFamily: "NotoSansKR",
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                          onPressed: () {
+                            negativeEvent();
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    ),
+  );
+  return accept;
 }

@@ -4,6 +4,7 @@ import 'package:picto_frontend/config/app_config.dart';
 import 'package:picto_frontend/screens/folder/folder_view_model.dart';
 import 'package:picto_frontend/screens/folder/sub_screen/chat_photo/folder_chat_screen.dart';
 import 'package:picto_frontend/services/folder_manager_service/folder_api.dart';
+import 'package:picto_frontend/services/user_manager_service/user_api.dart';
 import 'package:picto_frontend/utils/popup.dart';
 
 import 'sub_screen/chat_photo/folder_photo_screen.dart';
@@ -89,8 +90,10 @@ class FolderFrame extends StatelessWidget {
                         Icons.folder_delete,
                         color: AppConfig.mainColor,
                       ),
-                      const Text(
-                        " 폴더 삭제",
+                      Text(
+                        folderViewModel.currentFolder.value?.generatorId == UserManagerApi().ownerId
+                            ? " 폴더 삭제"
+                            : " 폴더 나가기",
                         style: TextStyle(
                           fontSize: 12,
                           color: Colors.black,
@@ -104,7 +107,8 @@ class FolderFrame extends StatelessWidget {
                 PopupMenuItem(
                   value: "send",
                   padding: EdgeInsets.all(4),
-                  onTap: () => Get.toNamed('/folder/invite/send', arguments: {"folderId": folderId}),
+                  onTap: () =>
+                      Get.toNamed('/folder/invite/send', arguments: {"folderId": folderId}),
                   child: Row(
                     children: [
                       Icon(
@@ -126,7 +130,8 @@ class FolderFrame extends StatelessWidget {
                 PopupMenuItem(
                   value: "info",
                   padding: EdgeInsets.all(4),
-                  onTap: () => Get.toNamed('/folder/info', arguments: {"folder": folderViewModel.currentFolder.value}),
+                  onTap: () => Get.toNamed('/folder/info',
+                      arguments: {"folder": folderViewModel.currentFolder.value}),
                   child: Row(
                     children: [
                       Icon(
@@ -171,6 +176,7 @@ class FolderFrame extends StatelessWidget {
           ),
         ),
         body: TabBarView(
+          // physics: const NeverScrollableScrollPhysics(),
           children: [
             FolderPhotoScreen(folderId: folderId),
             FolderChatScreen(folderId: folderId),

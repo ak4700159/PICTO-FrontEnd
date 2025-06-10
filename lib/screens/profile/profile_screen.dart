@@ -261,7 +261,7 @@ class ProfileScreen extends StatelessWidget {
                 children: [
                   TextButton(
                       onPressed: () {
-                        showPasswordResetPopup();
+                        showPasswordResetPopup(profileViewModel.email.value);
                       },
                       child: Row(
                         children: [
@@ -308,6 +308,37 @@ class ProfileScreen extends StatelessWidget {
                           ),
                         ],
                       )),
+                  TextButton(
+                      onPressed: () {
+                        showSelectionDialog(
+                            context: context,
+                            positiveEvent: () async {
+                              final SharedPreferences preferences =
+                              await SharedPreferences.getInstance();
+                              await preferences.clear();
+                              // Restart.restartApp();
+                            },
+                            negativeEvent: () {
+                              Get.back();
+                            },
+                            positiveMsg: "네",
+                            negativeMsg: "아니요",
+                            content: "계정을 삭제하시겠습니까?");
+                      },
+                      child: Row(
+                        children: [
+                          Icon(Icons.delete),
+                          Text(
+                            "  계정삭제",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 14,
+                              fontFamily: "NotoSansKR",
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      )),
                 ],
               ),
             ),
@@ -343,7 +374,7 @@ class ProfileScreen extends StatelessWidget {
 
     return FutureBuilder(
       future: PhotoStoreApi()
-          .downloadPhoto(photoId: profileViewModel.profilePhotoId.value!, scale: 0.3),
+          .downloadPhoto(photoId: profileViewModel.profilePhotoId.value!, scale: 0.6),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(child: CircularProgressIndicator());
@@ -393,7 +424,7 @@ class ProfileScreen extends StatelessWidget {
                             child: Text(
                               "적용하기",
                               style: TextStyle(
-                                color: Colors.green,
+                                color: AppConfig.mainColor,
                                 fontFamily: "NotoSansKR",
                                 fontWeight: FontWeight.w500,
                                 fontSize: 18,
@@ -492,7 +523,7 @@ class ProfileScreen extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    "저장 일시 : ${formatDateKorean(marker.photo.updateDatetime!)}",
+                    "장소 : ${marker.photo.location}",
                     style: TextStyle(
                         color: Colors.black,
                         fontFamily: "NotoSansKR",
@@ -501,7 +532,7 @@ class ProfileScreen extends StatelessWidget {
                         overflow: TextOverflow.fade),
                   ),
                   Text(
-                    "장소 : ${marker.photo.location}",
+                    "저장 일시 : ${formatDateKorean(marker.photo.updateDatetime!)}",
                     style: TextStyle(
                         color: Colors.black,
                         fontFamily: "NotoSansKR",
@@ -517,12 +548,12 @@ class ProfileScreen extends StatelessWidget {
                           marker.photo.photoId
                       ? Icon(
                           Icons.check_box,
-                          color: Colors.green,
+                          color: AppConfig.mainColor,
                           size: 30,
                         )
                       : Icon(
                           Icons.check_box_outline_blank,
-                          color: Colors.grey,
+                          color: Colors.grey.shade300,
                           size: 30,
                         ),
                 )),

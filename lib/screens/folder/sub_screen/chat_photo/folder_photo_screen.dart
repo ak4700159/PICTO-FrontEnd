@@ -25,7 +25,8 @@ class FolderPhotoScreen extends StatelessWidget {
               backgroundColor: Colors.white,
               color: AppConfig.mainColor,
               onRefresh: () async {
-                await folderViewModel.changeFolder(folderId: folderViewModel.currentFolder.value!.folderId);
+                // 현재 폴더 업데이트
+                folderViewModel.currentFolder.value = await folderViewModel.currentFolder.value!.updateFolder();
               },
               child: Obx(() => GridView.builder(
                     padding: const EdgeInsets.all(10),
@@ -62,7 +63,7 @@ class FolderPhotoScreen extends StatelessWidget {
                         "사진을 불러오는 중입니다.",
                         style: TextStyle(
                           fontFamily: "NotoSansKR",
-                          fontSize: 17,
+                          fontSize: 13,
                           fontWeight: FontWeight.w500,
                           color: Colors.grey,
                         ),
@@ -71,18 +72,9 @@ class FolderPhotoScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 20),
                   CircularProgressIndicator(
+                    strokeWidth: 2,
                     color: Colors.grey,
                   ),
-                  // const SizedBox(height: 10),
-                  // Text(
-                  //   "${(folderViewModel.progress.value * 100).toStringAsFixed(1)}%",
-                  //   style: TextStyle(
-                  //     fontFamily: "NotoSansKR",
-                  //     fontSize: 20,
-                  //     fontWeight: FontWeight.w700,
-                  //     color: Colors.grey,
-                  //   ),
-                  // ),
                 ],
               ),
             ),

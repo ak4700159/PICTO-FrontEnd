@@ -70,7 +70,7 @@ class _LatestLikePhotosState extends State<LatestLikePhotos> {
 
   Widget _getLikePhotoTile(BuildContext context, int idx) {
     return FutureBuilder(
-      future: PhotoStoreApi().downloadPhoto(photoId: latestLikePhotos[idx].photoId, scale: 0.1),
+      future: PhotoStoreApi().downloadPhoto(photoId: latestLikePhotos[idx].photoId, scale: 0.3),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(child: CircularProgressIndicator());

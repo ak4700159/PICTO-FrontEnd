@@ -117,7 +117,7 @@ class CalendarEventTile extends StatelessWidget {
       {required int photoId, required Uint8List? data, required BuildContext context}) {
     if (data == null) {
       return FutureBuilder(
-        future: PhotoStoreApi().downloadPhoto(photoId: photoId, scale: 0.08),
+        future: PhotoStoreApi().downloadPhoto(photoId: photoId, scale: 0.3),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return SizedBox(

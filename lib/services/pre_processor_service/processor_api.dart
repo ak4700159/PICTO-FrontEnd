@@ -70,6 +70,7 @@ class PreProcessorApi {
           return "기본폴더에 사진이 저장되었어요!!";
         }
       }
+      folderViewModel.resetFolder(init: false);
       return "기본폴더에서 사진을 확인해주세요!";
     } catch (e) {
       rethrow;
