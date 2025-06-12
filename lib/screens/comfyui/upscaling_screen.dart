@@ -14,6 +14,7 @@ class UpscalingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final double fullWidth = MediaQuery.of(context).size.width * 0.9;
     return Obx(() => Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -21,7 +22,9 @@ class UpscalingScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 TopBox(size: 0.1),
-                if (comfyuiViewModel.currentUpscalingSelectedPhoto.value != null)
+                if(comfyuiViewModel.upscaling.value)
+                  Center()
+                else if(comfyuiViewModel.currentUpscalingSelectedPhoto.value != null)
                   _getAnimationPhoto(context)
                 else
                   _getSelection(context),

@@ -41,7 +41,7 @@ class FolderManagerApi {
       Map<String, dynamic> data = response.data;
       return Folder.fromJson(data, false);
     } on DioException catch (e) {
-      showErrorPopup("오류 발생 : 폴더 셍성");
+      showErrorPopup("오류 발생 : 폴더 생성");
     }
     return null;
   }
@@ -51,11 +51,11 @@ class FolderManagerApi {
     try {
       final response = await dio.delete(
         '$baseUrl/folders/$folderId',
-        queryParameters: {"generatorId": UserManagerApi().ownerId},
+        queryParameters: {"userId": UserManagerApi().ownerId},
       );
       return true;
     } on DioException catch (e) {
-      showErrorPopup("오류 발생 : 폴더 식제");
+      showErrorPopup("오류 발생 : 폴더 삭제");
     }
     return false;
   }
@@ -68,7 +68,7 @@ class FolderManagerApi {
       List<dynamic> data = response.data;
       return data.map((json) => Folder.fromJson(json, init)).toList();
     } on DioException catch (e) {
-      showErrorPopup("오류 발생 : 폴더 목록 죄회");
+      showErrorPopup("오류 발생 : 폴더 목록 조회");
     }
     return [];
   }
@@ -182,7 +182,7 @@ class FolderManagerApi {
       });
       return true;
     } catch(e) {
-      showErrorPopup("푸쉬 알림 오류 :$e");
+      showErrorPopup("푸쉬 알림 오류");
     }
     return false;
   }

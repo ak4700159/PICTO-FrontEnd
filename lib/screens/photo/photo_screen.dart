@@ -163,8 +163,10 @@ class PhotoScreen extends StatelessWidget {
   Widget _getInfoWidget(Photo photo, BuildContext context) {
     return Container(
       width: MediaQuery.sizeOf(context).width,
+      height: MediaQuery.sizeOf(context).height * 0.2,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
+        color: Colors.white,
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
@@ -277,14 +279,9 @@ class PhotoScreen extends StatelessWidget {
           // 좋아요 하트
           Expanded(
             flex: 1,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                LikeButton(
-                  photoId: photo.photoId,
-                  likes: photo.likes,
-                )
-              ],
+            child: LikeButton(
+              photoId: photo.photoId,
+              likes: photo.likes,
             ),
           ),
         ],

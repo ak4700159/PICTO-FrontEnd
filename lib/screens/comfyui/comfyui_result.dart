@@ -70,7 +70,6 @@ class _ComfyuiResultState extends State<ComfyuiResult> with TickerProviderStateM
   @override
   Widget build(BuildContext context) {
     final double fullWidth = MediaQuery.of(context).size.width * 0.9;
-
     return SizedBox(
       width: fullWidth,
       height: fullWidth,
@@ -86,8 +85,8 @@ class _ComfyuiResultState extends State<ComfyuiResult> with TickerProviderStateM
                   scale: _scaleAnimation.value,
                   child: GestureDetector(
                     onTap: () async {
-                      final comfyuiViewModel = Get.find<ComfyuiViewModel>();
-                      comfyuiViewModel.reset();
+                      // final comfyuiViewModel = Get.find<ComfyuiViewModel>();
+                      // comfyuiViewModel.reset();
                       final fit = await determineFit(widget.upscaledImage);
                       Get.toNamed('/comfyui/photo', arguments: {
                         "fit": fit,

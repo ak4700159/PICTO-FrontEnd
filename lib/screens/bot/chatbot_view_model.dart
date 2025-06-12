@@ -10,9 +10,11 @@ import 'package:multi_image_picker_view/multi_image_picker_view.dart';
 import 'package:picto_frontend/models/chatbot_msg.dart';
 import 'package:picto_frontend/models/chatbot_room.dart';
 import 'package:picto_frontend/services/photo_manager_service/photo_manager_api.dart';
+import 'package:picto_frontend/services/user_manager_service/user_api.dart';
 
 import '../../models/photo.dart';
 import '../../models/photo_data.dart';
+import '../../models/user.dart';
 import '../../services/chatbot_manager_service/chatbot_api.dart';
 import '../../services/chatbot_manager_service/prompt_response.dart';
 import '../../utils/functions.dart';
@@ -227,10 +229,12 @@ class ChatbotViewModel extends GetxController {
     // 사진 검색 실패 시
     if (photo == null) return;
     final fit = await determineFit(data);
-    Get.toNamed('/chatbot/photo', arguments: {
+    User? user = await UserManagerApi().getUserByUserId(userId: photo.userId!);
+    Get.toNamed('/photo', arguments: {
       "photo": photo,
       "data": data,
       "fit": fit,
+      "user": user,
     });
   }
 

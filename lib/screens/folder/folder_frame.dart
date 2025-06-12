@@ -53,57 +53,52 @@ class FolderFrame extends StatelessWidget {
                 }
               },
               itemBuilder: (context) => [
-                PopupMenuItem(
-                  value: "delete",
-                  padding: EdgeInsets.all(4),
-                  onTap: () {
-                    showSelectionDialog(
-                      context: context,
-                      positiveEvent: () async {
-                        final folderViewModel = Get.find<FolderViewModel>();
-                        if (folderViewModel.getFolder(folderId: folderId)!.name == "default") {
+                if(folderViewModel.getFolder(folderId: folderId)!.name != "default")
+                  PopupMenuItem(
+                    value: "delete",
+                    padding: EdgeInsets.all(4),
+                    onTap: () {
+                      showSelectionDialog(
+                        context: context,
+                        positiveEvent: () async {
+                          bool isSuccess = await FolderManagerApi().removeFolder(folderId: folderId);
                           Get.back();
-                          showErrorPopup("기본 폴더는 삭제할 수 없습니다.");
-                          return;
-                        }
-                        bool isSuccess = await FolderManagerApi().removeFolder(folderId: folderId);
-                        Get.back();
-                        Get.back();
-                        if (isSuccess) {
-                          Get.find<FolderViewModel>().resetFolder(init: false);
-                          showMsgPopup(msg: "폴더가 삭제되었습니다", space: 0.4);
-                        } else {
-                          showMsgPopup(msg: "서버 오류 발생(삭제 실패)", space: 0.4);
-                        }
-                      },
-                      negativeEvent: () {
-                        Get.back();
-                      },
-                      positiveMsg: "네",
-                      negativeMsg: "아니요",
-                      content: "폴더를 삭제하시겠습니까?",
-                    );
-                  },
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.folder_delete,
-                        color: AppConfig.mainColor,
-                      ),
-                      Text(
-                        folderViewModel.currentFolder.value?.generatorId == UserManagerApi().ownerId
-                            ? " 폴더 삭제"
-                            : " 폴더 나가기",
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.black,
-                          fontFamily: "NotoSansKR",
-                          fontWeight: FontWeight.w600,
+                          Get.back();
+                          if (isSuccess) {
+                            Get.find<FolderViewModel>().resetFolder(init: false);
+                            showMsgPopup(msg: folderViewModel.currentFolder.value?.generatorId == UserManagerApi().ownerId ? "폴더가 삭제되었습니다" : "폴더를 나갔습니다.", space: 0.4);
+                          } else {
+                            showMsgPopup(msg: "서버 오류 발생(폴더 삭제, 나가기)", space: 0.4);
+                          }
+                        },
+                        negativeEvent: () {
+                          Get.back();
+                        },
+                        positiveMsg: "네",
+                        negativeMsg: "아니요",
+                        content: folderViewModel.currentFolder.value?.generatorId == UserManagerApi().ownerId ? "폴더를 삭제하시겠습니까?" : "폴더를 나가시겠습니까?",
+                      );
+                    },
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.folder_delete,
+                          color: AppConfig.mainColor,
                         ),
-                      ),
-                    ],
+                        Text(
+                          folderViewModel.currentFolder.value?.generatorId == UserManagerApi().ownerId
+                              ? " 폴더 삭제"
+                              : " 폴더 나가기",
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.black,
+                            fontFamily: "NotoSansKR",
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
                 PopupMenuItem(
                   value: "send",
                   padding: EdgeInsets.all(4),

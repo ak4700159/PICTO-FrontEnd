@@ -9,6 +9,7 @@ class ComfyuiViewModel extends GetxController {
   Rxn<XFile?> currentRemoveSelectedPhoto = Rxn();
   Rxn<XFile?> determinedRmovePhoto = Rxn();
   RxBool removing = false.obs;
+  RxBool upscaling = false.obs;
   RxString currentPrompt = "".obs;
   final textController = TextEditingController();
   final ImagePicker _picker = ImagePicker();
@@ -38,7 +39,6 @@ class ComfyuiViewModel extends GetxController {
       return;
     }
     determinedRmovePhoto.value = currentRemoveSelectedPhoto.value;
-    // currentPrompt.value = "";
   }
 
   // 선택된 사진 리셋
@@ -47,6 +47,8 @@ class ComfyuiViewModel extends GetxController {
     currentRemoveSelectedPhoto.value = null;
     determinedRmovePhoto.value = null;
     currentPrompt.value = "";
+    removing.value = false;
+    upscaling.value = false;
     cancelToken?.cancel();
     print("[INFO]] comfyUI screen init");
   }

@@ -144,9 +144,9 @@ Widget getUserProfile(
       if (snapshot.hasError) {
         return Container(
           decoration: BoxDecoration(
-            // border: Border.all(color: Colors.grey, width: 1,),
-            // borderRadius: BorderRadius.circular(100),
-          ),
+              // border: Border.all(color: Colors.grey, width: 1,),
+              // borderRadius: BorderRadius.circular(100),
+              ),
           height: MediaQuery.sizeOf(context).width * size,
           width: MediaQuery.sizeOf(context).width * size,
           child: CircleAvatar(
@@ -158,25 +158,14 @@ Widget getUserProfile(
         );
       }
 
-      return ClipRRect(
-        borderRadius: BorderRadius.circular(100),
-        child: Image.memory(
-          snapshot.data!,
-          fit: BoxFit.cover,
-          height: MediaQuery.sizeOf(context).width * size,
-          width: MediaQuery.sizeOf(context).width * size,
-          errorBuilder: (context, object, trace) {
-            return Image.asset(
-              "assets/images/picto_logo.png",
-              fit: BoxFit.cover,
-              height: MediaQuery.sizeOf(context).width * size,
-              width: MediaQuery.sizeOf(context).width * size,
-            );
-          },
-        ),
+      return CircleAvatar(
+        radius: MediaQuery.sizeOf(context).width * size / 1.5,
+        backgroundColor: Colors.grey.shade50,
+        backgroundImage: MemoryImage(snapshot.data!),
+        onBackgroundImageError: (_, __) {
+          // fallback 처리 필요 시 여기 작성
+        },
       );
     },
   );
 }
-
-// stomp 테스트 .. ?
