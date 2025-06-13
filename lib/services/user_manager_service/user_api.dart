@@ -127,7 +127,7 @@ class UserManagerApi {
       accessToken = response.data['accessToken'];
       preferences.setString("access-token", accessToken!);
     } on DioException catch (e) {
-      showErrorPopup(e.toString());
+      showErrorPopup("액세스 토큰 재발급 실패 \n다시 로그인 해주세요");
       Get.offNamed('/login');
       rethrow;
     }
@@ -149,10 +149,11 @@ class UserManagerApi {
           await _sendInitValueToViewModel(response);
         } catch (e) {
           print('[ERROR] refresh token fail');
+          showErrorPopup("리프레쉬 토큰 오류");
           Get.find<LoginViewModel>().loginStatus.value = "fail";
         }
       } else {
-        print('[ERROR] login server error');
+        showErrorPopup("로그인 서버 오류");
         Get.find<LoginViewModel>().loginStatus.value = "fail";
         Get.offNamed('/login');
       }

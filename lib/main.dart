@@ -20,6 +20,7 @@ import 'package:intl/date_symbol_data_local.dart' show initializeDateFormatting;
 import 'config/app_config.dart';
 import 'firebase_options.dart';
 import 'models/chatbot_room.dart';
+import 'models/comfyui_result_photo.dart';
 
 // 반드시 main 함수 외부에 작성합니다. (= 최상위 수준 함수여야 함)
 @pragma('vm:entry-point')
@@ -95,6 +96,8 @@ void main() async {
     ..registerAdapter((ChatbotRoomAdapter()))
     ..registerAdapter((PhotoDataAdapter()))
     ..registerAdapter(ChatbotMsgAdapter())
+    ..registerAdapter(ComfyuiResultPhotoAdapter())
+    ..registerAdapter(ComfyuiPhotoTypeAdapter())
     ..registerAdapter(ChatbotStatusAdapter());
 
   // 환경 설정 파일 로드

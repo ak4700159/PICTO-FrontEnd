@@ -1,7 +1,5 @@
 import 'package:hive/hive.dart';
 import 'package:picto_frontend/models/photo_data.dart';
-
-
 part "chatbot_msg.g.dart";
 
 @HiveType(typeId: 1)

@@ -9,7 +9,7 @@ class PhotoComfyuiScreen extends StatelessWidget {
   PhotoComfyuiScreen({super.key});
 
   final Uint8List data = Get.arguments["data"];
-  final BoxFit fit = Get.arguments["fit"];
+  // final BoxFit fit = Get.arguments["fit"];
 
   @override
   Widget build(BuildContext context) {
@@ -19,13 +19,17 @@ class PhotoComfyuiScreen extends StatelessWidget {
         children: [
           // 사진
           Positioned.fill(
-            child: Image.memory(
-              data,
-              fit: fit,
-              errorBuilder: (context, object, trace) => const Center(
-                child: Text(
-                  "[ERROR]",
-                  style: TextStyle(color: Colors.red, fontSize: 30),
+            child: InteractiveViewer(
+              minScale: 0.1,
+              maxScale: 3.6,
+              child: Image.memory(
+                data,
+                fit: BoxFit.contain,
+                errorBuilder: (context, object, trace) => const Center(
+                  child: Text(
+                    "사진 다운로드 오류",
+                    style: TextStyle(color: Colors.red, fontSize: 30),
+                  ),
                 ),
               ),
             ),

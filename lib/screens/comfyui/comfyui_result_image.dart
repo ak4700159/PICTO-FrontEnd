@@ -2,34 +2,31 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
-import 'package:picto_frontend/screens/comfyui/comfyui_view_model.dart';
 import 'package:picto_frontend/utils/functions.dart';
 
-class ComfyuiResult extends StatefulWidget {
+class ComfyuiResultImage extends StatefulWidget {
   final Uint8List originalImage;
   final Uint8List upscaledImage;
 
-  const ComfyuiResult({
+  const ComfyuiResultImage({
     super.key,
     required this.originalImage,
     required this.upscaledImage,
   });
 
   @override
-  State<ComfyuiResult> createState() => _ComfyuiResultState();
+  State<ComfyuiResultImage> createState() => _ComfyuiResultImageState();
 }
 
-class _ComfyuiResultState extends State<ComfyuiResult> with TickerProviderStateMixin {
+class _ComfyuiResultImageState extends State<ComfyuiResultImage> with TickerProviderStateMixin {
   late AnimationController _splitController;
   late AnimationController _scaleController;
-
   late Animation<double> _progressAnimation;
   late Animation<double> _scaleAnimation;
 
   @override
   void initState() {
     super.initState();
-
     _splitController = AnimationController(
       duration: const Duration(seconds: 4),
       vsync: this,
@@ -85,8 +82,6 @@ class _ComfyuiResultState extends State<ComfyuiResult> with TickerProviderStateM
                   scale: _scaleAnimation.value,
                   child: GestureDetector(
                     onTap: () async {
-                      // final comfyuiViewModel = Get.find<ComfyuiViewModel>();
-                      // comfyuiViewModel.reset();
                       final fit = await determineFit(widget.upscaledImage);
                       Get.toNamed('/comfyui/photo', arguments: {
                         "fit": fit,
