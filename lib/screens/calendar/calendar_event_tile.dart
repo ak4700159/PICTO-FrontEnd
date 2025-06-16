@@ -28,7 +28,7 @@ class CalendarEventTile extends StatelessWidget {
         border: Border(
           bottom: BorderSide(
             // strokeAlign: BorderSide.strokeAlignCenter,
-            width: 2,
+            width: 1,
             color: Colors.grey.shade400,
           ),
         ),
@@ -129,6 +129,7 @@ class CalendarEventTile extends StatelessWidget {
                     width: MediaQuery.sizeOf(context).width * 0.05,
                     child: CircularProgressIndicator(
                       color: Colors.grey,
+                      strokeWidth: 1,
                     )),
               ),
             );

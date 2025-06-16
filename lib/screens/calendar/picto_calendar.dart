@@ -20,10 +20,38 @@ class PictoCalendar extends StatelessWidget {
         future: folderViewModel.convertCalendarEvent(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Center(
-                child: CircularProgressIndicator(),
+            return SizedBox(
+              width: MediaQuery.sizeOf(context).width,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    width: MediaQuery.sizeOf(context).width * 0.2,
+                    height: MediaQuery.sizeOf(context).width * 0.2,
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          color: AppConfig.mainColor,
+                          strokeWidth: 1.3,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Text(
+                    "캘린더 로딩 중",
+                    style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      fontFamily: "NotoSansKR",
+                      fontSize: 14,
+                      color: Colors.grey,
+                    ),
+                  ),
+                  SizedBox(
+                    height: MediaQuery.sizeOf(context).width * 0.2,
+                  )
+                ],
               ),
             );
           }
@@ -112,7 +140,7 @@ class PictoCalendar extends StatelessWidget {
         color: AppConfig.mainColor,
         shape: BoxShape.circle,
       ),
-      rangeHighlightColor :Color.fromRGBO(238, 227, 253, 0.8),
+      rangeHighlightColor: Color.fromRGBO(238, 227, 253, 0.8),
       // withinRangeDecoration: const BoxDecoration(
       //   color: AppConfig.mainColor,
       // ),
@@ -150,8 +178,7 @@ class PictoCalendar extends StatelessWidget {
               margin: EdgeInsets.all(4),
               padding: EdgeInsets.all(2),
               decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: Colors.grey, width: 0.5)),
+                  borderRadius: BorderRadius.circular(20), border: Border.all(color: Colors.grey, width: 0.5)),
               child: Text("${events.length}",
                   style: TextStyle(
                     color: color,
@@ -204,16 +231,14 @@ class PictoCalendar extends StatelessWidget {
             return Center(
               child: Text(
                 '토',
-                style: TextStyle(
-                    fontFamily: "NotoSansKR", fontWeight: FontWeight.w500, color: Colors.blue),
+                style: TextStyle(fontFamily: "NotoSansKR", fontWeight: FontWeight.w500, color: Colors.blue),
               ),
             );
           case 7:
             return Center(
               child: Text(
                 '일',
-                style: TextStyle(
-                    fontFamily: "NotoSansKR", fontWeight: FontWeight.w500, color: Colors.red),
+                style: TextStyle(fontFamily: "NotoSansKR", fontWeight: FontWeight.w500, color: Colors.red),
               ),
             );
         }

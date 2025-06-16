@@ -48,7 +48,6 @@ class MarkerWidget extends StatelessWidget {
                   imageData!,
                   fit: BoxFit.cover,
                   errorBuilder: (context, object, trace) {
-                    // 에러 시 다시 복구
                     return Container(
                         color: Colors.white,
                         child: Image.asset(

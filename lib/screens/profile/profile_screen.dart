@@ -165,8 +165,7 @@ class ProfileScreen extends StatelessWidget {
             Container(
               margin: EdgeInsets.all(16),
               padding: EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                  border: BorderDirectional(bottom: BorderSide(width: 1, color: Colors.grey))),
+              decoration: BoxDecoration(border: BorderDirectional(bottom: BorderSide(width: 1, color: Colors.grey))),
               child: Row(
                 children: [
                   Icon(
@@ -197,8 +196,7 @@ class ProfileScreen extends StatelessWidget {
             Container(
               margin: EdgeInsets.only(top: 16, left: 16, right: 16),
               padding: EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                  border: BorderDirectional(bottom: BorderSide(width: 1, color: Colors.grey))),
+              decoration: BoxDecoration(border: BorderDirectional(bottom: BorderSide(width: 1, color: Colors.grey))),
               child: Row(
                 children: [
                   Icon(
@@ -236,8 +234,7 @@ class ProfileScreen extends StatelessWidget {
             Container(
               margin: EdgeInsets.only(top: 16, left: 16, right: 16),
               padding: EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                  border: BorderDirectional(bottom: BorderSide(width: 1, color: Colors.grey))),
+              decoration: BoxDecoration(border: BorderDirectional(bottom: BorderSide(width: 1, color: Colors.grey))),
               child: Row(
                 children: [
                   Icon(
@@ -282,8 +279,7 @@ class ProfileScreen extends StatelessWidget {
                         showSelectionDialog(
                             context: context,
                             positiveEvent: () async {
-                              final SharedPreferences preferences =
-                                  await SharedPreferences.getInstance();
+                              final SharedPreferences preferences = await SharedPreferences.getInstance();
                               await preferences.clear();
                               Restart.restartApp();
                             },
@@ -313,8 +309,7 @@ class ProfileScreen extends StatelessWidget {
                         showSelectionDialog(
                             context: context,
                             positiveEvent: () async {
-                              final SharedPreferences preferences =
-                              await SharedPreferences.getInstance();
+                              final SharedPreferences preferences = await SharedPreferences.getInstance();
                               await preferences.clear();
                               // Restart.restartApp();
                             },
@@ -368,13 +363,20 @@ class ProfileScreen extends StatelessWidget {
         child: Image.memory(
           profileViewModel.profilePhoto,
           fit: BoxFit.cover,
+          errorBuilder: (context, object, trace) {
+            return Container(
+                color: Colors.white,
+                child: Image.asset(
+                  'assets/images/picto_logo.png',
+                  fit: BoxFit.cover,
+                ));
+          },
         ),
       );
     }
 
     return FutureBuilder(
-      future: PhotoStoreApi()
-          .downloadPhoto(photoId: profileViewModel.profilePhotoId.value!, scale: 0.6),
+      future: PhotoStoreApi().downloadPhoto(photoId: profileViewModel.profilePhotoId.value!, scale: 0.6),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(child: CircularProgressIndicator());
@@ -391,6 +393,14 @@ class ProfileScreen extends StatelessWidget {
           child: Image.memory(
             snapshot.data!,
             fit: BoxFit.cover,
+            errorBuilder: (context, object, trace) {
+              return Container(
+                  color: Colors.white,
+                  child: Image.asset(
+                    'assets/images/picto_logo.png',
+                    fit: BoxFit.cover,
+                  ));
+            },
           ),
         );
       },
@@ -520,6 +530,14 @@ class ProfileScreen extends StatelessWidget {
                       height: MediaQuery.sizeOf(context).width * 0.5,
                       marker.imageData!,
                       fit: BoxFit.cover,
+                      errorBuilder: (context, object, trace) {
+                        return Container(
+                            color: Colors.white,
+                            child: Image.asset(
+                              'assets/images/picto_logo.png',
+                              fit: BoxFit.cover,
+                            ));
+                      },
                     ),
                   ),
                   Text(
@@ -544,8 +562,7 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
             Obx(() => Positioned(
-                  child: profileViewModel.selectedPictoMarker.value?.photo.photoId ==
-                          marker.photo.photoId
+                  child: profileViewModel.selectedPictoMarker.value?.photo.photoId == marker.photo.photoId
                       ? Icon(
                           Icons.check_box,
                           color: AppConfig.mainColor,

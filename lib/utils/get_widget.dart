@@ -7,6 +7,7 @@ import '../models/user.dart';
 import '../services/photo_store_service/photo_store_api.dart';
 import '../services/session_scheduler_service/session_socket.dart';
 import '../services/socket_function_controller.dart';
+import 'functions.dart';
 
 InputDecoration getCustomInputDecoration({
   required String label,
@@ -153,11 +154,23 @@ Widget getUserProfile(
             radius: 20,
             backgroundColor: Colors.grey.shade50,
             // 아이콘 다른 사용자
-            child: Icon(Icons.person, color: Colors.grey[800]),
+            child: Icon(Icons.person, color: getColorFromUserId(user.userId!)),
           ),
         );
       }
-
+      print("[INFO] image bytes : ${snapshot.data?.length}");
+      if(snapshot.data?.isEmpty ?? true) {
+        return Container(
+          height: MediaQuery.sizeOf(context).width * size,
+          width: MediaQuery.sizeOf(context).width * size,
+          child: CircleAvatar(
+            radius: 20,
+            backgroundColor: Colors.grey.shade50,
+            // 아이콘 다른 사용자
+            child: Icon(Icons.person, color: getColorFromUserId(user.userId!)),
+          ),
+        );
+      }
       return CircleAvatar(
         radius: MediaQuery.sizeOf(context).width * size / 1.5,
         backgroundColor: Colors.grey.shade50,

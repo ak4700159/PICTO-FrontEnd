@@ -41,6 +41,12 @@ class FolderViewModel extends GetxController {
     });
   }
 
+  void setZero() {
+    folders.clear();
+    currentMarkers.clear();
+    currentMsgList.clear();
+  }
+
   //  폴더 초기화 -> 새로운 폴더는 추가, 중복되는 폴더는 업데이트
   Future<void> resetFolder({required bool init}) async {
     try {
@@ -57,11 +63,14 @@ class FolderViewModel extends GetxController {
       // 기존에 있었던 폴더는 업데이트. 없었으면 추가
       for (Folder newFolder in search) {
         if (folders.keys.contains(newFolder.folderId)) {
-          folders[newFolder.folderId] = await folders[newFolder.folderId]!.updateFolder();
+          await folders[newFolder.folderId]!.updateFolder();
+          print("${folders[newFolder.folderId]?.name} number of users : ${folders[newFolder.folderId]?.users.length}");
         } else {
           folders[newFolder.folderId] = newFolder;
+          await folders[newFolder.folderId]!.updateFolder();
         }
       }
+      folders.refresh();
     } catch (e) {
       print("[ERROR] ${e.toString()}");
     }
@@ -284,24 +293,11 @@ class FolderViewModel extends GetxController {
   }
 
   // 사용자폴더와 공유팔더 나누니기
-  Map<String, List<Folder>> getPartitionedFolders() {
-    final ownerId = UserManagerApi().ownerId;
-    final partitioned = {
-      'my': <Folder>[],
-      'shared': <Folder>[],
-    };
-
-    for (final folder in folders.values) {
-      // 사용자 목록이 1명이고, 그 유저의 ID가 ownerId일 경우 -> 'my'
-      if ((folder.users.length <= 1) || (folder.name == "default")) {
-        partitioned['my']!.add(folder);
-      } else {
-        partitioned['shared']!.add(folder);
-      }
-    }
-
-    return partitioned;
-  }
+  // Map<String, List<Folder>> getPartitionedFolders() {
+  //
+  //
+  //   return partitioned;
+  // }
 
   // 퐇더 안에서 사진 조회
   Photo? getPhoto({required int photoId}) {

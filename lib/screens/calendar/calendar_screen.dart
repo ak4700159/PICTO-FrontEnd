@@ -44,13 +44,12 @@ class CalendarScreen extends StatelessWidget {
         child: Column(
           children: [
             SizedBox(
-              height: MediaQuery.sizeOf(context).height * 0.025,
+              height: MediaQuery.sizeOf(context).height * 0.005,
             ),
             // 캘린더
             Container(
               decoration: BoxDecoration(
                   color: Colors.white,
-                  // borderRadius: BorderRadius.circular(100)
                   boxShadow: [
                     BoxShadow(
                         spreadRadius: 1,

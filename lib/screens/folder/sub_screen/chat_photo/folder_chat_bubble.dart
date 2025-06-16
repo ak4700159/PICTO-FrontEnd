@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hive/hive.dart';
 import 'package:picto_frontend/config/app_config.dart';
 import 'package:picto_frontend/models/chatting_msg.dart';
 import 'package:picto_frontend/screens/folder/folder_view_model.dart';
@@ -77,6 +78,22 @@ class ChatBubble extends StatelessWidget {
                           fit: BoxFit.cover,
                           height: MediaQuery.sizeOf(context).width * 0.1,
                           width: MediaQuery.sizeOf(context).width * 0.1,
+                          errorBuilder: (context, object, trace) {
+                            return Container(
+                              height: MediaQuery.sizeOf(context).width * 0.1,
+                              width: MediaQuery.sizeOf(context).width * 0.1,
+                              margin: EdgeInsets.all(0),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(100),
+                                color: Colors.grey.shade200
+                              ),
+                              child: Icon(
+                                Icons.person,
+                                color: getColorFromUserId(msg.userId),
+                                size: 30,
+                              ),
+                            );
+                          },
                         ),
                       ),
                     )
@@ -130,7 +147,11 @@ class ChatBubble extends StatelessWidget {
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
                       formatDate(msg.sendDatetime).substring("0000-00-00".length),
-                      style: TextStyle(fontSize: 10, color: Colors.grey, fontFamily: "NotoSansKR",),
+                      style: TextStyle(
+                        fontSize: 10,
+                        color: Colors.grey,
+                        fontFamily: "NotoSansKR",
+                      ),
                     ),
                   ),
                 ],

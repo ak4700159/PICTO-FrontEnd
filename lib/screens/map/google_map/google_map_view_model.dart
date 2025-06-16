@@ -400,5 +400,8 @@ class GoogleMapViewModel extends GetxController {
     folderPhotos.clear();
     currentMarkers.clear();
     currentPictoMarkers.clear();
+
+    final folderViewModel = Get.find<FolderViewModel>();
+    folderViewModel.setZero();
   }
 }

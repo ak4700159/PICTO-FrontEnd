@@ -162,17 +162,22 @@ class FolderListScreen extends StatelessWidget {
     return Icons.folder;
   }
 
-  Color _getFolderColor(int generatorId, String folderName) {
-    if (folderName == "default") {
-      return Colors.black;
-    } else if (generatorId == UserManagerApi().ownerId) {
-      return AppConfig.mainColor;
-    }
-    return Colors.blue;
-  }
 
   Widget _getFolderList(BuildContext context) {
-    Map<String, List<Folder>> notOrderedFolders = folderViewModel.getPartitionedFolders();
+    final notOrderedFolders = {
+      'my': <Folder>[],
+      'shared': <Folder>[],
+    };
+
+    for (final folder in folderViewModel.folders.values) {
+      // 사용자 목록이 1명이고, 그 유저의 ID가 ownerId일 경우 -> 'my'
+      if ((folder.users.length <= 1) || (folder.name == "default")) {
+        notOrderedFolders['my']!.add(folder);
+      } else {
+        notOrderedFolders['shared']!.add(folder);
+      }
+    }
+
     List<Folder> myFolders = notOrderedFolders["my"]!
       ..sort((a, b) {
         if (a.name == "default") return -1;
@@ -189,7 +194,7 @@ class FolderListScreen extends StatelessWidget {
         backgroundColor: Colors.white,
         color: AppConfig.mainColor,
         onRefresh: () async {
-          await folderViewModel.resetFolder(init: false);
+          await folderViewModel.resetFolder(init: true);
         },
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
