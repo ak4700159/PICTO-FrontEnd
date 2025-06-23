@@ -21,8 +21,8 @@ class ComfyuiAPI {
     return _handler;
   }
 
-  // final String baseUrl = "${AppConfig.httpUrl}:8090";
-  final String baseUrl = "http://${dotenv.env['PROCESSOR_IP']}:8086";
+  final String baseUrl = "http://${dotenv.env['COMFYUI_IP']}:5001";
+
   Dio dio = Dio(
     BaseOptions(
         connectTimeout: const Duration(minutes: 10),

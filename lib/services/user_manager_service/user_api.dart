@@ -381,7 +381,7 @@ class UserManagerApi {
       final response = await dio.post('$baseUrl/send-temporary-password/$email');
       return true;
     } on DioException catch (e) {
-      showErrorPopup(e.toString());
+      showErrorPopup("임시 비밀번호 전송 실패");
     }
     return false;
   }

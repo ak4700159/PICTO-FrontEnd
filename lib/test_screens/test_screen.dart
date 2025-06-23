@@ -13,8 +13,11 @@ class TestScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print("rebuild!!");
     Get.put<TestViewModel>(TestViewModel());
     final testViewModel = TestViewModel.to;
+    // final height = MediaQuery.of(context).size.height;
+    // final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.sizeOf(context).height;
     final width = MediaQuery.sizeOf(context).width;
     return Scaffold(

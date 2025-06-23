@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:picto_frontend/models/chatting_msg.dart';
 import 'package:picto_frontend/models/photo.dart';
 import 'package:picto_frontend/models/user.dart';
+import 'package:picto_frontend/screens/folder/folder_view_model.dart';
 import 'package:picto_frontend/screens/map/google_map/marker/picto_marker.dart';
 import 'package:picto_frontend/screens/profile/profile_view_model.dart';
 import 'package:picto_frontend/services/folder_manager_service/folder_api.dart';
@@ -111,8 +112,9 @@ class Folder {
         }());
       }
     }
-
     await Future.wait(tasks);
+    final folderViewModel = Get.find<FolderViewModel>();
+    folderViewModel.folders.refresh();
   }
 
   Future<void> updateUser() async {

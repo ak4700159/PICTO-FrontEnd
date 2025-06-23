@@ -189,7 +189,7 @@ class FolderViewModel extends GetxController {
   Future<List<PictoMarker>> getPictoMarkersByName({required String folderName}) async {
     Folder folder = folders.values.firstWhere((f) => f.name == "default");
     await folder.updateFolder();
-    await folder.downloadPhotos(0.1);
+    await folder.downloadPhotos(0.4);
     return folder.markers;
   }
 
